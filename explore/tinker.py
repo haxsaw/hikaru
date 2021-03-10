@@ -1,36 +1,6 @@
-
-"""
-docstring
-"""
-import dataclasses
 from hikaru.model import *
 from hikaru.generate import get_yaml
 
-
-from typing import List,  Optional
-
-NoneType = type(None)
-
-
-@dataclasses.dataclass
-class Inner(object):
-    f1: float
-    s1: str
-    l1: List[int] = None
-
-
-@dataclasses.dataclass
-class Outer(object):
-    f2: float
-    s1: str
-    l2: Optional[List[Inner]] = dataclasses.field(default_factory=list)
-
-
-o = Outer(3.14, "out")
-o.l2.append(Inner(1.2, "asdf", [1, 2, 3]))
-
-l2 = Outer(5, "boom")
-_ = 0
 
 y = Pod(apiVersion="v1",
         kind='Pod',

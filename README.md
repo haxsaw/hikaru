@@ -96,3 +96,52 @@ You can create Kubernetes objects in Python:
       containers:
         - name: web
           image: kiamol/ch02-hello-kiamol
+
+The pieces can be created separately and even stored in a standard components
+library module for assembly later:
+
+    from component_lib import web_container, lb_container
+    from hikaru.model import Pod, ObjectMeta, PodSpec
+    # make an ObjectMeta instance here called "om"
+    p = Pod(apiVersion="v1", kind="Pod",
+            metadata=om,
+            spec=PodSpec(containers=[web_container, lb_container])
+            )
+
+Finally, every hikaru object that holds other properties and objects have methods
+that allow you to search the entire collection of objects. This lets you find various
+objects of interest for review and checking against policies. For example, if we
+had a Pod 'p' that was pulled in with load_full_yaml(), we could examine
+all of the Container objects with:
+
+    containers = p.find_by_name("containers")
+    for c in containers:
+        # check what you want...
+        
+Or you can get all of the ExecAction object (the value of 'exec'
+properties) that are part the second container's lifecycle's httpGet
+property like so:
+
+    execs = p.find_by_name("exec", following='containers.1.lifecycle.httpGet')
+    
+These queries result in a list of 'CatalogEntry' objects, which are
+named tuples that provide the path to the found element. You can 
+acquire the actual element for inspection with the `object_at_path()`
+method:
+
+    o = p.object_at_path(execs[0].path)
+    
+This makes it easy to scan for specific items in a config under automated control.
+
+### Future work
+
+As mentioned above, we want to add the ability to move to/from JSON.
+Additionally, since both the classes of hikaru and those in the official Python
+Kubernetes client are generated from the same swagger file, if a means to
+determine a mapping between the two can be established it should be possible to integrate
+these Python classes directly into the Kubernetes client for actioning on a Kubernetes
+cluster.
+
+### About
+
+Hikaru is Mr. Sulu's first name, a famed helmsman in fiction.
