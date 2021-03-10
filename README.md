@@ -10,7 +10,7 @@ large, complex files to enable automation of policy and security compliance.
 
 hikaru uses type-annotated Python dataclasses to represent each of the kinds of
 objects defined in the Kubernetes API, so when used with and IDE that understands
-Python type annotations, enables the IDE to provide the user direct assistance as
+Python type annotations, hikaru enables the IDE to provide the user direct assistance as
 to what parameters are available, what types each parameter must be, and which
 are optional. Assembled Kubernetes object can be rendered into YAML that can be
 processed by regular Kubernetes tools.
@@ -70,9 +70,9 @@ known object type, your IDE can provide you assistance in navigation:
     for k, v in p.metadata.labels.items():
         print(f"key:{k} value:{v}")
         
-You can create an Kubernetes objects in Python:
+You can create Kubernetes objects in Python:
 
-    from hikaru.model import Pod, PodSpec, Container
+    from hikaru.model import Pod, PodSpec, Container, ObjectMeta
     x = Pod(apiVersion='v1', kind='Pod',
             metadata=ObjectMeta(name='hello-kiamol-3'),
             spec=PodSpec(
