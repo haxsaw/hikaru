@@ -1,0 +1,110 @@
+For Maintainers: Building the models in the 'model' package
+===========================================================
+
+Intro
+-----
+
+The model package (hikaru.model) is constructed by processing the OpenAPI
+Swagger JSON file that describes the Kubernetes API and outputting all of
+the model modules in the package. Most users of hikaru won't need to mess
+with the build system, so this is really a note for maintainers.
+
+There has been a bit of sensitivity in the build process previously since
+some of the build code needs to access something from within the model
+package itself, and model/__init__.py imports all symbols from v1. If v1
+is deleted, the build previously failed unless you also deleted __init__.py.
+This has been changed so that if v1 is missing processing continues, but
+if v1 got accidentally deleted you wouldn't know until you tried some
+tests are tried to process some yaml with apiVersion == v1. This seems
+the most reasonable accommodation for the process, and this code shouldn't
+actually be in peril of having something deleted (what package survives
+when one module is deleted anyway?).
+
+Hopefully now these concerns are behind us, and a controlled build/release
+process will result in no more weirdness.
+
+
+Requirements
+------------
+
+There are extra requirements for building the model than from just using the
+package. Do a
+
+    pip install -r build_requirements.txt
+
+...to add these to your environment.
+
+
+The build process
+-----------------
+
+Pretty simple, actually:
+
+1. Set your PYTHONPATH so that it can find the hikaru package root,
+2. 'cd' into the package root
+3. Run the following:
+    python build.py ../openapi/<swagger file name>
+
+This will result in:
+
+- The 'model' directory being created if it doesn't already exist
+- All files in the 'model' directory being deleted.
+- An __init__.py file will be generated in model.
+- A non-version-specific module of object classes will be created in
+  the unversioned.py module.
+- A series of modules whose names match the version of the objects they
+  encompass will be created, each containing either the specific objects
+  for that version, or else imports of other modules where an object
+  has a dependency on a different version of the object.
+- A versions.py file that contains a list named 'versions' that contains
+  a list of strings of the names of the version modules created.
+- An update to the __init__.py file to import all symbols from 'v1' to
+  make it easier access all v1 Kubernetes classes (__all__ is populated).
+
+If run repeatedly with no change to the other code or input JSON file,
+identical model files will be generated, so it is safe to run again and
+again with no fear of git thinking there are new versions.
+
+The openapi directory is meant to hold different vintages of swagger file
+so you can re-create older models if desired. These have been downloaded
+from the official github repo and stored here. The build program requires
+you to provide the path to one of these files. The current version was
+acquired from here:
+
+https://github.com/kubernetes-client/python/blob/master/kubernetes/swagger.json.unprocessed
+
+
+If it goes wrong
+----------------
+
+It is possible to make an update to build.py such that a subsequent run
+creates version modules with illegal Python in them. If that happens, it's
+possible that build.py won't run properly any more. Allowances have been
+made in the build code for these kinds of issues, but if you find yourself
+stuck the quickest way out is to manually delete model/__init__.py and
+then run the build again. This generally solves any issues.
+
+
+Build caveats
+-------------
+
+- The modules imported into the generated modules is mostly static, so
+  sometimes not every imported module is needed. If you run a linter it
+  will complain about this.
+- We do not process any object definitions from any groups with
+  'apiextensions' in the group name. This is because there is one object
+  that is recursively defined and hence it breaks the topological sort
+  used to determine what order to output the Python classes for the API
+  objects. It also results in illegal Python code, as the item in question
+  is self-referential and hence can't be represented as a dataclass. We're
+  looking for a solution that will provide all the desired features of the
+  existing system, but until then objects in this group aren't included in
+  the model.
+- The test suite for the kubernetes client includes a yaml doc, list.yaml,
+  that has a kind value of 'List'. However, the input JSON doesn't define
+  any such object, hence hikaru has no support for this. The test suite
+  does warn on this as it is an expected failure given the state of the
+  input, so don't look at the build as part of the problem. From the looks
+  of the yaml in list.yaml, this may also pose problems for a topological
+  sort in the build process.
+
