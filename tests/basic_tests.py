@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from hikaru import load_full_yaml
-from hikaru.model import *
+from hikaru.model import Pod
 
 p = None
 
