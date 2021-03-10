@@ -1,10 +1,10 @@
 from pathlib import Path
-import os
 import sys
 from typing import Union, List, Optional
 import json
 import networkx
 from hikaru.naming import process_swagger_name, full_swagger_name
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 
 
 python_reserved = {"except", "continue", "from"}
@@ -77,7 +77,8 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     """
     print(_module_docstring, file=stream)
     print(file=stream)
-    print("from hikaru.meta import HikaruBase", file=stream)
+    print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
+          file=stream)
     print("from typing import Optional, List, Dict", file=stream)
     print("from dataclasses import dataclass, field", file=stream)
     if other_imports is not None:
@@ -116,6 +117,52 @@ def build_digraph(all_classes: dict) -> networkx.DiGraph:
 def write_classes(class_list, stream=sys.stdout):
     for dc in class_list:
         print(dc.as_python_class(), file=stream)
+
+
+def load_stable(swagger_file_path: str) -> NoneType:
+    f = open(swagger_file_path, 'r')
+    d = json.load(f)
+    for k, v in d["definitions"].items():
+        if 'apiextensions' not in k:
+            group, version, name = process_swagger_name(k)
+            mod_def = get_module_def(version)
+            cd = mod_def.get_class_desc(name)
+            if cd is None:
+                cd = ClassDescriptor(k, v)
+                mod_def.save_class_desc(cd)
+            else:
+                cd.update(v)
+            cd.process_properties()
+
+
+def write_modules(pkgpath: str):
+    pkg = Path(pkgpath)
+    d = module_defs()
+    mod_names = []
+    base = d.get(None)
+    # first, create the module with un-versioned object defs
+    if base:
+        unversioned = pkg / f'{unversioned_module_name}.py'
+        assert isinstance(base, ModuleDef)
+        f = unversioned.open('w')
+        base.as_python_module(stream=f)
+        f.close()
+
+    # next, write out all the version-specific object defs
+    for k, md in d.items():
+        if k is not None:
+            assert isinstance(md, ModuleDef)
+            mod_names.append(md.version)
+            mod = pkg / f'{md.version}.py'
+            f = mod.open('w')
+            md.as_python_module(stream=f)
+            f.close()
+
+    # finally, capture the names of all the version modules in version module
+    versions = pkg / 'versions.py'
+    f = versions.open('w')
+    print(f"versions = {str(mod_names)}", file=f)
+    f.close()
 
 
 class ClassDescriptor(object):
@@ -186,10 +233,14 @@ class ClassDescriptor(object):
         lines = list()
         # start of class statement
         if self.is_subclass_of is not None:
-            lines.append(f"class {self.short_name}({self.is_subclass_of}):")
+            base = self.is_subclass_of
         else:
+            # then it is to be a dataclass
+            base = (HikaruDocumentBase.__name__
+                    if self.is_document else
+                    HikaruBase.__name__)
             lines.append("@dataclass")
-            lines.append(f"class {self.short_name}(HikaruBase):")
+        lines.append(f"class {self.short_name}({base}):")
         # now the docstring
         ds_parts = ['    """']
         ds_parts.extend(self.split_line(self.description))
@@ -212,6 +263,7 @@ class ClassDescriptor(object):
         if self.is_subclass_of is None:
             if self.required_props or self.optional_props:
                 lines.append("")
+            lines.append(f"    version = '{self.version}'")
             for p in self.required_props:
                 lines.append(p.as_python_typeanno(True))
             for p in (x for x in self.optional_props if x.container_type is None):
@@ -313,12 +365,9 @@ class PropertyDescriptor(object):
                 fullname = full_swagger_name(ref)
                 mod_def = get_module_def(version)
                 item_ref = mod_def.get_class_desc(short_name)
-                # name = ref.split(".")[-1]
-                # item_ref = all_classes.get(name)
                 if item_ref is None:
                     item_ref = ClassDescriptor(fullname, {})  # make a placeholder
                     mod_def.save_class_desc(item_ref)
-                    # all_classes[name] = item_ref
                 self.item_type = item_ref
             elif self.item_type in types_map:
                 self.item_type = types_map[self.item_type]
@@ -335,14 +384,11 @@ class PropertyDescriptor(object):
             else:
                 group, version, short_name = process_swagger_name(d["$ref"])
                 fullname = full_swagger_name(d["$ref"])
-                # ref = d["$ref"].split(".")[-1]
                 mod_def = get_module_def(version)
                 ref_class = mod_def.get_class_desc(short_name)
-                # ref_class = all_classes.get(ref)
                 if ref_class is None:
                     ref_class = ClassDescriptor(fullname, {})
                     mod_def.save_class_desc(ref_class)
-                    # all_classes[ref] = ref_class
                 self.prop_type = ref_class
 
     @staticmethod
@@ -390,44 +436,6 @@ class PropertyDescriptor(object):
                 # just default it to None
                 parts.append(" = None")
         return "".join(parts)
-
-
-def load_stable(swagger_file_path: str) -> NoneType:
-    global all_classes
-
-    f = open(swagger_file_path, 'r')
-    d = json.load(f)
-    for k, v in d["definitions"].items():
-        if 'apiextensions' not in k:
-            group, version, name = process_swagger_name(k)
-            mod_def = get_module_def(version)
-            cd = mod_def.get_class_desc(name)
-            if cd is None:
-                cd = ClassDescriptor(k, v)
-                mod_def.save_class_desc(cd)
-            else:
-                cd.update(v)
-            cd.process_properties()
-
-
-def write_modules(pkgpath: str):
-    pkg = Path(pkgpath)
-    d = module_defs()
-    base = d.get(None)
-    if base:
-        unversioned = pkg / f'{unversioned_module_name}.py'
-        assert isinstance(base, ModuleDef)
-        f = unversioned.open('w')
-        base.as_python_module(stream=f)
-        f.close()
-
-    for k, md in d.items():
-        if k is not None:
-            assert isinstance(md, ModuleDef)
-            mod = pkg / f'{md.version}.py'
-            f = mod.open('w')
-            md.as_python_module(stream=f)
-            f.close()
 
 
 if __name__ == "__main__":

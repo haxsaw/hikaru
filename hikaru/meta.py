@@ -400,3 +400,7 @@ class HikaruBase(object):
         code.append(")")
         return " ".join(code)
 
+
+@dataclass
+class HikaruDocumentBase(HikaruBase):
+    version = 'UNKNOWN'

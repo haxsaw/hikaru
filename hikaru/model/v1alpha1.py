@@ -7,7 +7,7 @@ a Kubernetes Swagger spec into the code for the hikaru.model module.
 """
 
 
-from hikaru.meta import HikaruBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import Optional, List, Dict
 from dataclasses import dataclass, field
 from .unversioned import *
@@ -23,6 +23,7 @@ class StorageVersionSpec(HikaruBase):
 
     Attributes:
     """
+    version = 'v1alpha1'
 
 
 @dataclass
@@ -42,6 +43,7 @@ class StorageVersionCondition(HikaruBase):
         condition was set based upon.
     """
 
+    version = 'v1alpha1'
     reason: str
     status: str
     type: str
@@ -66,6 +68,7 @@ class ServerStorageVersion(HikaruBase):
         encodingVersion must be included in the decodableVersions.
     """
 
+    version = 'v1alpha1'
     apiServerID: Optional[str] = None
     encodingVersion: Optional[str] = None
     decodableVersions: Optional[List[str]] = field(default_factory=list)
@@ -88,13 +91,14 @@ class StorageVersionStatus(HikaruBase):
     storageVersions: The reported versions per API server instance.
     """
 
+    version = 'v1alpha1'
     commonEncodingVersion: Optional[str] = None
     conditions: Optional[List[StorageVersionCondition]] = field(default_factory=list)
     storageVersions: Optional[List[ServerStorageVersion]] = field(default_factory=list)
 
 
 @dataclass
-class StorageVersion(HikaruBase):
+class StorageVersion(HikaruDocumentBase):
     """
     Storage version of a specific resource.
 
@@ -115,6 +119,7 @@ class StorageVersion(HikaruBase):
     metadata: The name is <group>.<resource>.
     """
 
+    version = 'v1alpha1'
     spec: StorageVersionSpec
     status: StorageVersionStatus
     apiVersion: Optional[str] = None
@@ -123,7 +128,7 @@ class StorageVersion(HikaruBase):
 
 
 @dataclass
-class StorageVersionList(HikaruBase):
+class StorageVersionList(HikaruDocumentBase):
     """
     A list of StorageVersions.
 
@@ -142,6 +147,7 @@ class StorageVersionList(HikaruBase):
     metadata:
     """
 
+    version = 'v1alpha1'
     items: List[StorageVersion]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -161,6 +167,7 @@ class PriorityLevelConfigurationReference(HikaruBase):
         Required.
     """
 
+    version = 'v1alpha1'
     name: str
 
 
@@ -176,6 +183,7 @@ class FlowDistinguisherMethod(HikaruBase):
         and "ByNamespace". Required.
     """
 
+    version = 'v1alpha1'
     type: str
 
 
@@ -201,6 +209,7 @@ class Subject(HikaruBase):
         report an error.
     """
 
+    version = 'v1alpha1'
     kind: str
     name: str
     apiVersion: Optional[str] = None
@@ -227,6 +236,7 @@ class NonResourcePolicyRule(HikaruBase):
         verbs. If it is present, it must be the only entry. Required.
     """
 
+    version = 'v1alpha1'
     nonResourceURLs: List[str]
     verbs: List[str]
 
@@ -264,6 +274,7 @@ class ResourcePolicyRule(HikaruBase):
         empty, but only if `clusterScope` is true.
     """
 
+    version = 'v1alpha1'
     apiGroups: List[str]
     resources: List[str]
     verbs: List[str]
@@ -294,6 +305,7 @@ class PolicyRulesWithSubjects(HikaruBase):
         `resourceRules` and `nonResourceRules` has to be non-empty.
     """
 
+    version = 'v1alpha1'
     subjects: List[Subject]
     nonResourceRules: Optional[List[NonResourcePolicyRule]] = field(default_factory=list)
     resourceRules: Optional[List[ResourcePolicyRule]] = field(default_factory=list)
@@ -323,6 +335,7 @@ class FlowSchemaSpec(HikaruBase):
         if it is an empty slice, there will be no requests matching the FlowSchema.
     """
 
+    version = 'v1alpha1'
     priorityLevelConfiguration: PriorityLevelConfigurationReference
     distinguisherMethod: Optional[FlowDistinguisherMethod] = None
     matchingPrecedence: Optional[int] = None
@@ -348,6 +361,7 @@ class FlowSchemaCondition(HikaruBase):
     type: `type` is the type of the condition. Required.
     """
 
+    version = 'v1alpha1'
     lastTransitionTime: Optional[Time] = None
     message: Optional[str] = None
     reason: Optional[str] = None
@@ -366,11 +380,12 @@ class FlowSchemaStatus(HikaruBase):
     conditions: `conditions` is a list of the current states of FlowSchema.
     """
 
+    version = 'v1alpha1'
     conditions: Optional[List[FlowSchemaCondition]] = field(default_factory=list)
 
 
 @dataclass
-class FlowSchema(HikaruBase):
+class FlowSchema(HikaruDocumentBase):
     """
     FlowSchema defines the schema of a group of flows. Note that a flow is made up of a
     set of inbound API requests with similar attributes and is identified by a pair of
@@ -395,6 +410,7 @@ class FlowSchema(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1alpha1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -403,7 +419,7 @@ class FlowSchema(HikaruBase):
 
 
 @dataclass
-class FlowSchemaList(HikaruBase):
+class FlowSchemaList(HikaruDocumentBase):
     """
     FlowSchemaList is a list of FlowSchema objects.
 
@@ -423,6 +439,7 @@ class FlowSchemaList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[FlowSchema]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -442,6 +459,7 @@ class GroupSubject(HikaruBase):
         for some well-known group names. Required.
     """
 
+    version = 'v1alpha1'
     name: str
 
 
@@ -471,6 +489,7 @@ class QueuingConfiguration(HikaruBase):
         associated flow schemas irrelevant. This field has a default value of 64.
     """
 
+    version = 'v1alpha1'
     handSize: Optional[int] = None
     queueLengthLimit: Optional[int] = None
     queues: Optional[int] = None
@@ -492,6 +511,7 @@ class LimitResponse(HikaruBase):
         non-empty only if `type` is `"Queue"`.
     """
 
+    version = 'v1alpha1'
     type: str
     queuing: Optional[QueuingConfiguration] = None
 
@@ -520,6 +540,7 @@ class LimitedPriorityLevelConfiguration(HikaruBase):
         executed right now
     """
 
+    version = 'v1alpha1'
     assuredConcurrencyShares: Optional[int] = None
     limitResponse: Optional[LimitResponse] = None
 
@@ -543,6 +564,7 @@ class PriorityLevelConfigurationSpec(HikaruBase):
         This field must be non-empty if and only if `type` is `"Limited"`.
     """
 
+    version = 'v1alpha1'
     type: str
     limited: Optional[LimitedPriorityLevelConfiguration] = None
 
@@ -566,6 +588,7 @@ class PriorityLevelConfigurationCondition(HikaruBase):
     type: `type` is the type of the condition. Required.
     """
 
+    version = 'v1alpha1'
     lastTransitionTime: Optional[Time] = None
     message: Optional[str] = None
     reason: Optional[str] = None
@@ -584,11 +607,12 @@ class PriorityLevelConfigurationStatus(HikaruBase):
     conditions: `conditions` is the current state of "request-priority".
     """
 
+    version = 'v1alpha1'
     conditions: Optional[List[PriorityLevelConfigurationCondition]] = field(default_factory=list)
 
 
 @dataclass
-class PriorityLevelConfiguration(HikaruBase):
+class PriorityLevelConfiguration(HikaruDocumentBase):
     """
     PriorityLevelConfiguration represents the configuration of a priority level.
 
@@ -612,6 +636,7 @@ class PriorityLevelConfiguration(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1alpha1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -620,7 +645,7 @@ class PriorityLevelConfiguration(HikaruBase):
 
 
 @dataclass
-class PriorityLevelConfigurationList(HikaruBase):
+class PriorityLevelConfigurationList(HikaruDocumentBase):
     """
     PriorityLevelConfigurationList is a list of PriorityLevelConfiguration objects.
 
@@ -640,6 +665,7 @@ class PriorityLevelConfigurationList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[PriorityLevelConfiguration]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -659,6 +685,7 @@ class ServiceAccountSubject(HikaruBase):
     namespace: `namespace` is the namespace of matching ServiceAccount objects. Required.
     """
 
+    version = 'v1alpha1'
     name: str
     namespace: str
 
@@ -674,6 +701,7 @@ class UserSubject(HikaruBase):
     name: `name` is the username that matches, or "*" to match all usernames. Required.
     """
 
+    version = 'v1alpha1'
     name: str
 
 
@@ -689,6 +717,7 @@ class Overhead(HikaruBase):
         pod.
     """
 
+    version = 'v1alpha1'
     podFixed: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
@@ -710,6 +739,7 @@ class Scheduling(HikaruBase):
         the pod and the RuntimeClass.
     """
 
+    version = 'v1alpha1'
     nodeSelector: Optional[Dict[str, str]] = field(default_factory=dict)
     tolerations: Optional[List[Toleration]] = field(default_factory=list)
 
@@ -743,13 +773,14 @@ class RuntimeClassSpec(HikaruBase):
         nil, this RuntimeClass is assumed to be supported by all nodes.
     """
 
+    version = 'v1alpha1'
     runtimeHandler: str
     overhead: Optional[Overhead] = None
     scheduling: Optional[Scheduling] = None
 
 
 @dataclass
-class RuntimeClass(HikaruBase):
+class RuntimeClass(HikaruDocumentBase):
     """
     RuntimeClass defines a class of container runtime supported in the cluster. The
     RuntimeClass is used to determine which container runtime is used to run all
@@ -775,6 +806,7 @@ class RuntimeClass(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     spec: RuntimeClassSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -782,7 +814,7 @@ class RuntimeClass(HikaruBase):
 
 
 @dataclass
-class RuntimeClassList(HikaruBase):
+class RuntimeClassList(HikaruDocumentBase):
     """
     RuntimeClassList is a list of RuntimeClass objects.
 
@@ -802,6 +834,7 @@ class RuntimeClassList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[RuntimeClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -821,13 +854,14 @@ class RoleRef(HikaruBase):
     name: Name is the name of resource being referenced
     """
 
+    version = 'v1alpha1'
     apiGroup: str
     kind: str
     name: str
 
 
 @dataclass
-class ClusterRoleBinding(HikaruBase):
+class ClusterRoleBinding(HikaruDocumentBase):
     """
     ClusterRoleBinding references a ClusterRole, but not contain it. It can reference a
     ClusterRole in the global namespace, and adds who information via Subject. Deprecated
@@ -851,6 +885,7 @@ class ClusterRoleBinding(HikaruBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
+    version = 'v1alpha1'
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -859,7 +894,7 @@ class ClusterRoleBinding(HikaruBase):
 
 
 @dataclass
-class ClusterRoleBindingList(HikaruBase):
+class ClusterRoleBindingList(HikaruDocumentBase):
     """
     ClusterRoleBindingList is a collection of ClusterRoleBindings. Deprecated in v1.17 in
     favor of rbac.authorization.k8s.io/v1 ClusterRoleBindings, and will no longer be
@@ -880,6 +915,7 @@ class ClusterRoleBindingList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1alpha1'
     items: List[ClusterRoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -899,6 +935,7 @@ class AggregationRule(HikaruBase):
         then the ClusterRole's permissions will be added
     """
 
+    version = 'v1alpha1'
     clusterRoleSelectors: Optional[List[LabelSelector]] = field(default_factory=list)
 
 
@@ -928,6 +965,7 @@ class PolicyRule(HikaruBase):
         represents all resources.
     """
 
+    version = 'v1alpha1'
     verbs: List[str]
     apiGroups: Optional[List[str]] = field(default_factory=list)
     nonResourceURLs: Optional[List[str]] = field(default_factory=list)
@@ -936,7 +974,7 @@ class PolicyRule(HikaruBase):
 
 
 @dataclass
-class ClusterRole(HikaruBase):
+class ClusterRole(HikaruDocumentBase):
     """
     ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
     as a unit by a RoleBinding or ClusterRoleBinding. Deprecated in v1.17 in favor of
@@ -960,6 +998,7 @@ class ClusterRole(HikaruBase):
     rules: Rules holds all the PolicyRules for this ClusterRole
     """
 
+    version = 'v1alpha1'
     aggregationRule: Optional[AggregationRule] = None
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -968,7 +1007,7 @@ class ClusterRole(HikaruBase):
 
 
 @dataclass
-class ClusterRoleList(HikaruBase):
+class ClusterRoleList(HikaruDocumentBase):
     """
     ClusterRoleList is a collection of ClusterRoles. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 ClusterRoles, and will no longer be served in v1.22.
@@ -988,6 +1027,7 @@ class ClusterRoleList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1alpha1'
     items: List[ClusterRole]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -995,7 +1035,7 @@ class ClusterRoleList(HikaruBase):
 
 
 @dataclass
-class RoleBinding(HikaruBase):
+class RoleBinding(HikaruDocumentBase):
     """
     RoleBinding references a role, but does not contain it. It can reference a Role in the
     same namespace or a ClusterRole in the global namespace. It adds who information via
@@ -1021,6 +1061,7 @@ class RoleBinding(HikaruBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
+    version = 'v1alpha1'
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1029,7 +1070,7 @@ class RoleBinding(HikaruBase):
 
 
 @dataclass
-class RoleBindingList(HikaruBase):
+class RoleBindingList(HikaruDocumentBase):
     """
     RoleBindingList is a collection of RoleBindings Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleBindingList, and will no longer be served in v1.22.
@@ -1049,6 +1090,7 @@ class RoleBindingList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1alpha1'
     items: List[RoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1056,7 +1098,7 @@ class RoleBindingList(HikaruBase):
 
 
 @dataclass
-class Role(HikaruBase):
+class Role(HikaruDocumentBase):
     """
     Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit
     by a RoleBinding. Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 Role,
@@ -1077,6 +1119,7 @@ class Role(HikaruBase):
     rules: Rules holds all the PolicyRules for this Role
     """
 
+    version = 'v1alpha1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -1084,7 +1127,7 @@ class Role(HikaruBase):
 
 
 @dataclass
-class RoleList(HikaruBase):
+class RoleList(HikaruDocumentBase):
     """
     RoleList is a collection of Roles. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleList, and will no longer be served in v1.22.
@@ -1104,6 +1147,7 @@ class RoleList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1alpha1'
     items: List[Role]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1111,7 +1155,7 @@ class RoleList(HikaruBase):
 
 
 @dataclass
-class PriorityClass(HikaruBase):
+class PriorityClass(HikaruDocumentBase):
     """
     DEPRECATED - This group version of PriorityClass is deprecated by
     scheduling.k8s.io/v1/PriorityClass. PriorityClass defines mapping from a priority
@@ -1144,6 +1188,7 @@ class PriorityClass(HikaruBase):
         unset. This field is beta-level, gated by the NonPreemptingPriority feature-gate.
     """
 
+    version = 'v1alpha1'
     value: int
     apiVersion: Optional[str] = None
     description: Optional[str] = None
@@ -1154,7 +1199,7 @@ class PriorityClass(HikaruBase):
 
 
 @dataclass
-class PriorityClassList(HikaruBase):
+class PriorityClassList(HikaruDocumentBase):
     """
     PriorityClassList is a collection of priority classes.
 
@@ -1174,6 +1219,7 @@ class PriorityClassList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[PriorityClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1181,7 +1227,7 @@ class PriorityClassList(HikaruBase):
 
 
 @dataclass
-class CSIStorageCapacity(HikaruBase):
+class CSIStorageCapacity(HikaruDocumentBase):
     """
     CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given
     StorageClass, this describes the available capacity in a particular topology segment.
@@ -1228,6 +1274,7 @@ class CSIStorageCapacity(HikaruBase):
         immutable.
     """
 
+    version = 'v1alpha1'
     storageClassName: str
     apiVersion: Optional[str] = None
     capacity: Optional[Quantity] = None
@@ -1237,7 +1284,7 @@ class CSIStorageCapacity(HikaruBase):
 
 
 @dataclass
-class CSIStorageCapacityList(HikaruBase):
+class CSIStorageCapacityList(HikaruDocumentBase):
     """
     CSIStorageCapacityList is a collection of CSIStorageCapacity objects.
 
@@ -1257,6 +1304,7 @@ class CSIStorageCapacityList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[CSIStorageCapacity]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1281,6 +1329,7 @@ class VolumeAttachmentSource(HikaruBase):
     persistentVolumeName: Name of the persistent volume to attach.
     """
 
+    version = 'v1alpha1'
     inlineVolumeSpec: Optional[PersistentVolumeSpec] = None
     persistentVolumeName: Optional[str] = None
 
@@ -1299,6 +1348,7 @@ class VolumeAttachmentSpec(HikaruBase):
     source: Source represents the volume that should be attached.
     """
 
+    version = 'v1alpha1'
     attacher: str
     nodeName: str
     source: VolumeAttachmentSource
@@ -1317,6 +1367,7 @@ class VolumeError(HikaruBase):
     time: Time the error was encountered.
     """
 
+    version = 'v1alpha1'
     message: Optional[str] = None
     time: Optional[Time] = None
 
@@ -1343,6 +1394,7 @@ class VolumeAttachmentStatus(HikaruBase):
         the attach operation, i.e. the external-attacher.
     """
 
+    version = 'v1alpha1'
     attached: bool
     attachError: Optional[VolumeError] = None
     detachError: Optional[VolumeError] = None
@@ -1350,7 +1402,7 @@ class VolumeAttachmentStatus(HikaruBase):
 
 
 @dataclass
-class VolumeAttachment(HikaruBase):
+class VolumeAttachment(HikaruDocumentBase):
     """
     VolumeAttachment captures the intent to attach or detach the specified volume to/from
     the specified node. VolumeAttachment objects are non-namespaced.
@@ -1374,6 +1426,7 @@ class VolumeAttachment(HikaruBase):
         attach or detach operation, i.e. the external-attacher.
     """
 
+    version = 'v1alpha1'
     spec: VolumeAttachmentSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -1382,7 +1435,7 @@ class VolumeAttachment(HikaruBase):
 
 
 @dataclass
-class VolumeAttachmentList(HikaruBase):
+class VolumeAttachmentList(HikaruDocumentBase):
     """
     VolumeAttachmentList is a collection of VolumeAttachment objects.
 
@@ -1402,6 +1455,7 @@ class VolumeAttachmentList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1alpha1'
     items: List[VolumeAttachment]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None

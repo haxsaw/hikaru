@@ -7,7 +7,7 @@ a Kubernetes Swagger spec into the code for the hikaru.model module.
 """
 
 
-from hikaru.meta import HikaruBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import Optional, List, Dict
 from dataclasses import dataclass, field
 
@@ -36,6 +36,7 @@ class RawExtension(HikaruBase):
 
     Attributes:
     """
+    version = 'None'
 
 
 class IntOrString(str):
@@ -102,6 +103,7 @@ class Info(HikaruBase):
     platform:
     """
 
+    version = 'None'
     buildDate: str
     compiler: str
     gitCommit: str

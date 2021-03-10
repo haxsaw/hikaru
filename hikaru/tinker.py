@@ -4,7 +4,7 @@ docstring
 """
 import dataclasses
 from hikaru.model import *
-from pprint import pprint as pp
+from hikaru.generate import get_yaml
 
 
 from typing import List,  Optional
@@ -126,14 +126,4 @@ x = Pod(
                           LocalObjectReference(name='two',), ],
         nodeSelector={'key1': 'wibble', 'key2': 'wobble', },),)
 
-# print(get_yaml(x))
-
-
-possible_doc_types = {}
-for k, v in dict(globals()).items():
-    if k != 'HikaruBase' and type(v) == type and issubclass(v, HikaruBase):
-        field_set = {f.name for f in dataclasses.fields(v)}
-        if "apiVersion" in field_set and "api_version_group" in field_set:
-            possible_doc_types[('v1', k)] = k
-
-pp(possible_doc_types)
+print(get_yaml(x))

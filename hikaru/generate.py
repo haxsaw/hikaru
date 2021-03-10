@@ -7,7 +7,9 @@ from autopep8 import fix_code
 from ruamel.yaml import YAML
 
 from hikaru.model import *
-from hikaru.meta import num_positional
+from hikaru.meta import num_positional, HikaruBase
+from hikaru.naming import process_api_version
+from hikaru.version_kind import version_kind_map
 
 
 def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
@@ -109,117 +111,15 @@ def load_full_yaml(path=None, stream=None, yaml=None) -> List[HikaruBase]:
     parser = YAML()
     docs = list(parser.load_all(to_parse))
     for doc in docs:
-        apiVersion = doc.get('apiVersion').split('/')[-1]
-        kind = doc.get('kind')
-        klass = kinds.get((apiVersion, kind))
+        # api_version = doc.get('apiVersion').split('/')[-1]
+        _, api_version = process_api_version(doc.get('apiVersion', ""))
+        kind = doc.get('kind', "")
+        klass = version_kind_map.get((api_version, kind))
         if klass is None:
-            raise RuntimeError(f"No model class for {(apiVersion, kind)}")
+            raise RuntimeError(f"No model class for {(api_version, kind)}")
         np = num_positional(klass.__init__) - 1
         inst = klass(*([None] * np), **{})
         inst.parse(doc)
         objs.append(inst)
 
     return objs
-
-
-kinds = {('v1', 'APIGroup'): APIGroup,
- ('v1', 'APIGroupList'): APIGroupList,
- ('v1', 'APIResourceList'): APIResourceList,
- ('v1', 'APIService'): APIService,
- ('v1', 'APIServiceList'): APIServiceList,
- ('v1', 'APIVersions'): APIVersions,
- ('v1', 'Binding'): Binding,
- ('v1', 'BoundObjectReference'): BoundObjectReference,
- ('v1', 'CSIDriver'): CSIDriver,
- ('v1', 'CSIDriverList'): CSIDriverList,
- ('v1', 'CSINode'): CSINode,
- ('v1', 'CSINodeList'): CSINodeList,
- ('v1', 'CertificateSigningRequest'): CertificateSigningRequest,
- ('v1', 'CertificateSigningRequestList'): CertificateSigningRequestList,
- ('v1', 'ClusterRole'): ClusterRole,
- ('v1', 'ClusterRoleBinding'): ClusterRoleBinding,
- ('v1', 'ClusterRoleBindingList'): ClusterRoleBindingList,
- ('v1', 'ClusterRoleList'): ClusterRoleList,
- ('v1', 'ComponentStatus'): ComponentStatus,
- ('v1', 'ComponentStatusList'): ComponentStatusList,
- ('v1', 'ConfigMap'): ConfigMap,
- ('v1', 'ConfigMapList'): ConfigMapList,
- ('v1', 'ControllerRevision'): ControllerRevision,
- ('v1', 'ControllerRevisionList'): ControllerRevisionList,
- ('v1', 'CrossVersionObjectReference'): CrossVersionObjectReference,
- ('v1', 'DaemonSet'): DaemonSet,
- ('v1', 'DaemonSetList'): DaemonSetList,
- ('v1', 'DeleteOptions'): DeleteOptions,
- ('v1', 'Deployment'): Deployment,
- ('v1', 'DeploymentList'): DeploymentList,
- ('v1', 'Endpoints'): Endpoints,
- ('v1', 'EndpointsList'): EndpointsList,
- ('v1', 'EphemeralContainers'): EphemeralContainers,
- ('v1', 'Event'): Event,
- ('v1', 'EventList'): EventList,
- ('v1', 'HorizontalPodAutoscaler'): HorizontalPodAutoscaler,
- ('v1', 'HorizontalPodAutoscalerList'): HorizontalPodAutoscalerList,
- ('v1', 'Ingress'): Ingress,
- ('v1', 'IngressClass'): IngressClass,
- ('v1', 'IngressClassList'): IngressClassList,
- ('v1', 'IngressList'): IngressList,
- ('v1', 'Job'): Job,
- ('v1', 'JobList'): JobList,
- ('v1', 'Lease'): Lease,
- ('v1', 'LeaseList'): LeaseList,
- ('v1', 'LimitRange'): LimitRange,
- ('v1', 'LimitRangeList'): LimitRangeList,
- ('v1', 'LocalSubjectAccessReview'): LocalSubjectAccessReview,
- ('v1', 'MutatingWebhookConfiguration'): MutatingWebhookConfiguration,
- ('v1', 'MutatingWebhookConfigurationList'): MutatingWebhookConfigurationList,
- ('v1', 'Namespace'): Namespace,
- ('v1', 'NamespaceList'): NamespaceList,
- ('v1', 'NetworkPolicy'): NetworkPolicy,
- ('v1', 'NetworkPolicyList'): NetworkPolicyList,
- ('v1', 'Node'): Node,
- ('v1', 'NodeList'): NodeList,
- ('v1', 'ObjectReference'): ObjectReference,
- ('v1', 'OwnerReference'): OwnerReference,
- ('v1', 'PersistentVolume'): PersistentVolume,
- ('v1', 'PersistentVolumeClaim'): PersistentVolumeClaim,
- ('v1', 'PersistentVolumeClaimList'): PersistentVolumeClaimList,
- ('v1', 'PersistentVolumeList'): PersistentVolumeList,
- ('v1', 'Pod'): Pod,
- ('v1', 'PodList'): PodList,
- ('v1', 'PodTemplate'): PodTemplate,
- ('v1', 'PodTemplateList'): PodTemplateList,
- ('v1', 'PriorityClass'): PriorityClass,
- ('v1', 'PriorityClassList'): PriorityClassList,
- ('v1', 'ReplicaSet'): ReplicaSet,
- ('v1', 'ReplicaSetList'): ReplicaSetList,
- ('v1', 'ReplicationController'): ReplicationController,
- ('v1', 'ReplicationControllerList'): ReplicationControllerList,
- ('v1', 'ResourceQuota'): ResourceQuota,
- ('v1', 'ResourceQuotaList'): ResourceQuotaList,
- ('v1', 'Role'): Role,
- ('v1', 'RoleBinding'): RoleBinding,
- ('v1', 'RoleBindingList'): RoleBindingList,
- ('v1', 'RoleList'): RoleList,
- ('v1', 'RuntimeClass'): RuntimeClass,
- ('v1', 'RuntimeClassList'): RuntimeClassList,
- ('v1', 'Scale'): Scale,
- ('v1', 'Secret'): Secret,
- ('v1', 'SecretList'): SecretList,
- ('v1', 'SelfSubjectAccessReview'): SelfSubjectAccessReview,
- ('v1', 'SelfSubjectRulesReview'): SelfSubjectRulesReview,
- ('v1', 'Service'): Service,
- ('v1', 'ServiceAccount'): ServiceAccount,
- ('v1', 'ServiceAccountList'): ServiceAccountList,
- ('v1', 'ServiceList'): ServiceList,
- ('v1', 'StatefulSet'): StatefulSet,
- ('v1', 'StatefulSetList'): StatefulSetList,
- ('v1', 'Status'): Status,
- ('v1', 'StorageClass'): StorageClass,
- ('v1', 'StorageClassList'): StorageClassList,
- ('v1', 'SubjectAccessReview'): SubjectAccessReview,
- ('v1', 'TokenReview'): TokenReview,
- ('v1', 'ValidatingWebhookConfiguration'): ValidatingWebhookConfiguration,
- ('v1', 'ValidatingWebhookConfigurationList'): ValidatingWebhookConfigurationList,
- ('v1', 'VolumeAttachment'): VolumeAttachment,
- ('v1', 'VolumeAttachmentList'): VolumeAttachmentList}
-

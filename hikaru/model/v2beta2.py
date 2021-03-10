@@ -7,7 +7,7 @@ a Kubernetes Swagger spec into the code for the hikaru.model module.
 """
 
 
-from hikaru.meta import HikaruBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import Optional, List, Dict
 from dataclasses import dataclass, field
 from .unversioned import *
@@ -31,6 +31,7 @@ class HPAScalingPolicy(HikaruBase):
         be greater than zero
     """
 
+    version = 'v2beta2'
     periodSeconds: int
     type: str
     value: int
@@ -61,6 +62,7 @@ class HPAScalingRules(HikaruBase):
         be discarded as invalid
     """
 
+    version = 'v2beta2'
     selectPolicy: Optional[str] = None
     stabilizationWindowSeconds: Optional[int] = None
     policies: Optional[List[HPAScalingPolicy]] = field(default_factory=list)
@@ -83,6 +85,7 @@ class HorizontalPodAutoscalerBehavior(HikaruBase):
         of pods per 60 seconds No stabilization is used.
     """
 
+    version = 'v2beta2'
     scaleDown: Optional[HPAScalingRules] = None
     scaleUp: Optional[HPAScalingRules] = None
 
@@ -106,6 +109,7 @@ class MetricTarget(HikaruBase):
     value: value is the target value of the metric (as a quantity).
     """
 
+    version = 'v2beta2'
     type: str
     averageUtilization: Optional[int] = None
     averageValue: Optional[Quantity] = None
@@ -130,6 +134,7 @@ class ContainerResourceMetricSource(HikaruBase):
     target: target specifies the target value for the given metric
     """
 
+    version = 'v2beta2'
     container: str
     name: str
     target: MetricTarget
@@ -150,6 +155,7 @@ class MetricIdentifier(HikaruBase):
         will be used to gather metrics.
     """
 
+    version = 'v2beta2'
     name: str
     selector: Optional[LabelSelector] = None
 
@@ -168,6 +174,7 @@ class ExternalMetricSource(HikaruBase):
     target: target specifies the target value for the given metric
     """
 
+    version = 'v2beta2'
     metric: MetricIdentifier
     target: MetricTarget
 
@@ -188,6 +195,7 @@ class CrossVersionObjectReference(HikaruBase):
     apiVersion: API version of the referent
     """
 
+    version = 'v2beta2'
     kind: str
     name: str
     apiVersion: Optional[str] = None
@@ -207,6 +215,7 @@ class ObjectMetricSource(HikaruBase):
     target: target specifies the target value for the given metric
     """
 
+    version = 'v2beta2'
     describedObject: CrossVersionObjectReference
     metric: MetricIdentifier
     target: MetricTarget
@@ -226,6 +235,7 @@ class PodsMetricSource(HikaruBase):
     target: target specifies the target value for the given metric
     """
 
+    version = 'v2beta2'
     metric: MetricIdentifier
     target: MetricTarget
 
@@ -247,6 +257,7 @@ class ResourceMetricSource(HikaruBase):
     target: target specifies the target value for the given metric
     """
 
+    version = 'v2beta2'
     name: str
     target: MetricTarget
 
@@ -286,6 +297,7 @@ class MetricSpec(HikaruBase):
         "pods" source.
     """
 
+    version = 'v2beta2'
     type: str
     containerResource: Optional[ContainerResourceMetricSource] = None
     external: Optional[ExternalMetricSource] = None
@@ -325,6 +337,7 @@ class HorizontalPodAutoscalerSpec(HikaruBase):
         not set, the default metric will be set to 80% average CPU utilization.
     """
 
+    version = 'v2beta2'
     maxReplicas: int
     scaleTargetRef: CrossVersionObjectReference
     behavior: Optional[HorizontalPodAutoscalerBehavior] = None
@@ -350,6 +363,7 @@ class HorizontalPodAutoscalerCondition(HikaruBase):
     reason: reason is the reason for the condition's last transition.
     """
 
+    version = 'v2beta2'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -373,6 +387,7 @@ class MetricValueStatus(HikaruBase):
     value: value is the current value of the metric (as a quantity).
     """
 
+    version = 'v2beta2'
     averageUtilization: Optional[int] = None
     averageValue: Optional[Quantity] = None
     value: Optional[Quantity] = None
@@ -395,6 +410,7 @@ class ContainerResourceMetricStatus(HikaruBase):
     name: Name is the name of the resource in question.
     """
 
+    version = 'v2beta2'
     container: str
     current: MetricValueStatus
     name: str
@@ -413,6 +429,7 @@ class ExternalMetricStatus(HikaruBase):
     metric: metric identifies the target metric by name and selector
     """
 
+    version = 'v2beta2'
     current: MetricValueStatus
     metric: MetricIdentifier
 
@@ -431,6 +448,7 @@ class ObjectMetricStatus(HikaruBase):
     metric: metric identifies the target metric by name and selector
     """
 
+    version = 'v2beta2'
     current: MetricValueStatus
     describedObject: CrossVersionObjectReference
     metric: MetricIdentifier
@@ -449,6 +467,7 @@ class PodsMetricStatus(HikaruBase):
     metric: metric identifies the target metric by name and selector
     """
 
+    version = 'v2beta2'
     current: MetricValueStatus
     metric: MetricIdentifier
 
@@ -469,6 +488,7 @@ class ResourceMetricStatus(HikaruBase):
     name: Name is the name of the resource in question.
     """
 
+    version = 'v2beta2'
     current: MetricValueStatus
     name: str
 
@@ -506,6 +526,7 @@ class MetricStatus(HikaruBase):
         "pods" source.
     """
 
+    version = 'v2beta2'
     type: str
     containerResource: Optional[ContainerResourceMetricStatus] = None
     external: Optional[ExternalMetricStatus] = None
@@ -538,6 +559,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
         autoscaler.
     """
 
+    version = 'v2beta2'
     conditions: List[HorizontalPodAutoscalerCondition]
     currentReplicas: int
     desiredReplicas: int
@@ -547,7 +569,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
 
 
 @dataclass
-class HorizontalPodAutoscaler(HikaruBase):
+class HorizontalPodAutoscaler(HikaruDocumentBase):
     """
     HorizontalPodAutoscaler is the configuration for a horizontal pod autoscaler, which
     automatically manages the replica count of any resource implementing the scale
@@ -571,6 +593,7 @@ class HorizontalPodAutoscaler(HikaruBase):
     status: status is the current information about the autoscaler.
     """
 
+    version = 'v2beta2'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -579,7 +602,7 @@ class HorizontalPodAutoscaler(HikaruBase):
 
 
 @dataclass
-class HorizontalPodAutoscalerList(HikaruBase):
+class HorizontalPodAutoscalerList(HikaruDocumentBase):
     """
     HorizontalPodAutoscalerList is a list of horizontal pod autoscaler objects.
 
@@ -598,6 +621,7 @@ class HorizontalPodAutoscalerList(HikaruBase):
     metadata: metadata is the standard list metadata.
     """
 
+    version = 'v2beta2'
     items: List[HorizontalPodAutoscaler]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None

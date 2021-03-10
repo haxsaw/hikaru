@@ -7,7 +7,7 @@ a Kubernetes Swagger spec into the code for the hikaru.model module.
 """
 
 
-from hikaru.meta import HikaruBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import Optional, List, Dict
 from dataclasses import dataclass, field
 from .unversioned import *
@@ -30,6 +30,7 @@ class FieldsV1(HikaruBase):
 
     Attributes:
     """
+    version = 'v1'
 
 
 class Time(str):
@@ -65,6 +66,7 @@ class ManagedFieldsEntry(HikaruBase):
         Operation is 'Apply'
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     fieldsType: Optional[str] = None
     fieldsV1: Optional[FieldsV1] = None
@@ -97,6 +99,7 @@ class OwnerReference(HikaruBase):
     controller: If true, this reference points to the managing controller.
     """
 
+    version = 'v1'
     apiVersion: str
     kind: str
     name: str
@@ -216,6 +219,7 @@ class ObjectMeta(HikaruBase):
         controller.
     """
 
+    version = 'v1'
     clusterName: Optional[str] = None
     creationTimestamp: Optional[Time] = None
     deletionGracePeriodSeconds: Optional[int] = None
@@ -248,6 +252,7 @@ class ServiceReference(HikaruBase):
         backward compatibility. `port` should be a valid port number (1-65535, inclusive).
     """
 
+    version = 'v1'
     name: Optional[str] = None
     namespace: Optional[str] = None
     port: Optional[int] = None
@@ -283,6 +288,7 @@ class WebhookClientConfig(HikaruBase):
         allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
     """
 
+    version = 'v1'
     caBundle: Optional[str] = None
     service: Optional[ServiceReference] = None
     url: Optional[str] = None
@@ -305,6 +311,7 @@ class LabelSelectorRequirement(HikaruBase):
         values array must be empty. This array is replaced during a strategic merge patch.
     """
 
+    version = 'v1'
     key: str
     operator: str
     values: Optional[List[str]] = field(default_factory=list)
@@ -328,6 +335,7 @@ class LabelSelector(HikaruBase):
         requirements are ANDed.
     """
 
+    version = 'v1'
     matchExpressions: Optional[List[LabelSelectorRequirement]] = field(default_factory=list)
     matchLabels: Optional[Dict[str, str]] = field(default_factory=dict)
 
@@ -364,6 +372,7 @@ class RuleWithOperations(HikaruBase):
         Required.
     """
 
+    version = 'v1'
     scope: Optional[str] = None
     apiGroups: Optional[List[str]] = field(default_factory=list)
     apiVersions: Optional[List[str]] = field(default_factory=list)
@@ -462,6 +471,7 @@ class MutatingWebhook(HikaruBase):
         MutatingWebhookConfiguration objects.
     """
 
+    version = 'v1'
     admissionReviewVersions: List[str]
     clientConfig: WebhookClientConfig
     name: str
@@ -476,7 +486,7 @@ class MutatingWebhook(HikaruBase):
 
 
 @dataclass
-class MutatingWebhookConfiguration(HikaruBase):
+class MutatingWebhookConfiguration(HikaruDocumentBase):
     """
     MutatingWebhookConfiguration describes the configuration of and admission webhook that
     accept or reject and may change the object.
@@ -497,6 +507,7 @@ class MutatingWebhookConfiguration(HikaruBase):
     webhooks: Webhooks is a list of webhooks and the affected resources and operations.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -539,6 +550,7 @@ class ListMeta(HikaruBase):
         and the field is planned to be removed in 1.21 release.
     """
 
+    version = 'v1'
     continue_: Optional[str] = None
     remainingItemCount: Optional[int] = None
     resourceVersion: Optional[str] = None
@@ -546,7 +558,7 @@ class ListMeta(HikaruBase):
 
 
 @dataclass
-class MutatingWebhookConfigurationList(HikaruBase):
+class MutatingWebhookConfigurationList(HikaruDocumentBase):
     """
     MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
 
@@ -566,6 +578,7 @@ class MutatingWebhookConfigurationList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[MutatingWebhookConfiguration]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -650,6 +663,7 @@ class ValidatingWebhook(HikaruBase):
         MutatingWebhookConfiguration objects.
     """
 
+    version = 'v1'
     admissionReviewVersions: List[str]
     clientConfig: WebhookClientConfig
     name: str
@@ -663,7 +677,7 @@ class ValidatingWebhook(HikaruBase):
 
 
 @dataclass
-class ValidatingWebhookConfiguration(HikaruBase):
+class ValidatingWebhookConfiguration(HikaruDocumentBase):
     """
     ValidatingWebhookConfiguration describes the configuration of and admission webhook
     that accept or reject and object without changing it.
@@ -684,6 +698,7 @@ class ValidatingWebhookConfiguration(HikaruBase):
     webhooks: Webhooks is a list of webhooks and the affected resources and operations.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -691,7 +706,7 @@ class ValidatingWebhookConfiguration(HikaruBase):
 
 
 @dataclass
-class ValidatingWebhookConfigurationList(HikaruBase):
+class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     """
     ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
 
@@ -711,6 +726,7 @@ class ValidatingWebhookConfigurationList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ValidatingWebhookConfiguration]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -718,7 +734,7 @@ class ValidatingWebhookConfigurationList(HikaruBase):
 
 
 @dataclass
-class ControllerRevision(HikaruBase):
+class ControllerRevision(HikaruDocumentBase):
     """
     ControllerRevision implements an immutable snapshot of state data. Clients are
     responsible for serializing and deserializing the objects that contain their internal
@@ -747,6 +763,7 @@ class ControllerRevision(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     revision: int
     apiVersion: Optional[str] = None
     data: Optional[RawExtension] = None
@@ -755,7 +772,7 @@ class ControllerRevision(HikaruBase):
 
 
 @dataclass
-class ControllerRevisionList(HikaruBase):
+class ControllerRevisionList(HikaruDocumentBase):
     """
     ControllerRevisionList is a resource containing a list of ControllerRevision objects.
 
@@ -775,6 +792,7 @@ class ControllerRevisionList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[ControllerRevision]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -795,6 +813,7 @@ class ConfigMapKeySelector(HikaruBase):
     optional: Specify whether the ConfigMap or its key must be defined
     """
 
+    version = 'v1'
     key: str
     name: Optional[str] = None
     optional: Optional[bool] = None
@@ -813,6 +832,7 @@ class ObjectFieldSelector(HikaruBase):
         "v1".
     """
 
+    version = 'v1'
     fieldPath: str
     apiVersion: Optional[str] = None
 
@@ -831,6 +851,7 @@ class ResourceFieldSelector(HikaruBase):
     divisor: Specifies the output format of the exposed resources, defaults to "1"
     """
 
+    version = 'v1'
     resource: str
     containerName: Optional[str] = None
     divisor: Optional[Quantity] = None
@@ -850,6 +871,7 @@ class SecretKeySelector(HikaruBase):
     optional: Specify whether the Secret or its key must be defined
     """
 
+    version = 'v1'
     key: str
     name: Optional[str] = None
     optional: Optional[bool] = None
@@ -873,6 +895,7 @@ class EnvVarSource(HikaruBase):
     secretKeyRef: Selects a key of a secret in the pod's namespace
     """
 
+    version = 'v1'
     configMapKeyRef: Optional[ConfigMapKeySelector] = None
     fieldRef: Optional[ObjectFieldSelector] = None
     resourceFieldRef: Optional[ResourceFieldSelector] = None
@@ -898,6 +921,7 @@ class EnvVar(HikaruBase):
         empty.
     """
 
+    version = 'v1'
     name: str
     value: Optional[str] = None
     valueFrom: Optional[EnvVarSource] = None
@@ -918,6 +942,7 @@ class ConfigMapEnvSource(HikaruBase):
     optional: Specify whether the ConfigMap must be defined
     """
 
+    version = 'v1'
     name: Optional[str] = None
     optional: Optional[bool] = None
 
@@ -937,6 +962,7 @@ class SecretEnvSource(HikaruBase):
     optional: Specify whether the Secret must be defined
     """
 
+    version = 'v1'
     name: Optional[str] = None
     optional: Optional[bool] = None
 
@@ -955,6 +981,7 @@ class EnvFromSource(HikaruBase):
     secretRef: The Secret to select from
     """
 
+    version = 'v1'
     configMapRef: Optional[ConfigMapEnvSource] = None
     prefix: Optional[str] = None
     secretRef: Optional[SecretEnvSource] = None
@@ -975,6 +1002,7 @@ class ExecAction(HikaruBase):
         shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
     """
 
+    version = 'v1'
     command: Optional[List[str]] = field(default_factory=list)
 
 
@@ -990,6 +1018,7 @@ class HTTPHeader(HikaruBase):
     value: The header field value
     """
 
+    version = 'v1'
     name: str
     value: str
 
@@ -1011,6 +1040,7 @@ class HTTPGetAction(HikaruBase):
     httpHeaders: Custom headers to set in the request. HTTP allows repeated headers.
     """
 
+    version = 'v1'
     port: IntOrString
     host: Optional[str] = None
     path: Optional[str] = None
@@ -1031,6 +1061,7 @@ class TCPSocketAction(HikaruBase):
     host: Optional: Host name to connect to, defaults to the pod IP.
     """
 
+    version = 'v1'
     port: IntOrString
     host: Optional[str] = None
 
@@ -1050,6 +1081,7 @@ class Handler(HikaruBase):
         supported
     """
 
+    version = 'v1'
     exec: Optional[ExecAction] = None
     httpGet: Optional[HTTPGetAction] = None
     tcpSocket: Optional[TCPSocketAction] = None
@@ -1082,6 +1114,7 @@ class Lifecycle(HikaruBase):
         https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
     """
 
+    version = 'v1'
     postStart: Optional[Handler] = None
     preStop: Optional[Handler] = None
 
@@ -1115,6 +1148,7 @@ class Probe(HikaruBase):
         https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
     """
 
+    version = 'v1'
     exec: Optional[ExecAction] = None
     failureThreshold: Optional[int] = None
     httpGet: Optional[HTTPGetAction] = None
@@ -1145,6 +1179,7 @@ class ContainerPort(HikaruBase):
     protocol: Protocol for port. Must be UDP, TCP, or SCTP. Defaults to "TCP".
     """
 
+    version = 'v1'
     containerPort: int
     hostIP: Optional[str] = None
     hostPort: Optional[int] = None
@@ -1168,6 +1203,7 @@ class ResourceRequirements(HikaruBase):
         https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
     """
 
+    version = 'v1'
     limits: Optional[Dict[str, str]] = field(default_factory=dict)
     requests: Optional[Dict[str, str]] = field(default_factory=dict)
 
@@ -1184,6 +1220,7 @@ class Capabilities(HikaruBase):
     drop: Removed capabilities
     """
 
+    version = 'v1'
     add: Optional[List[str]] = field(default_factory=list)
     drop: Optional[List[str]] = field(default_factory=list)
 
@@ -1202,6 +1239,7 @@ class SELinuxOptions(HikaruBase):
     user: User is a SELinux user label that applies to the container.
     """
 
+    version = 'v1'
     level: Optional[str] = None
     role: Optional[str] = None
     type: Optional[str] = None
@@ -1227,6 +1265,7 @@ class SeccompProfile(HikaruBase):
         Must only be set if type is "Localhost".
     """
 
+    version = 'v1'
     type: str
     localhostProfile: Optional[str] = None
 
@@ -1250,6 +1289,7 @@ class WindowsSecurityContextOptions(HikaruBase):
         value specified in SecurityContext takes precedence.
     """
 
+    version = 'v1'
     gmsaCredentialSpec: Optional[str] = None
     gmsaCredentialSpecName: Optional[str] = None
     runAsUserName: Optional[str] = None
@@ -1306,6 +1346,7 @@ class SecurityContext(HikaruBase):
         takes precedence.
     """
 
+    version = 'v1'
     allowPrivilegeEscalation: Optional[bool] = None
     capabilities: Optional[Capabilities] = None
     privileged: Optional[bool] = None
@@ -1332,6 +1373,7 @@ class VolumeDevice(HikaruBase):
     name: name must match the name of a persistentVolumeClaim in the pod
     """
 
+    version = 'v1'
     devicePath: str
     name: str
 
@@ -1360,6 +1402,7 @@ class VolumeMount(HikaruBase):
         (volume's root). SubPathExpr and SubPath are mutually exclusive.
     """
 
+    version = 'v1'
     mountPath: str
     name: str
     mountPropagation: Optional[str] = None
@@ -1462,6 +1505,7 @@ class Container(HikaruBase):
     volumeMounts: Pod volumes to mount into the container's filesystem. Cannot be updated.
     """
 
+    version = 'v1'
     name: str
     image: Optional[str] = None
     imagePullPolicy: Optional[str] = None
@@ -1505,6 +1549,7 @@ class NodeSelectorRequirement(HikaruBase):
         strategic merge patch.
     """
 
+    version = 'v1'
     key: str
     operator: str
     values: Optional[List[str]] = field(default_factory=list)
@@ -1523,6 +1568,7 @@ class NodeSelectorTerm(HikaruBase):
     matchFields: A list of node selector requirements by node's fields.
     """
 
+    version = 'v1'
     matchExpressions: Optional[List[NodeSelectorRequirement]] = field(default_factory=list)
     matchFields: Optional[List[NodeSelectorRequirement]] = field(default_factory=list)
 
@@ -1542,6 +1588,7 @@ class PreferredSchedulingTerm(HikaruBase):
         range 1-100.
     """
 
+    version = 'v1'
     preference: NodeSelectorTerm
     weight: int
 
@@ -1559,6 +1606,7 @@ class NodeSelector(HikaruBase):
     nodeSelectorTerms: Required. A list of node selector terms. The terms are ORed.
     """
 
+    version = 'v1'
     nodeSelectorTerms: List[NodeSelectorTerm]
 
 
@@ -1586,6 +1634,7 @@ class NodeAffinity(HikaruBase):
         the most preferred.
     """
 
+    version = 'v1'
     requiredDuringSchedulingIgnoredDuringExecution: Optional[NodeSelector] = None
     preferredDuringSchedulingIgnoredDuringExecution: Optional[List[PreferredSchedulingTerm]] = field(default_factory=list)
 
@@ -1612,6 +1661,7 @@ class PodAffinityTerm(HikaruBase):
         (matches against); null or empty list means "this pod's namespace"
     """
 
+    version = 'v1'
     topologyKey: str
     labelSelector: Optional[LabelSelector] = None
     namespaces: Optional[List[str]] = field(default_factory=list)
@@ -1632,6 +1682,7 @@ class WeightedPodAffinityTerm(HikaruBase):
         range 1-100.
     """
 
+    version = 'v1'
     podAffinityTerm: PodAffinityTerm
     weight: int
 
@@ -1662,6 +1713,7 @@ class PodAffinity(HikaruBase):
         intersected, i.e. all terms must be satisfied.
     """
 
+    version = 'v1'
     preferredDuringSchedulingIgnoredDuringExecution: Optional[List[WeightedPodAffinityTerm]] = field(default_factory=list)
     requiredDuringSchedulingIgnoredDuringExecution: Optional[List[PodAffinityTerm]] = field(default_factory=list)
 
@@ -1692,6 +1744,7 @@ class PodAntiAffinity(HikaruBase):
         podAffinityTerm are intersected, i.e. all terms must be satisfied.
     """
 
+    version = 'v1'
     preferredDuringSchedulingIgnoredDuringExecution: Optional[List[WeightedPodAffinityTerm]] = field(default_factory=list)
     requiredDuringSchedulingIgnoredDuringExecution: Optional[List[PodAffinityTerm]] = field(default_factory=list)
 
@@ -1711,6 +1764,7 @@ class Affinity(HikaruBase):
         pod in the same node, zone, etc. as some other pod(s)).
     """
 
+    version = 'v1'
     nodeAffinity: Optional[NodeAffinity] = None
     podAffinity: Optional[PodAffinity] = None
     podAntiAffinity: Optional[PodAntiAffinity] = None
@@ -1728,6 +1782,7 @@ class PodDNSConfigOption(HikaruBase):
     value:
     """
 
+    version = 'v1'
     name: Optional[str] = None
     value: Optional[str] = None
 
@@ -1751,6 +1806,7 @@ class PodDNSConfig(HikaruBase):
         removed.
     """
 
+    version = 'v1'
     nameservers: Optional[List[str]] = field(default_factory=list)
     options: Optional[List[PodDNSConfigOption]] = field(default_factory=list)
     searches: Optional[List[str]] = field(default_factory=list)
@@ -1843,6 +1899,7 @@ class EphemeralContainer(HikaruBase):
     volumeMounts: Pod volumes to mount into the container's filesystem. Cannot be updated.
     """
 
+    version = 'v1'
     name: str
     image: Optional[str] = None
     imagePullPolicy: Optional[str] = None
@@ -1881,6 +1938,7 @@ class HostAlias(HikaruBase):
     hostnames: Hostnames for the above IP address.
     """
 
+    version = 'v1'
     ip: Optional[str] = None
     hostnames: Optional[List[str]] = field(default_factory=list)
 
@@ -1897,6 +1955,7 @@ class PodReadinessGate(HikaruBase):
         matching type.
     """
 
+    version = 'v1'
     conditionType: str
 
 
@@ -1912,6 +1971,7 @@ class Sysctl(HikaruBase):
     value: Value of a property to set
     """
 
+    version = 'v1'
     name: str
     value: str
 
@@ -1969,6 +2029,7 @@ class PodSecurityContext(HikaruBase):
         unsupported sysctls (by the container runtime) might fail to launch.
     """
 
+    version = 'v1'
     fsGroup: Optional[int] = None
     fsGroupChangePolicy: Optional[str] = None
     runAsGroup: Optional[int] = None
@@ -2008,6 +2069,7 @@ class Toleration(HikaruBase):
         the value should be empty, otherwise just a regular string.
     """
 
+    version = 'v1'
     effect: Optional[str] = None
     key: Optional[str] = None
     operator: Optional[str] = None
@@ -2056,6 +2118,7 @@ class TopologySpreadConstraint(HikaruBase):
         topology domain.
     """
 
+    version = 'v1'
     maxSkew: int
     topologyKey: str
     whenUnsatisfiable: str
@@ -2088,6 +2151,7 @@ class AWSElasticBlockStoreVolumeSource(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
     """
 
+    version = 'v1'
     volumeID: str
     fsType: Optional[str] = None
     partition: Optional[int] = None
@@ -2115,6 +2179,7 @@ class AzureDiskVolumeSource(HikaruBase):
         setting in VolumeMounts.
     """
 
+    version = 'v1'
     diskName: str
     diskURI: str
     cachingMode: Optional[str] = None
@@ -2138,6 +2203,7 @@ class AzureFileVolumeSource(HikaruBase):
         setting in VolumeMounts.
     """
 
+    version = 'v1'
     secretName: str
     shareName: str
     readOnly: Optional[bool] = None
@@ -2156,6 +2222,7 @@ class LocalObjectReference(HikaruBase):
         https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
     """
 
+    version = 'v1'
     name: Optional[str] = None
 
 
@@ -2184,6 +2251,7 @@ class CephFSVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
     """
 
+    version = 'v1'
     monitors: List[str]
     path: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -2215,6 +2283,7 @@ class CinderVolumeSource(HikaruBase):
         to OpenStack.
     """
 
+    version = 'v1'
     volumeID: str
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -2240,6 +2309,7 @@ class KeyToPath(HikaruBase):
         mode bits set.
     """
 
+    version = 'v1'
     key: str
     path: str
     mode: Optional[int] = None
@@ -2274,6 +2344,7 @@ class ConfigMapVolumeSource(HikaruBase):
         with '..'.
     """
 
+    version = 'v1'
     defaultMode: Optional[int] = None
     name: Optional[str] = None
     optional: Optional[bool] = None
@@ -2304,6 +2375,7 @@ class CSIVolumeSource(HikaruBase):
         to the CSI driver. Consult your driver's documentation for supported values.
     """
 
+    version = 'v1'
     driver: str
     fsType: Optional[str] = None
     nodePublishSecretRef: Optional[LocalObjectReference] = None
@@ -2336,6 +2408,7 @@ class DownwardAPIVolumeFile(HikaruBase):
         currently supported.
     """
 
+    version = 'v1'
     path: str
     fieldRef: Optional[ObjectFieldSelector] = None
     mode: Optional[int] = None
@@ -2361,6 +2434,7 @@ class DownwardAPIVolumeSource(HikaruBase):
     items: Items is a list of downward API volume file
     """
 
+    version = 'v1'
     defaultMode: Optional[int] = None
     items: Optional[List[DownwardAPIVolumeFile]] = field(default_factory=list)
 
@@ -2385,6 +2459,7 @@ class EmptyDirVolumeSource(HikaruBase):
         http://kubernetes.io/docs/user-guide/volumes#emptydir
     """
 
+    version = 'v1'
     medium: Optional[str] = None
     sizeLimit: Optional[Quantity] = None
 
@@ -2405,6 +2480,7 @@ class TypedLocalObjectReference(HikaruBase):
         third-party types, APIGroup is required.
     """
 
+    version = 'v1'
     kind: str
     name: str
     apiGroup: Optional[str] = None
@@ -2440,6 +2516,7 @@ class PersistentVolumeClaimSpec(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
     """
 
+    version = 'v1'
     dataSource: Optional[TypedLocalObjectReference] = None
     resources: Optional[ResourceRequirements] = None
     selector: Optional[LabelSelector] = None
@@ -2465,6 +2542,7 @@ class PersistentVolumeClaimTemplate(HikaruBase):
         creating it. No other fields are allowed and will be rejected during validation.
     """
 
+    version = 'v1'
     spec: PersistentVolumeClaimSpec
     metadata: Optional[ObjectMeta] = None
 
@@ -2495,6 +2573,7 @@ class EphemeralVolumeSource(HikaruBase):
         nil.
     """
 
+    version = 'v1'
     readOnly: Optional[bool] = None
     volumeClaimTemplate: Optional[PersistentVolumeClaimTemplate] = None
 
@@ -2520,6 +2599,7 @@ class FCVolumeSource(HikaruBase):
         of targetWWNs and lun must be set, but not both simultaneously.
     """
 
+    version = 'v1'
     fsType: Optional[str] = None
     lun: Optional[int] = None
     readOnly: Optional[bool] = None
@@ -2549,6 +2629,7 @@ class FlexVolumeSource(HikaruBase):
     options: Optional: Extra command options if any.
     """
 
+    version = 'v1'
     driver: str
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -2571,6 +2652,7 @@ class FlockerVolumeSource(HikaruBase):
     datasetUUID: UUID of the dataset. This is unique identifier of a Flocker dataset
     """
 
+    version = 'v1'
     datasetName: Optional[str] = None
     datasetUUID: Optional[str] = None
 
@@ -2602,6 +2684,7 @@ class GCEPersistentDiskVolumeSource(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
     """
 
+    version = 'v1'
     pdName: str
     fsType: Optional[str] = None
     partition: Optional[int] = None
@@ -2628,6 +2711,7 @@ class GitRepoVolumeSource(HikaruBase):
     revision: Commit hash for the specified revision.
     """
 
+    version = 'v1'
     repository: str
     directory: Optional[str] = None
     revision: Optional[str] = None
@@ -2651,6 +2735,7 @@ class GlusterfsVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
     """
 
+    version = 'v1'
     endpoints: str
     path: str
     readOnly: Optional[bool] = None
@@ -2672,6 +2757,7 @@ class HostPathVolumeSource(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/volumes#hostpath
     """
 
+    version = 'v1'
     path: str
     type: Optional[str] = None
 
@@ -2707,6 +2793,7 @@ class ISCSIVolumeSource(HikaruBase):
         port is other than default (typically TCP ports 860 and 3260).
     """
 
+    version = 'v1'
     iqn: str
     lun: int
     targetPortal: str
@@ -2738,6 +2825,7 @@ class NFSVolumeSource(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/volumes#nfs
     """
 
+    version = 'v1'
     path: str
     server: str
     readOnly: Optional[bool] = None
@@ -2760,6 +2848,7 @@ class PersistentVolumeClaimVolumeSource(HikaruBase):
     readOnly: Will force the ReadOnly setting in VolumeMounts. Default false.
     """
 
+    version = 'v1'
     claimName: str
     readOnly: Optional[bool] = None
 
@@ -2778,6 +2867,7 @@ class PhotonPersistentDiskVolumeSource(HikaruBase):
         unspecified.
     """
 
+    version = 'v1'
     pdID: str
     fsType: Optional[str] = None
 
@@ -2798,6 +2888,7 @@ class PortworxVolumeSource(HikaruBase):
         setting in VolumeMounts.
     """
 
+    version = 'v1'
     volumeID: str
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -2827,6 +2918,7 @@ class ConfigMapProjection(HikaruBase):
         with '..'.
     """
 
+    version = 'v1'
     name: Optional[str] = None
     optional: Optional[bool] = None
     items: Optional[List[KeyToPath]] = field(default_factory=list)
@@ -2844,6 +2936,7 @@ class DownwardAPIProjection(HikaruBase):
     items: Items is a list of DownwardAPIVolume file
     """
 
+    version = 'v1'
     items: Optional[List[DownwardAPIVolumeFile]] = field(default_factory=list)
 
 
@@ -2869,6 +2962,7 @@ class SecretProjection(HikaruBase):
         Paths must be relative and may not contain the '..' path or start with '..'.
     """
 
+    version = 'v1'
     name: Optional[str] = None
     optional: Optional[bool] = None
     items: Optional[List[KeyToPath]] = field(default_factory=list)
@@ -2898,6 +2992,7 @@ class ServiceAccountTokenProjection(HikaruBase):
         least 10 minutes.
     """
 
+    version = 'v1'
     path: str
     audience: Optional[str] = None
     expirationSeconds: Optional[int] = None
@@ -2917,6 +3012,7 @@ class VolumeProjection(HikaruBase):
     serviceAccountToken: information about the serviceAccountToken data to project
     """
 
+    version = 'v1'
     configMap: Optional[ConfigMapProjection] = None
     downwardAPI: Optional[DownwardAPIProjection] = None
     secret: Optional[SecretProjection] = None
@@ -2940,6 +3036,7 @@ class ProjectedVolumeSource(HikaruBase):
     sources: list of volume projections
     """
 
+    version = 'v1'
     defaultMode: Optional[int] = None
     sources: Optional[List[VolumeProjection]] = field(default_factory=list)
 
@@ -2965,6 +3062,7 @@ class QuobyteVolumeSource(HikaruBase):
     user: User to map volume access to Defaults to serivceaccount user
     """
 
+    version = 'v1'
     registry: str
     volume: str
     group: Optional[str] = None
@@ -3003,6 +3101,7 @@ class RBDVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
     """
 
+    version = 'v1'
     image: str
     monitors: List[str]
     fsType: Optional[str] = None
@@ -3039,6 +3138,7 @@ class ScaleIOVolumeSource(HikaruBase):
         associated with this volume source.
     """
 
+    version = 'v1'
     gateway: str
     secretRef: LocalObjectReference
     system: str
@@ -3078,6 +3178,7 @@ class SecretVolumeSource(HikaruBase):
         Paths must be relative and may not contain the '..' path or start with '..'.
     """
 
+    version = 'v1'
     defaultMode: Optional[int] = None
     optional: Optional[bool] = None
     secretName: Optional[str] = None
@@ -3109,6 +3210,7 @@ class StorageOSVolumeSource(HikaruBase):
         pre-exist within StorageOS will be created.
     """
 
+    version = 'v1'
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
     secretRef: Optional[LocalObjectReference] = None
@@ -3133,6 +3235,7 @@ class VsphereVirtualDiskVolumeSource(HikaruBase):
     storagePolicyName: Storage Policy Based Management (SPBM) profile name.
     """
 
+    version = 'v1'
     volumePath: str
     fsType: Optional[str] = None
     storagePolicyID: Optional[str] = None
@@ -3227,6 +3330,7 @@ class Volume(HikaruBase):
         kubelets host machine
     """
 
+    version = 'v1'
     name: str
     awsElasticBlockStore: Optional[AWSElasticBlockStoreVolumeSource] = None
     azureDisk: Optional[AzureDiskVolumeSource] = None
@@ -3405,6 +3509,7 @@ class PodSpec(HikaruBase):
         info: https://kubernetes.io/docs/concepts/storage/volumes
     """
 
+    version = 'v1'
     containers: List[Container]
     activeDeadlineSeconds: Optional[int] = None
     affinity: Optional[Affinity] = None
@@ -3456,6 +3561,7 @@ class PodTemplateSpec(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PodSpec] = None
 
@@ -3498,6 +3604,7 @@ class RollingUpdateDaemonSet(HikaruBase):
         original number of DaemonSet pods are available at all times during the update.
     """
 
+    version = 'v1'
     maxSurge: Optional[IntOrString] = None
     maxUnavailable: Optional[IntOrString] = None
 
@@ -3516,6 +3623,7 @@ class DaemonSetUpdateStrategy(HikaruBase):
         RollingUpdate.
     """
 
+    version = 'v1'
     rollingUpdate: Optional[RollingUpdateDaemonSet] = None
     type: Optional[str] = None
 
@@ -3544,6 +3652,7 @@ class DaemonSetSpec(HikaruBase):
     updateStrategy: An update strategy to replace existing DaemonSet pods with new pods.
     """
 
+    version = 'v1'
     selector: LabelSelector
     template: PodTemplateSpec
     minReadySeconds: Optional[int] = None
@@ -3566,6 +3675,7 @@ class DaemonSetCondition(HikaruBase):
     reason: The reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -3607,6 +3717,7 @@ class DaemonSetStatus(HikaruBase):
         state.
     """
 
+    version = 'v1'
     currentNumberScheduled: int
     desiredNumberScheduled: int
     numberMisscheduled: int
@@ -3620,7 +3731,7 @@ class DaemonSetStatus(HikaruBase):
 
 
 @dataclass
-class DaemonSet(HikaruBase):
+class DaemonSet(HikaruDocumentBase):
     """
     DaemonSet represents the configuration of a daemon set.
 
@@ -3644,6 +3755,7 @@ class DaemonSet(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -3652,7 +3764,7 @@ class DaemonSet(HikaruBase):
 
 
 @dataclass
-class DaemonSetList(HikaruBase):
+class DaemonSetList(HikaruDocumentBase):
     """
     DaemonSetList is a collection of daemon sets.
 
@@ -3672,6 +3784,7 @@ class DaemonSetList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[DaemonSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3705,6 +3818,7 @@ class RollingUpdateDeployment(HikaruBase):
         available at all times during the update is at least 70% of desired pods.
     """
 
+    version = 'v1'
     maxSurge: Optional[IntOrString] = None
     maxUnavailable: Optional[IntOrString] = None
 
@@ -3723,6 +3837,7 @@ class DeploymentStrategy(HikaruBase):
         RollingUpdate.
     """
 
+    version = 'v1'
     rollingUpdate: Optional[RollingUpdateDeployment] = None
     type: Optional[str] = None
 
@@ -3756,6 +3871,7 @@ class DeploymentSpec(HikaruBase):
     strategy: The deployment strategy to use to replace existing pods with new ones.
     """
 
+    version = 'v1'
     selector: LabelSelector
     template: PodTemplateSpec
     minReadySeconds: Optional[int] = None
@@ -3782,6 +3898,7 @@ class DeploymentCondition(HikaruBase):
     reason: The reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -3817,6 +3934,7 @@ class DeploymentStatus(HikaruBase):
         state.
     """
 
+    version = 'v1'
     availableReplicas: Optional[int] = None
     collisionCount: Optional[int] = None
     observedGeneration: Optional[int] = None
@@ -3828,7 +3946,7 @@ class DeploymentStatus(HikaruBase):
 
 
 @dataclass
-class Deployment(HikaruBase):
+class Deployment(HikaruDocumentBase):
     """
     Deployment enables declarative updates for Pods and ReplicaSets.
 
@@ -3848,6 +3966,7 @@ class Deployment(HikaruBase):
     status: Most recently observed status of the Deployment.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -3856,7 +3975,7 @@ class Deployment(HikaruBase):
 
 
 @dataclass
-class DeploymentList(HikaruBase):
+class DeploymentList(HikaruDocumentBase):
     """
     DeploymentList is a list of Deployments.
 
@@ -3875,6 +3994,7 @@ class DeploymentList(HikaruBase):
     metadata: Standard list metadata.
     """
 
+    version = 'v1'
     items: List[Deployment]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3904,6 +4024,7 @@ class ReplicaSetSpec(HikaruBase):
         https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template
     """
 
+    version = 'v1'
     selector: LabelSelector
     minReadySeconds: Optional[int] = None
     replicas: Optional[int] = None
@@ -3926,6 +4047,7 @@ class ReplicaSetCondition(HikaruBase):
     reason: The reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -3954,6 +4076,7 @@ class ReplicaSetStatus(HikaruBase):
         state.
     """
 
+    version = 'v1'
     replicas: int
     availableReplicas: Optional[int] = None
     fullyLabeledReplicas: Optional[int] = None
@@ -3963,7 +4086,7 @@ class ReplicaSetStatus(HikaruBase):
 
 
 @dataclass
-class ReplicaSet(HikaruBase):
+class ReplicaSet(HikaruDocumentBase):
     """
     ReplicaSet ensures that a specified number of pod replicas are running at any given
     time.
@@ -3991,6 +4114,7 @@ class ReplicaSet(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -3999,7 +4123,7 @@ class ReplicaSet(HikaruBase):
 
 
 @dataclass
-class ReplicaSetList(HikaruBase):
+class ReplicaSetList(HikaruDocumentBase):
     """
     ReplicaSetList is a collection of ReplicaSets.
 
@@ -4020,6 +4144,7 @@ class ReplicaSetList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ReplicaSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4039,6 +4164,7 @@ class RollingUpdateStatefulSetStrategy(HikaruBase):
         partitioned. Default value is 0.
     """
 
+    version = 'v1'
     partition: Optional[int] = None
 
 
@@ -4058,6 +4184,7 @@ class StatefulSetUpdateStrategy(HikaruBase):
         RollingUpdate.
     """
 
+    version = 'v1'
     rollingUpdate: Optional[RollingUpdateStatefulSetStrategy] = None
     type: Optional[str] = None
 
@@ -4080,6 +4207,7 @@ class PersistentVolumeClaimCondition(HikaruBase):
         the underlying persistent volume is being resized.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastProbeTime: Optional[Time] = None
@@ -4105,6 +4233,7 @@ class PersistentVolumeClaimStatus(HikaruBase):
         volume is being resized then the Condition will be set to 'ResizeStarted'.
     """
 
+    version = 'v1'
     phase: Optional[str] = None
     accessModes: Optional[List[str]] = field(default_factory=list)
     capacity: Optional[Dict[str, str]] = field(default_factory=dict)
@@ -4112,7 +4241,7 @@ class PersistentVolumeClaimStatus(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeClaim(HikaruBase):
+class PersistentVolumeClaim(HikaruDocumentBase):
     """
     PersistentVolumeClaim is a user's request for and claim to a persistent volume
 
@@ -4137,6 +4266,7 @@ class PersistentVolumeClaim(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -4189,6 +4319,7 @@ class StatefulSetSpec(HikaruBase):
         template, with the same name.
     """
 
+    version = 'v1'
     selector: LabelSelector
     serviceName: str
     template: PodTemplateSpec
@@ -4214,6 +4345,7 @@ class StatefulSetCondition(HikaruBase):
     reason: The reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -4250,6 +4382,7 @@ class StatefulSetStatus(HikaruBase):
         state.
     """
 
+    version = 'v1'
     replicas: int
     collisionCount: Optional[int] = None
     currentReplicas: Optional[int] = None
@@ -4262,7 +4395,7 @@ class StatefulSetStatus(HikaruBase):
 
 
 @dataclass
-class StatefulSet(HikaruBase):
+class StatefulSet(HikaruDocumentBase):
     """
     StatefulSet represents a set of pods with consistent identities. Identities are
     defined as: - Network: A single stable DNS and hostname. - Storage: As many
@@ -4286,6 +4419,7 @@ class StatefulSet(HikaruBase):
         of date by some window of time.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -4294,7 +4428,7 @@ class StatefulSet(HikaruBase):
 
 
 @dataclass
-class StatefulSetList(HikaruBase):
+class StatefulSetList(HikaruDocumentBase):
     """
     StatefulSetList is a collection of StatefulSets.
 
@@ -4313,6 +4447,7 @@ class StatefulSetList(HikaruBase):
     metadata:
     """
 
+    version = 'v1'
     items: List[StatefulSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4333,6 +4468,7 @@ class BoundObjectReference(HikaruBase):
     uid: UID of the referent.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     name: Optional[str] = None
@@ -4362,6 +4498,7 @@ class TokenRequestSpec(HikaruBase):
         a client needs to check the 'expiration' field in a response.
     """
 
+    version = 'v1'
     audiences: List[str]
     boundObjectRef: Optional[BoundObjectReference] = None
     expirationSeconds: Optional[int] = None
@@ -4380,6 +4517,7 @@ class TokenRequestStatus(HikaruBase):
     token: Token is the opaque bearer token.
     """
 
+    version = 'v1'
     expirationTimestamp: Time
     token: str
 
@@ -4400,6 +4538,7 @@ class TokenReviewSpec(HikaruBase):
         Kubernetes apiserver.
     """
 
+    version = 'v1'
     token: Optional[str] = None
     audiences: Optional[List[str]] = field(default_factory=list)
 
@@ -4420,6 +4559,7 @@ class UserInfo(HikaruBase):
     groups: The names of groups this user is a part of.
     """
 
+    version = 'v1'
     uid: Optional[str] = None
     username: Optional[str] = None
     extra: Optional[Dict[str, str]] = field(default_factory=dict)
@@ -4448,6 +4588,7 @@ class TokenReviewStatus(HikaruBase):
         valid against the audience of the Kubernetes API server.
     """
 
+    version = 'v1'
     authenticated: Optional[bool] = None
     error: Optional[str] = None
     user: Optional[UserInfo] = None
@@ -4455,7 +4596,7 @@ class TokenReviewStatus(HikaruBase):
 
 
 @dataclass
-class TokenReview(HikaruBase):
+class TokenReview(HikaruDocumentBase):
     """
     TokenReview attempts to authenticate a token to a known user. Note: TokenReview
     requests may be cached by the webhook token authenticator plugin in the
@@ -4478,6 +4619,7 @@ class TokenReview(HikaruBase):
         authenticated.
     """
 
+    version = 'v1'
     spec: TokenReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4498,6 +4640,7 @@ class NonResourceAttributes(HikaruBase):
     verb: Verb is the standard HTTP verb
     """
 
+    version = 'v1'
     path: Optional[str] = None
     verb: Optional[str] = None
 
@@ -4526,6 +4669,7 @@ class ResourceAttributes(HikaruBase):
     version: Version is the API Version of the Resource. "*" means all.
     """
 
+    version = 'v1'
     group: Optional[str] = None
     name: Optional[str] = None
     namespace: Optional[str] = None
@@ -4556,6 +4700,7 @@ class SubjectAccessReviewSpec(HikaruBase):
     groups: Groups is the groups you're testing for.
     """
 
+    version = 'v1'
     nonResourceAttributes: Optional[NonResourceAttributes] = None
     resourceAttributes: Optional[ResourceAttributes] = None
     uid: Optional[str] = None
@@ -4584,6 +4729,7 @@ class SubjectAccessReviewStatus(HikaruBase):
     reason: Reason is optional. It indicates why a request was allowed or denied.
     """
 
+    version = 'v1'
     allowed: bool
     denied: Optional[bool] = None
     evaluationError: Optional[str] = None
@@ -4591,7 +4737,7 @@ class SubjectAccessReviewStatus(HikaruBase):
 
 
 @dataclass
-class LocalSubjectAccessReview(HikaruBase):
+class LocalSubjectAccessReview(HikaruDocumentBase):
     """
     LocalSubjectAccessReview checks whether or not a user or group can perform an action
     in a given namespace. Having a namespace scoped resource makes it much easier to grant
@@ -4615,6 +4761,7 @@ class LocalSubjectAccessReview(HikaruBase):
         or not
     """
 
+    version = 'v1'
     spec: SubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4637,12 +4784,13 @@ class SelfSubjectAccessReviewSpec(HikaruBase):
         resource access request
     """
 
+    version = 'v1'
     nonResourceAttributes: Optional[NonResourceAttributes] = None
     resourceAttributes: Optional[ResourceAttributes] = None
 
 
 @dataclass
-class SelfSubjectAccessReview(HikaruBase):
+class SelfSubjectAccessReview(HikaruDocumentBase):
     """
     SelfSubjectAccessReview checks whether or the current user can perform an action. Not
     filling in a spec.namespace means "in all namespaces". Self is a special case, because
@@ -4666,6 +4814,7 @@ class SelfSubjectAccessReview(HikaruBase):
         or not
     """
 
+    version = 'v1'
     spec: SelfSubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4683,6 +4832,7 @@ class SelfSubjectRulesReviewSpec(HikaruBase):
     namespace: Namespace to evaluate rules for. Required.
     """
 
+    version = 'v1'
     namespace: Optional[str] = None
 
 
@@ -4701,6 +4851,7 @@ class NonResourceRule(HikaruBase):
         all.
     """
 
+    version = 'v1'
     verbs: List[str]
     nonResourceURLs: Optional[List[str]] = field(default_factory=list)
 
@@ -4727,6 +4878,7 @@ class ResourceRule(HikaruBase):
         the specified apiGroups.
     """
 
+    version = 'v1'
     verbs: List[str]
     apiGroups: Optional[List[str]] = field(default_factory=list)
     resourceNames: Optional[List[str]] = field(default_factory=list)
@@ -4759,6 +4911,7 @@ class SubjectRulesReviewStatus(HikaruBase):
         rule evaluation, and that ResourceRules and/or NonResourceRules may be incomplete.
     """
 
+    version = 'v1'
     incomplete: bool
     nonResourceRules: List[NonResourceRule]
     resourceRules: List[ResourceRule]
@@ -4766,7 +4919,7 @@ class SubjectRulesReviewStatus(HikaruBase):
 
 
 @dataclass
-class SelfSubjectRulesReview(HikaruBase):
+class SelfSubjectRulesReview(HikaruDocumentBase):
     """
     SelfSubjectRulesReview enumerates the set of actions the current user can perform
     within a namespace. The returned list of actions may be incomplete depending on the
@@ -4795,6 +4948,7 @@ class SelfSubjectRulesReview(HikaruBase):
         perform.
     """
 
+    version = 'v1'
     spec: SelfSubjectRulesReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4803,7 +4957,7 @@ class SelfSubjectRulesReview(HikaruBase):
 
 
 @dataclass
-class SubjectAccessReview(HikaruBase):
+class SubjectAccessReview(HikaruDocumentBase):
     """
     SubjectAccessReview checks whether or not a user or group can perform an action.
 
@@ -4824,6 +4978,7 @@ class SubjectAccessReview(HikaruBase):
         or not
     """
 
+    version = 'v1'
     spec: SubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4847,6 +5002,7 @@ class CrossVersionObjectReference(HikaruBase):
     apiVersion: API version of the referent
     """
 
+    version = 'v1'
     kind: str
     name: str
     apiVersion: Optional[str] = None
@@ -4875,6 +5031,7 @@ class HorizontalPodAutoscalerSpec(HikaruBase):
         autoscaling policy will be used.
     """
 
+    version = 'v1'
     maxReplicas: int
     scaleTargetRef: CrossVersionObjectReference
     minReplicas: Optional[int] = None
@@ -4899,6 +5056,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
     observedGeneration: most recent generation observed by this autoscaler.
     """
 
+    version = 'v1'
     currentReplicas: int
     desiredReplicas: int
     currentCPUUtilizationPercentage: Optional[int] = None
@@ -4907,7 +5065,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
 
 
 @dataclass
-class HorizontalPodAutoscaler(HikaruBase):
+class HorizontalPodAutoscaler(HikaruDocumentBase):
     """
     configuration of a horizontal pod autoscaler.
 
@@ -4929,6 +5087,7 @@ class HorizontalPodAutoscaler(HikaruBase):
     status: current information about the autoscaler.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -4937,7 +5096,7 @@ class HorizontalPodAutoscaler(HikaruBase):
 
 
 @dataclass
-class HorizontalPodAutoscalerList(HikaruBase):
+class HorizontalPodAutoscalerList(HikaruDocumentBase):
     """
     list of horizontal pod autoscaler objects.
 
@@ -4956,6 +5115,7 @@ class HorizontalPodAutoscalerList(HikaruBase):
     metadata: Standard list metadata.
     """
 
+    version = 'v1'
     items: List[HorizontalPodAutoscaler]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4973,6 +5133,7 @@ class ScaleSpec(HikaruBase):
     replicas: desired number of instances for the scaled object.
     """
 
+    version = 'v1'
     replicas: Optional[int] = None
 
 
@@ -4991,12 +5152,13 @@ class ScaleStatus(HikaruBase):
         selectors: http://kubernetes.io/docs/user-guide/labels#label-selectors
     """
 
+    version = 'v1'
     replicas: int
     selector: Optional[str] = None
 
 
 @dataclass
-class Scale(HikaruBase):
+class Scale(HikaruDocumentBase):
     """
     Scale represents a scaling request for a resource.
 
@@ -5020,6 +5182,7 @@ class Scale(HikaruBase):
         Read-only.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -5074,6 +5237,7 @@ class JobSpec(HikaruBase):
         enable the TTLAfterFinished feature.
     """
 
+    version = 'v1'
     template: PodTemplateSpec
     activeDeadlineSeconds: Optional[int] = None
     backoffLimit: Optional[int] = None
@@ -5100,6 +5264,7 @@ class JobCondition(HikaruBase):
     reason: (brief) reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastProbeTime: Optional[Time] = None
@@ -5131,6 +5296,7 @@ class JobStatus(HikaruBase):
         https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
     """
 
+    version = 'v1'
     active: Optional[int] = None
     completionTime: Optional[Time] = None
     failed: Optional[int] = None
@@ -5140,7 +5306,7 @@ class JobStatus(HikaruBase):
 
 
 @dataclass
-class Job(HikaruBase):
+class Job(HikaruDocumentBase):
     """
     Job represents the configuration of a single job.
 
@@ -5163,6 +5329,7 @@ class Job(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -5171,7 +5338,7 @@ class Job(HikaruBase):
 
 
 @dataclass
-class JobList(HikaruBase):
+class JobList(HikaruDocumentBase):
     """
     JobList is a collection of jobs.
 
@@ -5191,6 +5358,7 @@ class JobList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[Job]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5253,6 +5421,7 @@ class CertificateSigningRequestSpec(HikaruBase):
         "timestamping", "ocsp signing", "microsoft sgc", "netscape sgc"
     """
 
+    version = 'v1'
     request: str
     signerName: str
     uid: Optional[str] = None
@@ -5291,6 +5460,7 @@ class CertificateSigningRequestCondition(HikaruBase):
     reason: reason indicates a brief reason for the request state
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -5329,12 +5499,13 @@ class CertificateSigningRequestStatus(HikaruBase):
         "Denied", and "Failed".
     """
 
+    version = 'v1'
     certificate: Optional[str] = None
     conditions: Optional[List[CertificateSigningRequestCondition]] = field(default_factory=list)
 
 
 @dataclass
-class CertificateSigningRequest(HikaruBase):
+class CertificateSigningRequest(HikaruDocumentBase):
     """
     CertificateSigningRequest objects provide a mechanism to obtain x509 certificates by
     submitting a certificate signing request, and having it asynchronously approved and
@@ -5366,6 +5537,7 @@ class CertificateSigningRequest(HikaruBase):
         signer failure.
     """
 
+    version = 'v1'
     spec: CertificateSigningRequestSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5374,7 +5546,7 @@ class CertificateSigningRequest(HikaruBase):
 
 
 @dataclass
-class CertificateSigningRequestList(HikaruBase):
+class CertificateSigningRequestList(HikaruDocumentBase):
     """
     CertificateSigningRequestList is a collection of CertificateSigningRequest objects
 
@@ -5393,6 +5565,7 @@ class CertificateSigningRequestList(HikaruBase):
     metadata:
     """
 
+    version = 'v1'
     items: List[CertificateSigningRequest]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5426,6 +5599,7 @@ class LeaseSpec(HikaruBase):
         lease.
     """
 
+    version = 'v1'
     acquireTime: Optional[MicroTime] = None
     holderIdentity: Optional[str] = None
     leaseDurationSeconds: Optional[int] = None
@@ -5434,7 +5608,7 @@ class LeaseSpec(HikaruBase):
 
 
 @dataclass
-class Lease(HikaruBase):
+class Lease(HikaruDocumentBase):
     """
     Lease defines a lease concept.
 
@@ -5455,6 +5629,7 @@ class Lease(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -5462,7 +5637,7 @@ class Lease(HikaruBase):
 
 
 @dataclass
-class LeaseList(HikaruBase):
+class LeaseList(HikaruDocumentBase):
     """
     LeaseList is a list of Lease objects.
 
@@ -5482,6 +5657,7 @@ class LeaseList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[Lease]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5519,6 +5695,7 @@ class ObjectReference(HikaruBase):
         https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     fieldPath: Optional[str] = None
     kind: Optional[str] = None
@@ -5529,7 +5706,7 @@ class ObjectReference(HikaruBase):
 
 
 @dataclass
-class Binding(HikaruBase):
+class Binding(HikaruDocumentBase):
     """
     Binding ties one object to another; for example, a pod is bound to a node by a
     scheduler. Deprecated in 1.7, please use the bindings subresource of pods instead.
@@ -5550,6 +5727,7 @@ class Binding(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     target: ObjectReference
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5572,6 +5750,7 @@ class ComponentCondition(HikaruBase):
         health check.
     """
 
+    version = 'v1'
     status: str
     type: str
     error: Optional[str] = None
@@ -5579,7 +5758,7 @@ class ComponentCondition(HikaruBase):
 
 
 @dataclass
-class ComponentStatus(HikaruBase):
+class ComponentStatus(HikaruDocumentBase):
     """
     ComponentStatus (and ComponentStatusList) holds the cluster validation info.
     Deprecated: This API is deprecated in v1.19+
@@ -5600,6 +5779,7 @@ class ComponentStatus(HikaruBase):
     conditions: List of component conditions observed
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -5607,7 +5787,7 @@ class ComponentStatus(HikaruBase):
 
 
 @dataclass
-class ComponentStatusList(HikaruBase):
+class ComponentStatusList(HikaruDocumentBase):
     """
     Status of all the conditions for the component as a list of ComponentStatus objects.
     Deprecated: This API is deprecated in v1.19+
@@ -5628,6 +5808,7 @@ class ComponentStatusList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ComponentStatus]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5635,7 +5816,7 @@ class ComponentStatusList(HikaruBase):
 
 
 @dataclass
-class ConfigMap(HikaruBase):
+class ConfigMap(HikaruDocumentBase):
     """
     ConfigMap holds configuration data for pods to consume.
 
@@ -5666,6 +5847,7 @@ class ConfigMap(HikaruBase):
         BinaryData field, this is enforced during validation process.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     immutable: Optional[bool] = None
     kind: Optional[str] = None
@@ -5675,7 +5857,7 @@ class ConfigMap(HikaruBase):
 
 
 @dataclass
-class ConfigMapList(HikaruBase):
+class ConfigMapList(HikaruDocumentBase):
     """
     ConfigMapList is a resource containing a list of ConfigMap objects.
 
@@ -5695,6 +5877,7 @@ class ConfigMapList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[ConfigMap]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5719,6 +5902,7 @@ class EndpointAddress(HikaruBase):
     targetRef: Reference to object providing the endpoint.
     """
 
+    version = 'v1'
     ip: str
     hostname: Optional[str] = None
     nodeName: Optional[str] = None
@@ -5745,6 +5929,7 @@ class EndpointPort(HikaruBase):
     protocol: The IP protocol for this port. Must be UDP, TCP, or SCTP. Default is TCP.
     """
 
+    version = 'v1'
     port: int
     appProtocol: Optional[str] = None
     name: Optional[str] = None
@@ -5771,13 +5956,14 @@ class EndpointSubset(HikaruBase):
     ports: Port numbers available on the related IP addresses.
     """
 
+    version = 'v1'
     addresses: Optional[List[EndpointAddress]] = field(default_factory=list)
     notReadyAddresses: Optional[List[EndpointAddress]] = field(default_factory=list)
     ports: Optional[List[EndpointPort]] = field(default_factory=list)
 
 
 @dataclass
-class Endpoints(HikaruBase):
+class Endpoints(HikaruDocumentBase):
     """
     Endpoints is a collection of endpoints that implement the actual service. Example:
     Name: "mysvc", Subsets: [ { Addresses: [{"ip": "10.10.1.1"}, {"ip": "10.10.2.2"}],
@@ -5807,6 +5993,7 @@ class Endpoints(HikaruBase):
         service.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -5814,7 +6001,7 @@ class Endpoints(HikaruBase):
 
 
 @dataclass
-class EndpointsList(HikaruBase):
+class EndpointsList(HikaruDocumentBase):
     """
     EndpointsList is a list of endpoints.
 
@@ -5834,6 +6021,7 @@ class EndpointsList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Endpoints]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5841,7 +6029,7 @@ class EndpointsList(HikaruBase):
 
 
 @dataclass
-class EphemeralContainers(HikaruBase):
+class EphemeralContainers(HikaruDocumentBase):
     """
     A list of ephemeral containers used with the Pod ephemeralcontainers subresource.
 
@@ -5862,6 +6050,7 @@ class EphemeralContainers(HikaruBase):
     metadata:
     """
 
+    version = 'v1'
     ephemeralContainers: List[EphemeralContainer]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5880,6 +6069,7 @@ class EventSource(HikaruBase):
     host: Node name on which the event is generated.
     """
 
+    version = 'v1'
     component: Optional[str] = None
     host: Optional[str] = None
 
@@ -5902,12 +6092,13 @@ class EventSeries(HikaruBase):
         seen before last heartbeat.
     """
 
+    version = 'v1'
     count: int
     lastObservedTime: MicroTime
 
 
 @dataclass
-class Event(HikaruBase):
+class Event(HikaruDocumentBase):
     """
     Event is a report of an event somewhere in the cluster. It generally denotes some
     state change in the system. Events have a limited retention time and triggers and
@@ -5963,6 +6154,7 @@ class Event(HikaruBase):
         the future. It is machine-readable. This field cannot be empty for new Events.
     """
 
+    version = 'v1'
     eventTime: MicroTime
     metadata: ObjectMeta
     action: Optional[str] = None
@@ -5983,7 +6175,7 @@ class Event(HikaruBase):
 
 
 @dataclass
-class EventList(HikaruBase):
+class EventList(HikaruDocumentBase):
     """
     EventList is a list of Event objects.
 
@@ -6003,6 +6195,7 @@ class EventList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[Event]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6030,6 +6223,7 @@ class LimitRangeItem(HikaruBase):
     min: Min usage constraints on this kind by resource name.
     """
 
+    version = 'v1'
     type: str
     default: Optional[Dict[str, str]] = field(default_factory=dict)
     defaultRequest: Optional[Dict[str, str]] = field(default_factory=dict)
@@ -6049,11 +6243,12 @@ class LimitRangeSpec(HikaruBase):
     limits: Limits is the list of LimitRangeItem objects that are enforced.
     """
 
+    version = 'v1'
     limits: List[LimitRangeItem]
 
 
 @dataclass
-class LimitRange(HikaruBase):
+class LimitRange(HikaruDocumentBase):
     """
     LimitRange sets resource usage limits for each kind of resource in a Namespace.
 
@@ -6074,6 +6269,7 @@ class LimitRange(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -6081,7 +6277,7 @@ class LimitRange(HikaruBase):
 
 
 @dataclass
-class LimitRangeList(HikaruBase):
+class LimitRangeList(HikaruDocumentBase):
     """
     LimitRangeList is a list of LimitRange items.
 
@@ -6102,6 +6298,7 @@ class LimitRangeList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[LimitRange]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6121,6 +6318,7 @@ class NamespaceSpec(HikaruBase):
         https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
     """
 
+    version = 'v1'
     finalizers: Optional[List[str]] = field(default_factory=list)
 
 
@@ -6139,6 +6337,7 @@ class NamespaceCondition(HikaruBase):
     reason:
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -6160,12 +6359,13 @@ class NamespaceStatus(HikaruBase):
         state.
     """
 
+    version = 'v1'
     phase: Optional[str] = None
     conditions: Optional[List[NamespaceCondition]] = field(default_factory=list)
 
 
 @dataclass
-class Namespace(HikaruBase):
+class Namespace(HikaruDocumentBase):
     """
     Namespace provides a scope for Names. Use of multiple namespaces is optional.
 
@@ -6188,6 +6388,7 @@ class Namespace(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -6196,7 +6397,7 @@ class Namespace(HikaruBase):
 
 
 @dataclass
-class NamespaceList(HikaruBase):
+class NamespaceList(HikaruDocumentBase):
     """
     NamespaceList is a list of Namespaces.
 
@@ -6217,6 +6418,7 @@ class NamespaceList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Namespace]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6245,6 +6447,7 @@ class ConfigMapNodeConfigSource(HikaruBase):
         Node.Spec, and required in Node.Status.
     """
 
+    version = 'v1'
     kubeletConfigKey: str
     name: str
     namespace: str
@@ -6264,6 +6467,7 @@ class NodeConfigSource(HikaruBase):
     configMap: ConfigMap is a reference to a Node's ConfigMap
     """
 
+    version = 'v1'
     configMap: Optional[ConfigMapNodeConfigSource] = None
 
 
@@ -6284,6 +6488,7 @@ class Taint(HikaruBase):
     value: The taint value corresponding to the taint key.
     """
 
+    version = 'v1'
     effect: str
     key: str
     timeAdded: Optional[Time] = None
@@ -6315,6 +6520,7 @@ class NodeSpec(HikaruBase):
     taints: If specified, the node's taints.
     """
 
+    version = 'v1'
     configSource: Optional[NodeConfigSource] = None
     externalID: Optional[str] = None
     podCIDR: Optional[str] = None
@@ -6336,6 +6542,7 @@ class NodeAddress(HikaruBase):
     type: Node address type, one of Hostname, ExternalIP or InternalIP.
     """
 
+    version = 'v1'
     address: str
     type: str
 
@@ -6356,6 +6563,7 @@ class NodeCondition(HikaruBase):
     reason: (brief) reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastHeartbeatTime: Optional[Time] = None
@@ -6411,6 +6619,7 @@ class NodeConfigStatus(HikaruBase):
         configurable in the future.
     """
 
+    version = 'v1'
     active: Optional[NodeConfigSource] = None
     assigned: Optional[NodeConfigSource] = None
     error: Optional[str] = None
@@ -6428,6 +6637,7 @@ class DaemonEndpoint(HikaruBase):
     Port: Port number of the given endpoint.
     """
 
+    version = 'v1'
     Port: int
 
 
@@ -6442,6 +6652,7 @@ class NodeDaemonEndpoints(HikaruBase):
     kubeletEndpoint: Endpoint on which Kubelet is listening.
     """
 
+    version = 'v1'
     kubeletEndpoint: Optional[DaemonEndpoint] = None
 
 
@@ -6458,6 +6669,7 @@ class ContainerImage(HikaruBase):
     sizeBytes: The size of the image in bytes.
     """
 
+    version = 'v1'
     names: List[str]
     sizeBytes: Optional[int] = None
 
@@ -6489,6 +6701,7 @@ class NodeSystemInfo(HikaruBase):
         https://access.redhat.com/documentation/en-us/red_hat_subscription_management/1/html/rhsm/uuid
     """
 
+    version = 'v1'
     architecture: str
     bootID: str
     containerRuntimeVersion: str
@@ -6513,6 +6726,7 @@ class AttachedVolume(HikaruBase):
     name: Name of the attached volume
     """
 
+    version = 'v1'
     devicePath: str
     name: str
 
@@ -6549,6 +6763,7 @@ class NodeStatus(HikaruBase):
     volumesInUse: List of attachable volumes in use (mounted) by the node.
     """
 
+    version = 'v1'
     config: Optional[NodeConfigStatus] = None
     daemonEndpoints: Optional[NodeDaemonEndpoints] = None
     nodeInfo: Optional[NodeSystemInfo] = None
@@ -6563,7 +6778,7 @@ class NodeStatus(HikaruBase):
 
 
 @dataclass
-class Node(HikaruBase):
+class Node(HikaruDocumentBase):
     """
     Node is a worker node in Kubernetes. Each node will have a unique identifier in the
     cache (i.e. in etcd).
@@ -6588,6 +6803,7 @@ class Node(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -6596,7 +6812,7 @@ class Node(HikaruBase):
 
 
 @dataclass
-class NodeList(HikaruBase):
+class NodeList(HikaruDocumentBase):
     """
     NodeList is the whole list of all Nodes which have been registered with master.
 
@@ -6616,6 +6832,7 @@ class NodeList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Node]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6623,7 +6840,7 @@ class NodeList(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeClaimList(HikaruBase):
+class PersistentVolumeClaimList(HikaruDocumentBase):
     """
     PersistentVolumeClaimList is a list of PersistentVolumeClaim items.
 
@@ -6644,6 +6861,7 @@ class PersistentVolumeClaimList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[PersistentVolumeClaim]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6667,6 +6885,7 @@ class AzureFilePersistentVolumeSource(HikaruBase):
         and Key default is the same as the Pod
     """
 
+    version = 'v1'
     secretName: str
     shareName: str
     readOnly: Optional[bool] = None
@@ -6686,6 +6905,7 @@ class SecretReference(HikaruBase):
     namespace: Namespace defines the space within which the secret name must be unique.
     """
 
+    version = 'v1'
     name: Optional[str] = None
     namespace: Optional[str] = None
 
@@ -6715,6 +6935,7 @@ class CephFSPersistentVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it
     """
 
+    version = 'v1'
     monitors: List[str]
     path: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -6746,6 +6967,7 @@ class CinderPersistentVolumeSource(HikaruBase):
         to OpenStack.
     """
 
+    version = 'v1'
     volumeID: str
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -6791,6 +7013,7 @@ class CSIPersistentVolumeSource(HikaruBase):
     volumeAttributes: Attributes of the volume to publish.
     """
 
+    version = 'v1'
     driver: str
     volumeHandle: str
     controllerExpandSecretRef: Optional[SecretReference] = None
@@ -6824,6 +7047,7 @@ class FlexPersistentVolumeSource(HikaruBase):
     options: Optional: Extra command options if any.
     """
 
+    version = 'v1'
     driver: str
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
@@ -6853,6 +7077,7 @@ class GlusterfsPersistentVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod
     """
 
+    version = 'v1'
     endpoints: str
     path: str
     endpointsNamespace: Optional[str] = None
@@ -6891,6 +7116,7 @@ class ISCSIPersistentVolumeSource(HikaruBase):
         port is other than default (typically TCP ports 860 and 3260).
     """
 
+    version = 'v1'
     iqn: str
     lun: int
     targetPortal: str
@@ -6919,6 +7145,7 @@ class LocalVolumeSource(HikaruBase):
         "xfs", "ntfs". The default value is to auto-select a fileystem if unspecified.
     """
 
+    version = 'v1'
     path: str
     fsType: Optional[str] = None
 
@@ -6935,6 +7162,7 @@ class VolumeNodeAffinity(HikaruBase):
     required: Required specifies hard node constraints that must be met.
     """
 
+    version = 'v1'
     required: Optional[NodeSelector] = None
 
 
@@ -6968,6 +7196,7 @@ class RBDPersistentVolumeSource(HikaruBase):
         https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
     """
 
+    version = 'v1'
     image: str
     monitors: List[str]
     fsType: Optional[str] = None
@@ -7004,6 +7233,7 @@ class ScaleIOPersistentVolumeSource(HikaruBase):
         associated with this volume source.
     """
 
+    version = 'v1'
     gateway: str
     secretRef: SecretReference
     system: str
@@ -7041,6 +7271,7 @@ class StorageOSPersistentVolumeSource(HikaruBase):
         pre-exist within StorageOS will be created.
     """
 
+    version = 'v1'
     fsType: Optional[str] = None
     readOnly: Optional[bool] = None
     secretRef: Optional[ObjectReference] = None
@@ -7130,6 +7361,7 @@ class PersistentVolumeSpec(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes/#mount-options
     """
 
+    version = 'v1'
     awsElasticBlockStore: Optional[AWSElasticBlockStoreVolumeSource] = None
     azureDisk: Optional[AzureDiskVolumeSource] = None
     azureFile: Optional[AzureFilePersistentVolumeSource] = None
@@ -7179,13 +7411,14 @@ class PersistentVolumeStatus(HikaruBase):
         machine parsing and tidy display in the CLI.
     """
 
+    version = 'v1'
     message: Optional[str] = None
     phase: Optional[str] = None
     reason: Optional[str] = None
 
 
 @dataclass
-class PersistentVolume(HikaruBase):
+class PersistentVolume(HikaruDocumentBase):
     """
     PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
     analogous to a node. More info:
@@ -7212,6 +7445,7 @@ class PersistentVolume(HikaruBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -7220,7 +7454,7 @@ class PersistentVolume(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeList(HikaruBase):
+class PersistentVolumeList(HikaruDocumentBase):
     """
     PersistentVolumeList is a list of PersistentVolume items.
 
@@ -7241,6 +7475,7 @@ class PersistentVolumeList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[PersistentVolume]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7265,6 +7500,7 @@ class PodCondition(HikaruBase):
     reason: Unique, one-word, CamelCase reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastProbeTime: Optional[Time] = None
@@ -7284,6 +7520,7 @@ class ContainerStateRunning(HikaruBase):
     startedAt: Time at which the container was last (re-)started
     """
 
+    version = 'v1'
     startedAt: Optional[Time] = None
 
 
@@ -7304,6 +7541,7 @@ class ContainerStateTerminated(HikaruBase):
     startedAt: Time at which previous execution of the container started
     """
 
+    version = 'v1'
     exitCode: int
     containerID: Optional[str] = None
     finishedAt: Optional[Time] = None
@@ -7325,6 +7563,7 @@ class ContainerStateWaiting(HikaruBase):
     reason: (brief) reason the container is not yet running.
     """
 
+    version = 'v1'
     message: Optional[str] = None
     reason: Optional[str] = None
 
@@ -7343,6 +7582,7 @@ class ContainerState(HikaruBase):
     waiting: Details about a waiting container
     """
 
+    version = 'v1'
     running: Optional[ContainerStateRunning] = None
     terminated: Optional[ContainerStateTerminated] = None
     waiting: Optional[ContainerStateWaiting] = None
@@ -7375,6 +7615,7 @@ class ContainerStatus(HikaruBase):
     state: Details about the container's current condition.
     """
 
+    version = 'v1'
     image: str
     imageID: str
     name: str
@@ -7398,6 +7639,7 @@ class PodIP(HikaruBase):
     ip: ip is an IP address (IPv4 or IPv6) assigned to the pod
     """
 
+    version = 'v1'
     ip: Optional[str] = None
 
 
@@ -7465,6 +7707,7 @@ class PodStatus(HikaruBase):
         allocated yet.
     """
 
+    version = 'v1'
     hostIP: Optional[str] = None
     message: Optional[str] = None
     nominatedNodeName: Optional[str] = None
@@ -7481,7 +7724,7 @@ class PodStatus(HikaruBase):
 
 
 @dataclass
-class Pod(HikaruBase):
+class Pod(HikaruDocumentBase):
     """
     Pod is a collection of containers that can run on a host. This resource is created by
     clients and scheduled onto hosts.
@@ -7506,6 +7749,7 @@ class Pod(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -7514,7 +7758,7 @@ class Pod(HikaruBase):
 
 
 @dataclass
-class PodList(HikaruBase):
+class PodList(HikaruDocumentBase):
     """
     PodList is a list of Pods.
 
@@ -7535,6 +7779,7 @@ class PodList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Pod]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7542,7 +7787,7 @@ class PodList(HikaruBase):
 
 
 @dataclass
-class PodTemplate(HikaruBase):
+class PodTemplate(HikaruDocumentBase):
     """
     PodTemplate describes a template for creating copies of a predefined pod.
 
@@ -7563,6 +7808,7 @@ class PodTemplate(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -7570,7 +7816,7 @@ class PodTemplate(HikaruBase):
 
 
 @dataclass
-class PodTemplateList(HikaruBase):
+class PodTemplateList(HikaruDocumentBase):
     """
     PodTemplateList is a list of PodTemplates.
 
@@ -7590,6 +7836,7 @@ class PodTemplateList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[PodTemplate]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7621,6 +7868,7 @@ class ReplicationControllerSpec(HikaruBase):
         https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
     """
 
+    version = 'v1'
     minReadySeconds: Optional[int] = None
     replicas: Optional[int] = None
     template: Optional[PodTemplateSpec] = None
@@ -7644,6 +7892,7 @@ class ReplicationControllerCondition(HikaruBase):
     reason: The reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -7672,6 +7921,7 @@ class ReplicationControllerStatus(HikaruBase):
         current state.
     """
 
+    version = 'v1'
     replicas: int
     availableReplicas: Optional[int] = None
     fullyLabeledReplicas: Optional[int] = None
@@ -7681,7 +7931,7 @@ class ReplicationControllerStatus(HikaruBase):
 
 
 @dataclass
-class ReplicationController(HikaruBase):
+class ReplicationController(HikaruDocumentBase):
     """
     ReplicationController represents the configuration of a replication controller.
 
@@ -7709,6 +7959,7 @@ class ReplicationController(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -7717,7 +7968,7 @@ class ReplicationController(HikaruBase):
 
 
 @dataclass
-class ReplicationControllerList(HikaruBase):
+class ReplicationControllerList(HikaruDocumentBase):
     """
     ReplicationControllerList is a collection of replication controllers.
 
@@ -7738,6 +7989,7 @@ class ReplicationControllerList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ReplicationController]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7761,6 +8013,7 @@ class ScopedResourceSelectorRequirement(HikaruBase):
         must be empty. This array is replaced during a strategic merge patch.
     """
 
+    version = 'v1'
     operator: str
     scopeName: str
     values: Optional[List[str]] = field(default_factory=list)
@@ -7778,6 +8031,7 @@ class ScopeSelector(HikaruBase):
     matchExpressions: A list of scope selector requirements by scope of the resources.
     """
 
+    version = 'v1'
     matchExpressions: Optional[List[ScopedResourceSelectorRequirement]] = field(default_factory=list)
 
 
@@ -7799,6 +8053,7 @@ class ResourceQuotaSpec(HikaruBase):
         specified, the quota matches all objects.
     """
 
+    version = 'v1'
     scopeSelector: Optional[ScopeSelector] = None
     hard: Optional[Dict[str, str]] = field(default_factory=dict)
     scopes: Optional[List[str]] = field(default_factory=list)
@@ -7817,12 +8072,13 @@ class ResourceQuotaStatus(HikaruBase):
     used: Used is the current observed total usage of the resource in the namespace.
     """
 
+    version = 'v1'
     hard: Optional[Dict[str, str]] = field(default_factory=dict)
     used: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
 @dataclass
-class ResourceQuota(HikaruBase):
+class ResourceQuota(HikaruDocumentBase):
     """
     ResourceQuota sets aggregate quota restrictions enforced per namespace
 
@@ -7845,6 +8101,7 @@ class ResourceQuota(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -7853,7 +8110,7 @@ class ResourceQuota(HikaruBase):
 
 
 @dataclass
-class ResourceQuotaList(HikaruBase):
+class ResourceQuotaList(HikaruDocumentBase):
     """
     ResourceQuotaList is a list of ResourceQuota items.
 
@@ -7874,6 +8131,7 @@ class ResourceQuotaList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ResourceQuota]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7881,7 +8139,7 @@ class ResourceQuotaList(HikaruBase):
 
 
 @dataclass
-class Secret(HikaruBase):
+class Secret(HikaruDocumentBase):
     """
     Secret holds secret data of a certain type. The total bytes of the values in the Data
     field must be less than MaxSecretSize bytes.
@@ -7913,6 +8171,7 @@ class Secret(HikaruBase):
         stringData field is never output when reading from the API.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     immutable: Optional[bool] = None
     kind: Optional[str] = None
@@ -7923,7 +8182,7 @@ class Secret(HikaruBase):
 
 
 @dataclass
-class SecretList(HikaruBase):
+class SecretList(HikaruDocumentBase):
     """
     SecretList is a list of Secret.
 
@@ -7944,6 +8203,7 @@ class SecretList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Secret]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7951,7 +8211,7 @@ class SecretList(HikaruBase):
 
 
 @dataclass
-class ServiceAccount(HikaruBase):
+class ServiceAccount(HikaruDocumentBase):
     """
     ServiceAccount binds together: * a name, understood by users, and perhaps by
     peripheral systems, for an identity * a principal that can be authenticated and
@@ -7984,6 +8244,7 @@ class ServiceAccount(HikaruBase):
         https://kubernetes.io/docs/concepts/configuration/secret
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     automountServiceAccountToken: Optional[bool] = None
     kind: Optional[str] = None
@@ -7993,7 +8254,7 @@ class ServiceAccount(HikaruBase):
 
 
 @dataclass
-class ServiceAccountList(HikaruBase):
+class ServiceAccountList(HikaruDocumentBase):
     """
     ServiceAccountList is a list of ServiceAccount objects
 
@@ -8014,6 +8275,7 @@ class ServiceAccountList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[ServiceAccount]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8058,6 +8320,7 @@ class ServicePort(HikaruBase):
         https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
     """
 
+    version = 'v1'
     port: int
     appProtocol: Optional[str] = None
     name: Optional[str] = None
@@ -8079,6 +8342,7 @@ class ClientIPConfig(HikaruBase):
         Default value is 10800(for 3 hours).
     """
 
+    version = 'v1'
     timeoutSeconds: Optional[int] = None
 
 
@@ -8093,6 +8357,7 @@ class SessionAffinityConfig(HikaruBase):
     clientIP: clientIP contains the configurations of Client IP based session affinity.
     """
 
+    version = 'v1'
     clientIP: Optional[ClientIPConfig] = None
 
 
@@ -8253,6 +8518,7 @@ class ServiceSpec(HikaruBase):
         version.
     """
 
+    version = 'v1'
     allocateLoadBalancerNodePorts: Optional[bool] = None
     clusterIP: Optional[str] = None
     externalName: Optional[str] = None
@@ -8300,6 +8566,7 @@ class Condition(HikaruBase):
         date with respect to the current state of the instance.
     """
 
+    version = 'v1'
     lastTransitionTime: Time
     message: str
     reason: str
@@ -8324,6 +8591,7 @@ class PortStatus(HikaruBase):
         values must have names that comply with the format foo.example.com/CamelCase.
     """
 
+    version = 'v1'
     port: int
     protocol: str
     error: Optional[str] = None
@@ -8346,6 +8614,7 @@ class LoadBalancerIngress(HikaruBase):
         service should have an entry in it
     """
 
+    version = 'v1'
     hostname: Optional[str] = None
     ip: Optional[str] = None
     ports: Optional[List[PortStatus]] = field(default_factory=list)
@@ -8363,6 +8632,7 @@ class LoadBalancerStatus(HikaruBase):
         intended for the service should be sent to these ingress points.
     """
 
+    version = 'v1'
     ingress: Optional[List[LoadBalancerIngress]] = field(default_factory=list)
 
 
@@ -8379,12 +8649,13 @@ class ServiceStatus(HikaruBase):
     conditions: Current service state
     """
 
+    version = 'v1'
     loadBalancer: Optional[LoadBalancerStatus] = None
     conditions: Optional[List[Condition]] = field(default_factory=list)
 
 
 @dataclass
-class Service(HikaruBase):
+class Service(HikaruDocumentBase):
     """
     Service is a named abstraction of software service (for example, mysql) consisting of
     local port (for example 3306) that the proxy listens on, and the selector that
@@ -8410,6 +8681,7 @@ class Service(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -8418,7 +8690,7 @@ class Service(HikaruBase):
 
 
 @dataclass
-class ServiceList(HikaruBase):
+class ServiceList(HikaruDocumentBase):
     """
     ServiceList holds a list of services.
 
@@ -8438,6 +8710,7 @@ class ServiceList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     items: List[Service]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8463,12 +8736,13 @@ class IngressClassSpec(HikaruBase):
         require extra parameters.
     """
 
+    version = 'v1'
     controller: Optional[str] = None
     parameters: Optional[TypedLocalObjectReference] = None
 
 
 @dataclass
-class IngressClass(HikaruBase):
+class IngressClass(HikaruDocumentBase):
     """
     IngressClass represents the class of the Ingress, referenced by the Ingress Spec. The
     `ingressclass.kubernetes.io/is-default-class` annotation can be used to indicate that
@@ -8493,6 +8767,7 @@ class IngressClass(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -8500,7 +8775,7 @@ class IngressClass(HikaruBase):
 
 
 @dataclass
-class IngressClassList(HikaruBase):
+class IngressClassList(HikaruDocumentBase):
     """
     IngressClassList is a collection of IngressClasses.
 
@@ -8519,6 +8794,7 @@ class IngressClassList(HikaruBase):
     metadata: Standard list metadata.
     """
 
+    version = 'v1'
     items: List[IngressClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8539,6 +8815,7 @@ class ServiceBackendPort(HikaruBase):
         mutually exclusive setting with "Name".
     """
 
+    version = 'v1'
     name: Optional[str] = None
     number: Optional[int] = None
 
@@ -8557,6 +8834,7 @@ class IngressServiceBackend(HikaruBase):
         IngressServiceBackend.
     """
 
+    version = 'v1'
     name: str
     port: Optional[ServiceBackendPort] = None
 
@@ -8576,6 +8854,7 @@ class IngressBackend(HikaruBase):
         setting with "Resource".
     """
 
+    version = 'v1'
     resource: Optional[TypedLocalObjectReference] = None
     service: Optional[IngressServiceBackend] = None
 
@@ -8609,6 +8888,7 @@ class HTTPIngressPath(HikaruBase):
         all path types.
     """
 
+    version = 'v1'
     backend: IngressBackend
     path: Optional[str] = None
     pathType: Optional[str] = None
@@ -8628,6 +8908,7 @@ class HTTPIngressRuleValue(HikaruBase):
     paths: A collection of paths that map requests to backends.
     """
 
+    version = 'v1'
     paths: List[HTTPIngressPath]
 
 
@@ -8662,6 +8943,7 @@ class IngressRule(HikaruBase):
     http:
     """
 
+    version = 'v1'
     host: Optional[str] = None
     http: Optional[HTTPIngressRuleValue] = None
 
@@ -8685,6 +8967,7 @@ class IngressTLS(HikaruBase):
         unspecified.
     """
 
+    version = 'v1'
     secretName: Optional[str] = None
     hosts: Optional[List[str]] = field(default_factory=list)
 
@@ -8718,6 +9001,7 @@ class IngressSpec(HikaruBase):
         if the ingress controller fulfilling the ingress supports SNI.
     """
 
+    version = 'v1'
     defaultBackend: Optional[IngressBackend] = None
     ingressClassName: Optional[str] = None
     rules: Optional[List[IngressRule]] = field(default_factory=list)
@@ -8735,11 +9019,12 @@ class IngressStatus(HikaruBase):
     loadBalancer: LoadBalancer contains the current status of the load-balancer.
     """
 
+    version = 'v1'
     loadBalancer: Optional[LoadBalancerStatus] = None
 
 
 @dataclass
-class Ingress(HikaruBase):
+class Ingress(HikaruDocumentBase):
     """
     Ingress is a collection of rules that allow inbound connections to reach the endpoints
     defined by a backend. An Ingress can be configured to give services
@@ -8765,6 +9050,7 @@ class Ingress(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -8773,7 +9059,7 @@ class Ingress(HikaruBase):
 
 
 @dataclass
-class IngressList(HikaruBase):
+class IngressList(HikaruDocumentBase):
     """
     IngressList is a collection of Ingress.
 
@@ -8793,6 +9079,7 @@ class IngressList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[Ingress]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8819,6 +9106,7 @@ class NetworkPolicyPort(HikaruBase):
         this field defaults to TCP.
     """
 
+    version = 'v1'
     endPort: Optional[int] = None
     port: Optional[IntOrString] = None
     protocol: Optional[str] = None
@@ -8841,6 +9129,7 @@ class IPBlock(HikaruBase):
         rejected if they are outside the CIDR range
     """
 
+    version = 'v1'
     cidr: str
     except_: Optional[List[str]] = field(default_factory=list)
 
@@ -8869,6 +9158,7 @@ class NetworkPolicyPeer(HikaruBase):
         Otherwise it selects the Pods matching PodSelector in the policy's own Namespace.
     """
 
+    version = 'v1'
     ipBlock: Optional[IPBlock] = None
     namespaceSelector: Optional[LabelSelector] = None
     podSelector: Optional[LabelSelector] = None
@@ -8896,6 +9186,7 @@ class NetworkPolicyEgressRule(HikaruBase):
         allows traffic only if the traffic matches at least one item in the to list.
     """
 
+    version = 'v1'
     ports: Optional[List[NetworkPolicyPort]] = field(default_factory=list)
     to: Optional[List[NetworkPolicyPeer]] = field(default_factory=list)
 
@@ -8922,6 +9213,7 @@ class NetworkPolicyIngressRule(HikaruBase):
         traffic only if the traffic matches at least one port in the list.
     """
 
+    version = 'v1'
     from_: Optional[List[NetworkPolicyPeer]] = field(default_factory=list)
     ports: Optional[List[NetworkPolicyPort]] = field(default_factory=list)
 
@@ -8965,6 +9257,7 @@ class NetworkPolicySpec(HikaruBase):
         "Ingress" ]). This field is beta-level in 1.8
     """
 
+    version = 'v1'
     podSelector: LabelSelector
     egress: Optional[List[NetworkPolicyEgressRule]] = field(default_factory=list)
     ingress: Optional[List[NetworkPolicyIngressRule]] = field(default_factory=list)
@@ -8972,7 +9265,7 @@ class NetworkPolicySpec(HikaruBase):
 
 
 @dataclass
-class NetworkPolicy(HikaruBase):
+class NetworkPolicy(HikaruDocumentBase):
     """
     NetworkPolicy describes what network traffic is allowed for a set of Pods
 
@@ -8992,6 +9285,7 @@ class NetworkPolicy(HikaruBase):
     spec: Specification of the desired behavior for this NetworkPolicy.
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -8999,7 +9293,7 @@ class NetworkPolicy(HikaruBase):
 
 
 @dataclass
-class NetworkPolicyList(HikaruBase):
+class NetworkPolicyList(HikaruDocumentBase):
     """
     NetworkPolicyList is a list of NetworkPolicy objects.
 
@@ -9019,6 +9313,7 @@ class NetworkPolicyList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[NetworkPolicy]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9037,6 +9332,7 @@ class Overhead(HikaruBase):
         pod.
     """
 
+    version = 'v1'
     podFixed: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
@@ -9058,12 +9354,13 @@ class Scheduling(HikaruBase):
         the pod and the RuntimeClass.
     """
 
+    version = 'v1'
     nodeSelector: Optional[Dict[str, str]] = field(default_factory=dict)
     tolerations: Optional[List[Toleration]] = field(default_factory=list)
 
 
 @dataclass
-class RuntimeClass(HikaruBase):
+class RuntimeClass(HikaruDocumentBase):
     """
     RuntimeClass defines a class of container runtime supported in the cluster. The
     RuntimeClass is used to determine which container runtime is used to run all
@@ -9103,6 +9400,7 @@ class RuntimeClass(HikaruBase):
         nil, this RuntimeClass is assumed to be supported by all nodes.
     """
 
+    version = 'v1'
     handler: str
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9112,7 +9410,7 @@ class RuntimeClass(HikaruBase):
 
 
 @dataclass
-class RuntimeClassList(HikaruBase):
+class RuntimeClassList(HikaruDocumentBase):
     """
     RuntimeClassList is a list of RuntimeClass objects.
 
@@ -9132,6 +9430,7 @@ class RuntimeClassList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[RuntimeClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9151,6 +9450,7 @@ class Preconditions(HikaruBase):
     uid: Specifies the target UID.
     """
 
+    version = 'v1'
     resourceVersion: Optional[str] = None
     uid: Optional[str] = None
 
@@ -9194,6 +9494,7 @@ class DeleteOptions(HikaruBase):
         processed
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     gracePeriodSeconds: Optional[int] = None
     kind: Optional[str] = None
@@ -9216,6 +9517,7 @@ class RoleRef(HikaruBase):
     name: Name is the name of resource being referenced
     """
 
+    version = 'v1'
     apiGroup: str
     kind: str
     name: str
@@ -9243,6 +9545,7 @@ class Subject(HikaruBase):
         report an error.
     """
 
+    version = 'v1'
     kind: str
     name: str
     apiGroup: Optional[str] = None
@@ -9250,7 +9553,7 @@ class Subject(HikaruBase):
 
 
 @dataclass
-class ClusterRoleBinding(HikaruBase):
+class ClusterRoleBinding(HikaruDocumentBase):
     """
     ClusterRoleBinding references a ClusterRole, but not contain it. It can reference a
     ClusterRole in the global namespace, and adds who information via Subject.
@@ -9272,6 +9575,7 @@ class ClusterRoleBinding(HikaruBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
+    version = 'v1'
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9280,7 +9584,7 @@ class ClusterRoleBinding(HikaruBase):
 
 
 @dataclass
-class ClusterRoleBindingList(HikaruBase):
+class ClusterRoleBindingList(HikaruDocumentBase):
     """
     ClusterRoleBindingList is a collection of ClusterRoleBindings
 
@@ -9299,6 +9603,7 @@ class ClusterRoleBindingList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1'
     items: List[ClusterRoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9318,6 +9623,7 @@ class AggregationRule(HikaruBase):
         then the ClusterRole's permissions will be added
     """
 
+    version = 'v1'
     clusterRoleSelectors: Optional[List[LabelSelector]] = field(default_factory=list)
 
 
@@ -9347,6 +9653,7 @@ class PolicyRule(HikaruBase):
         represents all resources.
     """
 
+    version = 'v1'
     verbs: List[str]
     apiGroups: Optional[List[str]] = field(default_factory=list)
     nonResourceURLs: Optional[List[str]] = field(default_factory=list)
@@ -9355,7 +9662,7 @@ class PolicyRule(HikaruBase):
 
 
 @dataclass
-class ClusterRole(HikaruBase):
+class ClusterRole(HikaruDocumentBase):
     """
     ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
     as a unit by a RoleBinding or ClusterRoleBinding.
@@ -9378,6 +9685,7 @@ class ClusterRole(HikaruBase):
     rules: Rules holds all the PolicyRules for this ClusterRole
     """
 
+    version = 'v1'
     aggregationRule: Optional[AggregationRule] = None
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9386,7 +9694,7 @@ class ClusterRole(HikaruBase):
 
 
 @dataclass
-class ClusterRoleList(HikaruBase):
+class ClusterRoleList(HikaruDocumentBase):
     """
     ClusterRoleList is a collection of ClusterRoles
 
@@ -9405,6 +9713,7 @@ class ClusterRoleList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1'
     items: List[ClusterRole]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9412,7 +9721,7 @@ class ClusterRoleList(HikaruBase):
 
 
 @dataclass
-class RoleBinding(HikaruBase):
+class RoleBinding(HikaruDocumentBase):
     """
     RoleBinding references a role, but does not contain it. It can reference a Role in the
     same namespace or a ClusterRole in the global namespace. It adds who information via
@@ -9437,6 +9746,7 @@ class RoleBinding(HikaruBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
+    version = 'v1'
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9445,7 +9755,7 @@ class RoleBinding(HikaruBase):
 
 
 @dataclass
-class RoleBindingList(HikaruBase):
+class RoleBindingList(HikaruDocumentBase):
     """
     RoleBindingList is a collection of RoleBindings
 
@@ -9464,6 +9774,7 @@ class RoleBindingList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1'
     items: List[RoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9471,7 +9782,7 @@ class RoleBindingList(HikaruBase):
 
 
 @dataclass
-class Role(HikaruBase):
+class Role(HikaruDocumentBase):
     """
     Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit
     by a RoleBinding.
@@ -9491,6 +9802,7 @@ class Role(HikaruBase):
     rules: Rules holds all the PolicyRules for this Role
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -9498,7 +9810,7 @@ class Role(HikaruBase):
 
 
 @dataclass
-class RoleList(HikaruBase):
+class RoleList(HikaruDocumentBase):
     """
     RoleList is a collection of Roles
 
@@ -9517,6 +9829,7 @@ class RoleList(HikaruBase):
     metadata: Standard object's metadata.
     """
 
+    version = 'v1'
     items: List[Role]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9524,7 +9837,7 @@ class RoleList(HikaruBase):
 
 
 @dataclass
-class PriorityClass(HikaruBase):
+class PriorityClass(HikaruDocumentBase):
     """
     PriorityClass defines mapping from a priority class name to the priority integer
     value. The value can be any valid integer.
@@ -9556,6 +9869,7 @@ class PriorityClass(HikaruBase):
         unset. This field is beta-level, gated by the NonPreemptingPriority feature-gate.
     """
 
+    version = 'v1'
     value: int
     apiVersion: Optional[str] = None
     description: Optional[str] = None
@@ -9566,7 +9880,7 @@ class PriorityClass(HikaruBase):
 
 
 @dataclass
-class PriorityClassList(HikaruBase):
+class PriorityClassList(HikaruDocumentBase):
     """
     PriorityClassList is a collection of priority classes.
 
@@ -9586,6 +9900,7 @@ class PriorityClassList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[PriorityClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9593,7 +9908,7 @@ class PriorityClassList(HikaruBase):
 
 
 @dataclass
-class TokenRequest(HikaruBase):
+class TokenRequest(HikaruDocumentBase):
     """
     TokenRequest contains parameters of a service account token.
 
@@ -9607,6 +9922,7 @@ class TokenRequest(HikaruBase):
         "TokenRequestSpec".
     """
 
+    version = 'v1'
     audience: str
     expirationSeconds: Optional[int] = None
 
@@ -9689,6 +10005,7 @@ class CSIDriverSpec(HikaruBase):
         field is beta.
     """
 
+    version = 'v1'
     attachRequired: Optional[bool] = None
     fsGroupPolicy: Optional[str] = None
     podInfoOnMount: Optional[bool] = None
@@ -9699,7 +10016,7 @@ class CSIDriverSpec(HikaruBase):
 
 
 @dataclass
-class CSIDriver(HikaruBase):
+class CSIDriver(HikaruDocumentBase):
     """
     CSIDriver captures information about a Container Storage Interface (CSI) volume driver
     deployed on the cluster. Kubernetes attach detach controller uses this object to
@@ -9726,6 +10043,7 @@ class CSIDriver(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     spec: CSIDriverSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9733,7 +10051,7 @@ class CSIDriver(HikaruBase):
 
 
 @dataclass
-class CSIDriverList(HikaruBase):
+class CSIDriverList(HikaruDocumentBase):
     """
     CSIDriverList is a collection of CSIDriver objects.
 
@@ -9753,6 +10071,7 @@ class CSIDriverList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[CSIDriver]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9774,6 +10093,7 @@ class VolumeNodeResources(HikaruBase):
         supported number of volumes on this node is unbounded.
     """
 
+    version = 'v1'
     count: Optional[int] = None
 
 
@@ -9809,6 +10129,7 @@ class CSINodeDriver(HikaruBase):
         empty if driver does not support topology.
     """
 
+    version = 'v1'
     name: str
     nodeID: str
     allocatable: Optional[VolumeNodeResources] = None
@@ -9828,11 +10149,12 @@ class CSINodeSpec(HikaruBase):
         all drivers in the list are uninstalled, this can become empty.
     """
 
+    version = 'v1'
     drivers: List[CSINodeDriver]
 
 
 @dataclass
-class CSINode(HikaruBase):
+class CSINode(HikaruDocumentBase):
     """
     CSINode holds information about all CSI drivers installed on a node. CSI drivers do
     not need to create the CSINode object directly. As long as they use the
@@ -9858,6 +10180,7 @@ class CSINode(HikaruBase):
     metadata: metadata.name must be the Kubernetes node name.
     """
 
+    version = 'v1'
     spec: CSINodeSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9865,7 +10188,7 @@ class CSINode(HikaruBase):
 
 
 @dataclass
-class CSINodeList(HikaruBase):
+class CSINodeList(HikaruDocumentBase):
     """
     CSINodeList is a collection of CSINode objects.
 
@@ -9885,6 +10208,7 @@ class CSINodeList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[CSINode]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9905,6 +10229,7 @@ class TopologySelectorLabelRequirement(HikaruBase):
         entry in Values is ORed.
     """
 
+    version = 'v1'
     key: str
     values: List[str]
 
@@ -9923,11 +10248,12 @@ class TopologySelectorTerm(HikaruBase):
     matchLabelExpressions: A list of topology selector requirements by labels.
     """
 
+    version = 'v1'
     matchLabelExpressions: Optional[List[TopologySelectorLabelRequirement]] = field(default_factory=list)
 
 
 @dataclass
-class StorageClass(HikaruBase):
+class StorageClass(HikaruDocumentBase):
     """
     StorageClass describes the parameters for a class of storage for which
     PersistentVolumes can be dynamically provisioned. StorageClasses are non-namespaced;
@@ -9965,6 +10291,7 @@ class StorageClass(HikaruBase):
         volumes of this storage class.
     """
 
+    version = 'v1'
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
     apiVersion: Optional[str] = None
@@ -9978,7 +10305,7 @@ class StorageClass(HikaruBase):
 
 
 @dataclass
-class StorageClassList(HikaruBase):
+class StorageClassList(HikaruDocumentBase):
     """
     StorageClassList is a collection of storage classes.
 
@@ -9998,6 +10325,7 @@ class StorageClassList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[StorageClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -10022,6 +10350,7 @@ class VolumeAttachmentSource(HikaruBase):
     persistentVolumeName: Name of the persistent volume to attach.
     """
 
+    version = 'v1'
     inlineVolumeSpec: Optional[PersistentVolumeSpec] = None
     persistentVolumeName: Optional[str] = None
 
@@ -10040,6 +10369,7 @@ class VolumeAttachmentSpec(HikaruBase):
     source: Source represents the volume that should be attached.
     """
 
+    version = 'v1'
     attacher: str
     nodeName: str
     source: VolumeAttachmentSource
@@ -10058,6 +10388,7 @@ class VolumeError(HikaruBase):
     time: Time the error was encountered.
     """
 
+    version = 'v1'
     message: Optional[str] = None
     time: Optional[Time] = None
 
@@ -10084,6 +10415,7 @@ class VolumeAttachmentStatus(HikaruBase):
         the attach operation, i.e. the external-attacher.
     """
 
+    version = 'v1'
     attached: bool
     attachError: Optional[VolumeError] = None
     detachError: Optional[VolumeError] = None
@@ -10091,7 +10423,7 @@ class VolumeAttachmentStatus(HikaruBase):
 
 
 @dataclass
-class VolumeAttachment(HikaruBase):
+class VolumeAttachment(HikaruDocumentBase):
     """
     VolumeAttachment captures the intent to attach or detach the specified volume to/from
     the specified node. VolumeAttachment objects are non-namespaced.
@@ -10115,6 +10447,7 @@ class VolumeAttachment(HikaruBase):
         attach or detach operation, i.e. the external-attacher.
     """
 
+    version = 'v1'
     spec: VolumeAttachmentSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -10123,7 +10456,7 @@ class VolumeAttachment(HikaruBase):
 
 
 @dataclass
-class VolumeAttachmentList(HikaruBase):
+class VolumeAttachmentList(HikaruDocumentBase):
     """
     VolumeAttachmentList is a collection of VolumeAttachment objects.
 
@@ -10143,6 +10476,7 @@ class VolumeAttachmentList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
+    version = 'v1'
     items: List[VolumeAttachment]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -10164,6 +10498,7 @@ class GroupVersionForDiscovery(HikaruBase):
         clients the trouble of splitting the GroupVersion.
     """
 
+    version = 'v1'
     groupVersion: str
     version: str
 
@@ -10183,6 +10518,7 @@ class ServerAddressByClientCIDR(HikaruBase):
         CIDR. This can be a hostname, hostname:port, IP or IP:port.
     """
 
+    version = 'v1'
     clientCIDR: str
     serverAddress: str
 
@@ -10218,6 +10554,7 @@ class APIGroup(HikaruBase):
         X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
     """
 
+    version = 'v1'
     name: str
     versions: List[GroupVersionForDiscovery]
     apiVersion: Optional[str] = None
@@ -10245,6 +10582,7 @@ class APIGroupList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     groups: List[APIGroup]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -10284,6 +10622,7 @@ class APIResource(HikaruBase):
     shortNames: shortNames is a list of suggested short names of the resource.
     """
 
+    version = 'v1'
     kind: str
     name: str
     namespaced: bool
@@ -10318,6 +10657,7 @@ class APIResourceList(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     groupVersion: str
     resources: List[APIResource]
     apiVersion: Optional[str] = None
@@ -10352,6 +10692,7 @@ class APIVersions(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
+    version = 'v1'
     serverAddressByClientCIDRs: List[ServerAddressByClientCIDR]
     versions: List[str]
     apiVersion: Optional[str] = None
@@ -10368,6 +10709,7 @@ class Patch(HikaruBase):
 
     Attributes:
     """
+    version = 'v1'
 
 
 @dataclass
@@ -10391,6 +10733,7 @@ class StatusCause(HikaruBase):
         empty there is no information available.
     """
 
+    version = 'v1'
     field: Optional[str] = None
     message: Optional[str] = None
     reason: Optional[str] = None
@@ -10424,6 +10767,7 @@ class StatusDetails(HikaruBase):
         failure. Not all StatusReasons may provide detailed causes.
     """
 
+    version = 'v1'
     group: Optional[str] = None
     kind: Optional[str] = None
     name: Optional[str] = None
@@ -10433,7 +10777,7 @@ class StatusDetails(HikaruBase):
 
 
 @dataclass
-class Status(HikaruBase):
+class Status(HikaruDocumentBase):
     """
     Status is a return value for calls that don't return other objects.
 
@@ -10462,6 +10806,7 @@ class Status(HikaruBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     code: Optional[int] = None
     details: Optional[StatusDetails] = None
@@ -10486,6 +10831,7 @@ class WatchEvent(HikaruBase):
     type:
     """
 
+    version = 'v1'
     object: RawExtension
     type: str
 
@@ -10535,6 +10881,7 @@ class APIServiceSpec(HikaruBase):
     version: Version is the API version this server hosts. For example, "v1"
     """
 
+    version = 'v1'
     groupPriorityMinimum: int
     versionPriority: int
     caBundle: Optional[str] = None
@@ -10559,6 +10906,7 @@ class APIServiceCondition(HikaruBase):
     reason: Unique, one-word, CamelCase reason for the condition's last transition.
     """
 
+    version = 'v1'
     status: str
     type: str
     lastTransitionTime: Optional[Time] = None
@@ -10577,11 +10925,12 @@ class APIServiceStatus(HikaruBase):
     conditions: Current service state of apiService.
     """
 
+    version = 'v1'
     conditions: Optional[List[APIServiceCondition]] = field(default_factory=list)
 
 
 @dataclass
-class APIService(HikaruBase):
+class APIService(HikaruDocumentBase):
     """
     APIService represents a server for a particular GroupVersion. Name must be
     "version.group".
@@ -10602,6 +10951,7 @@ class APIService(HikaruBase):
     status: Status contains derived information about an API server
     """
 
+    version = 'v1'
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -10610,7 +10960,7 @@ class APIService(HikaruBase):
 
 
 @dataclass
-class APIServiceList(HikaruBase):
+class APIServiceList(HikaruDocumentBase):
     """
     APIServiceList is a list of APIService objects.
 
@@ -10629,6 +10979,7 @@ class APIServiceList(HikaruBase):
     metadata:
     """
 
+    version = 'v1'
     items: List[APIService]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
