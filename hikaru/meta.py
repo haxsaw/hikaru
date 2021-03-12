@@ -78,8 +78,8 @@ CatalogEntry = namedtuple('CatalogEntry', ['classname', 'attrname', 'path'])
 @dataclass
 class HikaruBase(object):
     def __post_init__(self):
-        self.type_catalog = defaultdict(list)
-        self.field_catalog = defaultdict(list)
+        self._type_catalog = defaultdict(list)
+        self._field_catalog = defaultdict(list)
         self._capture_catalog()
 
     @staticmethod
@@ -100,21 +100,21 @@ class HikaruBase(object):
         #
         # catalog entries are of the form:
         # (classname, attrname, idx (possibly None), path-list, obj)
-        # type_catalog is keyed by the classname
-        # field_catalog is keyed by the attribute name
+        # _type_catalog is keyed by the classname
+        # _field_catalog is keyed by the attribute name
         # first, add an entry for this item
         if idx is None:
             ce = CatalogEntry(other.__class__.__name__, name, [name])
         else:
             ce = CatalogEntry(other.__class__.__name__, name, [name, idx])
-        self.type_catalog[other.__class__.__name__].append(ce)
-        self.field_catalog[name].append(ce)
+        self._type_catalog[other.__class__.__name__].append(ce)
+        self._field_catalog[name].append(ce)
 
         # now merge in the catalog of other if it has one
         if isinstance(other, HikaruBase):
             assert isinstance(other, HikaruBase)
-            self._process_other_catalog(other.type_catalog, self.type_catalog, idx, name)
-            self._process_other_catalog(other.field_catalog, self.field_catalog,
+            self._process_other_catalog(other._type_catalog, self._type_catalog, idx, name)
+            self._process_other_catalog(other._field_catalog, self._field_catalog,
                                         idx, name)
 
     def _capture_catalog(self):
@@ -132,8 +132,8 @@ class HikaruBase(object):
             if (type(assignment_type) == type and
                     issubclass(assignment_type, (int, str, bool, float, dict))):
                 ce = CatalogEntry(assignment_type.__name__, f.name, [f.name])
-                self.field_catalog[f.name].append(ce)
-                self.type_catalog[assignment_type.__name__].append(ce)
+                self._field_catalog[f.name].append(ce)
+                self._type_catalog[assignment_type.__name__].append(ce)
             elif is_dataclass(assignment_type) and issubclass(assignment_type,
                                                               HikaruBase):
                 if obj:
@@ -148,22 +148,86 @@ class HikaruBase(object):
                     elif (type(item_type) == type and
                             issubclass(item_type, (int, str, bool, float, dict))):
                         ce = CatalogEntry(item_type.__name__, f.name, [f.name])
-                        self.field_catalog[f.name].append(ce)
-                        self.type_catalog[item_type.__name__].append(ce)
+                        self._field_catalog[f.name].append(ce)
+                        self._type_catalog[item_type.__name__].append(ce)
 
-    def repopulate_catalog(self) -> NoneType:
+    def _clear_catalog(self):
+        # clear the catalogs from this object down into any contained
+        # catalog-holding objects
+        self._field_catalog.clear()
+        self._type_catalog.clear()
+        for f in fields(self):
+            a = getattr(self, f.name)
+            if a is None:
+                continue
+            if is_dataclass(a) and isinstance(a, HikaruBase):
+                a._clear_catalog()
+            elif type(a) == list and len(a) > 0:
+                for i in a:
+                    if is_dataclass(i) and isinstance(i, HikaruBase):
+                        i._clear_catalog()
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+        else:
+            flist = fields(self)
+            for f in flist:
+                left = getattr(self, f.name)
+                right = getattr(other, f.name)
+                if left.__class__ != right.__class__:
+                    return False
+                elif isinstance(left, HikaruBase):
+                    result = left.__eq__(right)
+                    if not result:
+                        return False
+                elif left != right:
+                    # this covers list, dict and the scalars
+                    # tuples aren't interchangeable with lists!
+                    return False
+        return True
+
+    def repopulate_catalog(self):
         """
-        re-creates the catalog for this object from scratch
+        re-creates the catalog for this object (and any contained objects) from scratch
 
         If a HikaruBase model gets changed after it was populated from YAML or
-        by Python source code, it may be desireable to re-create the catalogs
+        by Python source code, it may be desirable to re-create the catalogs
         to inspect the new model. This method causes the old catalogs to be
         dropped and new catalogs to be loaded with the data currently in the
         model.
         """
-        self.field_catalog.clear()
-        self.type_catalog.clear()
+        self._clear_catalog()
         self._capture_catalog()
+        return self
+
+    def dup(self):
+        """
+        Create a deep copy of self
+        :return: identical instance of self plus any contained instances
+        """
+        klass = self.__class__
+        np = num_positional(klass.__init__) - 1
+        copy = klass(*([None] * np), **{})
+        for f in fields(self):
+            a = getattr(self, f.name)
+            if isinstance(a, HikaruBase):
+                setattr(copy, f.name, a.dup())
+            elif type(a) == dict:
+                setattr(copy, f.name, dict(a))
+            elif type(a) == list:
+                new_list = []
+                setattr(copy, f.name, new_list)
+                for i in a:
+                    if isinstance(i, HikaruBase):
+                        new_list.append(i.dup())
+                    elif type(i) == dict:
+                        new_list.append(dict(i))
+                    else:
+                        new_list.append(i)
+            else:
+                setattr(copy, f.name, a)
+        return copy
 
     def find_by_name(self, name: str, following: Union[str, List] = None) -> \
             List[CatalogEntry]:
@@ -219,7 +283,7 @@ class HikaruBase(object):
         :return: list of CatalogEntry objects that match the query criteria.
         """
         result = list()
-        field_list = self.field_catalog.get(name)
+        field_list = self._field_catalog.get(name)
         if field_list is not None:
             result.extend(field_list)
 
@@ -376,47 +440,53 @@ class HikaruBase(object):
         # open the call to the 'constructor'
         code.append(f'{self.__class__.__name__}(')
         # now process all attributes of the class
+        parameters = []
         for f, p in zip(all_fields, tuple(sig.parameters.values())):
+            one_param = []
             is_required = get_origin(f.type) is not Union
-            # is_required = p.api_version_group in (Parameter.POSITIONAL_ONLY,
-            #                          Parameter.POSITIONAL_OR_KEYWORD)
             val = getattr(self, f.name)
             if val is None and not is_required:  # should only be for optional args
                 continue
             if p.kind in (Parameter.KEYWORD_ONLY, Parameter.POSITIONAL_OR_KEYWORD):
-                code.append(f'{f.name}=')
+                one_param.append(f'{f.name}=')
             if isinstance(val, HikaruBase):
                 # then this attr is a nested object; get its code and set the
                 # value of the attribute to it
                 inner_code = val.as_python_source()
-                code.append(inner_code)
+                one_param.append(inner_code)
             elif isinstance(val, list):
-                code.append("[")
+                one_param.append("[")
+                list_values = []
                 for item in val:
                     if isinstance(item, HikaruBase):
                         inner_code = item.as_python_source()
-                        code.append(inner_code)
+                        list_values.append(inner_code)
                     elif isinstance(item, str):
-                        code.append(f"'{item}'")
+                        list_values.append(f"'{item}'")
                     elif isinstance(item, dict):
-                        code.append("{")
+                        list_values.append("{")
+                        dict_pairs = []
                         for k, v in item.items():
-                            code.append(f"'{k}': '{v}',")
-                        code.append("}")
+                            dict_pairs.append(f"'{k}': '{v}'")
+                        list_values.append(",".join(dict_pairs))
+                        list_values.append("}")
                     else:
-                        code.append(str(val))
-                    code.append(",")
-                code.append("]")
+                        list_values.append(str(val))
+                one_param.append(",".join(list_values))
+                one_param.append("]")
             elif isinstance(val, str):
-                code.append(f"'{val}'")
+                one_param.append(f"'{val}'")
             elif isinstance(val, dict):
-                code.append("{")
+                one_param.append("{")
+                dict_pairs = []
                 for k, v in val.items():
-                    code.append(f"'{k}': '{v}',")
-                code.append("}")
+                    dict_pairs.append(f"'{k}': '{v}'")
+                one_param.append(",".join(dict_pairs))
+                one_param.append("}")
             else:
-                code.append(str(val))
-            code.append(",")
+                one_param.append(str(val))
+            parameters.append("".join(one_param))
+        code.append(",".join(parameters))
         code.append(")")
         return " ".join(code)
 

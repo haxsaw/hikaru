@@ -24,14 +24,16 @@ from hikaru.model import Pod
 p = None
 
 
-def setup_pod():
-    global p
+def setup_pod() -> Pod:
     docs = load_full_yaml(stream=open("test.yaml", "r"))
-    p = docs[0]
+    pod = docs[0]
+    assert isinstance(pod, Pod)
+    return pod
 
 
 def setup():
-    setup_pod()
+    global p
+    p = setup_pod()
 
 
 def test01():
@@ -383,6 +385,44 @@ def test36():
     assert len(results) == 1
 
 
+def test37():
+    """
+    check that equals returns true for the same object
+    """
+    assert isinstance(p, Pod)
+    q = setup_pod()
+    assert p == q
+
+
+def test38():
+    """
+    check that equals returns False for a tweaked object
+    """
+    assert isinstance(p, Pod)
+    q: Pod = setup_pod()
+    q.spec.containers[1].securityContext.capabilities.add.append("wibble")
+    assert p != q
+
+
+def test39():
+    """
+    check that dup produces equal objects
+    """
+    assert isinstance(p, Pod)
+    q: Pod = p.dup()
+    assert p == q
+
+
+def test40():
+    """
+    check that a twiddled dup'd object isn't equals
+    """
+    assert isinstance(p, Pod)
+    q: Pod = p.dup()
+    q.spec.containers[1].lifecycle.postStart.httpGet.port = "1234"
+    assert p != q
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
@@ -392,4 +432,3 @@ if __name__ == "__main__":
             v()
         except Exception as e:
             print(f'{k} failed with {str(e)}')
-

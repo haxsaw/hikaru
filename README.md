@@ -12,7 +12,7 @@ hikaru uses type-annotated Python dataclasses to represent each of the kinds of
 objects defined in the Kubernetes API, so when used with and IDE that understands
 Python type annotations, hikaru enables the IDE to provide the user direct assistance as
 to what parameters are available, what types each parameter must be, and which
-are optional. Assembled Kubernetes object can be rendered into YAML that can be
+are optional. Assembled hikaru object can be rendered into YAML that can be
 processed by regular Kubernetes tools.
 
 ### From YAML
@@ -97,8 +97,22 @@ You can create Kubernetes objects in Python:
         - name: web
           image: kiamol/ch02-hello-kiamol
 
-The pieces can be created separately and even stored in a standard components
-library module for assembly later:
+If you use hikaru to parse this back in as Python objects, you can then ask 
+hikaru to output Python source code that will re-create it (thus providing a
+migration path):
+
+    from hikaru import get_python_source, load_full_yaml
+    docs = load_full_yaml(path="to/the/above.yaml")
+    print(get_python_source(docs[0], assign_to='x'))
+
+Which results in:
+
+    x = Pod(apiVersion='v1', kind='Pod', metadata=ObjectMeta(name='hello-kiamol-3'),
+            spec=PodSpec(containers=[Container(name='web', image='kiamol/ch02-hello-kiamol')]))
+
+The pieces of complex objects can be created separately and even stored in a
+standard components library module for assembly later, as opposed to using a
+templating system to piece text files together:
 
     from component_lib import web_container, lb_container
     from hikaru.model import Pod, ObjectMeta, PodSpec
@@ -107,6 +121,13 @@ library module for assembly later:
             metadata=om,
             spec=PodSpec(containers=[web_container, lb_container])
             )
+
+Hikaru objects can be tested for equivalence with '==', and you can also easily
+create deep copies of entire object structures with dup(). This latter is useful
+in cases where you have a component that you want to use multiple times in a
+model but need it slightly tweaked in each use; a shared instance can't have
+different values at each use, so it's easy to make a copy that can be customised
+in isolation.
 
 Finally, every hikaru object that holds other properties and objects have methods
 that allow you to search the entire collection of objects. This lets you find various
@@ -144,4 +165,4 @@ cluster.
 
 ### About
 
-Hikaru is Mr. Sulu's first name, a famed helmsman in fiction.
+Hikaru is Mr. Sulu's first name, a famed fictional helmsman.
