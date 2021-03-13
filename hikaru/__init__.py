@@ -27,6 +27,8 @@ model_classes = [k for k, v in globals().items()
                  if type(v) == type and
                  k != HikaruBase]
 
+__version__ = "0.1"
+
 __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_source",
            "get_clean_dict", "load_full_yaml"]
 __all__.extend(model_classes)

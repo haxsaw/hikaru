@@ -344,14 +344,44 @@ class HikaruBase(object):
                     raise RuntimeError(f"Path {path} leads to None at {p}")
         return obj
 
-    def parse(self, yaml) -> None:
+    @classmethod
+    def from_yaml(cls, yaml):
         """
-        process out the object's data items from the supplied yaml object.
+        Create an instance of this HikaruBase subclass from the provided yaml
+
+        This factory method creates a new instance of the class upon which it is
+        invoked and fills the instance with data from supplied yaml object. It is
+        a short-cut to creating an empty instance yourself and then invoking
+        process(yaml) on that instance (this method hides the details of making
+        an empty instance).
+
+        This method can fill an instance with suitable YAML object, whether a
+        full document or a fragment of one, as long as the type of the YAML
+        object being processed and the subclass of HikaruBase agree. If a fragment
+        of a object that would otherwise be part of a larger object, the fragment
+        should not have the same indentation as it would as part of the larger
+        document, but instead should be fully "outdented" to the left as if it
+        was the standalone document itself.
+
+        :param yaml: a ruamel.yaml YAML instance
+        :return: an instance of a subclass of HikaruBase
+        """
+        np = num_positional(cls.__init__) - 1
+        inst = cls(*([None] * np), **{})
+        inst.process(yaml)
+        return inst
+
+    def process(self, yaml) -> None:
+        """
+        extract self's data items from the supplied yaml object.
+
         :param yaml: a populated dict-like object that contains keys and values
             that  represent the constructs of a Kubernetes YAML file. Supplied by
-            pyyaml or ruamel.yaml. Results in the construction of a set of
-            Python objects that mirror the structure and contents of the YAML,
-            as well as the population of the type/field catalogs.
+            pyyaml or ruamel.yaml. Results in the construction of a set of hikaru
+            class instances that mirror the structure and contents of the YAML,
+            as well as the population of the type/field catalogs. To ensure proper
+            catalogues, invoke repopulate_catalog() after modifying data or doing
+            multiple sequential parse() calls.
 
         NOTE: it is possible to call parse again, but this will result in
             additional fields added to the existing fields, not a replacement
@@ -385,7 +415,7 @@ class HikaruBase(object):
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
                 np = num_positional(initial_type.__init__) - 1
                 obj = initial_type(*([None] * np), **{})
-                obj.parse(val)
+                obj.process(val)
                 setattr(self, f.name, obj)
             else:
                 origin = get_origin(initial_type)
@@ -402,7 +432,7 @@ class HikaruBase(object):
                         l = []
                         for o in val:
                             obj = target_type(*([None] * np), **{})
-                            obj.parse(o)
+                            obj.process(o)
                             l.append(obj)
                         setattr(self, f.name, l)
                     else:

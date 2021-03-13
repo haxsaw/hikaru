@@ -21,7 +21,7 @@
 import json
 from dataclasses import asdict
 from io import StringIO
-from typing import List
+from typing import List, TextIO
 
 from autopep8 import fix_code
 from ruamel.yaml import YAML
@@ -34,13 +34,16 @@ from hikaru.version_kind import version_kind_map
 
 def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
     """
-    returns formatted Python source that will re-create the supplied object
+    returns PEP8-formatted Python source that will re-create the supplied object
+
+    NOTE: this function can be slow, as formatting the code to be PEP8 compliant
+    can take some time for complex code.
 
     :param obj: an instance of HikaruBase
     :param assign_to: if supplied, must be a legal Python identifier name,
-        as the returned expression will be assigned to that variable.
-    :return: fully formatted Python code that will re-create the supplied
-        object
+        as the returned expression will be assigned to that as a variable.
+    :return: fully PEP8 formatted Python source code that will re-create the
+        supplied object
     """
     code = obj.as_python_source(assign_to=assign_to)
     result = fix_code(code, options={"max_line_length": 90,
@@ -116,7 +119,30 @@ def get_json(obj: HikaruBase) -> str:
     return s
 
 
-def load_full_yaml(path=None, stream=None, yaml=None) -> List[HikaruBase]:
+def load_full_yaml(path: str = None, stream: TextIO = None,
+                   yaml: str = None) -> List[HikaruBase]:
+    """
+    Parse/process the indicated Kubernetes yaml file and return a list of hikaru objects
+
+    This function takes one of the supplied sources of Kubernetes YAML, parses it
+    into separate YAML documents, and then processes those into a list of hikaru
+    objects, one per document.
+
+    NOTE: this function only works on complete Kubernetes message documents, and relies
+    on the presence of both 'apiVersion' and 'kind' being in the top-level object.
+    Other Kubernetes objects represented in ruamel.yaml can be parsed using either the
+    appropriate class's from_yaml() class method, or from an instance's process() method,
+    both of which can only accept a ruamel.yaml instance to process.
+
+    Only one of path, stream or yaml should be supplied. If yaml is supplied in addition
+    to path or stream, only the yaml parameter is used. If stream and path are supplied,
+    then only stream is used.
+
+    :param path: string; path to a yaml file that will be opened, read, and processed
+    :param stream: return of the open() function, or any file-like (TextIO) object
+    :param yaml: string; the actual YAML to process
+    :return: list of HikaruBase subclasses, one for each document in the YAML file
+    """
     if path is None and stream is None and yaml is None:
         raise RuntimeError("One of path, stream, or yaml must be specified")
     objs = []
@@ -131,15 +157,10 @@ def load_full_yaml(path=None, stream=None, yaml=None) -> List[HikaruBase]:
     parser = YAML()
     docs = list(parser.load_all(to_parse))
     for doc in docs:
-        # api_version = doc.get('apiVersion').split('/')[-1]
         _, api_version = process_api_version(doc.get('apiVersion', ""))
         kind = doc.get('kind', "")
         klass = version_kind_map.get((api_version, kind))
-        if klass is None:
-            raise RuntimeError(f"No model class for {(api_version, kind)}")
-        np = num_positional(klass.__init__) - 1
-        inst = klass(*([None] * np), **{})
-        inst.parse(doc)
+        inst = klass.from_yaml(doc)
         objs.append(inst)
 
     return objs

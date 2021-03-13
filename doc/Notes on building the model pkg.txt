@@ -30,7 +30,7 @@ Requirements
 There are extra requirements for building the model than from just using the
 package. Do a
 
-    pip install -r build_requirements.txt
+    pip install -r maintainers_requirements.txt
 
 ...to add these to your environment.
 
