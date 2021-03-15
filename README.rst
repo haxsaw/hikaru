@@ -1,5 +1,8 @@
+======
 hikaru
 ======
+
+**Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
 
 hikaru is a tool that provides you the ability to easily shift between
 YAML and Python representations of your Kubernetes config files, as well
