@@ -1,6 +1,6 @@
 from setuptools import setup
-from hikaru import __version__
 
+__version__ = "0.1"
 
 def get_long_desc():
     return open('README.rst', 'r').read()
@@ -8,7 +8,7 @@ def get_long_desc():
 
 def get_requirements():
     lines = open('requirements.txt', 'r').readlines()
-    reqs = [line.strip() for line in lines if line]
+    reqs = [line.strip() for line in lines if line.strip()]
     return reqs
 
 

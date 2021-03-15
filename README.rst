@@ -24,7 +24,8 @@ From YAML
 
 But you don’t have to start with authoring Python: you can use hikaru to
 parse Kubernetes YAML into these same Python objects, at which point you
-can inspect the created objects, or even have hikaru emit Python source
+can inspect the created objects, modify them and re-generate new YAML,
+or even have hikaru emit Python source
 code that will re- create the same structure but from the Python
 interface.
 
@@ -32,7 +33,7 @@ To YAML, Python, or JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 hikaru can output a Python Kubernetes object as Python source code,
-YAML, or JSON (going to the other two from JSON is coming), allowing you
+YAML, or JSON (going from JSON to the other two is coming), allowing you
 to shift easily between representational formats for various purposes.
 
 Alternative to templating for customisation
@@ -185,7 +186,7 @@ property like so:
 
    execs = p.find_by_name("exec", following='containers.1.lifecycle.httpGet')
 
-These queries result in a list of ‘CatalogEntry’ objects, which are
+These queries result in a list of ``CatalogEntry`` objects, which are
 named tuples that provide the path to the found element. You can acquire
 the actual element for inspection with the ``object_at_path()`` method:
 

@@ -250,10 +250,11 @@ class HikaruBase(object):
         'following' will be considered in order, but they don't have to be directly
         sequential in the model.
 
-        :param name: string containing a name for an attribute somewhere in the model
-            anchored by self. This must be a legal Python identifier, not an integer.
+        :param name: string containing a name for an attribute somewhere in the model,
+            the search for with starts at 'self'. This must be a legal Python identifier,
+            not an integer.
         :param following: Sequence of strings or a single string with elements
-            separated by '.';. These elements must appear somewhere along the path to
+            separated by '.'. These elements must appear somewhere along the path to
             'name' in order, but not necessarily consecutively. These will serve as a
             way to specify 'signposts' along the way to the desired field. Each element
             is either an attribute name or an integer for lists to identify which
@@ -347,7 +348,7 @@ class HikaruBase(object):
     @classmethod
     def from_yaml(cls, yaml):
         """
-        Create an instance of this HikaruBase subclass from the provided yaml
+        Create an instance of this HikaruBase subclass from the provided yaml.
 
         This factory method creates a new instance of the class upon which it is
         invoked and fills the instance with data from supplied yaml object. It is
@@ -458,9 +459,9 @@ class HikaruBase(object):
         :return: single string of formatted python code that if run will re-
             create self.
 
-        NOTE: the returned code string will not include any necessary imports
-            that may be needed to allow the code to actually execute; the caller
-            is expected to supply that boilerplate.
+        NOTE: the returned code string will not include any
+            necessary imports that may be needed to allow the code to actually execute;
+            the caller is expected to supply that boilerplate.
         """
         code = []
         if assign_to is not None:
