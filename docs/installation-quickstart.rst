@@ -13,6 +13,8 @@ Or if installing from source,  cd into the project root an then you can install 
 
     ``python setup.py install``
 
+The project GitHub repository can be found at: https://github.com/haxsaw/hikaru
+
 Quickstart
 ############
 
