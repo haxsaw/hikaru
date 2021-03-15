@@ -70,7 +70,7 @@ To create Python objects from a Kubernetes YAML source, use
    docs = load_full_yaml(stream=open("test.yaml", "r"))
    p = docs[0]
 
-``load_full_yaml()`` loads every YAML document in a YAML file and returns
+``load_full_yaml()`` loads every Kubernetes YAML document in a YAML file and returns
 a list of the resulting hikaru objects found. You can then use the YAML
 property names to navigate the resulting object. If you assert that an
 object is of a known object type, your IDE can provide you assistance in
@@ -130,7 +130,7 @@ providing a migration path):
    docs = load_full_yaml(path="to/the/above.yaml")
    print(get_python_source(docs[0], assign_to='x'))
 
-Which results in:
+...which results in:
 
 .. code:: python
 
@@ -142,8 +142,9 @@ send it back to YAML; hikaru can round-trip YAML through Python and
 then back to the equivalent YAML.
 
 The pieces of complex objects can be created separately and even stored
-in a standard components library module for assembly later, as opposed
-to using a templating system to piece text files together:
+in a standard components library module for assembly later, or returned as the
+value of a factory function, as opposed to using a templating system to piece
+text files together:
 
 .. code:: python
 
@@ -165,8 +166,8 @@ to make a copy that can be customised in isolation.
 Finally, every hikaru object that holds other properties and objects
 have methods that allow you to search the entire collection of objects.
 This lets you find various objects of interest for review and checking
-against policies. For example, if we had a Pod ‘p’ that was pulled in
-with load_full_yaml(), we could examine all of the Container objects
+against policies and conventions. For example, if we had a Pod ‘p’ that was
+pulled in with load_full_yaml(), we could examine all of the Container objects
 with:
 
 .. code:: python

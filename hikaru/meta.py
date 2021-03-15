@@ -72,7 +72,7 @@ def num_positional(acallable) -> int:
     return num_pos
 
 
-CatalogEntry = namedtuple('CatalogEntry', ['classname', 'attrname', 'path'])
+CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
 
 @dataclass
@@ -87,7 +87,7 @@ class HikaruBase(object):
         for k, ce_list in src_cat.items():
             for ce in ce_list:
                 assert isinstance(ce, CatalogEntry)
-                new_ce = CatalogEntry(ce.classname, ce.attrname, ce.path[:])
+                new_ce = CatalogEntry(ce.cls, ce.attrname, ce.path[:])
                 if idx is not None:
                     new_ce.path.insert(0, idx)
                 new_ce.path.insert(0, name)
@@ -99,15 +99,15 @@ class HikaruBase(object):
         # idx: optional integer index within name if name is a list
         #
         # catalog entries are of the form:
-        # (classname, attrname, idx (possibly None), path-list, obj)
-        # _type_catalog is keyed by the classname
+        # (cls, attrname, path-list)
+        # _type_catalog is keyed by the cls
         # _field_catalog is keyed by the attribute name
         # first, add an entry for this item
         if idx is None:
-            ce = CatalogEntry(other.__class__.__name__, name, [name])
+            ce = CatalogEntry(other.__class__, name, [name])
         else:
-            ce = CatalogEntry(other.__class__.__name__, name, [name, idx])
-        self._type_catalog[other.__class__.__name__].append(ce)
+            ce = CatalogEntry(other.__class__, name, [name, idx])
+        self._type_catalog[other.__class__].append(ce)
         self._field_catalog[name].append(ce)
 
         # now merge in the catalog of other if it has one
@@ -131,9 +131,9 @@ class HikaruBase(object):
                 continue
             if (type(assignment_type) == type and
                     issubclass(assignment_type, (int, str, bool, float, dict))):
-                ce = CatalogEntry(assignment_type.__name__, f.name, [f.name])
+                ce = CatalogEntry(assignment_type, f.name, [f.name])
                 self._field_catalog[f.name].append(ce)
-                self._type_catalog[assignment_type.__name__].append(ce)
+                self._type_catalog[assignment_type].append(ce)
             elif is_dataclass(assignment_type) and issubclass(assignment_type,
                                                               HikaruBase):
                 if obj:
@@ -147,9 +147,9 @@ class HikaruBase(object):
                             self._merge_catalog_of(item, f.name, i)
                     elif (type(item_type) == type and
                             issubclass(item_type, (int, str, bool, float, dict))):
-                        ce = CatalogEntry(item_type.__name__, f.name, [f.name])
+                        ce = CatalogEntry(item_type, f.name, [f.name])
                         self._field_catalog[f.name].append(ce)
-                        self._type_catalog[item_type.__name__].append(ce)
+                        self._type_catalog[item_type].append(ce)
 
     def _clear_catalog(self):
         # clear the catalogs from this object down into any contained
@@ -443,6 +443,9 @@ class HikaruBase(object):
                 else:
                     raise ImportError(f"Unknown type inside of list: {initial_type}")
         self._capture_catalog()
+
+    def __repr__(self):
+        return self.as_python_source()
 
     def as_python_source(self, assign_to: str = None) -> str:
         """

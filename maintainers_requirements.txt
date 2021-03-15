@@ -1,1 +1,2 @@
 networkx==2.5
+Pygments==2.8.1
