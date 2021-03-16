@@ -18,7 +18,7 @@ To make type annotations on Python dataclasses, the type needs to be defined bef
 can be created. However, the **apiextensions** group in the API file contains a reference cycle
 in terms of the defined types, and hence a topological sort to determine the order of writing
 classes for these objects isn't possible. Therefore, there is currently no support for the 
-objects defined in the ``apiextensions`` group in hikaru. Solutions for this problem are being
+objects defined in the ``apiextensions`` group in Hikaru. Solutions for this problem are being
 considered.
 
 Long run times for getting formatted Python code
@@ -26,7 +26,7 @@ Long run times for getting formatted Python code
 
 Hikaru uses the ``autopep`` package to reformat generated code to be PEP8 compliant. However,
 this package apparently runs into some issues with the kinds of deeply nested object instantiation
-that is typical in making Python source for hikaru objects from YAML, and can take a second or
+that is typical in making Python source for Hikaru objects from YAML, and can take a second or
 two to return the formatted code. Nothing is wrong, just know that this operation can take longer
 than you may expect.
 
@@ -41,7 +41,7 @@ processing supplied YAML, and if re-generating YAML from Python objects that wer
 by such YAML, the out-of-spec fields will not be part of the output YAML. While all attributes in
 the model objects are typed and IDEs will provide help to the author to select the proper type for
 each keyword argument (or warn when the wrong one is provided), Python doesn't require this, and
-will happily generate YAML for improperly constructed hikaru objects. While some checking may be
+will happily generate YAML for improperly constructed Hikaru objects. While some checking may be
 added in a future release, for the time being it is best to pay attention to IDE objections and
 to be sure that any YAML you load is in accordance with the official spec.
 
@@ -54,7 +54,7 @@ API objects that are really just renames of the `str` type. It's unclear why thi
 real documentation motivation since each property can have a description in the swagger file, so there's
 really no need for an additional class just to have class documentation. It does avoid putting the
 doc in more than once in the file, but the motivation is unclear. In any event, since these objects
-don't have their own properties, hikaru simply makes a derived class of ``str`` with the proper name.
+don't have their own properties, Hikaru simply makes a derived class of ``str`` with the proper name.
 While they process YAML correctly, be aware that they exist and won't support the methods that were
 documented for the HikaruBase class.
 

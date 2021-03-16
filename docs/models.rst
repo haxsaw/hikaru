@@ -39,5 +39,5 @@ All model classes are built as Python dataclasses with type annotations that are
 from the swagger file. This means that in IDEs such as PyCharm and Pydev you can receive
 meaningful assistance from the IDE as to the names and types of a parameters to a model
 class, which provides material assistance in the authoring process. It also means that every
-hikaru model class can be used with the tools in the dataclasses module to inspect and
+Hikaru model class can be used with the tools in the dataclasses module to inspect and
 process both classes and class instances.

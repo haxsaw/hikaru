@@ -159,10 +159,10 @@ def get_processors(path: str = None, stream: TextIO = None,
 def load_full_yaml(path: str = None, stream: TextIO = None,
                    yaml: str = None) -> List[HikaruBase]:
     """
-    Parse/process the indicated Kubernetes yaml file and return a list of hikaru objects
+    Parse/process the indicated Kubernetes yaml file and return a list of Hikaru objects
 
     This function takes one of the supplied sources of Kubernetes YAML, parses it
-    into separate YAML documents, and then processes those into a list of hikaru
+    into separate YAML documents, and then processes those into a list of Hikaru
     objects, one per document.
 
     NOTE: this function only works on complete Kubernetes message documents, and relies

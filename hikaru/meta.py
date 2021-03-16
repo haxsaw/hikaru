@@ -382,7 +382,7 @@ class HikaruBase(object):
 
         :param yaml: a populated dict-like object that contains keys and values
             that  represent the constructs of a Kubernetes YAML file. Supplied by
-            pyyaml or ruamel.yaml. Results in the construction of a set of hikaru
+            pyyaml or ruamel.yaml. Results in the construction of a set of Hikaru
             class instances that mirror the structure and contents of the YAML,
             as well as the population of the type/field catalogs. To ensure proper
             catalogues, invoke repopulate_catalog() after modifying data or doing

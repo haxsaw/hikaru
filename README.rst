@@ -1,10 +1,10 @@
 ======
-hikaru
+Hikaru
 ======
 
 **Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
 
-hikaru is a tool that provides you the ability to easily shift between
+Hikaru is a tool that provides you the ability to easily shift between
 YAML and Python representations of your Kubernetes config files, as well
 as providing some assistance in authoring these files in Python, opens
 up options in how you can assemble and customise the files, and even
@@ -14,42 +14,42 @@ enable automation of policy and security compliance.
 From Python
 ~~~~~~~~~~~
 
-hikaru uses type-annotated Python dataclasses to represent each of the
+Hikaru uses type-annotated Python dataclasses to represent each of the
 kinds of objects defined in the Kubernetes API, so when used with and
-IDE that understands Python type annotations, hikaru enables the IDE to
+IDE that understands Python type annotations, Hikaru enables the IDE to
 provide the user direct assistance as to what parameters are available,
 what types each parameter must be, and which are optional. Assembled
-hikaru object can be rendered into YAML that can be processed by regular
+Hikaru object can be rendered into YAML that can be processed by regular
 Kubernetes tools.
 
 From YAML
 ~~~~~~~~~
 
-But you don’t have to start with authoring Python: you can use hikaru to
+But you don’t have to start with authoring Python: you can use Hikaru to
 parse Kubernetes YAML into these same Python objects, at which point you
 can inspect the created objects, modify them and re-generate new YAML,
-or even have hikaru emit Python source
+or even have Hikaru emit Python source
 code that will re- create the same structure but from the Python
 interface.
 
 To YAML, Python, or JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-hikaru can output a Python Kubernetes object as Python source code,
+Hikaru can output a Python Kubernetes object as Python source code,
 YAML, or JSON (going from JSON to the other two is coming), allowing you
 to shift easily between representational formats for various purposes.
 
 Alternative to templating for customisation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Using hikaru, you can assemble Kubernetes objects using previously
+Using Hikaru, you can assemble Kubernetes objects using previously
 defined library objects in Python, craft replacements procedurally, or
 even tweak the values of an existing object and turn it back into YAML.
 
 API Coverage
 ~~~~~~~~~~~~
 
-Currently, hikaru supports all objects in the OpenAPI swagger spec for
+Currently, Hikaru supports all objects in the OpenAPI swagger spec for
 the Kubernetes API except those in the ‘apiextensions’ group. There are
 recusively defined objects in that group which can neither be
 topologically sorted or represented by Python dataclasses, so an
@@ -75,7 +75,7 @@ To create Python objects from a Kubernetes YAML source, use
    p = docs[0]
 
 ``load_full_yaml()`` loads every Kubernetes YAML document in a YAML file and returns
-a list of the resulting hikaru objects found. You can then use the YAML
+a list of the resulting Hikaru objects found. You can then use the YAML
 property names to navigate the resulting object. If you assert that an
 object is of a known object type, your IDE can provide you assistance in
 navigation:
@@ -124,8 +124,8 @@ You can create Kubernetes objects in Python:
        - name: web
          image: kiamol/ch02-hello-kiamol
 
-If you use hikaru to parse this back in as Python objects, you can then
-ask hikaru to output Python source code that will re-create it (thus
+If you use Hikaru to parse this back in as Python objects, you can then
+ask Hikaru to output Python source code that will re-create it (thus
 providing a migration path):
 
 .. code:: python
@@ -142,7 +142,7 @@ providing a migration path):
            spec=PodSpec(containers=[Container(name='web', image='kiamol/ch02-hello-kiamol')]))
 
 It is entirely possible to load YAML into Python, tailor it, and then
-send it back to YAML; hikaru can round-trip YAML through Python and
+send it back to YAML; Hikaru can round-trip YAML through Python and
 then back to the equivalent YAML.
 
 The pieces of complex objects can be created separately and even stored
@@ -167,7 +167,7 @@ use multiple times in a model but need it slightly tweaked in each use;
 a shared instance can’t have different values at each use, so it’s easy
 to make a copy that can be customised in isolation.
 
-Finally, every hikaru object that holds other properties and objects
+Finally, every Hikaru object that holds other properties and objects
 have methods that allow you to search the entire collection of objects.
 This lets you find various objects of interest for review and checking
 against policies and conventions. For example, if we had a Pod ‘p’ that was
@@ -204,7 +204,7 @@ Future work
 ~~~~~~~~~~~
 
 As mentioned above, we want to add the ability to move to/from JSON.
-Additionally, since both the classes of hikaru and those in the official
+Additionally, since both the classes of Hikaru and those in the official
 Python Kubernetes client are generated from the same swagger file, if a
 means to determine a mapping between the two can be established it
 should be possible to integrate these Python classes directly into the
@@ -213,4 +213,4 @@ Kubernetes client for actioning on a Kubernetes cluster.
 About
 ~~~~~
 
-Hikaru is Mr. Sulu’s first name, a famed fictional helmsman.
+Hikaru is Mr. Sulu’s first name, a famed fictional helmsman.

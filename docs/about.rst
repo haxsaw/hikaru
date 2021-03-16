@@ -1,5 +1,5 @@
 *************
-Why 'hikaru'?
+Why 'Hikaru'?
 *************
 
 According to the Kubernetes site, the word 'Kubernetes' comes from the Greek meaning

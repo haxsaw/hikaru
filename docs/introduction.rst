@@ -12,7 +12,7 @@ semantic spaces like Kubernetes:
   - YAML itself is just a markup language; for Kubernetes, it provides structure and agree-upon semantics to data that the Kubernetes system uses to perform its tasks. But that data often has value in a variety of other enterprise processes such as affirming standards compliance, audit, and security review. YAML in and of itself provides no automated access to this data; some other agent must become involved to extract this data for other purposes.
   - Kubernetes YAML is quite rich, with hundreds of objects and many fields. Authoring these files correctly requires some kind of additional support, lots of referring back to reference docs, copying chunks of existing YAML, or an encyclopedic knowledge of the API.
 
-A number of solutions exist for these issues, but each entails different tooling. What hikaru
+A number of solutions exist for these issues, but each entails different tooling. What Hikaru
 strives for is providing an alternative representational mechanism that can help resolve
 these issues, still be rendered, as YAML for existing tooling, and enables other uses due to
 the fact that the representation itself is in Python.
@@ -30,11 +30,11 @@ You can also author Kubernetes objects directly in Python, and if done in IDEs s
 the author will be provided assistance in terms of available attributes to set, and the type
 of each attribute. These can then be rendered as YAML for further processing.
 
-hikaru objects can also be rendered as JSON, which can serve as a handy form for storage in
+Hikaru objects can also be rendered as JSON, which can serve as a handy form for storage in
 document DB for archival and audit purposes. Currently, this is a one-way trip, but future
-updates will include the ability to re-create the hikaru objects from JSON.
+updates will include the ability to re-create the Hikaru objects from JSON.
 
 Hikaru objects can also be queried while in memory, so inspection and audit processes can
 be easily automated using the same tooling and representation as the above uses.
 
-The single representation, multiple uses abilities of hikaru allow it to leverage your Kubernetes YAML assets further in your organization.
+The single representation, multiple uses abilities of Hikaru allow it to leverage your Kubernetes YAML assets further in your organization.
