@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = "0.1"
+__version__ = "v0.1alpha"
 
 
 def get_long_desc():
@@ -24,7 +24,7 @@ setup(
     author="Tom Carroll",
     author_email="tcarroll@incisivetech.co.uk",
     url="https://github.com/haxsaw/hikaru",
-    download_url=f"https://github.com/haxsaw/hikaru/archive/v{__version__}alpha.tar.gz",
+    download_url=f"https://github.com/haxsaw/hikaru/archive/{__version__}.tar.gz",
     keywords=["Kubernetes", "modelling", "YAML", "JSON", "modeling",
               "translate", "translator", "reformatter", "transform"],
     install_requires=get_requirements(),
