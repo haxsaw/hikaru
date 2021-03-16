@@ -18,6 +18,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+This program generates all the 'model' package & api version modules
+
+This program works off a specified Kubernetes swagger file and from there
+builds out the model sub-package of hikaru. It first removes all existing
+content of this package and then re-creates it from scratch. If the swagger
+file hasn't changed, then these generated modules will be identical, otherwise
+they will contain the new contents from the swagger file.
+
+Usage is:
+
+    python build.py <path to swagger file>
+
+The assumption is to create the 'build' package in the cwd.
+"""
 from pathlib import Path
 import sys
 from typing import Union, List, Optional
@@ -156,11 +171,11 @@ def build_digraph(all_classes: dict) -> networkx.DiGraph:
     dg = networkx.DiGraph()
     for cd in all_classes.values():
         assert isinstance(cd, ClassDescriptor)
-        deps = cd.depends_on()
+        deps = cd.depends_on(include_external=True)
         dg.add_node(cd)
         for c in deps:
             dg.add_edge(cd, c)
-    assert len(all_classes) == len(dg.nodes)
+
     return dg
 
 
@@ -329,9 +344,7 @@ class ClassDescriptor(object):
     def depends_on(self, include_external=False) -> list:
         r = [p.depends_on() for p in self.required_props]
         deps = [p for p in r
-                if p is not None and self.version == p.version]
-        if len(r) != len(deps):
-            _ = 0
+                if p is not None]
         o = [p.depends_on() for p in self.optional_props]
         deps.extend(p for p in o
                     if p is not None and (True
@@ -366,11 +379,16 @@ class ModuleDef(object):
         other_imports = []
         if None in externals:
             other_imports.append(f'from .{unversioned_module_name} import *')
-        other_imports.extend([f'from .{m} import *'
-                              for m in self.external_versions_used()
-                              if m is not None])
+            externals.remove(None)
+        externals.sort()
+        all_classes = {}
+        for ext in externals:
+            emod = _all_module_defs[ext]
+            assert isinstance(emod, ModuleDef)
+            all_classes.update(emod.all_classes)
+        all_classes.update(self.all_classes)
+        g = build_digraph(all_classes)
         output_boilerplate(stream=stream, other_imports=other_imports)
-        g = build_digraph(self.all_classes)
         traversal = list(reversed(list(networkx.topological_sort(g))))
         if not traversal:
             traversal = list(self.all_classes.values())
@@ -489,11 +507,20 @@ class PropertyDescriptor(object):
         return "".join(parts)
 
 
+def build_it(swagger_file: str):
+    """
+    Initiate the swagger-file-driven model package build
+
+    :param swagger_file: string; path to the swagger file to process
+    """
+    load_stable(swagger_file)
+    prep_package("model")
+    write_modules("model")
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(f"usage: {sys.argv[0]} <path-to-swagger-json-file>")
         sys.exit(1)
-    load_stable(sys.argv[1])
-    prep_package("model")
-    write_modules("model")
+    build_it(sys.argv[1])
     sys.exit(0)
