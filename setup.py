@@ -2,6 +2,7 @@ from setuptools import setup
 
 __version__ = "0.1"
 
+
 def get_long_desc():
     return open('README.rst', 'r').read()
 
@@ -16,8 +17,8 @@ setup(
     name="hikaru",
     version=__version__,
     packages=["hikaru", "hikaru.model"],
-    description="Hikaru allows you to smoothly move between Kubernetes YAML "
-                "Python objects, and Python source, any direction",
+    description="Hikaru allows you to smoothly move between Kubernetes YAML, "
+                "Python objects, and Python source, in any direction",
     long_description=get_long_desc(),
     author="Tom Carroll",
     author_email="tcarroll@incisivetech.co.uk",
