@@ -46,6 +46,13 @@ Using Hikaru, you can assemble Kubernetes objects using previously
 defined library objects in Python, craft replacements procedurally, or
 even tweak the values of an existing object and turn it back into YAML.
 
+Build models for uses other than controlling systems
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use Hikaru in the process of issuing instructions to Kubernetes,
+but the same Hikaru models can be used as high-fidelity replicas of the
+YAML for other processes as well.
+
 API Coverage
 ~~~~~~~~~~~~
 

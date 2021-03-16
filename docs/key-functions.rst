@@ -11,6 +11,8 @@ section, but they will be quickly reviewed here. All of these can be imported fr
 load_full_yaml()
 ****************
 
+:ref:`Documentation<load_full_yaml doc>`
+
 ``load_full_yaml()`` is the main way to load Kubernetes YAML files and the documents they
 contain into Hikaru objects. ``load_full_yaml()`` returns a list of Hikaru objects, each
 of which represents a document in the YAML file. Each document **must** be a top-level
@@ -32,6 +34,8 @@ instantiate.
 get_processors()
 ****************
 
+:ref:`Documentation<get_processors doc>`
+
 This function takes the same arguments as ``load_full_yaml()`` but instead of
 returning a list of HikaruBase subclasses, it returns a list of dicts containing
 the parsed out YAML. This would then normally be processed by the machinery in
@@ -41,6 +45,8 @@ hierarchies, but you are free to use these as you wish.
 
 get_yaml()
 **********
+
+:ref:`Documentation<get_yaml doc>`
 
 This function returns a string containing YAML that can re-create the object it is called
 with. The YAML that is output is preceeded by a start of document marker (---), and the top
@@ -55,6 +61,8 @@ programmatically, and then rendering it back to YAML.
 get_json()
 **********
 
+:ref:`Documentation<get_json doc>`
+
 This function works like ``get_yaml()`` but returns JSON that represents the object instead.
 This is currently a one-way operation; there is no current ability to load a Hikaru object
 from JSON, but this is may change in the future.
@@ -64,6 +72,8 @@ executed Kubernetes commands in a document database.
 
 get_python_source()
 *******************
+
+:ref:`Documentation<get_python_source doc>`
 
 This function returns a PEP8-compliant string containing Python source code that will
 re-create the object that was passed to it. By default, this code simply calls a model
@@ -93,6 +103,8 @@ recreate the original object.
 
 get_clean_dict()
 ****************
+
+:ref:`Documentation<get_clean_dict doc>`
 
 All Hikaru model classes are Python dataclasses, which can automatically be rendered to
 a dict. However, the resultant dict will contain every attribute of every object, even

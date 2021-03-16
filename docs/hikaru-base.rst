@@ -6,12 +6,13 @@ All Hikaru model objects are based on the HikaruBase class, and the model object
 only add data; there are no additional behaviours. All operations that you can do
 on Hikaru objects are defined on the HikaruBase class.
 
-Full documentation for the class can be found in the :ref:`Reference` section, but some
-of the
-key methods are discussed here.
+:ref:`Full documentation for the class<HikaruBase doc>` can be found in the
+:ref:`Reference` section, but some of the key methods are discussed here.
 
 from_yaml()
 *************************
+
+:py:meth:`Documentation<hikaru.HikaruBase.from_yaml>`
 
 The class method ``from_yaml()`` allows you to create a populated instance instance
 from a supplied `ruamel.yaml.YAML` instance (this is what is used internally for
@@ -54,7 +55,7 @@ to pass into ``from_yaml()``:
 
 .. code:: python
 
-    from hikaru import Container, get_processor
+    from hikaru import Container, get_processors
     docs = get_processors(path="<path to Container yaml file>")
     c = Container.from_yaml(docs[0])
     assert isinstance(c, Container)
@@ -62,6 +63,8 @@ to pass into ``from_yaml()``:
 
 as_python_source()
 *************************
+
+:py:meth:`Documentation<hikaru.HikaruBase.as_python_source>`
 
 HikaruBase can render itself as Python source with ``as_python_source()`` that will
 re-create the state of the object. The source is unformatted with respect to PEP8, and may
@@ -79,6 +82,8 @@ etc are the same.
 dup()
 *************************
 
+:py:meth:`Documentation<hikaru.HikaruBase.dup>`
+
 Any HikaruBase instance can generate a duplicate of itself, a deep copy. This is especially
 useful in cases where pre-made components are loaded from a library and a particular
 component is used mutliple times within the same containing object, but where you may wish
@@ -89,15 +94,17 @@ same group of objects are all being operated on from different places.
 find_by_name()
 *************************
 
+:py:meth:`Documentation<hikaru.HikaruBase.find_by_name>`
+
 As HikaruBase objects are populated via processing YAML or by being created with Python
 code, an internal search catalog is created on each object that provides assistance in
 searching through the object hierarchy for specific fields or nested objects. This provides
 significant assistance in constructing automated reviewing tools that can locate and
 highlight specific objects to ensure consistency of usage and compliance to standards.
 
-This catalog is used by the ``find_by_name()`` method, which returns a list of CatalogEntry
-objects (named tuples) that describe all attributes and their location in the model that
-satisfy the query arguments to the method.
+This catalog is used by the ``find_by_name()`` method, which returns a list of
+:ref:`CatalogEntry<CatalogEntry doc>` objects (named tuples) that describe all attributes
+and their location in the model that satisfy the query arguments to the method.
 
 The simplest use of this method is to supply a name to find; in this case, ``find_by_name()``
 will return every attribute called name wherever it is in the model. For example, here is
@@ -158,8 +165,7 @@ the second container, and under that we just want the postStart:
 Now we only have one entry in the result. In this case, although we could have used just
 used 'lifecycle' as the value of ``following``, we want to illustrate a couple of things:
 
-  - First, notice that we can use a series of attributes in the ``following`` expression,
-separated by '.'.
+  - First, notice that we can use a series of attributes in the ``following`` expression, separated by '.'.
   - Second, notice that the attributes don't have to be directly sequential as you tunnel into an object.
   - Third, note that we can use integers as indexes into a list of objects; we will only search under that index.
 
@@ -175,6 +181,8 @@ The attributes of the returned CatalogEntry namedtuples are:
 object_at_path()
 *************************
 
+:py:meth:`Documentation<hikaru.HikaruBase.object_at_path>`
+
 The ``object_at_path()`` method works with the ``path`` attribute of the returned 
 CatalogEntry object. By passing the the path into ``object_at_path()``, you can access
 the actual value of the object stored there. This gives you the means to inspect the 
@@ -182,6 +190,8 @@ object that you've located.
 
 repopulate_catalog()
 *************************
+
+:py:meth:`Documentation<hikaru.HikaruBase.repopulate_catalog>`
 
 Normally, the catalogs are created automatically when you create an object in Python or when
 you load an instance from YAML. However, once you've loaded the instance, you are free to

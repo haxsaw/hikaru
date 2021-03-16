@@ -70,7 +70,7 @@ not HikaruBase:
   - IntOrString
   - Quantity
 
-PyYAML vs ruamel.yaml
+ruamel.yaml vs PyYAML
 ---------------------
 
 Hikaru internally uses ruamel.yaml for YAML parsing, representation, and generation.

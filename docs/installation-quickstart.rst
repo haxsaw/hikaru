@@ -24,7 +24,7 @@ To read Kubernetes YAML documents into Hikaru Python objects:
 *************************************************************
 
 For loading Kubernetes YAML documents into live Hikaru Python objects, use the
-``load_full_yaml()`` function:
+:ref:`load_full_yaml()` function:
 
 .. code:: python
 
@@ -34,7 +34,7 @@ For loading Kubernetes YAML documents into live Hikaru Python objects, use the
     # as Pod, Deployment, etc
 
 The objects in the resultant list will always have *kind* and *apiVersion*
-attributes populat4ed. If any of the input YAML doesn't have these attributes for their
+attributes populated. If any of the input YAML doesn't have these attributes for their
 documents, Hikaru can't tell what classes to build. You can then use Kubernetes YAML
 property names to navigate through the Python objects.
 
@@ -42,7 +42,7 @@ To write Kubernetes YAML documents from Hikaru Python objects:
 ==============================================================
 
 You can print out the equivalent Kubernetes YAML from Hikaru Python objects with the
-``get_yaml()`` function:
+:ref:`get_yaml()` function:
 
 .. code:: python
 
@@ -57,7 +57,7 @@ To generate Hikaru Python source from Hikaru Python objects:
 ============================================================
 
 If you want to convert your Kubernetes YAML to actual Hikaru Python source code, use
-the ``get_python_source()`` function:
+the :ref:`get_python_source()` function:
 
 .. code:: python
 

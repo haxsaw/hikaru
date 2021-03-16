@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'hikaru'
+project = 'Hikaru'
 copyright = '2021, Tom Carroll'
 author = 'Tom Carroll'
 
