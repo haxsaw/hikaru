@@ -3,15 +3,18 @@ Key Functions
 *************
 
 A good deal of the manipulations you'll perform on hikaru objects will be facilitated
-by a short list of functions. These are covered in detail in the Reference section, but they will be quickly reviewed here. All of these can be imported from the 'hikaru' package.
+by a short list of functions. These are covered in detail in the :ref:`Reference`
+section, but they will be quickly reviewed here. All of these can be imported from the
+'hikaru' package.
 
 
 load_full_yaml()
 ****************
 
 ``load_full_yaml()`` is the main way to load Kubernetes YAML files and the documents they
-contain into hikaru objects. ``load_full_yaml()`` returns a list of hikaru objects, each of
-which represents a document in the YAML file. Each document **must** be a top-level Kubernetes object, such as Deployment, Pod, DaemonSet, etc, and each must have valid
+contain into hikaru objects. ``load_full_yaml()`` returns a list of hikaru objects, each
+of which represents a document in the YAML file. Each document **must** be a top-level
+Kubernetes object, such as Deployment, Pod, DaemonSet, etc, and each must have valid
 `kind` and `apiVersion` properties-- this is how hikaru tells what root object to
 instantiate.
 
@@ -26,12 +29,24 @@ instantiate.
     # to load from a string that contains the YAML:
     load_full_yaml(yaml=x)
 
+get_processors()
+****************
+
+This function takes the same arguments as ``load_full_yaml()`` but instead of
+returning a list of HikaruBase subclasses, it returns a list of dicts containing
+the parsed out YAML. This would then normally be processed by the machinery in
+HikaruBase to create objects, and individual elements can be used with the
+``from_yaml()`` method of HikaruBase subclasses to populate individual document
+hierarchies, but you are free to use these as you wish.
+
 get_yaml()
 **********
 
 This function returns a string containing YAML that can re-create the object it is called
 with. The YAML that is output is preceeded by a start of document marker (---), and the top
-level object in the YAML file will be the hikaru object that is passed in. The hikaru object can be a Kubernetes document object such as Pod, Deployment, etc, but it can also be any hikaru modeling object; all will be rendered as YAML.
+level object in the YAML file will be the hikaru object that is passed in. The
+hikaru object can be a Kubernetes document object such as Pod, Deployment, etc,
+but it can also be any hikaru modeling object; all will be rendered as YAML.
 
 ``load_full_yaml()`` and ``get_yaml()`` can be used to round-trip YAML through Python; it
 may be a handy way to customize a Kubernetes YAML file by loading into Python, modifying it

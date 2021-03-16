@@ -17,6 +17,7 @@ hikaru: Usage and Reference
    hikaru-base
    issues
    reference
+   about
 
 
 Indices and tables

@@ -261,23 +261,27 @@ class HikaruBase(object):
             element in the list must be seen before 'name'. For example, say you had a
             model of a Pod and wanted all the attributes called 'name', but only within
             a container's volumeMounts objects. You can get these with the following
-            invocation:
+            invocation::
 
-            p.find_by_name('name', following="containers.volumeMounts")
+                p.find_by_name('name',
+                               following="containers.volumeMounts")
 
             Or suppose you wanted 'exec' from from anywhere in the lifecycle object
-            of of the first container in a pod:
+            of of the first container in a pod::
 
-            p.find_by_name('exec', following=['containers', 0, 'lifecycle'])
+                p.find_by_name('exec',
+                               following=['containers', 0, 'lifecycle'])
 
-            or
+            or::
 
-            p.find_by_name('exec', following="containers.0.lifecycle")
+                p.find_by_name('exec',
+                               following="containers.0.lifecycle")
 
             Or suppose you wanted to find all the httpHeaders 'name' from in the
-            lifecycle in any container in a pod:
+            lifecycle in any container in a pod::
 
-            p.find_by_name('name', following="containers.lifecycle.httpGet")
+                p.find_by_name('name',
+                               following="containers.lifecycle.httpGet")
 
             In the last example, 'lifecycle' is an direct attribute of a single
             container, but 'httpGet' is several objects beneath the lifecycle.

@@ -6,10 +6,11 @@ All hikaru model objects are based on the HikaruBase class, and the model object
 only add data; there are no additional behaviours. All operations that you can do
 on hikaru objects are defined on the HikaruBase class.
 
-Full documentation for the class can be found in the `Reference` section, but some of the 
+Full documentation for the class can be found in the :ref:`Reference` section, but some
+of the
 key methods are discussed here.
 
-from_yaml() (classmethod)
+from_yaml()
 *************************
 
 The class method ``from_yaml()`` allows you to create a populated instance instance from a supplied `ruamel.yaml.YAML` instance (this is what is used internally for loading and parsing Kubernetes YAML). So you can use ``from_yaml()`` to manually load a specific hikaru class:

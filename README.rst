@@ -49,7 +49,7 @@ even tweak the values of an existing object and turn it back into YAML.
 API Coverage
 ~~~~~~~~~~~~
 
-Currently, hikaru supports all objects in the OpenAPI Swagger spec for
+Currently, hikaru supports all objects in the OpenAPI swagger spec for
 the Kubernetes API except those in the ‘apiextensions’ group. There are
 recusively defined objects in that group which can neither be
 topologically sorted or represented by Python dataclasses, so an

@@ -119,6 +119,43 @@ def get_json(obj: HikaruBase) -> str:
     return s
 
 
+def get_processors(path: str = None, stream: TextIO = None,
+                   yaml: str = None) -> List[dict]:
+    """
+    Takes a path, stream, or string for a YAML file and returns a list of processors.
+
+    This function can accept a number of different parameters that can provide
+    the contents of a YAML file; from this, a YAML parser is created and a processed
+    list of YAML dicts is created and returned. The main use case for this function is to
+    provide input to the from_yaml() method of a HikaruBase subclass.
+
+    Only one of path, stream or yaml should be supplied. If yaml is supplied in addition
+    to path or stream, only the yaml parameter is used. If stream and path are supplied,
+    then only stream is used.
+
+    :param path: string; path to a Kubernetes YAML file containing one or more docs
+    :param stream: file-like object; opened on a Kubernetes YAML file containing one
+        or more documents
+    :param yaml: string; contains Kubernetes YAML, one or more documents
+    :return: List of dicts (or dictionary-like objects) that contain the parsed-
+        out content of the input YAML files.
+    """
+    if path is None and stream is None and yaml is None:
+        raise RuntimeError("One of path, stream, or yaml must be specified")
+    objs = []
+    if path:
+        f = open(path, "r")
+    if stream:
+        f = stream
+    if yaml:
+        to_parse = yaml
+    else:
+        to_parse = f.read()
+    parser = YAML()
+    docs = list(parser.load_all(to_parse))
+    return docs
+
+
 def load_full_yaml(path: str = None, stream: TextIO = None,
                    yaml: str = None) -> List[HikaruBase]:
     """
@@ -143,19 +180,8 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     :param yaml: string; the actual YAML to process
     :return: list of HikaruBase subclasses, one for each document in the YAML file
     """
-    if path is None and stream is None and yaml is None:
-        raise RuntimeError("One of path, stream, or yaml must be specified")
+    docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
-    if path:
-        f = open(path, "r")
-    if stream:
-        f = stream
-    if yaml:
-        to_parse = yaml
-    else:
-        to_parse = f.read()
-    parser = YAML()
-    docs = list(parser.load_all(to_parse))
     for doc in docs:
         _, api_version = process_api_version(doc.get('apiVersion', ""))
         kind = doc.get('kind', "")

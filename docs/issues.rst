@@ -70,4 +70,20 @@ not HikaruBase:
   - IntOrString
   - Quantity
 
+PyYAML vs ruamel.yaml
+---------------------
 
+Hikaru internally uses ruamel.yaml for YAML parsing, representation, and generation.
+If using the high-level functions, this is never actually visible as you only
+provide strings, paths to files, or file objects. The ruamel.yaml package was
+used due to its support for newer YAML standards. However, since ruamel.yaml is
+based on PyYAML, parsed-out YAML dictionaries from either package work with
+Hikaru.
+
+However, there is a lower-level method where you pass a ruamel.yaml object
+to create a particular subclass of HikaruBase. These objects can be acquired using
+the ``get_processors`` function, or alternatively you can create them yourself.
+
+The ruamel.yaml package was used due to its support for newer YAML standards.
+However, since ruamel.yaml is based on PyYAML, parsed-out YAML dictionaries from either
+package work with Hikaru.
