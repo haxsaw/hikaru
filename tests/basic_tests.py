@@ -18,8 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from hikaru import load_full_yaml
-from hikaru.model import Pod
+from hikaru import *
 
 p = None
 
@@ -421,6 +420,28 @@ def test40():
     q: Pod = p.dup()
     q.spec.containers[1].lifecycle.postStart.httpGet.port = "1234"
     assert p != q
+
+
+def test41():
+    """
+    get_python_source with the autopep8 style
+    """
+    assert isinstance(p, Pod)
+    code = get_python_source(p)
+    x = eval(code, globals(), locals())
+    assert p == x, "the two aren't the same"
+
+
+def test42():
+    """
+    check that a modified loaded version of p isn't equal
+    """
+    assert isinstance(p, Pod)
+    code = get_python_source(p)
+    x = eval(code, globals(), locals())
+    assert isinstance(x, Pod)
+    x.spec.containers[1].lifecycle.postStart.httpGet.port = 4
+    assert x != p
 
 
 if __name__ == "__main__":

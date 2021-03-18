@@ -207,8 +207,7 @@ class HikaruBase(object):
         :return: identical instance of self plus any contained instances
         """
         klass = self.__class__
-        np = num_positional(klass.__init__) - 1
-        copy = klass(*([None] * np), **{})
+        copy = klass.get_empty_instance()
         for f in fields(self):
             a = getattr(self, f.name)
             if isinstance(a, HikaruBase):
@@ -371,10 +370,48 @@ class HikaruBase(object):
         :param yaml: a ruamel.yaml YAML instance
         :return: an instance of a subclass of HikaruBase
         """
-        np = num_positional(cls.__init__) - 1
-        inst = cls(*([None] * np), **{})
+        inst = cls.get_empty_instance()
         inst.process(yaml)
         return inst
+
+    @classmethod
+    def get_empty_instance(cls):
+        """
+        Returns a properly initialized instance with Nones and empty collections
+
+        :return: and instance of 'cls' with all scalar attrs set to None and
+            all collection attrs set to an appropriate empty collection
+        """
+        field_map = {f.name: f for f in fields(cls)}
+        kw_args = {}
+        sig = signature(cls.__init__)
+        for p in sig.parameters.values():
+            if p.name == 'self':
+                continue
+            f = field_map[p.name]
+            initial_type = f.type
+            origin = get_origin(initial_type)
+            if origin is Union:
+                type_args = get_args(f.type)
+                initial_type = type_args[0]
+            if ((type(initial_type) == type and issubclass(initial_type, (int, str,
+                                                                          bool,
+                                                                          float))) or
+                    (is_dataclass(initial_type) and
+                     issubclass(initial_type, HikaruBase))):
+                # this is a type that can default to None
+                kw_args[p.name] = None
+            else:
+                origin = get_origin(initial_type)
+                if origin in (list, List):
+                    kw_args[p.name] = []
+                elif origin in (dict, Dict):
+                    kw_args[p.name] = {}
+                else:
+                    raise RuntimeError(f"Unknown type {initial_type} for parameter "
+                                       f"{p.name} in {cls.__name__}")
+        new_inst = cls(**kw_args)
+        return new_inst
 
     def process(self, yaml) -> None:
         """
@@ -418,8 +455,7 @@ class HikaruBase(object):
                 # take as is
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
-                np = num_positional(initial_type.__init__) - 1
-                obj = initial_type(*([None] * np), **{})
+                obj = initial_type.get_empty_instance()
                 obj.process(val)
                 setattr(self, f.name, obj)
             else:
@@ -433,10 +469,9 @@ class HikaruBase(object):
                         setattr(self, f.name, l)
                     elif is_dataclass(target_type) and issubclass(target_type,
                                                                   HikaruBase):
-                        np = num_positional(target_type.__init__) - 1
                         l = []
                         for o in val:
-                            obj = target_type(*([None] * np), **{})
+                            obj = target_type.get_empty_instance()
                             obj.process(o)
                             l.append(obj)
                         setattr(self, f.name, l)
@@ -518,7 +553,8 @@ class HikaruBase(object):
                 one_param.append("{")
                 dict_pairs = []
                 for k, v in val.items():
-                    dict_pairs.append(f"'{k}': '{v}'")
+                    the_val = f"'{v}'" if isinstance(v, str) else v
+                    dict_pairs.append(f"'{k}': {the_val}")
                 one_param.append(",".join(dict_pairs))
                 one_param.append("}")
             else:
