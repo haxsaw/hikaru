@@ -444,6 +444,38 @@ def test42():
     assert x != p
 
 
+def test43():
+    """
+    check that you can render explicitly to autopep8
+    """
+    assert isinstance(p, Pod)
+    code = get_python_source(p, style='autopep8')
+    x = eval(code, globals(), locals())
+    assert p == x, "the two aren't the same"
+
+
+def test44():
+    """
+    check that you can render to black
+    """
+    assert isinstance(p, Pod)
+    code = get_python_source(p, style="black")
+    x = eval(code, globals(), locals())
+    assert p == x, "the two aren't the same"
+
+
+def test45():
+    """
+    check that illegal styles are caught
+    """
+    assert isinstance(p, Pod)
+    try:
+        code = get_python_source(p, style="groovy")
+        assert False, "we should have got an exception about bad style"
+    except RuntimeError:
+        pass
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
