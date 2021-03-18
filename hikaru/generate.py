@@ -24,6 +24,7 @@ from io import StringIO
 from typing import List, TextIO
 
 from autopep8 import fix_code
+from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
 from hikaru.model import *
@@ -32,7 +33,8 @@ from hikaru.naming import process_api_version
 from hikaru.version_kind import version_kind_map
 
 
-def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
+def get_python_source(obj: HikaruBase, assign_to: str = None,
+                      style: str = "autopep8") -> str:
     """
     returns PEP8-formatted Python source that will re-create the supplied object
 
@@ -42,12 +44,24 @@ def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
     :param obj: an instance of HikaruBase
     :param assign_to: if supplied, must be a legal Python identifier name,
         as the returned expression will be assigned to that as a variable.
+    :param style: string, default 'autopep8'. Indicates which code formatter to
+        use, 'black' or 'autopep8'. The 'black' style produces somewhat more
+        vertically spread-out code that is a bit clearer to read. The 'autopep8'
+        formatter is a bit more aggressive in putting more arguments on a single
+        line, so it's a bit more compact, but can be a little harder to see
+        what's going on.
     :return: fully PEP8 formatted Python source code that will re-create the
         supplied object
     """
+    if style not in ('black', 'autopep8'):
+        raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
-    result = fix_code(code, options={"max_line_length": 90,
-                                     "experimental": 1})
+    if style == "autopep8":
+        result = fix_code(code, options={"max_line_length": 90,
+                                         "experimental": 1})
+    else:
+        mode = FileMode()
+        result = format_file_contents(code, fast=False, mode=mode)
     return result
 
 
