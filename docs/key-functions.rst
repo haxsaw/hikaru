@@ -92,11 +92,46 @@ This will result in code that looks something like the following:
 .. code:: python
 
     >>> print(code)
-    the_deployment = Deployment(apiVerision='v1', kind='Deployment',
-                                metadata=ObjectMeta(<etc>),
-                                spec=<etc>)
+    the_deployment = Deployment(apiVersion='v1', kind='Deployment',
+                                metadata=ObjectMeta(
+                                    name='wibble', annotations={},
+                                    finalizers=[],
+                                    labels={},
+                                    managedFields=[],
+                                    ownerReferences=[]),
+                                spec=DeploymentSpec(
+                                    selector=LabelSelector(
+                                        matchExpressions=[],
+                                        matchLabels={}),
+                                    template=PodTemplateSpec()))
 
-Code is formatted to a line length of 90 chars. This function may take a second or two
+The above code is formatted to the default style, ``autopep8``. If you would rather have a more vertically oriented style, use ``black`` for the value of the style argument:
+
+.. code:: python
+
+    >>> print(get_python_source(d, assign_to="the_deployment", style='black'))
+    the_deployment = Deployment(
+        apiVersion="v1",
+        kind="Deployment",
+        metadata=ObjectMeta(
+            name="wibble",
+            annotations={},
+            finalizers=[],
+            labels={},
+            managedFields=[],
+            ownerReferences=[],
+        ),
+        spec=DeploymentSpec(
+            selector=LabelSelector(matchExpressions=[], matchLabels={}),
+            template=PodTemplateSpec(),
+        ),
+    )
+
+In general, ``autopep8`` will work harder to fill lines and will tend to indent parameters
+more, while ``black`` will indent less and generally write things on different lines unless
+it can put all parameters on a single line.
+
+Code is formatted to a line length of 88 chars. This function may take a second or two
 to run, depending on how many nested objects are involved in the argument to
 ``get_python_source()``. The code can be saved to another Python module and re-run to
 recreate the original object.

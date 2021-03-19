@@ -28,7 +28,7 @@ from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
 from hikaru.model import *
-from hikaru.meta import num_positional, HikaruBase
+from hikaru.meta import HikaruBase
 from hikaru.naming import process_api_version
 from hikaru.version_kind import version_kind_map
 
@@ -57,7 +57,7 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
         raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
     if style == "autopep8":
-        result = fix_code(code, options={"max_line_length": 90,
+        result = fix_code(code, options={"max_line_length": 88,
                                          "experimental": 1})
     else:
         mode = FileMode()

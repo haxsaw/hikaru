@@ -24,11 +24,11 @@ considered.
 Long run times for getting formatted Python code
 ------------------------------------------------
 
-Hikaru uses the ``autopep`` package to reformat generated code to be PEP8 compliant. However,
-this package apparently runs into some issues with the kinds of deeply nested object instantiation
-that is typical in making Python source for Hikaru objects from YAML, and can take a second or
-two to return the formatted code. Nothing is wrong, just know that this operation can take longer
-than you may expect.
+Hikaru uses the ``autopep`` and ``black`` packages to reformat generated code to be PEP8 compliant. However,
+these packages can run into some issues with the kinds of deeply nested object instantiation
+that is typical in making Python source for Hikaru objects from YAML, and can take a second
+or two to return the formatted code. Nothing is wrong, just know that this operation can
+take longer than you may expect.
 
 Limited correctness checking
 ---------------------------------------------

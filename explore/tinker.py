@@ -97,3 +97,8 @@ print(get_yaml(x))
 
 x = Pod(apiVersion='v1', kind='Pod', metadata=ObjectMeta(name='hello-kiamol-3'),
         spec=PodSpec(containers=[Container(name='web', image='kiamol/ch02-hello-kiamol')]))
+
+d = Deployment(apiVersion='v1', kind='Deployment',
+               metadata=ObjectMeta(name='wibble'),
+               spec=DeploymentSpec(selector=LabelSelector(),
+                                   template=PodTemplateSpec()))

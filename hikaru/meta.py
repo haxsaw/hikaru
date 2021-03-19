@@ -64,14 +64,6 @@ except ImportError:
 NoneType = type(None)
 
 
-def num_positional(acallable) -> int:
-    sig = signature(acallable)
-    num_pos = len([p for p in sig.parameters.values()
-                  if p.kind in (Parameter.POSITIONAL_ONLY,
-                                Parameter.POSITIONAL_OR_KEYWORD)])
-    return num_pos
-
-
 CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
 
@@ -166,26 +158,6 @@ class HikaruBase(object):
                 for i in a:
                     if is_dataclass(i) and isinstance(i, HikaruBase):
                         i._clear_catalog()
-
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-        else:
-            flist = fields(self)
-            for f in flist:
-                left = getattr(self, f.name)
-                right = getattr(other, f.name)
-                if left.__class__ != right.__class__:
-                    return False
-                elif isinstance(left, HikaruBase):
-                    result = left.__eq__(right)
-                    if not result:
-                        return False
-                elif left != right:
-                    # this covers list, dict and the scalars
-                    # tuples aren't interchangeable with lists!
-                    return False
-        return True
 
     def repopulate_catalog(self):
         """
