@@ -1,5 +1,4 @@
-from hikaru.model import *
-from hikaru.generate import get_yaml
+from hikaru import *
 
 
 y = Pod(apiVersion="v1",
@@ -102,3 +101,12 @@ d = Deployment(apiVersion='v1', kind='Deployment',
                metadata=ObjectMeta(name='wibble'),
                spec=DeploymentSpec(selector=LabelSelector(),
                                    template=PodTemplateSpec()))
+
+om = ObjectMeta(name='wibble', namespace='wobble')
+print(get_python_source(om, assign_to='x', style='black'))
+
+m = Pod(apiVersion='v1', kind="Pod",
+        spec=PodSpec(containers=[], dnsConfig=PodDNSConfig(),
+                     overhead={'a': 'b'}))
+print(get_python_source(m, assign_to='q', style='black'))
+

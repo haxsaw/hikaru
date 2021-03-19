@@ -66,6 +66,8 @@ NoneType = type(None)
 
 CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
+TypeWarning = namedtuple('TypeWarning', ['cls', 'attrname', 'path', 'warning'])
+
 
 @dataclass
 class HikaruBase(object):
@@ -385,6 +387,71 @@ class HikaruBase(object):
         new_inst = cls(**kw_args)
         return new_inst
 
+    def get_type_warnings(self) -> List[TypeWarning]:
+        # """
+        # Compares attribute type annotation to actual data; issues warning on mismatches.
+        #
+        # This method compares the type of each attribute based on the type annotation
+        # against the type of the actual data in the attribute and generates a warning
+        # object whenever a mismatch is discovered. The search for mismatches starts
+        # at ``self`` and recursively searches any HikaruBase objects contained in
+        # ``self``.
+        # :return: a list of TypeWarning namedtuple objects. The fields should be
+        #     interpreted as follows:
+        #
+        #     - cls: the class object that contains the attribute that has a type mismatch
+        #     - attrname: the name of the attribute that has the type mismatch
+        #     - path: a list of strings that indicates from ``self`` how to reach the attr
+        #     - warning: a string that contains the text of the warning.
+        #
+        #     Note that the first three fields are similar to those from CatalogEntry,
+        #     however their interpretation is slightly different.
+        #
+        #     A return of an empty list indicates that there were no TypeWarnings.
+        #     This DOES NOT indicate that there aren't errors in usage; for example, if
+        #     and object may contain one of three alternative objects, this method doesn't
+        #     check if that constraint holds true; it only checks that the types of any
+        #     contained objects are correct.
+        # """
+        warnings: List[TypeWarning] = list()
+        for f in fields(self):
+            is_required = True
+            initial_type = f.type
+            origin = get_origin(initial_type)
+            if origin is Union:  # this is optional; grab what's inside
+                type_args = get_args(f.type)
+                if NoneType in type_args:
+                    is_required = False
+                    initial_type = type_args[0]
+                else:
+                    raise NotImplementedError("we aren't ready for this case")
+            attrval = getattr(self, f.name)
+            if attrval is None:
+                if initial_type in (list, List):
+                    warnings.append(TypeWarning(self.__class__, f.name,
+                                                [f.name],
+                                                f"Attribute {f.name} is None but"
+                                                f" should be at least an empty list"))
+                elif initial_type in (dict, Dict):
+                      warnings.append(TypeWarning(self.__class__, f.name,
+                                                  [f.name],
+                                                  f"Attribute {f.name} is None but"
+                                                  f" should be at least an empty dict"))
+                elif is_required:
+                    warnings.append(TypeWarning(self.__class__, f.name,
+                                                [f.name],
+                                                f"Attribute {f.name} is None but"
+                                                f" it is a required attribute"))
+
+            if attrval is None and not is_required:
+                continue
+            # check if the type is a list/dict the and value has no entries
+            if (initial_type in (list, List, dict, Dict) and
+                    type(attrval) in (list, List, dict, Dict) and
+                    len(attrval)):
+                continue
+
+
     def process(self, yaml) -> None:
         """
         extract self's data items from the supplied yaml object.
@@ -488,6 +555,7 @@ class HikaruBase(object):
         parameters = []
         for f, p in zip(all_fields, tuple(sig.parameters.values())):
             one_param = []
+            keep_param = True
             is_required = get_origin(f.type) is not Union
             val = getattr(self, f.name)
             if val is None and not is_required:  # should only be for optional args
@@ -500,39 +568,52 @@ class HikaruBase(object):
                 inner_code = val.as_python_source()
                 one_param.append(inner_code)
             elif isinstance(val, list):
-                one_param.append("[")
-                list_values = []
-                for item in val:
-                    if isinstance(item, HikaruBase):
-                        inner_code = item.as_python_source()
-                        list_values.append(inner_code)
-                    elif isinstance(item, str):
-                        list_values.append(f"'{item}'")
-                    elif isinstance(item, dict):
-                        list_values.append("{")
-                        dict_pairs = []
-                        for k, v in item.items():
-                            dict_pairs.append(f"'{k}': '{v}'")
-                        list_values.append(",".join(dict_pairs))
-                        list_values.append("}")
-                    else:
-                        list_values.append(str(val))
-                one_param.append(",".join(list_values))
-                one_param.append("]")
+                if len(val) > 0 or is_required:
+                    one_param.append("[")
+                    list_values = []
+                    for item in val:
+                        if isinstance(item, HikaruBase):
+                            inner_code = item.as_python_source()
+                            list_values.append(inner_code)
+                        elif isinstance(item, str):
+                            list_values.append(f"'{item}'")
+                        elif isinstance(item, dict):
+                            if len(val) > 0:
+                                list_values.append("{")
+                                dict_pairs = []
+                                for k, v in item.items():
+                                    the_val = f"'{v}'" if isinstance(v, str) else v
+                                    dict_pairs.append(f"'{k}': {the_val}")
+                                if dict_pairs:
+                                    list_values.append(",".join(dict_pairs))
+                                list_values.append("}")
+                        else:
+                            list_values.append(str(val))
+                    if list_values:
+                        one_param.append(",".join(list_values))
+                    one_param.append("]")
+                else:
+                    keep_param = False
             elif isinstance(val, str):
                 one_param.append(f"'{val}'")
             elif isinstance(val, dict):
-                one_param.append("{")
-                dict_pairs = []
-                for k, v in val.items():
-                    the_val = f"'{v}'" if isinstance(v, str) else v
-                    dict_pairs.append(f"'{k}': {the_val}")
-                one_param.append(",".join(dict_pairs))
-                one_param.append("}")
+                if len(val) > 0 or is_required:
+                    one_param.append("{")
+                    dict_pairs = []
+                    for k, v in val.items():
+                        the_val = f"'{v}'" if isinstance(v, str) else v
+                        dict_pairs.append(f"'{k}': {the_val}")
+                    if dict_pairs:
+                        one_param.append(",".join(dict_pairs))
+                    one_param.append("}")
+                else:
+                    keep_param = False
             else:
                 one_param.append(str(val))
-            parameters.append("".join(one_param))
-        code.append(",".join(parameters))
+            if keep_param:
+                parameters.append("".join(one_param))
+        if parameters:
+            code.append(",".join(parameters))
         code.append(")")
         return " ".join(code)
 
