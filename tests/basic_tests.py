@@ -158,7 +158,7 @@ def test14():
     check that httpGet in lifecyle postStart works
     """
     assert isinstance(p, Pod)
-    assert p.spec.containers[1].lifecycle.postStart.httpGet.port == 80
+    assert p.spec.containers[1].lifecycle.postStart.httpGet.port == "80"
     assert p.spec.containers[1].lifecycle.postStart.httpGet.host == 'localhost'
     assert p.spec.containers[1].lifecycle.postStart.httpGet.path == "/home"
     assert p.spec.containers[1].lifecycle.postStart.httpGet.scheme == "https"
@@ -173,7 +173,7 @@ def test15():
     check that tcpSocket in lifecycle postStart works
     """
     assert isinstance(p, Pod)
-    assert p.spec.containers[1].lifecycle.postStart.tcpSocket.port == 1025
+    assert p.spec.containers[1].lifecycle.postStart.tcpSocket.port == "1025"
     assert p.spec.containers[1].lifecycle.postStart.tcpSocket.host == "devnull"
 
 
@@ -474,6 +474,117 @@ def test45():
         assert False, "we should have got an exception about bad style"
     except RuntimeError:
         pass
+
+
+def test46():
+    """
+    check that None instead of dict generates a warning
+    """
+    om = ObjectMeta()
+    copy: ObjectMeta = om.dup()
+    copy.annotations = None
+    warnings = copy.get_type_warnings()
+    assert len(warnings) == 1, f"{len(warnings)} warnings"
+    assert warnings[0].cls == ObjectMeta
+    assert warnings[0].attrname == "annotations"
+    assert "empty dict" in warnings[0].warning
+
+
+def test47():
+    """
+    check that None instead of a list generates a warning
+    """
+    om = ObjectMeta()
+    copy: ObjectMeta = om.dup()
+    copy.finalizers = None
+    warnings = copy.get_type_warnings()
+    assert len(warnings) == 1, f"{len(warnings)} warnings"
+    assert warnings[0].cls == ObjectMeta
+    assert warnings[0].attrname == 'finalizers'
+    assert "empty list" in warnings[0].warning
+
+
+def test48():
+    """
+    check that None instead of a required str generates a warning
+    """
+    ref: OwnerReference = OwnerReference('v1', 'OwnerReference',
+                                         'wibble', '1')
+    ref.kind = None
+    warnings = ref.get_type_warnings()
+    assert len(warnings) == 1, f"{len(warnings)} warnings"
+    assert warnings[0].cls == OwnerReference
+    assert warnings[0].attrname == "kind"
+    assert "should have been" in warnings[0].warning
+
+
+def test49():
+    """
+    check that the wrong basic type is gives a warning
+    """
+    om = ObjectMeta(name=5)
+    warnings = om.get_type_warnings()
+    assert len(warnings) == 1, f"Got {len(warnings)} warnings"
+    assert warnings[0].cls == ObjectMeta
+    assert warnings[0].attrname == "name"
+    assert "expecting" in warnings[0].warning, f"warning: {warnings[0].warning}"
+
+
+def test50():
+    """
+    check the big test Pod for warnings (should be none)
+    """
+    assert isinstance(p, Pod)
+    warnings = p.get_type_warnings()
+    wstrings = "\n".join(w.warning for w in warnings)
+    assert not warnings, f"warnings: {wstrings}"
+
+
+def test51():
+    """
+    check that the wrong contained type in a list generates a warning
+    """
+    ps = PodSpec(containers=['asdf'])
+    warnings = ps.get_type_warnings()
+    assert len(warnings) == 1, f"got {len(warnings)} warnings"
+    assert len(warnings[0].path) == 2, f"path is {warnings[0].path}"
+
+
+def test52():
+    """
+    Put a correct object inside an appropriate list; should be no warnings.
+    """
+    own = OwnerReference(apiVersion='v1', kind='OwnerReference',
+                         name="wibble", uid='1234')
+    om = ObjectMeta(ownerReferences=[own])
+    warnings = om.get_type_warnings()
+    assert len(warnings) == 0, f'got {len(warnings)} warnings'
+
+
+def test53():
+    """
+    Put a broken object into the list in another; get warnings
+    """
+    own = OwnerReference(apiVersion=1, kind='OwnerReference',
+                         name='wibble', uid='345')
+    om = ObjectMeta(ownerReferences=[own])
+    warnings = om.get_type_warnings()
+    assert len(warnings) == 1, f'got {len(warnings)} warnings'
+    assert len(warnings[0].path) == 3, f'path was {warnings[0].path}'
+    assert 0 in warnings[0].path, f'path was {warnings[0].path}'
+
+
+def test54():
+    """
+    Put the wrong object inside another; get warnings
+    """
+    own = OwnerReference(apiVersion=1, kind='OwnerReference',
+                         name='wibble', uid='345')
+    p = Pod(spec=PodSpec(containers=[own]))
+    warnings = p.get_type_warnings()
+    assert len(warnings) == 1, f'got {len(warnings)} warnings'
+    assert 0 in warnings[0].path, f'path was {warnings[0].path}'
+
 
 
 if __name__ == "__main__":

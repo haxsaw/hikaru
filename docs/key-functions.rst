@@ -92,18 +92,8 @@ This will result in code that looks something like the following:
 .. code:: python
 
     >>> print(code)
-    the_deployment = Deployment(apiVersion='v1', kind='Deployment',
-                                metadata=ObjectMeta(
-                                    name='wibble', annotations={},
-                                    finalizers=[],
-                                    labels={},
-                                    managedFields=[],
-                                    ownerReferences=[]),
-                                spec=DeploymentSpec(
-                                    selector=LabelSelector(
-                                        matchExpressions=[],
-                                        matchLabels={}),
-                                    template=PodTemplateSpec()))
+    the_deployment = Deployment(apiVersion='v1', kind='Deployment', metadata=ObjectMeta(
+        name='wibble'), spec=DeploymentSpec(selector=LabelSelector(), template=PodTemplateSpec()))
 
 The above code is formatted to the default style, ``autopep8``. If you would rather have a more vertically oriented style, use ``black`` for the value of the style argument:
 

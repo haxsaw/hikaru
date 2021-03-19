@@ -388,31 +388,33 @@ class HikaruBase(object):
         return new_inst
 
     def get_type_warnings(self) -> List[TypeWarning]:
-        # """
-        # Compares attribute type annotation to actual data; issues warning on mismatches.
-        #
-        # This method compares the type of each attribute based on the type annotation
-        # against the type of the actual data in the attribute and generates a warning
-        # object whenever a mismatch is discovered. The search for mismatches starts
-        # at ``self`` and recursively searches any HikaruBase objects contained in
-        # ``self``.
-        # :return: a list of TypeWarning namedtuple objects. The fields should be
-        #     interpreted as follows:
-        #
-        #     - cls: the class object that contains the attribute that has a type mismatch
-        #     - attrname: the name of the attribute that has the type mismatch
-        #     - path: a list of strings that indicates from ``self`` how to reach the attr
-        #     - warning: a string that contains the text of the warning.
-        #
-        #     Note that the first three fields are similar to those from CatalogEntry,
-        #     however their interpretation is slightly different.
-        #
-        #     A return of an empty list indicates that there were no TypeWarnings.
-        #     This DOES NOT indicate that there aren't errors in usage; for example, if
-        #     and object may contain one of three alternative objects, this method doesn't
-        #     check if that constraint holds true; it only checks that the types of any
-        #     contained objects are correct.
-        # """
+        """
+        Compares attribute type annotation to actual data; issues warning on mismatches.
+
+        This method compares the type of each attribute based on the type annotation
+        against the type of the actual data in the attribute and generates a warning
+        object whenever a mismatch is discovered. The search for mismatches starts
+        at ``self`` and recursively searches any HikaruBase objects contained in
+        ``self``.
+
+        Note that if ``get_type_warnings()`` finds an incorrect typ
+        :return: a list of TypeWarning namedtuple objects. The fields should be
+            interpreted as follows:
+
+            - cls: the class object that contains the attribute that has a type mismatch
+            - attrname: the name of the attribute that has the type mismatch
+            - path: a list of strings that indicates from ``self`` how to reach the attr
+            - warning: a string that contains the text of the warning.
+
+            Note that the first three fields are similar to those from CatalogEntry,
+            however their interpretation is slightly different.
+
+            A return of an empty list indicates that there were no TypeWarnings.
+            This DOES NOT indicate that there aren't errors in usage; for example, if
+            and object may contain one of three alternative objects, this method doesn't
+            check if that constraint holds true; it only checks that the types of any
+            contained objects are correct.
+        """
         warnings: List[TypeWarning] = list()
         for f in fields(self):
             is_required = True
@@ -425,31 +427,82 @@ class HikaruBase(object):
                     initial_type = type_args[0]
                 else:
                     raise NotImplementedError("we aren't ready for this case")
+            # current value of initial_type:
+            # ok, now we have either a scaler (int, bool, str, etc),
+            # a subclass of HikaruBase,
+            # or a container (Dict, List)
+            # now we want the attr's real type (scalars, dict, list, HikaruBase)
+            # and if list, we want the contained type
+            contained_type = None
+            attr_type = initial_type
+            origin = get_origin(initial_type)
+            if origin is list:
+                attr_type = list
+                contained_type = get_args(initial_type)[0]
+            elif origin is dict:
+                attr_type = dict
+            elif (type(initial_type) != type or
+                    not issubclass(initial_type, (str, int,  float,
+                                                  bool, HikaruBase))):
+                raise RuntimeError(f"Some other kind of type: {initial_type}"
+                                   f", name={f.name}")
             attrval = getattr(self, f.name)
             if attrval is None:
-                if initial_type in (list, List):
+                if issubclass(attr_type, (str, int, float,
+                                          bool, HikaruBase)):
+                    if is_required:
+                        warnings.append(TypeWarning(self.__class__,
+                                                    f.name,
+                                                    [f.name],
+                                                    f"Attribute {f.name} is None but"
+                                                    f" should have been "
+                                                    f"{initial_type.__name__}"))
+                elif attr_type is list:
                     warnings.append(TypeWarning(self.__class__, f.name,
                                                 [f.name],
                                                 f"Attribute {f.name} is None but"
                                                 f" should be at least an empty list"))
-                elif initial_type in (dict, Dict):
-                      warnings.append(TypeWarning(self.__class__, f.name,
-                                                  [f.name],
-                                                  f"Attribute {f.name} is None but"
-                                                  f" should be at least an empty dict"))
+                elif attr_type is dict:
+                    warnings.append(TypeWarning(self.__class__, f.name,
+                                                [f.name],
+                                                f"Attribute {f.name} is None but"
+                                                f" should be at least an empty dict"))
                 elif is_required:
                     warnings.append(TypeWarning(self.__class__, f.name,
                                                 [f.name],
                                                 f"Attribute {f.name} is None but"
-                                                f" it is a required attribute"))
-
-            if attrval is None and not is_required:
-                continue
-            # check if the type is a list/dict the and value has no entries
-            if (initial_type in (list, List, dict, Dict) and
-                    type(attrval) in (list, List, dict, Dict) and
-                    len(attrval)):
-                continue
+                                                f" it is a required "
+                                                f"{initial_type.__name__} attribute"))
+            elif (attr_type != type(attrval) and
+                  not issubclass(attr_type, type(attrval))):
+                warnings.append(TypeWarning(self.__class__, f.name,
+                                            [f.name],
+                                            f"Was expecting type {attr_type.__name__},"
+                                            f" got {type(attrval).__name__}"))
+            elif attr_type is list:
+                # check the contained types
+                for i, o in enumerate(attrval):
+                    if contained_type != type(o):
+                        warnings.append(TypeWarning(self.__class__, f.name,
+                                                    [f.name, i],
+                                                    f"Element {i} of list"
+                                                    f" {f.name} is of type"
+                                                    f" {type(o).__name__},"
+                                                    f" not {contained_type.__name__}"))
+                    elif issubclass(contained_type, HikaruBase):
+                        # extract any warnings and amend the path
+                        inner_warnings = o.get_type_warnings()
+                        warnings.extend([TypeWarning(w.cls, w.attrname,
+                                                     [f.name, i] + w.path,
+                                                     w.warning)
+                                         for w in inner_warnings])
+            elif isinstance(attrval, HikaruBase):
+                inner_warnings = attrval.get_type_warnings()
+                warnings.extend([TypeWarning(w.cls, w.attrname,
+                                             [f.name] + w.path,
+                                             w.warning)
+                                 for w in inner_warnings])
+        return warnings
 
 
     def process(self, yaml) -> None:
