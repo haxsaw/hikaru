@@ -19,33 +19,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-Just some notes to remember how this all works:
+The meta module contains all the support to reflectively process objects
 
-For the collection types, you must parameterize the
-types from typing (List, Dict, etc).
-
-If you want an optional type, you can use typing.Optional,
-which turns into Union[T, NoneType].
-
-You can use dataclasses.field(default_factory=list) to indicate
-where optional args should be defaulted to new empty lists.
-
-You can acquire the fields of class X with
-dataclasses.fields(X). The type annotation for the field is
-stored in the 'type' attribute.
-
-You now want to understand Union and List types. There are two
-different ways to do this; the change comes at Py3.8. This
-are both performed on the type object found in the above
-mentioned attribute:
-
-Operation           Pre-3.8         3.8 and later
-========================================================
-get origin          __origin__      typing.get_origin()
-get args            __args__        typing.get_args()
-
-inspect.signature() can give the argument signature for a
-method; can find how many required positional args there are.
+This module provides the main runtime support for Hikaru. It defines the base
+class from which all Kubernetes model version classes are derived. The base
+class provides all of the machinery for working with the both Python and YAML:
+it can do the YAML parsing, the Python generation, and the Python runtime
+object management.
 """
 from typing import Union, List, Dict
 from dataclasses import fields, dataclass, is_dataclass
@@ -397,7 +377,12 @@ class HikaruBase(object):
         at ``self`` and recursively searches any HikaruBase objects contained in
         ``self``.
 
-        Note that if ``get_type_warnings()`` finds an incorrect typ
+        Note that if ``get_type_warnings()`` finds an attribute that is a
+        HikaruBase object of the incorrect type, ``get_type_warnings()``
+        will NOT inspect the incorrect object's attributes for type correctness.
+        The object itself will be flagged as incorrect, but checking will not
+        continue inside the incorrect object. Other checks will still proceed.
+
         :return: a list of TypeWarning namedtuple objects. The fields should be
             interpreted as follows:
 
@@ -503,7 +488,6 @@ class HikaruBase(object):
                                              w.warning)
                                  for w in inner_warnings])
         return warnings
-
 
     def process(self, yaml) -> None:
         """
