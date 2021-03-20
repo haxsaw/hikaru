@@ -7,7 +7,11 @@ Reference
 .. autoclass:: hikaru.CatalogEntry
    :members:
 
-.. autoclass:: hikaru.UsageWarning
+.. autoclass:: hikaru.TypeWarning
+   :members:
+
+.. autoclass:: hikaru.DiffDetail
+   :members:
 
 CatalogEntry is a namedtuple that is returned as list elements from ``find_by_name()``.
 

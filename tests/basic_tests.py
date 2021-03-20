@@ -586,6 +586,106 @@ def test54():
     assert 0 in warnings[0].path, f'path was {warnings[0].path}'
 
 
+def test55():
+    """
+    check that a single change is detected by diff
+    """
+    assert isinstance(p, Pod)
+    copy = p.dup()
+    del copy.spec.containers[0]
+    # copy.spec.containers[1].securityContext.seLinuxOptions.role = 'overlord'
+    diffs = p.diff(copy)
+    assert len(diffs) == 1
+    assert "Length" in diffs[0].report
+
+
+def test56():
+    """
+    check a single deeply nested change is detected
+    """
+    assert isinstance(p, Pod)
+    copy = p.dup()
+    copy.spec.containers[1].securityContext.seLinuxOptions.role = 'overlord'
+    diffs = p.diff(copy)
+    assert len(diffs) == 1
+    assert len(diffs[0].path) == 6, f'path is {diffs[0].path}'
+
+
+def test57():
+    """
+    check different types yield a diff
+    """
+    assert isinstance(p, Pod)
+    diffs = p.diff(p.metadata)
+    assert len(diffs) == 1
+    assert "Incompatible" in diffs[0].report
+
+
+def test58():
+    """
+    check that a type mismatch diff is caught
+    """
+    om1 = ObjectMeta(clusterName=5)
+    om2 = ObjectMeta(clusterName="willie")
+    diffs = om2.diff(om1)
+    assert len(diffs) == 1
+    assert "Type mismatch" in diffs[0].report
+
+
+def test59():
+    """
+    check that a value mismatch diff is caught
+    """
+    om1 = ObjectMeta(namespace='ns1')
+    om2 = ObjectMeta(namespace='ns2')
+    diffs = om1.diff(om2)
+    assert len(diffs) == 1
+    assert "Value mismatch" in diffs[0].report
+
+
+def test60():
+    """
+    check that dict key differences are caught by diff
+    """
+    om1 = ObjectMeta(labels={'a': '1', 'b': '2'})
+    om2 = ObjectMeta(labels={'a': '1', 'c': '2'})
+    diffs = om1.diff(om2)
+    assert len(diffs) == 1
+    assert "Key mismatch" in diffs[0].report
+
+
+def test61():
+    """
+    check that dict key differences are caught by diff
+    """
+    om1 = ObjectMeta(labels={'a': '1', 'b': '2'})
+    om2 = ObjectMeta(labels={'a': '1', 'b': '99'})
+    diffs = om1.diff(om2)
+    assert len(diffs) == 1
+    assert "Item mismatch" in diffs[0].report
+
+
+def test62():
+    """
+    check that lists with different element types generate a diff
+    """
+    ps1 = PodSpec(containers=[Container('first')])
+    ps2 = PodSpec(containers=[ObjectMeta()])
+    diffs = ps1.diff(ps2)
+    assert len(diffs) == 1
+    assert "Element mismatch" in diffs[0].report
+
+
+def test63():
+    """
+    check that lists with elements that don't match are caught
+    """
+    ps1 = PodSpec(containers=[Container('first')])
+    ps2 = PodSpec(containers=[Container('second')])
+    diffs = ps1.diff(ps2)
+    assert len(diffs) == 1, f'len is {len(diffs)}'
+    assert "Value mismatch" in diffs[0].report, diffs[0].report
+
 
 if __name__ == "__main__":
     setup()

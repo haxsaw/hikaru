@@ -110,7 +110,7 @@ def get_yaml(obj: HikaruBase) -> str:
     :return: big ol' string of YAML that represents the model
     """
     d: dict = get_clean_dict(obj)
-    yaml = YAML()
+    yaml = YAML(typ="safe")
     yaml.indent(offset=2, sequence=4)
     sio = StringIO()
     yaml.dump(d, sio)
@@ -165,7 +165,7 @@ def get_processors(path: str = None, stream: TextIO = None,
         to_parse = yaml
     else:
         to_parse = f.read()
-    parser = YAML()
+    parser = YAML(typ="safe")
     docs = list(parser.load_all(to_parse))
     return docs
 
