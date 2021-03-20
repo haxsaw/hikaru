@@ -126,6 +126,17 @@ to run, depending on how many nested objects are involved in the argument to
 ``get_python_source()``. The code can be saved to another Python module and re-run to
 recreate the original object.
 
+process_api_version()
+*********************
+
+:ref:`Documentation<process_api_version doc>`
+
+The ``apiVersion`` attribute of any top-level Kubernetes object may have encoded
+both the object group and the version of the API that the object is to respect.
+This function takes the value of this attibute and splits it out into its parts,
+the API object group and the version. This is returned as a 2-tuple of strings,
+(group, version).
+
 get_clean_dict()
 ****************
 

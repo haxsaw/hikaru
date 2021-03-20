@@ -43,3 +43,8 @@ CatalogEntry is a namedtuple that is returned as list elements from ``find_by_na
 .. _load_full_yaml doc:
 
 .. autofunction:: hikaru.load_full_yaml
+
+.. _process_api_version doc:
+
+.. autofunction:: hikaru.process_api_version
+

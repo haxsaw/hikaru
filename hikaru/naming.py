@@ -24,6 +24,7 @@ from typing import Tuple, Optional
 def process_api_version(api_version: str) -> Tuple[str, str]:
     """
     Takes the value of an apiVersion property and returns group and version
+
     :param api_version: the value of a apiVersion property
     :return: tuple of two strings: published object group, version
     """
