@@ -535,6 +535,9 @@ class PropertyDescriptor(object):
         return "".join(parts)
 
 
+model_package = "hikaru/model"
+
+
 def build_it(swagger_file: str):
     """
     Initiate the swagger-file-driven model package build
@@ -542,8 +545,8 @@ def build_it(swagger_file: str):
     :param swagger_file: string; path to the swagger file to process
     """
     load_stable(swagger_file)
-    prep_package("model")
-    write_modules("model")
+    prep_package(model_package)
+    write_modules(model_package)
 
 
 if __name__ == "__main__":
