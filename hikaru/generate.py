@@ -21,7 +21,7 @@
 import json
 from dataclasses import asdict
 from io import StringIO
-from typing import List, TextIO
+from typing import List, TextIO, Optional
 
 from autopep8 import fix_code
 from black import format_file_contents, FileMode
@@ -90,7 +90,16 @@ def _clean_dict(d: dict) -> dict:
 
 def get_clean_dict(obj: HikaruBase) -> dict:
     """
-    turns an instance of a HikaruBase into a dict with values of None
+    Turns an instance of a HikaruBase into a dict without values of None
+
+    This function returns a Python dict object that represents the hierarchy
+    of objects starting at ``obj`` and recusing into any nested objects.
+    The returned dict **does not** include any key/value pairs where the value
+    of the key is None or empty.
+
+    If you wish to instead have a dict with all key/value pairs even when
+    there is no useful value then you should use the dataclass module's
+    ``asdict()`` function on obj.
 
     :param obj: some api_version_group of subclass of HikaruBase
     :return: a dict representation of the obj instance, but if any value
@@ -131,6 +140,71 @@ def get_json(obj: HikaruBase) -> str:
     d = get_clean_dict(obj)
     s = json.dumps(d)
     return s
+
+
+def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
+    """
+    Create Hikaru objects from a string of JSON from ``get_json()``
+
+    This function can re-create a hierachy of HikaruBase objects from a string
+    of JSON previous returned by a call to ``get_json()``.
+
+    If the JSON was created from a full Kubernetes document object, such as Pod
+    or Deployment, only the json_data argument is required.
+
+    If the JSON was created from an arbitrary HikaruBase subclass, this function
+    needs to know what kind of thing it is loading; in this case, you must provide
+    the ``cls`` parameter so that Hikaru knows what kind of instance you wish
+    to create.
+
+    :param json_data: string; the value previously returned by ``get_json()`` on
+        some HikaruBase subclass instance.
+    :param cls: optional; a HikaruBase subclass (*not* the string name
+        of the class). This should match the kind of object that was dumped into
+        the dict.
+    :return: an instance of a HikaruBase subclass with all attributes and contained
+        objects recreated.
+    """
+    d = json.loads(json_data)
+    return from_dict(d, cls=cls)
+
+
+def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
+    """
+    Create Hikaru objects from a ``get_clean_dict()`` dict
+
+    This function can re-create a hierarchy of HikaruBase objects from a
+    dict that was created with ``get_clean_dict()``.
+
+    If the dict was created from a full Kubernetes document object, such as Pod
+    or Deployment, only the dict argument is required.
+
+    If the dict was created from an arbitrary HikaruBase subclass, this function
+    needs to know what kind of thing it is loading; in this case, you must provide
+    the ``cls`` parameter so that Hikaru knows what kind of instance you wish
+    to create.
+
+    :param adict: a Python dict that was previously created with ``get_clean_dict()``
+    :param cls: optional; a HikaruBase subclass (*not* the string name
+        of the class). This should match the kind of object that was dumped into
+        the dict.
+    :return: an instance of a HikaruBase subclass with all attributes and contained
+        objects recreated.
+    """
+    parser = YAML(typ="safe")
+    sio = StringIO()
+    parser.dump(adict, stream=sio)
+
+    if cls is None:
+        docs = load_full_yaml(yaml=sio.getvalue())
+        doc = docs[0]
+    else:
+        assert issubclass(cls, HikaruBase)
+        parser = YAML(typ="safe")
+        sio.seek(0)
+        yaml = parser.load(sio)
+        doc = cls.from_yaml(yaml)
+    return doc
 
 
 def get_processors(path: str = None, stream: TextIO = None,

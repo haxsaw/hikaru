@@ -5,9 +5,9 @@ Hikaru
 **Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
 
 Hikaru is a tool that provides you the ability to easily shift between
-YAML and Python representations of your Kubernetes config files, as well
-as providing some assistance in authoring these files in Python, opens
-up options in how you can assemble and customise the files, and even
+YAML, Python objects/source, and JSON representations of your Kubernetes config
+files, provides assistance in authoring these files in Python,
+opens up options in how you can assemble and customise the files, and even
 provides some programmatic tools for inspecting large, complex files to
 enable automation of policy and security compliance.
 
@@ -15,10 +15,10 @@ From Python
 ~~~~~~~~~~~
 
 Hikaru uses type-annotated Python dataclasses to represent each of the
-kinds of objects defined in the Kubernetes API, so when used with and
+kinds of objects defined in the Kubernetes API, so when used with an
 IDE that understands Python type annotations, Hikaru enables the IDE to
 provide the user direct assistance as to what parameters are available,
-what types each parameter must be, and which are optional. Assembled
+what type each parameter must be, and which parameters are optional. Assembled
 Hikaru object can be rendered into YAML that can be processed by regular
 Kubernetes tools.
 
@@ -29,21 +29,27 @@ But you don’t have to start with authoring Python: you can use Hikaru to
 parse Kubernetes YAML into these same Python objects, at which point you
 can inspect the created objects, modify them and re-generate new YAML,
 or even have Hikaru emit Python source
-code that will re- create the same structure but from the Python
+code that will re-create the same structure but from the Python
 interface.
+
+From JSON
+~~~~~~~~~
+
+You can also process JSON or Python dict representations of Kubernetes configs
+into the corresponding Python objects
 
 To YAML, Python, or JSON
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Hikaru can output a Python Kubernetes object as Python source code,
-YAML, or JSON (going from JSON to the other two is coming), allowing you
+YAML, JSON, or a Python dict, and go back to any of these representations, allowing you
 to shift easily between representational formats for various purposes.
 
 Alternative to templating for customisation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Hikaru, you can assemble Kubernetes objects using previously
-defined library objects in Python, craft replacements procedurally, or
+defined libraries of objects in Python, craft replacements procedurally, or
 even tweak the values of an existing object and turn it back into YAML.
 
 Build models for uses other than controlling systems
@@ -52,6 +58,14 @@ Build models for uses other than controlling systems
 You can use Hikaru in the process of issuing instructions to Kubernetes,
 but the same Hikaru models can be used as high-fidelity replicas of the
 YAML for other processes as well.
+
+Type checking, diffing, and inspection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hikaru supports a number of other operations on the Python objects it defines. For
+example, you can check the types of all attributes in a config against the defined
+types for each attribute, you can diff two configs to see where they aren't the same,
+and you can search through a config for specific values and contained objects.
 
 API Coverage
 ~~~~~~~~~~~~
@@ -76,7 +90,7 @@ To create Python objects from a Kubernetes YAML source, use
 
 .. code:: python
 
-   from hikaru import load_full_yaml
+   from hikaru import load_full_yaml  # or just 'from hikaru import *'
 
    docs = load_full_yaml(stream=open("test.yaml", "r"))
    p = docs[0]
@@ -89,7 +103,7 @@ navigation:
 
 .. code:: python
 
-   from hikaru.model import Pod
+   from hikaru import Pod
    assert isinstance(p, Pod)
    print(p.metadata.labels["lab2"])
    print(p.spec.containers[0].ports[0].containerPort)
@@ -101,7 +115,7 @@ You can create Kubernetes objects in Python:
 
 .. code:: python
 
-   from hikaru.model import Pod, PodSpec, Container, ObjectMeta
+   from hikaru import Pod, PodSpec, Container, ObjectMeta
    x = Pod(apiVersion='v1', kind='Pod',
            metadata=ObjectMeta(name='hello-kiamol-3'),
            spec=PodSpec(
@@ -139,14 +153,18 @@ providing a migration path):
 
    from hikaru import get_python_source, load_full_yaml
    docs = load_full_yaml(path="to/the/above.yaml")
-   print(get_python_source(docs[0], assign_to='x'))
+   print(get_python_source(docs[0], assign_to='x', style="black"))
 
 ...which results in:
 
 .. code:: python
 
-   x = Pod(apiVersion='v1', kind='Pod', metadata=ObjectMeta(name='hello-kiamol-3'),
-           spec=PodSpec(containers=[Container(name='web', image='kiamol/ch02-hello-kiamol')]))
+    x = Pod(
+        apiVersion="v1",
+        kind="Pod",
+        metadata=ObjectMeta(name="hello-kiamol-3"),
+        spec=PodSpec(containers=[Container(name="web", image="kiamol/ch02-hello-kiamol")]),
+    )
 
 It is entirely possible to load YAML into Python, tailor it, and then
 send it back to YAML; Hikaru can round-trip YAML through Python and
@@ -166,6 +184,38 @@ text files together:
            metadata=om,
            spec=PodSpec(containers=[web_container, lb_container])
            )
+
+You can also transform Hikaru objects into Python dicts:
+
+.. code:: python
+
+    from pprint import pprint
+    pprint(get_clean_dict(x))
+
+...which yields:
+
+.. code:: python
+
+    {'apiVersion': 'v1',
+     'kind': 'Pod',
+     'metadata': {'name': 'hello-kiamol-3'},
+     'spec': {'containers': [{'image': 'kiamol/ch02-hello-kiamol', 'name': 'web'}]}}
+
+...and go back into Hikaru objects. You can also render Hikaru objects as
+JSON:
+
+.. code:: python
+
+    from hikaru import *
+    print(get_json(x))
+
+...which outputs the similar:
+
+.. code:: json
+
+    {"apiVersion": "v1", "kind": "Pod", "metadata": {"name": "hello-kiamol-3"}, "spec": {"containers": [{"name": "web", "image": "kiamol/ch02-hello-kiamol"}]}}
+
+Hikaru lets you go from JSON back to Hikaru objects as well.
 
 Hikaru objects can be tested for equivalence with ‘==’, and you can also
 easily create deep copies of entire object structures with dup(). This

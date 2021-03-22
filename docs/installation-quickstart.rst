@@ -18,7 +18,15 @@ The project GitHub repository can be found at: https://github.com/haxsaw/hikaru
 Quickstart
 ############
 
-The following are the 'bread and butter' functions of Hikaru.
+Normally, you would begin with:
+
+.. code:: python
+
+    from hikaru import *
+
+...to load in all the symbols you need, including all the v1 Kubernetes objects. You can of
+course load in just the bits you want to work with, as shown below. The following are
+the 'bread and butter' functions of Hikaru.
 
 To read Kubernetes YAML documents into Hikaru Python objects:
 *************************************************************

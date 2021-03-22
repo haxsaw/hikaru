@@ -41,6 +41,7 @@ def test_yaml(yamlpath: pathlib.Path):
     docs = load_full_yaml(stream=f)
     assert len(docs) > 0, f"For path {yamlpath}, only got {len(docs)} docs"
     for doc in docs:
+        # first test that rendered Python source yields the same object
         source = get_python_source(doc, style="black")
         _, version = process_api_version(doc.apiVersion)
         x = make_instance_from_source(version, source)
@@ -53,12 +54,32 @@ def test_yaml(yamlpath: pathlib.Path):
                 assert isinstance(dd, DiffDetail)
                 print(f">>{dd.cls.__name__}.{dd.attrname}: {dd.report}")
             raise
+
+        # next try rendered yaml yields the same object
         yaml = get_yaml(x)
         new_doc = load_full_yaml(yaml=yaml)[0]
         try:
             assert doc == new_doc, f'Failed to create identical Python from' \
                                    f' exported yaml for {str(yamlpath)},' \
                                    f' kind={doc.kind}'
+        except AssertionError:
+            _ = 1  # debugger hook
+
+        # next check rendered dicts yield the same object
+        d = get_clean_dict(new_doc)
+        dict_doc = from_dict(d)
+        try:
+            assert doc == dict_doc, f'Failed to get matching doc from a' \
+                                    f' previously dumped dict'
+        except AssertionError:
+            _ = 1  # debugger hook
+
+        # finally, try dumping json and recrating it; should be the same
+        j = get_json(dict_doc)
+        jdoc = from_json(j)
+        try:
+            assert doc == jdoc, f'Failed to get matching doc from a' \
+                                f' previous json dump'
         except AssertionError:
             _ = 1  # debugger hook
 

@@ -20,7 +20,8 @@
 # SOFTWARE.
 from hikaru.meta import (HikaruBase, CatalogEntry, TypeWarning, DiffDetail)
 from hikaru.generate import (get_python_source, get_clean_dict, get_yaml, get_json,
-                             load_full_yaml, get_processors, process_api_version)
+                             load_full_yaml, get_processors, process_api_version,
+                             from_dict, from_json)
 from hikaru.model import *
 
 model_classes = [k for k, v in globals().items()
@@ -31,6 +32,6 @@ __version__ = "v0.1.1a0"
 
 __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_source",
            "get_clean_dict", "load_full_yaml", "get_processors", "TypeWarning",
-           "DiffDetail", "process_api_version"]
+           "DiffDetail", "process_api_version", "from_dict", "from_json"]
 __all__.extend(model_classes)
 del model_classes

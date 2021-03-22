@@ -7,18 +7,37 @@ Reference
 .. autoclass:: hikaru.CatalogEntry
    :members:
 
+CatalogEntry is a namedtuple that is returned as list elements from the
+:meth:`find_by_name()<hikaru.HikaruBase.find_by_name>` method of HikaruBase.
+
+.. _TypeWarning doc:
+
 .. autoclass:: hikaru.TypeWarning
    :members:
+
+TypeWarning is a namedtuple that is returned as list elements from the
+:meth:`get_type_warnings()<hikaru.HikaruBase.get_type_warnings>` method of HikaruBase.
+
+.. _DiffDetail doc:
 
 .. autoclass:: hikaru.DiffDetail
    :members:
 
-CatalogEntry is a namedtuple that is returned as list elements from ``find_by_name()``.
+DiffDetail is a namedtuple that is returned as list elements from the
+:meth:`diff()<hikaru.HikaruBase.diff>` method of HikaruBase.
 
 .. _HikaruBase doc:
 
 .. autoclass:: hikaru.HikaruBase
    :members:
+
+.. _from_dict doc:
+
+.. autofunction:: hikaru.from_dict
+
+.. _from_json doc:
+
+.. autofunction:: hikaru.from_json
 
 .. _get_clean_dict doc:
 

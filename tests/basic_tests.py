@@ -687,6 +687,46 @@ def test63():
     assert "Value mismatch" in diffs[0].report, diffs[0].report
 
 
+def test64():
+    """
+    check we can reload a doc from a get_clean_dict() dump
+    """
+    assert isinstance(p, Pod)
+    d = get_clean_dict(p)
+    new_p = from_dict(d)
+    assert p == new_p
+
+
+def test65():
+    """
+    Check if from_dict works with a named class that was dumped
+    """
+    ps = PodSpec(containers=[Container('first')])
+    d = get_clean_dict(ps)
+    new_ps = from_dict(d, cls=PodSpec)
+    assert ps == new_ps
+
+
+def test66():
+    """
+    Check if we can reload a doc from a get_json() dump
+    """
+    assert isinstance(p, Pod)
+    j = get_json(p)
+    new_p = from_json(j)
+    assert p == new_p
+
+
+def test67():
+    """
+    Check if from_json works with a named class that was dumped
+    """
+    ps = PodSpec(containers=[Container('first')])
+    j = get_json(ps)
+    new_ps = from_json(j, cls=PodSpec)
+    assert ps == new_ps
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()

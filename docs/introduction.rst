@@ -31,10 +31,9 @@ the author will be provided assistance in terms of available attributes to set, 
 of each attribute. These can then be rendered as YAML for further processing.
 
 Hikaru objects can also be rendered as JSON, which can serve as a handy form for storage in
-document DB for archival and audit purposes. Currently, this is a one-way trip, but future
-updates will include the ability to re-create the Hikaru objects from JSON.
+document DB for archival and audit purposes. The JSON representation can be turned back into the source Hikaru Python objects at a later time. Hikaru also supports round-tripping it's objects to Python dicts and back again.
 
 Hikaru objects can also be queried while in memory, so inspection and audit processes can
 be easily automated using the same tooling and representation as the above uses.
 
-The single representation, multiple uses abilities of Hikaru allow it to leverage your Kubernetes YAML assets further in your organization.
+The single representation/multiple uses capability of Hikaru allow it to leverage your Kubernetes YAML assets further into your organization.
