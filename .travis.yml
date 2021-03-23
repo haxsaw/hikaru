@@ -6,8 +6,6 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r maintainers_requirements.txt
-env:
-  - CODECOV_TOKEN='33edcdbf-2764-465f-86bf-b1866a5dffd7'
 script:
   - export PYTHONPATH=`pwd`; cd tests; pytest --cov=hikaru --cov-report=term-missing *.py
 after_success:
