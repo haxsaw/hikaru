@@ -8,3 +8,5 @@ install:
   - pip install -r maintainers_requirements.txt
 script:
   - export PYTHONPATH=`pwd`; cd tests; pytest --cov=hikaru --cov-report=term-missing *.py
+after_success:
+  - bash < (curl -s https://codecov.io/bash)
