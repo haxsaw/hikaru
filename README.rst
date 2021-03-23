@@ -8,11 +8,14 @@
 .. |versions| image:: https://img.shields.io/pypi/pyversions/hikaru
    :alt: PyPI - Python Version
 
+.. |coverage| image:: https://codecov.io/gh/haxsaw/hikaru/branch/main/graph/badge.svg
+  :target: https://codecov.io/gh/haxsaw/hikaru
+
 ======
 Hikaru
 ======
 
-|travis|   |license|   |versions|
+|travis|   |license|   |versions|   |coverage|
 
 **Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
 
