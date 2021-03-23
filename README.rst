@@ -1,3 +1,7 @@
+
+.. image:: https://travis-ci.com/haxsaw/hikaru.svg?branch=dev
+    :target: https://travis-ci.com/haxsaw/hikaru
+
 ======
 Hikaru
 ======
