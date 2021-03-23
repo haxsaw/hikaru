@@ -11,4 +11,4 @@ env:
 script:
   - export PYTHONPATH=`pwd`; cd tests; pytest --cov=hikaru --cov-report=term-missing *.py
 after_success:
-  - bash < (curl -s https://codecov.io/bash)
+  - cd tests; bash < (curl -s https://codecov.io/bash)
