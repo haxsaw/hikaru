@@ -12,9 +12,7 @@
 Hikaru
 ======
 
-========   =========   ==========
 |travis|   |license|   |versions|
-========   =========   ==========
 
 **Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
 
