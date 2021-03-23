@@ -5,7 +5,8 @@
 .. |license| image:: https://img.shields.io/github/license/haxsaw/hikaru
    :alt: GitHub license   :target: https://github.com/haxsaw/hikaru/blob/main/LICENSE
 
-.. |versions| image:: https://img.shields.io/pypi/pyversions/hikaru   :alt: PyPI - Python Version
+.. |versions| image:: https://img.shields.io/pypi/pyversions/hikaru
+   :alt: PyPI - Python Version
 
 ======
 Hikaru
