@@ -44,6 +44,9 @@ except ImportError:
 NoneType = type(None)
 
 
+_not_there = object()
+
+
 CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
 TypeWarning = namedtuple('TypeWarning', ['cls', 'attrname', 'path', 'warning'])
@@ -176,8 +179,6 @@ class HikaruBase(object):
                 for i in a:
                     if isinstance(i, HikaruBase):
                         new_list.append(i.dup())
-                    elif type(i) == dict:
-                        new_list.append(dict(i))
                     else:
                         new_list.append(i)
             else:
@@ -241,7 +242,15 @@ class HikaruBase(object):
             In the last example, 'lifecycle' is an direct attribute of a single
             container, but 'httpGet' is several objects beneath the lifecycle.
         :return: list of CatalogEntry objects that match the query criteria.
+        :raises TypeError: if 'name' is not a string, or if 'following' is not
+            a string or list
+        :raises ValueError: if 'following' is a list and one of the elements is not
+            a str or an int
         """
+        if not isinstance(name, str):
+            raise TypeError("name must be a str")
+        if following is not None and not isinstance(following, (str, list, tuple)):
+            raise TypeError("following must be a string or list")
         result = list()
         field_list = self._field_catalog.get(name)
         if field_list is not None:
@@ -252,8 +261,6 @@ class HikaruBase(object):
                 signposts = following.split('.')
             elif isinstance(following, (list, tuple)):
                 signposts = following
-            else:
-                raise TypeError("following is an unsupported type")
             candidates = result
             result = []
             for ce in candidates:
@@ -262,8 +269,9 @@ class HikaruBase(object):
                 for sp in signposts:
                     try:
                         sp = int(sp)
-                    except ValueError:
-                        pass
+                    except (ValueError, TypeError) as e:
+                        if not isinstance(sp, str):
+                            raise ValueError(str(e))
                     try:
                         start = ce.path.index(sp, start)
                     except ValueError:
@@ -281,27 +289,45 @@ class HikaruBase(object):
         at 'self'. The elements of path are either strings representing attribute
         names or else integers in the case where an attribute name reaches a list
         (the int is used as an index into the list). Generally, the thing to do is
-        to use the 'path' value of a returned CatalogEntry from find_by_name()
+        to use the 'path' attribute of a returned CatalogEntry from find_by_name()
 
         :param path: A list of strings or ints.
         :return: Whatever value is found at the end of the path; this could be
             another HikaruBase instance or a plain Python object (str, bool, dict,
             etc).
 
-        :raises RuntimeError: since there should only be actual values along the
-            path, if None is ever encountered a RuntimeError exception is raised.
+        :raises RuntimeError: raised if None is found anywhere along the path except
+            at the last element
+        :raises IndexError: raised if a path index value is beyond the end of a
+            list-valued attribute
+        :raises ValueError: if an index for a list can't be turned into an int
+        :raises AttributeError: raised if any attribute on the path isn't an
+            attribute of the previous object on the path
         """
         obj = self
         for p in path:
-            try:
-                p = int(p)
-                obj = obj[p]
-                if obj is None:
-                    raise RuntimeError(f"Path {path} leads to None at {p}")
-            except ValueError:
-                obj = getattr(obj, p, None)
-                if obj is None:
-                    raise RuntimeError(f"Path {path} leads to None at {p}")
+            if isinstance(obj, (list, tuple)):
+                try:
+                    idx_p = int(p)
+                except ValueError:
+                    raise ValueError(f"Path element isn't an int for list"
+                                     f" attribute; attr={p}")
+                else:
+                    try:
+                        obj = obj[idx_p]
+                    except IndexError:
+                        raise IndexError(f"Index {idx_p} is beyond the end of the list")
+                    else:
+                        if obj is None:
+                            raise RuntimeError(f"Path {path} leads to None at {p}")
+            else:
+                try:
+                    obj = getattr(obj, p, _not_there)
+                except TypeError as _:
+                    raise TypeError(f'{p} is an illegal attribute')
+                else:
+                    if obj is _not_there:
+                        raise AttributeError(f"Path {path} leads to an unknown attr at {p}")
         return obj
 
     @classmethod
@@ -364,8 +390,10 @@ class HikaruBase(object):
                 elif origin in (dict, Dict):
                     kw_args[p.name] = {}
                 else:
-                    raise RuntimeError(f"Unknown type {initial_type} for parameter "
-                                       f"{p.name} in {cls.__name__}")
+                    raise NotImplementedError(f"Internal error! Unknown type {initial_type}"
+                                              f" for parameter {p.name} in"
+                                              f" {cls.__name__}. Please file a"
+                                              f" bug report.")
         new_inst = cls(**kw_args)
         return new_inst
 
@@ -460,30 +488,15 @@ class HikaruBase(object):
                                                      [f.name, i] + d.path,
                                                      d.report)
                                           for d in inner_diffs])
-                        elif isinstance(self_element, dict):
-                            if set(self_element.keys()) != set(other_element.keys()):
-                                dd = DiffDetail(self.__class__, f.name,
-                                                [f.name, i],
-                                                f"Element mismatch:"
-                                                f"self.{f.name}[{i}] is a dict"
-                                                f" with different keys than other")
-                                diffs.append(dd)
-                            else:
-                                for k, v in self_element.items():
-                                    if v != other_element[k]:
-                                        dd = DiffDetail(self.__class__, f.name,
-                                                        [f.name, i],
-                                                        f"Element mismatch:"
-                                                        f"self.{f.name}[{i}][{k}"
-                                                        f" is {v}, but in other"
-                                                        f" the value is "
-                                                        f"{other_element[k]}")
                         else:
-                            raise RuntimeError(f"Don't know how to compare"
-                                               f" {other_element} with {other_element}")
+                            raise NotImplementedError(f"Internal error! Don't know how to "
+                                                      f"compare element {self_element}"
+                                                      f" with {other_element}."
+                                                      f" Please file a bug report.")
             else:
-                raise RuntimeError(f"don't know how to compare {self_attr}"
-                                   f" with {other_attr}")
+                raise NotImplementedError(f"Internal error! Don't know how to compare"
+                                          f" attribute {self_attr} with {other_attr}."
+                                          f" Please file a bug report")
         return diffs
 
     def get_type_warnings(self) -> List[TypeWarning]:
@@ -530,7 +543,8 @@ class HikaruBase(object):
                     is_required = False
                     initial_type = type_args[0]
                 else:
-                    raise NotImplementedError("we aren't ready for this case")
+                    raise NotImplementedError("Internal error! We aren't expecting this "
+                                              "case. Please file a bug report.")
             # current value of initial_type:
             # ok, now we have either a scaler (int, bool, str, etc),
             # a subclass of HikaruBase,
@@ -548,8 +562,9 @@ class HikaruBase(object):
             elif (type(initial_type) != type or
                     not issubclass(initial_type, (str, int,  float,
                                                   bool, HikaruBase))):
-                raise RuntimeError(f"Some other kind of type: {initial_type}"
-                                   f", name={f.name}")
+                raise NotImplementedError(f"Internal error! Some other kind of type:"
+                                          f" {initial_type}, name={f.name}."
+                                          f" Please file a bug report.")
             attrval = getattr(self, f.name)
             if attrval is None:
                 if issubclass(attr_type, (str, int, float,
@@ -571,12 +586,6 @@ class HikaruBase(object):
                                                 [f.name],
                                                 f"Attribute {f.name} is None but"
                                                 f" should be at least an empty dict"))
-                elif is_required:
-                    warnings.append(TypeWarning(self.__class__, f.name,
-                                                [f.name],
-                                                f"Attribute {f.name} is None but"
-                                                f" it is a required "
-                                                f"{initial_type.__name__} attribute"))
             elif (attr_type != type(attrval) and
                   not issubclass(attr_type, type(attrval))):
                 warnings.append(TypeWarning(self.__class__, f.name,
@@ -585,6 +594,11 @@ class HikaruBase(object):
                                             f" got {type(attrval).__name__}"))
             elif attr_type is list:
                 # check the contained types
+                if is_required and len(attrval) == 0:
+                    warnings.append(TypeWarning(self.__class__, f.name,
+                                                [f.name],
+                                                f"List {f.name} has no"
+                                                f" elements but is required"))
                 for i, o in enumerate(attrval):
                     if contained_type != type(o):
                         warnings.append(TypeWarning(self.__class__, f.name,
@@ -624,6 +638,8 @@ class HikaruBase(object):
             additional fields added to the existing fields, not a replacement
             of what was previously there. Always parse with an empty instance
             of the object.
+
+        :raises TypeError: in these if the YAML is missing a required property.
         """
 
         for f in fields(self.__class__):
@@ -637,7 +653,8 @@ class HikaruBase(object):
                     is_required = False
                     initial_type = type_args[0]
                 else:
-                    raise NotImplementedError("we aren't ready for this case")
+                    raise NotImplementedError("Internal error! We shouldn't see this "
+                                              "case! Please file a bug report.")
             # ok, we've peeled away a Union left by Optional
             # let's see what we're really working with
             val = yaml.get(k8s_name, None)
@@ -671,16 +688,19 @@ class HikaruBase(object):
                             l.append(obj)
                         setattr(self, f.name, l)
                     else:
-                        raise TypeError("Can only do list of scalars and k8s objs")
+                        raise NotImplementedError(f"Internal error! Processing"
+                                                  f" {self.__class__.__name__}.{f.name};"
+                                                  f" can only do list of scalars and"
+                                                  f" k8s objs. Please file a"
+                                                  f" bug report.")
                 elif origin in (dict, Dict):
                     d = {k: v for k, v in val.items()}
                     setattr(self, f.name, d)
                 else:
-                    raise ImportError(f"Unknown type inside of list: {initial_type}")
+                    raise NotImplementedError(f"Internal error! Unknown type inside of"
+                                              f" list: {initial_type}. Please file a bug"
+                                              f" report.")
         self._capture_catalog()
-
-    def __repr__(self):
-        return self.as_python_source()
 
     def as_python_source(self, assign_to: str = None) -> str:
         """
@@ -702,9 +722,10 @@ class HikaruBase(object):
             code.append(f'{assign_to} = ')
         all_fields = fields(self)
         sig = signature(self.__init__)
-        if len(all_fields) != len(sig.parameters):  # ignore self
-            raise NotImplementedError(f"uneven number of params for "
-                                      f"{self.__class__.__name__}")
+        if len(all_fields) != len(sig.parameters):
+            raise NotImplementedError(f"Internal error! Uneven number of params for"
+                                      f" {self.__class__.__name__}. Please file"
+                                      f" a bug report.")
         # open the call to the 'constructor'
         code.append(f'{self.__class__.__name__}(')
         # now process all attributes of the class
@@ -724,8 +745,9 @@ class HikaruBase(object):
                 inner_code = val.as_python_source()
                 if inner_code:
                     one_param.append(inner_code)
-                else:
-                    keep_param = False
+                # I don't think this can happen
+                # else:
+                #     keep_param = False
             elif isinstance(val, list):
                 if len(val) > 0 or is_required:
                     one_param.append("[")
@@ -736,16 +758,6 @@ class HikaruBase(object):
                             list_values.append(inner_code)
                         elif isinstance(item, str):
                             list_values.append(f"'{item}'")
-                        elif isinstance(item, dict):
-                            if len(val) > 0:
-                                list_values.append("{")
-                                dict_pairs = []
-                                for k, v in item.items():
-                                    the_val = f"'{v}'" if isinstance(v, str) else v
-                                    dict_pairs.append(f"'{k}': {the_val}")
-                                if dict_pairs:
-                                    list_values.append(",".join(dict_pairs))
-                                list_values.append("}")
                         else:
                             list_values.append(str(val))
                     if list_values:

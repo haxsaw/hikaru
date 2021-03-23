@@ -1,0 +1,16 @@
+The command to use that does coverage a skipped line numbers it:
+
+    pytest --cov=hikaru --cov-report=term-missing *.py
+
+Run this from within the tests directory of the project.
+
+
+To make the docs, cd into the docs project directory, and run:
+
+    make html
+
+To do a full make, first run:
+
+    make clean
+
+The index.html file can be found in docs/_build/html.

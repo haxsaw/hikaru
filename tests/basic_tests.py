@@ -427,7 +427,7 @@ def test41():
     get_python_source with the autopep8 style
     """
     assert isinstance(p, Pod)
-    code = get_python_source(p)
+    code = get_python_source(p, style="black")
     x = eval(code, globals(), locals())
     assert p == x, "the two aren't the same"
 
@@ -437,7 +437,7 @@ def test42():
     check that a modified loaded version of p isn't equal
     """
     assert isinstance(p, Pod)
-    code = get_python_source(p)
+    code = get_python_source(p, style="black")
     x = eval(code, globals(), locals())
     assert isinstance(x, Pod)
     x.spec.containers[1].lifecycle.postStart.httpGet.port = 4
@@ -727,6 +727,316 @@ def test67():
     assert ps == new_ps
 
 
+def test68():
+    """
+    Check catching a bad path attribute for a list
+    """
+    assert isinstance(p, Pod)
+    path = ['spec', 'containers', 'lifecycle']
+    try:
+        o = p.object_at_path(path)
+        assert False, 'should have got a gripe about "lifecycle"'
+    except ValueError:
+        pass
+
+
+def test69():
+    """
+    Check catching a bad index for a list
+    """
+    assert isinstance(p, Pod)
+    path = ['spec', 'containers', 99]
+    try:
+        o = p.object_at_path(path)
+        assert False, "should have got a gripe about index 99"
+    except IndexError:
+        pass
+
+
+def test70():
+    """
+    Check catching a bad attribute on a regular object
+    """
+    assert isinstance(p, Pod)
+    path = ['spec', 'containers', 1, 'wibble', 'wobble']
+    try:
+        o = p.object_at_path(path)
+        assert False, "should have got a gripe about attribute 'wibble'"
+    except AttributeError:
+        pass
+
+
+def test71():
+    """
+    Check that repopulating the cataloge doesn't blow up
+    """
+    assert isinstance(p, Pod)
+    p.repopulate_catalog()
+
+
+def test72():
+    """
+    Check that find_by_name()'s name parameter check works
+    """
+    assert isinstance(p, Pod)
+    try:
+        p.find_by_name(object())
+        assert False, "should have gotten a TypeError"
+    except TypeError:
+        pass
+
+
+def test73():
+    """
+    Check that find_by_name()'s following parameter check works
+    """
+    assert isinstance(p, Pod)
+    try:
+        p.find_by_name('name', following=object())
+        assert False, "should have gotten a TypeError about following"
+    except TypeError:
+        pass
+
+
+def test74():
+    """
+    Check that weird type where there should be an int index is caught
+    """
+    assert isinstance(p, Pod)
+    try:
+        p.find_by_name('name', following=['spec', 'containers', object()])
+        assert False, "should have gotten a ValueError"
+    except ValueError:
+        pass
+
+
+def test75():
+    """
+    Check that a None in a list raises a gripe
+    """
+    assert isinstance(p, Pod)
+    copy: Pod = p.dup()
+    copy.spec.containers.append(None)
+    try:
+        o = copy.object_at_path(["spec", "containers", 2])
+        assert False, "should have gotten a RuntimeError"
+    except RuntimeError:
+        pass
+
+
+def test76():
+    """
+    Check a bad attr is found an griped about
+    """
+    assert isinstance(p, Pod)
+    path = [object()]
+    try:
+        o = p.object_at_path(path)
+        assert False, "should have gotten an TypeError"
+    except TypeError:
+        pass
+
+
+def test77():
+    """
+    Find an object properly
+    """
+    assert isinstance(p, Pod)
+    path = ['spec', 'containers', 0]
+    con = p.object_at_path(path)
+    assert isinstance(con, Container)
+
+
+def test78():
+    """
+    Make a diff detail on a basic string
+    """
+    assert isinstance(p, Pod)
+    copy: Pod = p.dup()
+    copy.metadata.name = 'adsgad'
+    diffs = p.diff(copy)
+    assert len(diffs) == 1
+
+
+def test79():
+    """
+    check that mismatched list items are caught in a diff
+    """
+    assert isinstance(p, Pod)
+    copy1: Pod = p.dup()
+    copy2: Pod = p.dup()
+    copy1.metadata.finalizers = ["one", "two", "three"]
+    copy2.metadata.finalizers = ["one", "two", "four"]
+    diffs = copy1.diff(copy2)
+    assert len(diffs) == 1
+
+
+def test80():
+    """
+    check that mismatched dict keys are caught in a diff
+    """
+    assert isinstance(p, Pod)
+    copy1: Pod = p.dup()
+    copy2: Pod = p.dup()
+    copy1.metadata.annotations = {"one": "uno", "two": "dos"}
+    copy2.metadata.annotations = {"two": "dos", "three": "tres"}
+    diffs = copy1.diff(copy2)
+    assert len(diffs) == 1
+
+
+def test81():
+    """
+    check that a required attr is caught in a typecheck
+    """
+    owner = OwnerReference(apiVersion="v1", kind=None,
+                           name="test81", uid="asdf")
+    warnings = owner.get_type_warnings()
+    assert len(warnings) == 1
+
+
+def test82():
+    """
+    check that __repr__ gets called
+    """
+    assert isinstance(p, Pod)
+    s = repr(p)
+    assert s
+
+
+def test83():
+    """
+    check that the assign_to arg works in get_python_source()
+    """
+    assert isinstance(p, Pod)
+    s = get_python_source(p, style='black', assign_to='x')
+    assert s.startswith('x =')
+
+
+def test84():
+    """
+    ensure positional params are correct
+    """
+    own = OwnerReference('v1', 'OR', 'test84', 'asdf')
+    s = get_python_source(own, style='black')
+    o: OwnerReference = eval(s, globals(), locals())
+    assert o.apiVersion == 'v1'
+    assert o.kind == 'OR'
+    assert o.name == 'test84'
+    assert o.uid == 'asdf'
+
+
+def test85():
+    """
+    test the checks in get_clean_dict()
+    """
+    try:
+        d = get_clean_dict({})
+        assert False, 'should have raised a TypeError'
+    except TypeError:
+        pass
+
+
+def test86():
+    """
+    Test proper generation of YAML
+    """
+    assert isinstance(p, Pod)
+    yaml = get_yaml(p)
+    procs = get_processors(yaml=yaml)
+    new_p = Pod.from_yaml(procs[0])
+    assert p == new_p
+
+
+def test87():
+    """
+    Test guard code in get_yaml()
+    """
+    try:
+        yaml = get_yaml(get_clean_dict(p))
+        assert False, "This should have raised a TypeError"
+    except TypeError:
+        pass
+
+
+def test88():
+    """
+    Test guard code in get_json
+    """
+    try:
+        j = get_json(get_clean_dict(p))
+        assert False, "This should have raised a TypeError"
+    except TypeError:
+        pass
+
+
+def test89():
+    """
+    Test guard code in from_dict
+    """
+    try:
+        h = from_dict(p)
+        assert False, "This should have raised a TypeError about adict"
+    except TypeError:
+        pass
+    try:
+        h = from_dict(get_clean_dict(p), cls=list)
+        assert False, "This should ahve raised a TypeError about cls"
+    except TypeError:
+        pass
+
+
+def test90():
+    """
+    Check guard code in get_processors
+    """
+    try:
+        p = get_processors()
+        assert False, "This should have raised about no args"
+    except RuntimeError:
+        pass
+
+
+def test91():
+    """
+    Check using a path for get_processors()
+    """
+    p = get_processors(path="test.yaml")
+    assert len(p) == 2
+
+
+def test92():
+    """
+    Check that a bad apiVersion/kind raises a RuntimeError
+    """
+    try:
+        docs = load_full_yaml(path="bad.yaml")
+        assert False, f"num docs: {len(docs)}"
+    except RuntimeError:
+        pass
+
+
+def test93():
+    """
+    Check that required but empty lists raise a type warning
+    """
+    assert isinstance(p, Pod)
+    copy: Pod = p.dup()
+    copy.spec.containers = []
+    warnings = copy.get_type_warnings()
+    assert len(warnings) == 1
+
+
+def test94():
+    """
+    Check we get a TypeError when parsing YAML with missing required prop
+    """
+    try:
+        _ = load_full_yaml(path="bad2.yaml")
+        assert False, "Should have raised a TypeError"
+    except TypeError:
+        pass
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
@@ -735,4 +1045,4 @@ if __name__ == "__main__":
         try:
             v()
         except Exception as e:
-            print(f'{k} failed with {str(e)}')
+            print(f'{k} failed with {str(e)}, {e.__class__}')

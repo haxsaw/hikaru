@@ -36,7 +36,7 @@ def make_instance_from_source(version, source):
     return x
 
 
-def test_yaml(yamlpath: pathlib.Path):
+def process_yaml(yamlpath: pathlib.Path):
     f = yamlpath.open("r")
     docs = load_full_yaml(stream=f)
     assert len(docs) > 0, f"For path {yamlpath}, only got {len(docs)} docs"
@@ -74,7 +74,7 @@ def test_yaml(yamlpath: pathlib.Path):
         except AssertionError:
             _ = 1  # debugger hook
 
-        # finally, try dumping json and recrating it; should be the same
+        # try dumping json and recrating it; should be the same
         j = get_json(dict_doc)
         jdoc = from_json(j)
         try:
@@ -83,12 +83,17 @@ def test_yaml(yamlpath: pathlib.Path):
         except AssertionError:
             _ = 1  # debugger hook
 
+        # finally, check that the types check on the final copy
+        warnings = jdoc.get_type_warnings()
+        no_intorstring = [w for w in warnings if "IntOrString" not in w.warning]
+        assert len(no_intorstring) == 0, f"Got {len(no_intorstring)}"
 
-def test_all():
+
+def do_all():
     path = pathlib.Path("test_yaml")
     for p in path.iterdir():
         try:
-            test_yaml(p)
+            process_yaml(p)
         except Exception as e:
             if str(p) == "test_yaml/list.yaml":
                 print(f"WARNING! Still failed on list.yaml; no support in the "
@@ -97,5 +102,13 @@ def test_all():
                 print(f"Failed on {p} with {e}")
 
 
+def test_all():
+    path = pathlib.Path("test_yaml")
+    for p in path.iterdir():
+        if str(p).endswith("/list.yaml"):
+            continue
+        process_yaml(p)
+
+
 if __name__ == "__main__":
-    test_all()
+    do_all()
