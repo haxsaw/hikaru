@@ -8,7 +8,7 @@
 .. |versions| image:: https://img.shields.io/pypi/pyversions/hikaru
    :alt: PyPI - Python Version
 
-.. |coverage| image:: https://codecov.io/gh/haxsaw/hikaru/branch/dev/graph/badge.svg?token=QOFGNVHGNP
+.. |coverage| image:: https://codecov.io/gh/haxsaw/hikaru/branch/main/graph/badge.svg?token=QOFGNVHGNP
    :target: https://codecov.io/gh/haxsaw/hikaru
 
 ======
