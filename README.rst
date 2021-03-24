@@ -275,8 +275,7 @@ automated control.
 Future work
 ~~~~~~~~~~~
 
-As mentioned above, we want to add the ability to move to/from JSON.
-Additionally, since both the classes of Hikaru and those in the official
+Since both the classes of Hikaru and those in the official
 Python Kubernetes client are generated from the same swagger file, if a
 means to determine a mapping between the two can be established it
 should be possible to integrate these Python classes directly into the
