@@ -1037,6 +1037,18 @@ def test94():
         pass
 
 
+def test95():
+    """
+    Check two different code gen styles yield equivalent objects
+    """
+    assert isinstance(p, Pod)
+    code1 = get_python_source(p)
+    code2 = get_python_source(p, style='black')
+    obj1 = eval(code1, globals(), locals())
+    obj2 = eval(code2, globals(), locals())
+    assert obj1 == obj2
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()

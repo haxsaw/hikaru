@@ -34,9 +34,9 @@ from hikaru.version_kind import version_kind_map
 
 
 def get_python_source(obj: HikaruBase, assign_to: str = None,
-                      style: str = "autopep8") -> str:
+                      style: Optional[str] = None) -> str:
     """
-    returns PEP8-formatted Python source that will re-create the supplied object
+    returns Python source that will re-create the supplied object
 
     NOTE: this function can be slow, as formatting the code to be PEP8 compliant
     can take some time for complex code.
@@ -44,23 +44,30 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
     :param obj: an instance of HikaruBase
     :param assign_to: if supplied, must be a legal Python identifier name,
         as the returned expression will be assigned to that as a variable.
-    :param style: string, default 'autopep8'. Indicates which code formatter to
-        use, 'black' or 'autopep8'. The 'black' style produces somewhat more
-        vertically spread-out code that is a bit clearer to read. The 'autopep8'
-        formatter is a bit more aggressive in putting more arguments on a single
-        line, so it's a bit more compact, but can be a little harder to see
-        what's going on.
-    :return: fully PEP8 formatted Python source code that will re-create the
-        supplied object
+    :param style: optional string, default None, may also be one of 'black'
+        or 'autopep8'. This argument indicates what code formatter, if any,
+        to apply. The default value of None says not to format the code; this
+        will return syntactically correct Python, but it will be an eyesore.
+        However, if you just plan to dynamically execute it how it looks
+        may be of no consequence. The other two formatters return PEP8-compliant
+        formatted Python based on different formatting 'opinions'. The 'black'
+        style produces somewhat more vertically spread-out code that is a bit
+        clearer to read. The 'autopep8' formatter is a bit more aggressive in
+        putting more arguments on a single line, so it's a bit more compact,
+        but can be a little harder to see what's going on. The 'black' formatter
+        is a bit faster than 'autopep8', and no formatting is the fastest.
+    :return: Python source code that will re-create the supplied object
     :raises RuntimeError: if an unrecognized style is supplied
     """
-    if style not in ('black', 'autopep8'):
+    if style not in ('black', 'autopep8', None):
         raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
-    if style == "autopep8":
+    if style is None:
+        result = code
+    elif style == "autopep8":
         result = fix_code(code, options={"max_line_length": 88,
                                          "experimental": 1})
-    else:
+    else:  # then it's black
         mode = FileMode()
         result = format_file_contents(code, fast=False, mode=mode)
     return result

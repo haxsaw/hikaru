@@ -114,5 +114,3 @@ f = open("../tests/test_yaml/apps-deployment-2.yaml", "r")
 docs = load_full_yaml(stream=f)
 doc = docs[0]
 print(get_python_source(doc, style='autopep8'))
-
-
