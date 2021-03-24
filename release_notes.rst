@@ -10,7 +10,7 @@ v0.2a0
 - New `diff()` method of HikaruBase; compares to object hierarchies and generates difference records indicating where they are different.
 - Removed dead code.
 - Improved and documented all exceptions that are raised.
-- Added support for round-tripping between YAML, Python objects, Python source, JSON, and Python dicts. You can now start with any of these, move between them, and get back the original represenation.
+- Added support for round-tripping between YAML, Python objects, Python source, JSON, and Python dicts. You can now start with any of these, move between them, and get back the original representation.
 - Raised testing coverage to 99% overall.
 - Documentation updates; includes a section on patterns and recipes.
 
