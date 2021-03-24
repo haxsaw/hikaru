@@ -41,9 +41,9 @@ The build process
 Pretty simple, actually:
 
 1. Set your PYTHONPATH so that it can find the hikaru package root,
-2. 'cd' into the package root
+2. 'cd' into the directory above the package root where build.py is
 3. Run the following:
-    python build.py ../openapi/<swagger file name>
+    python build.py openapi/<swagger file name>
 
 This will result in:
 

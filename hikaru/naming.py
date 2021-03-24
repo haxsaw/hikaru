@@ -24,9 +24,14 @@ from typing import Tuple, Optional
 def process_api_version(api_version: str) -> Tuple[str, str]:
     """
     Takes the value of an apiVersion property and returns group and version
+
     :param api_version: the value of a apiVersion property
-    :return: tuple of two strings: published object group, version
+    :return: tuple of two strings: published object group, version. If the
+        group is unspecified it defaults to 'core'
+    :raises TypeError: if api_version isn't a string
     """
+    if not isinstance(api_version, str):
+        raise TypeError("api_version is not a str")
     parts = api_version.split("/")
     if len(parts) == 1:
         group = "core"
@@ -91,12 +96,3 @@ _api_group_swagger_map = {
     "scheduling.k8s.io": "io.k8s.api.scheduling",
     "storage.k8s.io": "io.k8s.api.storage"
 }
-
-
-def get_swagger_group_from_api_version_group(api_version_group: str) -> str:
-    """
-    returns the associated swagger group string for the provided group from apiVersion
-    :param api_version_group: the group portion of the apiVersion string
-    :return: string that is the associated group from the swagger spec
-    """
-    return _api_group_swagger_map[api_version_group]

@@ -14,7 +14,7 @@ from_yaml()
 
 :py:meth:`Documentation<hikaru.HikaruBase.from_yaml>`
 
-The class method ``from_yaml()`` allows you to create a populated instance instance
+The class method ``from_yaml()`` allows you to create a populated instance
 from a supplied `ruamel.yaml.YAML` instance (this is what is used internally for
 loading and parsing Kubernetes YAML). So you can use ``from_yaml()`` to manually
 load a specific Hikaru class:
@@ -24,7 +24,7 @@ load a specific Hikaru class:
     from ruamel.yaml import YAML
     from hikaru import Pod
     yaml = YAML()
-    f = open("<path to yaml containing a pod>", "r")
+    f = open("<path to yaml file containing a pod>", "r")
     doc = yaml.load(f)
     p = Pod.from_yaml(doc)
     assert isinstance(p, Pod)
@@ -42,7 +42,7 @@ allow you to load it:
     from ruamel.yaml import YAML
     from hikaru import Container
     yaml = YAML()
-    f = open("<path to yaml containing a container>", "r")
+    f = open("<path to yaml ficontaining a container>", "r")
     doc = yaml.load(f)
     c = Container.from_yaml(doc)
     assert isinstance(c, Container)
@@ -60,17 +60,27 @@ to pass into ``from_yaml()``:
     c = Container.from_yaml(docs[0])
     assert isinstance(c, Container)
 
+get_empty_instance()
+********************
+
+:py:meth:`Documentation<hikaru.HikaruBase.get_empty_instance>`
+
+This classmethod provides you an empty instance of the class on which you invoke it.
+Otherwise, you have to ensure that you provide the correct required number of the non-
+optional parameters to the usual object creation call. This method takes care of that
+for you, giving you an empty instance that you can then populate as you wish.
 
 as_python_source()
 *************************
 
 :py:meth:`Documentation<hikaru.HikaruBase.as_python_source>`
 
-HikaruBase can render itself as Python source with ``as_python_source()`` that will
-re-create the state of the object. The source is unformatted with respect to PEP8, and may
-in fact be quite difficult to read. However, it is legal Python and will execute properly.
-It is better to use the ``get_python_source()`` function for this, as it will also run the
-PEP8 formatter to make the code more readable.
+HikaruBase subclasses can render themselves as Python source with ``as_python_source()``.
+The rendered code will
+re-create the state of the original object. The source is unformatted with respect to PEP8,
+and may in fact be quite difficult to read. However, it is legal Python and will execute properly.
+It is better to use the ``get_python_source()`` function for this, as it will
+also run the PEP8 formatter to make the code more readable.
 
 Support for ==
 *************************
@@ -177,6 +187,54 @@ The attributes of the returned CatalogEntry namedtuples are:
   - cls: the class object for the value of the item that was named
   - attrname: the name of the attribute found
   - path: a list of strings that will take you from object where you did the search to the located item
+
+get_type_warnings()
+*******************
+
+:py:meth:`Documentation<hikaru.HikaruBase.get_type_warnings>`
+
+Although Hikaru's annotations will aid you in avoiding supplying the wrong types for 
+object parameter values, or from setting an attribute directly with an item of the wrong type,
+it can only aid you with warnings and advisories-- Python still let's you put anything anywhere
+you want, and not until run time will you find you stuck an ObjectMeta where a PodSpec belongs.
+However, you can check the alignment of contained data against the type annotations of the
+attributes with the ``get_type_warnings()`` method.
+
+This method examines every field of an object hierarchy and compares the types of the values
+contained there with the types in the annotations. If there are any discrepancies, they are
+collected into a list of :ref:`TypeWarning<TypeWarning doc>` nametuples are returned to the
+caller. TypeWarnings are similar in structure to CatalogEntries, but have a slightly different
+interpretation:
+
+  - cls: is the class that holds the attribute that is of the wrong type
+  - attrname: the name of the attribute on an instance of cls
+  - path: list of strings that names the attribute path from the object where get_type_warnings() was called to the incorrect attribute
+  - warning: a string that contains a message describing the type error that was found
+
+If the returned list is empty, then all types are correct. However, there may be other usage
+conventions are make an object incorrect, for example suppling three different sub-objects
+when you are supposed to choose only one. ``get_type_warnings()`` doesn't find those kinds
+of errors, just when types are incorrect.
+
+diff()
+******
+
+:py:meth:`Documentation<hikaru.HikaruBase.diff>`
+
+The ``diff()`` method provides you a way to determine where two different Hikaru objects differ.
+This can be handy when two objects that are supposed to be equal (==) aren't, and it is
+difficult to determine where they are different.
+
+The ``diff()`` method takes another Hikaru object as an argument and recusively compares all
+attributes of each object. If a difference it found, a :ref:`DiffDetail<DiffDetail doc>` namedtuple
+is created and returned in a list. The DiffDetail includes the following fields:
+
+  - cls: is the class where the difference was found
+  - attrname: is the name of the attribute on class where the difference was found
+  - path: a list of strings that show how to reach the attribute where the difference was found
+  - report: a string that describes the difference found
+
+If the list is empty, then the two objects have no differences.
 
 object_at_path()
 *************************

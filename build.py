@@ -32,6 +32,34 @@ Usage is:
     python build.py <path to swagger file>
 
 The assumption is to create the 'build' package in the cwd.
+
+Just some notes to remember how this all works:
+
+For the collection types, you must parameterize the
+types from typing (List, Dict, etc).
+
+If you want an optional type, you can use typing.Optional,
+which turns into Union[T, NoneType].
+
+You can use dataclasses.field(default_factory=list) to indicate
+where optional args should be defaulted to new empty lists.
+
+You can acquire the fields of class X with
+dataclasses.fields(X). The type annotation for the field is
+stored in the 'type' attribute.
+
+You now want to understand Union and List types. There are two
+different ways to do this; the change comes at Py3.8. This
+are both performed on the type object found in the above
+mentioned attribute:
+
+Operation           Pre-3.8         3.8 and later
+========================================================
+get origin          __origin__      typing.get_origin()
+get args            __args__        typing.get_args()
+
+inspect.signature() can give the argument signature for a
+method; can find how many required positional args there are.
 """
 from pathlib import Path
 import sys
@@ -507,6 +535,9 @@ class PropertyDescriptor(object):
         return "".join(parts)
 
 
+model_package = "hikaru/model"
+
+
 def build_it(swagger_file: str):
     """
     Initiate the swagger-file-driven model package build
@@ -514,8 +545,8 @@ def build_it(swagger_file: str):
     :param swagger_file: string; path to the swagger file to process
     """
     load_stable(swagger_file)
-    prep_package("model")
-    write_modules("model")
+    prep_package(model_package)
+    write_modules(model_package)
 
 
 if __name__ == "__main__":

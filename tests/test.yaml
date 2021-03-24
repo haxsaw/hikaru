@@ -54,7 +54,7 @@ spec:
           exec:
             command: [cmd, arg1, arg2]
           httpGet:
-            port: 80
+            port: "80"
             host: localhost
             httpHeaders:
               - name: Content-Disposition
@@ -62,7 +62,7 @@ spec:
             path: /home
             scheme: https
           tcpSocket:
-            port: 1025
+            port: "1025"
             host: devnull
         preStop:
           exec:

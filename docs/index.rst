@@ -6,6 +6,8 @@
 Hikaru: Usage and Reference
 ==================================
 
+Version: 0.2a0
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -15,6 +17,7 @@ Hikaru: Usage and Reference
    key-functions
    models
    hikaru-base
+   patterns-recipes
    issues
    reference
    about

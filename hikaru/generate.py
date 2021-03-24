@@ -21,20 +21,22 @@
 import json
 from dataclasses import asdict
 from io import StringIO
-from typing import List, TextIO
+from typing import List, TextIO, Optional
 
 from autopep8 import fix_code
+from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
 from hikaru.model import *
-from hikaru.meta import num_positional, HikaruBase
+from hikaru.meta import HikaruBase
 from hikaru.naming import process_api_version
 from hikaru.version_kind import version_kind_map
 
 
-def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
+def get_python_source(obj: HikaruBase, assign_to: str = None,
+                      style: Optional[str] = None) -> str:
     """
-    returns PEP8-formatted Python source that will re-create the supplied object
+    returns Python source that will re-create the supplied object
 
     NOTE: this function can be slow, as formatting the code to be PEP8 compliant
     can take some time for complex code.
@@ -42,12 +44,32 @@ def get_python_source(obj: HikaruBase, assign_to: str = None) -> str:
     :param obj: an instance of HikaruBase
     :param assign_to: if supplied, must be a legal Python identifier name,
         as the returned expression will be assigned to that as a variable.
-    :return: fully PEP8 formatted Python source code that will re-create the
-        supplied object
+    :param style: optional string, default None, may also be one of 'black'
+        or 'autopep8'. This argument indicates what code formatter, if any,
+        to apply. The default value of None says not to format the code; this
+        will return syntactically correct Python, but it will be an eyesore.
+        However, if you just plan to dynamically execute it how it looks
+        may be of no consequence. The other two formatters return PEP8-compliant
+        formatted Python based on different formatting 'opinions'. The 'black'
+        style produces somewhat more vertically spread-out code that is a bit
+        clearer to read. The 'autopep8' formatter is a bit more aggressive in
+        putting more arguments on a single line, so it's a bit more compact,
+        but can be a little harder to see what's going on. The 'black' formatter
+        is a bit faster than 'autopep8', and no formatting is the fastest.
+    :return: Python source code that will re-create the supplied object
+    :raises RuntimeError: if an unrecognized style is supplied
     """
+    if style not in ('black', 'autopep8', None):
+        raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
-    result = fix_code(code, options={"max_line_length": 90,
-                                     "experimental": 1})
+    if style is None:
+        result = code
+    elif style == "autopep8":
+        result = fix_code(code, options={"max_line_length": 88,
+                                         "experimental": 1})
+    else:  # then it's black
+        mode = FileMode()
+        result = format_file_contents(code, fast=False, mode=mode)
     return result
 
 
@@ -76,13 +98,26 @@ def _clean_dict(d: dict) -> dict:
 
 def get_clean_dict(obj: HikaruBase) -> dict:
     """
-    turns an instance of a HikaruBase into a dict with values of None
+    Turns an instance of a HikaruBase into a dict without values of None
+
+    This function returns a Python dict object that represents the hierarchy
+    of objects starting at ``obj`` and recusing into any nested objects.
+    The returned dict **does not** include any key/value pairs where the value
+    of the key is None or empty.
+
+    If you wish to instead have a dict with all key/value pairs even when
+    there is no useful value then you should use the dataclasses module's
+    ``asdict()`` function on obj.
 
     :param obj: some api_version_group of subclass of HikaruBase
     :return: a dict representation of the obj instance, but if any value
         in the dict was originally None, that key:value is removed from the
         returned dict, hence it is a minimal representation
+    :raises TypeError: if the supplied obj is not a HikaruBase (dataclass),
+        or if obj is not an instance of a HikaruBase subclass
     """
+    if not isinstance(obj, HikaruBase):
+        raise TypeError("obj must be a kind of HikaruBase")
     initial_dict = asdict(obj)
     clean_dict = _clean_dict(initial_dict)
     return clean_dict
@@ -94,9 +129,13 @@ def get_yaml(obj: HikaruBase) -> str:
 
     :param obj: instance of some HikaruBase subclass
     :return: big ol' string of YAML that represents the model
+    :raises TypeError: if the supplied obj is not an instance of a HikaruBase
+        subclass
     """
+    if not isinstance(obj, HikaruBase):
+        raise TypeError("obj must be a kind of HikaruBase")
     d: dict = get_clean_dict(obj)
-    yaml = YAML()
+    yaml = YAML(typ="safe")
     yaml.indent(offset=2, sequence=4)
     sio = StringIO()
     yaml.dump(d, sio)
@@ -113,10 +152,86 @@ def get_json(obj: HikaruBase) -> str:
 
     :param obj: instance of a HikaruBase model
     :return: string containing JSON that represents the information in the model
+    :raises TypeError: if obj is not an instance of a HikaruBase subclass
     """
+    if not isinstance(obj, HikaruBase):
+        raise TypeError("obj must be an instance of a HikaruBase subclass")
     d = get_clean_dict(obj)
     s = json.dumps(d)
     return s
+
+
+def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
+    """
+    Create Hikaru objects from a string of JSON from ``get_json()``
+
+    This function can re-create a hierachy of HikaruBase objects from a string
+    of JSON previous returned by a call to ``get_json()``.
+
+    If the JSON was created from a full Kubernetes document object, such as Pod
+    or Deployment, only the json_data argument is required.
+
+    If the JSON was created from an arbitrary HikaruBase subclass, this function
+    needs to know what kind of thing it is loading; in this case, you must provide
+    the ``cls`` parameter so that Hikaru knows what kind of instance you wish
+    to create.
+
+    :param json_data: string; the value previously returned by ``get_json()`` on
+        some HikaruBase subclass instance.
+    :param cls: optional; a HikaruBase subclass (*not* the string name
+        of the class). This should match the kind of object that was dumped into
+        the dict.
+    :return: an instance of a HikaruBase subclass with all attributes and contained
+        objects recreated.
+    """
+    d = json.loads(json_data)
+    return from_dict(d, cls=cls)
+
+
+def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
+    """
+    Create Hikaru objects from a ``get_clean_dict()`` dict
+
+    This function can re-create a hierarchy of HikaruBase objects from a
+    dict that was created with ``get_clean_dict()``.
+
+    If the dict was created from a full Kubernetes document object, such as Pod
+    or Deployment, only the dict argument is required.
+
+    If the dict was created from an arbitrary HikaruBase subclass, this function
+    needs to know what kind of thing it is loading; in this case, you must provide
+    the ``cls`` parameter so that Hikaru knows what kind of instance you wish
+    to create.
+
+    :param adict: a Python dict that was previously created with ``get_clean_dict()``
+    :param cls: optional; a HikaruBase subclass (*not* the string name
+        of the class). This should match the kind of object that was dumped into
+        the dict.
+    :return: an instance of a HikaruBase subclass with all attributes and contained
+        objects recreated.
+    :raises RuntimeError: if no cls was specified and Hikaru was unable to determine
+        what class to make from the data
+    :raises TypeError: if adict isn't actually a dict, or if cls isn't a subclass
+        (not an instance) of HikaruBase
+    """
+    if not isinstance(adict, dict):
+        raise TypeError("The 'adict' parameter is not a dict")
+    if cls is not None and not issubclass(cls, HikaruBase):
+        raise TypeError("cls is not a subclass of HikaruBase")
+    parser = YAML(typ="safe")
+    sio = StringIO()
+    parser.dump(adict, stream=sio)
+
+    if cls is None:
+        docs = load_full_yaml(yaml=sio.getvalue())
+        doc = docs[0]
+    else:
+        assert issubclass(cls, HikaruBase)
+        parser = YAML(typ="safe")
+        sio.seek(0)
+        yaml = parser.load(sio)
+        doc = cls.from_yaml(yaml)
+    return doc
 
 
 def get_processors(path: str = None, stream: TextIO = None,
@@ -139,6 +254,7 @@ def get_processors(path: str = None, stream: TextIO = None,
     :param yaml: string; contains Kubernetes YAML, one or more documents
     :return: List of dicts (or dictionary-like objects) that contain the parsed-
         out content of the input YAML files.
+    :raises RuntimeError: if none of path, stream or yaml are provided.
     """
     if path is None and stream is None and yaml is None:
         raise RuntimeError("One of path, stream, or yaml must be specified")
@@ -151,7 +267,7 @@ def get_processors(path: str = None, stream: TextIO = None,
         to_parse = yaml
     else:
         to_parse = f.read()
-    parser = YAML()
+    parser = YAML(typ="safe")
     docs = list(parser.load_all(to_parse))
     return docs
 
@@ -165,11 +281,11 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     into separate YAML documents, and then processes those into a list of Hikaru
     objects, one per document.
 
-    NOTE: this function only works on complete Kubernetes message documents, and relies
-    on the presence of both 'apiVersion' and 'kind' being in the top-level object.
-    Other Kubernetes objects represented in ruamel.yaml can be parsed using either the
-    appropriate class's from_yaml() class method, or from an instance's process() method,
-    both of which can only accept a ruamel.yaml instance to process.
+    **NOTE**: this function only works on complete Kubernetes message documents,
+    and relies on the presence of both 'apiVersion' and 'kind' being in the top-level
+    object. Other Kubernetes objects represented in ruamel.yaml can be parsed using either
+    the appropriate class's from_yaml() class method, or from an instance's process()
+    method, both of which can only accept a ruamel.yaml instance to process.
 
     Only one of path, stream or yaml should be supplied. If yaml is supplied in addition
     to path or stream, only the yaml parameter is used. If stream and path are supplied,
@@ -179,13 +295,21 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     :param stream: return of the open() function, or any file-like (TextIO) object
     :param yaml: string; the actual YAML to process
     :return: list of HikaruBase subclasses, one for each document in the YAML file
+    :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
+        api_version/kind pair; Hikaru can't determine what class to instantiate, or
+        if none of the YAML input sources have been specified.
     """
     docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
-    for doc in docs:
+    for i, doc in enumerate(docs):
         _, api_version = process_api_version(doc.get('apiVersion', ""))
         kind = doc.get('kind', "")
         klass = version_kind_map.get((api_version, kind))
+        if klass is None:
+            raise RuntimeError(f"Doc number {i} in the supplied YAML has an"
+                               f" unrecognized api_version ({api_version}) and"
+                               f" kind ({kind}) pair; can't determine the class"
+                               f" to instantiate")
         inst = klass.from_yaml(doc)
         objs.append(inst)
 
