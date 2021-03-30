@@ -19,6 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from hikaru import *
+import json
+from build import *
+from hikaru.naming import make_swagger_name
 
 p = None
 
@@ -1047,6 +1050,102 @@ def test95():
     obj1 = eval(code1, globals(), locals())
     obj2 = eval(code2, globals(), locals())
     assert obj1 == obj2
+
+
+def test96():
+    """
+    Test processing the group, version, name back into a swagger name
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        swagger_name = make_swagger_name(cd.group, cd.version, cd.short_name)
+        break
+    g, v, n = process_swagger_name(swagger_name)
+    assert g == cd.group, "Group doesn't match"
+    assert v == cd.version, "Version doesn't match"
+    assert n == cd.short_name, "Named doesn't match"
+
+
+def test97():
+    """
+    Check that we can detect a recursively defined swagger object
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    cd = None
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        cd.process_properties()
+        break
+    assert cd.has_alternate_base() is True
+
+
+def test98():
+    """
+    Check that we get a new ClassDescriptor as an alternate base
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    cd = None
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        cd.process_properties()
+        break
+    assert cd.has_alternate_base() is True
+    assert isinstance(cd.alternate_base, ClassDescriptor)
+
+
+def test99():
+    """
+    Check that an existing ClassDecriptor depends on its alternate base
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    cd = None
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        cd.process_properties()
+        break
+    assert cd.has_alternate_base() is True
+    assert isinstance(cd.alternate_base, ClassDescriptor)
+    assert cd.alternate_base in cd.depends_on()
+
+
+def test100():
+    """
+    Check that we can generate sane Python source for the alternate base
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    cd = None
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        cd.process_properties()
+        break
+    ab = cd.alternate_base
+    assert isinstance(ab, ClassDescriptor)
+    src = ab.as_python_class()
+    assert src
+
+
+def test101():
+    """
+    Check that if there's an alternate base it is the base class for the parsed one
+    """
+    f = open("recursive.json", "r")
+    jdict = json.load(f)
+    cd = None
+    for k, v in jdict.items():
+        cd = ClassDescriptor(k, v)
+        cd.process_properties()
+        break
+    ab = cd.alternate_base
+    assert isinstance(ab, ClassDescriptor)
+    expected = f'{cd.short_name}({ab.short_name})'
+    src = cd.as_python_class()
+    assert expected in src
 
 
 if __name__ == "__main__":

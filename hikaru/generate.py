@@ -29,7 +29,7 @@ from ruamel.yaml import YAML
 
 from hikaru.model import *
 from hikaru.meta import HikaruBase
-from hikaru.naming import process_api_version
+from hikaru.naming import process_api_version, dprefix
 from hikaru.version_kind import version_kind_map
 
 
@@ -77,6 +77,9 @@ def _clean_dict(d: dict) -> dict:
     # returns a new dict missing any keys in d that have None for its value
     clean = {}
     for k, v in d.items():
+        k = k.strip("_")
+        if k.startswith(dprefix):
+            k = f'${k.strip(dprefix)}'
         if v is None:
             continue
         if isinstance(v, (list, dict)) and not v:  # this is an empty container

@@ -66,7 +66,8 @@ import sys
 from typing import Union, List, Optional
 import json
 import networkx
-from hikaru.naming import process_swagger_name, full_swagger_name
+from hikaru.naming import (process_swagger_name, full_swagger_name,
+                           make_swagger_name, dprefix)
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 
 
@@ -226,6 +227,8 @@ def load_stable(swagger_file_path: str) -> NoneType:
             else:
                 cd.update(v)
             cd.process_properties()
+            if cd.has_alternate_base():
+                mod_def.save_class_desc(cd.alternate_base)
 
 
 def write_modules(pkgpath: str):
@@ -265,16 +268,20 @@ class ClassDescriptor(object):
         self.short_name = name
         self.group = group
         self.version = version
-        self.description = None
-        self.all_properties = None
-        self.required = None
+        self.description = "None"
+        self.all_properties = {}
+        self.required = []
         self.type = None
         self.is_subclass_of = None
         self.is_document = False
+        self.alternate_base = None
 
         self.required_props = []
         self.optional_props = []
         self.update(d)
+
+    def has_alternate_base(self) -> bool:
+        return self.alternate_base is not None
 
     def update(self, d: dict):
         self.description = d.get("description")
@@ -303,6 +310,54 @@ class ClassDescriptor(object):
                     self.optional_props.append(fd)
             self.required_props.sort(key=lambda x: x.name)
             self.optional_props.sort(key=lambda x: x.name)
+        make_alternate_base = False
+        deps = self.depends_on()
+        for dep in deps:
+            assert isinstance(dep, ClassDescriptor)
+            if self.ref_to_self(dep):
+                # this is then recursive
+                make_alternate_base = True
+        if make_alternate_base:
+            self.alternate_base = self.construct_alternate_base()
+
+    def ref_to_self(self, other) -> bool:
+        """
+        returns True if other names the same group/version/short_name
+        :param other: another ClassDescriptor
+        :return: True if they refer to the same group/version/short_name
+        """
+        assert isinstance(other, ClassDescriptor)
+        return (self.group == other.group and
+                self.version == other.version and
+                self.short_name == other.short_name)
+
+    def construct_alternate_base(self):
+        base_name = f"{self.short_name}Base"
+        swagger_name = make_swagger_name(self.group, self.version, base_name)
+        alt_base = ClassDescriptor(swagger_name, {})
+        alt_base.process_properties()  # ensure all state is where it belongs
+        for prop in list(self.required_props):
+            assert isinstance(prop, PropertyDescriptor)
+            dep = prop.depends_on()
+            if dep is None or not self.ref_to_self(dep):
+                # this isn't self-referential and can go into the new base
+                alt_base.required_props.append(prop)
+                self.required_props.remove(prop)
+                self.required.remove(prop.name)
+                alt_base.required.append(prop.name)
+            else:
+                prop.change_dep(alt_base)
+        for prop in list(self.optional_props):
+            assert isinstance(prop, PropertyDescriptor)
+            dep = prop.depends_on()
+            if dep is None or not self.ref_to_self(dep):
+                # this isn't self-referential and can go into the new base
+                alt_base.optional_props.append(prop)
+                self.optional_props.remove(prop)
+            else:
+                prop.change_dep(alt_base)
+        alt_base.type = "object"
+        return alt_base
 
     @staticmethod
     def split_line(line, prefix: str = "   ", hanging_indent: str = "") -> List[str]:
@@ -329,10 +384,13 @@ class ClassDescriptor(object):
             base = self.is_subclass_of
         else:
             # then it is to be a dataclass
-            base = (HikaruDocumentBase.__name__
-                    if self.is_document else
-                    HikaruBase.__name__)
             lines.append("@dataclass")
+            if self.alternate_base:
+                base = self.alternate_base.short_name
+            else:
+                base = (HikaruDocumentBase.__name__
+                        if self.is_document else
+                        HikaruBase.__name__)
         lines.append(f"class {self.short_name}({base}):")
         # now the docstring
         ds_parts = ['    """']
@@ -378,6 +436,8 @@ class ClassDescriptor(object):
                     if p is not None and (True
                                           if include_external else
                                           self.version == p.version))
+        if self.alternate_base is not None:
+            deps.append(self.alternate_base)
         return deps
 
 
@@ -439,13 +499,21 @@ def module_defs() -> dict:
 
 
 class PropertyDescriptor(object):
-    def __init__(self, containing_class, name, d):
+
+    def __init__(self, containing_class: ClassDescriptor, name: str,
+                 d: dict):
         """
         capture the information
         :param containing_class:
         :param d:
         """
-        self.name = f'{name}_' if name in python_reserved else name
+        if name in python_reserved:
+            python_name = f'{name}_'
+        elif name.startswith("$"):
+            python_name = f'{dprefix}{name.strip("$")}'
+        else:
+            python_name = name
+        self.name = python_name
         self.containing_class = containing_class
         self.description = d.get('description', "")
         # all possible attributes that could be populated
@@ -499,6 +567,12 @@ class PropertyDescriptor(object):
         elif isinstance(self.prop_type, ClassDescriptor):
             result = self.prop_type
         return result
+
+    def change_dep(self, new_dep):
+        if isinstance(self.item_type, ClassDescriptor):
+            self.item_type = new_dep
+        elif isinstance(self.prop_type, ClassDescriptor):
+            self.prop_type = new_dep
 
     def as_python_typeanno(self, as_required: bool) -> str:
         parts = ["    ", self.name, ": "]

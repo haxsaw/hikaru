@@ -21,6 +21,10 @@
 from typing import Tuple, Optional
 
 
+# this is the prefix to use for attributes that otherwise start with '$'
+dprefix = 'dollar_'
+
+
 def process_api_version(api_version: str) -> Tuple[str, str]:
     """
     Takes the value of an apiVersion property and returns group and version
@@ -69,6 +73,19 @@ def process_swagger_name(sname: str) -> Tuple[str, str, str]:
         version = None
         swagger_group = ".".join(name_parts[:-1])
     return swagger_group, version, name
+
+
+def make_swagger_name(group: str, version: str, name: str) -> str:
+    """
+    This function creates properly formatted swagger names for an object
+    :param group: string; group that the object belongs to
+    :param version: string; version that the object belongs to
+    :param name: string: name of the object (class)
+    :return: A single string that combines the three input elements; can
+        be fed to process_swagger_name() and receive the original broken-out
+        parts.
+    """
+    return f"{group}.{version}.{name}"
 
 
 # mapping the group in apiVersion to the swagger group string
