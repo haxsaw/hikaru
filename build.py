@@ -71,7 +71,7 @@ from hikaru.naming import (process_swagger_name, full_swagger_name,
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 
 
-python_reserved = {"except", "continue", "from"}
+python_reserved = {"except", "continue", "from", "not", "or"}
 
 
 types_map = {"boolean": "bool",
@@ -217,18 +217,17 @@ def load_stable(swagger_file_path: str) -> NoneType:
     f = open(swagger_file_path, 'r')
     d = json.load(f)
     for k, v in d["definitions"].items():
-        if 'apiextensions' not in k:
-            group, version, name = process_swagger_name(k)
-            mod_def = get_module_def(version)
-            cd = mod_def.get_class_desc(name)
-            if cd is None:
-                cd = ClassDescriptor(k, v)
-                mod_def.save_class_desc(cd)
-            else:
-                cd.update(v)
-            cd.process_properties()
-            if cd.has_alternate_base():
-                mod_def.save_class_desc(cd.alternate_base)
+        group, version, name = process_swagger_name(k)
+        mod_def = get_module_def(version)
+        cd = mod_def.get_class_desc(name)
+        if cd is None:
+            cd = ClassDescriptor(k, v)
+            mod_def.save_class_desc(cd)
+        else:
+            cd.update(v)
+        cd.process_properties()
+        if cd.has_alternate_base():
+            mod_def.save_class_desc(cd.alternate_base)
 
 
 def write_modules(pkgpath: str):
@@ -357,6 +356,7 @@ class ClassDescriptor(object):
             else:
                 prop.change_dep(alt_base)
         alt_base.type = "object"
+        alt_base.full_name = self.full_name
         return alt_base
 
     @staticmethod
@@ -393,7 +393,7 @@ class ClassDescriptor(object):
                         HikaruBase.__name__)
         lines.append(f"class {self.short_name}({base}):")
         # now the docstring
-        ds_parts = ['    """']
+        ds_parts = ['    r"""']
         ds_parts.extend(self.split_line(self.description))
         ds_parts.append("")
         ds_parts.append(f'    Full name: {self.full_name.split("/")[-1]}')
@@ -507,6 +507,7 @@ class PropertyDescriptor(object):
         :param containing_class:
         :param d:
         """
+        name = name.replace('-', '_')
         if name in python_reserved:
             python_name = f'{name}_'
         elif name.startswith("$"):

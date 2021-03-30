@@ -34,7 +34,7 @@ from .unversioned import *
 
 @dataclass
 class FieldsV1(HikaruBase):
-    """
+    r"""
     FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format. Each
     key is either a '.' representing the field itself, and will always map to an empty
     set, or a string representing a sub-field or item. The string will follow one of these
@@ -52,7 +52,7 @@ class FieldsV1(HikaruBase):
 
 
 class Time(str):
-    """
+    r"""
     Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.
     Wrappers are provided for many of the factory methods that the time package offers.
 
@@ -62,7 +62,7 @@ class Time(str):
 
 @dataclass
 class ManagedFieldsEntry(HikaruBase):
-    """
+    r"""
     ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
     that the fieldset applies to.
 
@@ -94,7 +94,7 @@ class ManagedFieldsEntry(HikaruBase):
 
 @dataclass
 class OwnerReference(HikaruBase):
-    """
+    r"""
     OwnerReference contains enough information to let you identify an owning object. An
     owning object must be in the same namespace as the dependent, or be cluster-scoped, so
     there is no namespace field.
@@ -126,7 +126,7 @@ class OwnerReference(HikaruBase):
 
 @dataclass
 class ObjectMeta(HikaruBase):
-    """
+    r"""
     ObjectMeta is metadata that all persisted resources must have, which includes all
     objects users must create.
 
@@ -255,7 +255,7 @@ class ObjectMeta(HikaruBase):
 
 @dataclass
 class ServiceReference(HikaruBase):
-    """
+    r"""
     ServiceReference holds a reference to Service.legacy.k8s.io
 
     Full name: io.k8s.api.admissionregistration.v1.ServiceReference
@@ -274,19 +274,20 @@ class ServiceReference(HikaruBase):
 
 @dataclass
 class WebhookClientConfig(HikaruBase):
-    """
-    WebhookClientConfig contains the information to make a TLS connection with the webhook
+    r"""
+    WebhookClientConfig contains the information to make a TLS connection with the
+    webhook.
 
     Full name: io.k8s.api.admissionregistration.v1.WebhookClientConfig
 
     Attributes:
-    caBundle: `caBundle` is a PEM encoded CA bundle which will be used to validate the
+    caBundle: caBundle is a PEM encoded CA bundle which will be used to validate the
         webhook's server certificate. If unspecified, system trust roots on the apiserver
         are used.
-    service: `service` is a reference to the service for this webhook. Either `service` or
-        `url` must be specified. If the webhook is running within the cluster, then you
-        should use `service`.
-    url: `url` gives the location of the webhook, in standard URL form
+    service: service is a reference to the service for this webhook. Either service or url
+        must be specified. If the webhook is running within the cluster, then you should
+        use `service`.
+    url: url gives the location of the webhook, in standard URL form
         (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
         The `host` should not refer to a service running in the cluster; use the `service`
         field instead. The host might be resolved via external DNS in some apiservers
@@ -309,7 +310,7 @@ class WebhookClientConfig(HikaruBase):
 
 @dataclass
 class LabelSelectorRequirement(HikaruBase):
-    """
+    r"""
     A label selector requirement is a selector that contains values, a key, and an
     operator that relates the key and values.
 
@@ -331,7 +332,7 @@ class LabelSelectorRequirement(HikaruBase):
 
 @dataclass
 class LabelSelector(HikaruBase):
-    """
+    r"""
     A label selector is a label query over a set of resources. The result of matchLabels
     and matchExpressions are ANDed. An empty label selector matches all objects. A null
     label selector matches no objects.
@@ -353,7 +354,7 @@ class LabelSelector(HikaruBase):
 
 @dataclass
 class RuleWithOperations(HikaruBase):
-    """
+    r"""
     RuleWithOperations is a tuple of Operations and Resources. It is recommended to make
     sure that all the tuple expansions are valid.
 
@@ -392,7 +393,7 @@ class RuleWithOperations(HikaruBase):
 
 @dataclass
 class MutatingWebhook(HikaruBase):
-    """
+    r"""
     MutatingWebhook describes an admission webhook and the resources and operations it
     applies to.
 
@@ -496,7 +497,7 @@ class MutatingWebhook(HikaruBase):
 
 @dataclass
 class MutatingWebhookConfiguration(HikaruDocumentBase):
-    """
+    r"""
     MutatingWebhookConfiguration describes the configuration of and admission webhook that
     accept or reject and may change the object.
 
@@ -525,7 +526,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
 
 @dataclass
 class ListMeta(HikaruBase):
-    """
+    r"""
     ListMeta describes metadata that synthetic resources must have, including lists and
     various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 
@@ -567,7 +568,7 @@ class ListMeta(HikaruBase):
 
 @dataclass
 class MutatingWebhookConfigurationList(HikaruDocumentBase):
-    """
+    r"""
     MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
 
     Full name: io.k8s.api.admissionregistration.v1.MutatingWebhookConfigurationList
@@ -595,7 +596,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
 @dataclass
 class ValidatingWebhook(HikaruBase):
-    """
+    r"""
     ValidatingWebhook describes an admission webhook and the resources and operations it
     applies to.
 
@@ -685,7 +686,7 @@ class ValidatingWebhook(HikaruBase):
 
 @dataclass
 class ValidatingWebhookConfiguration(HikaruDocumentBase):
-    """
+    r"""
     ValidatingWebhookConfiguration describes the configuration of and admission webhook
     that accept or reject and object without changing it.
 
@@ -714,7 +715,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
 
 @dataclass
 class ValidatingWebhookConfigurationList(HikaruDocumentBase):
-    """
+    r"""
     ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
 
     Full name: io.k8s.api.admissionregistration.v1.ValidatingWebhookConfigurationList
@@ -742,7 +743,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
 @dataclass
 class RawExtension(HikaruBase):
-    """
+    r"""
     RawExtension is used to hold extensions in external versions. To use this, make a
     field which has RawExtension as its type in your external, versioned struct, and
     Object in your internal struct. You also need to register your various plugin types.
@@ -768,7 +769,7 @@ class RawExtension(HikaruBase):
 
 @dataclass
 class ControllerRevision(HikaruDocumentBase):
-    """
+    r"""
     ControllerRevision implements an immutable snapshot of state data. Clients are
     responsible for serializing and deserializing the objects that contain their internal
     state. Once a ControllerRevision has been successfully created, it can not be updated.
@@ -806,7 +807,7 @@ class ControllerRevision(HikaruDocumentBase):
 
 @dataclass
 class ControllerRevisionList(HikaruDocumentBase):
-    """
+    r"""
     ControllerRevisionList is a resource containing a list of ControllerRevision objects.
 
     Full name: io.k8s.api.apps.v1.ControllerRevisionList
@@ -834,7 +835,7 @@ class ControllerRevisionList(HikaruDocumentBase):
 
 @dataclass
 class ConfigMapKeySelector(HikaruBase):
-    """
+    r"""
     Selects a key from a ConfigMap.
 
     Full name: io.k8s.api.core.v1.ConfigMapKeySelector
@@ -853,7 +854,7 @@ class ConfigMapKeySelector(HikaruBase):
 
 @dataclass
 class ObjectFieldSelector(HikaruBase):
-    """
+    r"""
     ObjectFieldSelector selects an APIVersioned field of an object.
 
     Full name: io.k8s.api.core.v1.ObjectFieldSelector
@@ -869,7 +870,7 @@ class ObjectFieldSelector(HikaruBase):
 
 
 class Quantity(str):
-    """
+    r"""
     Quantity is a fixed-point representation of a number. It provides convenient
     marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64()
     accessors. The serialization format is: <quantity> ::= <signedNumber><suffix> (Note
@@ -905,7 +906,7 @@ class Quantity(str):
 
 @dataclass
 class ResourceFieldSelector(HikaruBase):
-    """
+    r"""
     ResourceFieldSelector represents container resources (cpu, memory) and their output
     format
 
@@ -924,7 +925,7 @@ class ResourceFieldSelector(HikaruBase):
 
 @dataclass
 class SecretKeySelector(HikaruBase):
-    """
+    r"""
     SecretKeySelector selects a key of a Secret.
 
     Full name: io.k8s.api.core.v1.SecretKeySelector
@@ -943,7 +944,7 @@ class SecretKeySelector(HikaruBase):
 
 @dataclass
 class EnvVarSource(HikaruBase):
-    """
+    r"""
     EnvVarSource represents a source for the value of an EnvVar.
 
     Full name: io.k8s.api.core.v1.EnvVarSource
@@ -967,7 +968,7 @@ class EnvVarSource(HikaruBase):
 
 @dataclass
 class EnvVar(HikaruBase):
-    """
+    r"""
     EnvVar represents an environment variable present in a Container.
 
     Full name: io.k8s.api.core.v1.EnvVar
@@ -991,7 +992,7 @@ class EnvVar(HikaruBase):
 
 @dataclass
 class ConfigMapEnvSource(HikaruBase):
-    """
+    r"""
     ConfigMapEnvSource selects a ConfigMap to populate the environment variables with. The
     contents of the target ConfigMap's Data field will represent the key-value pairs as
     environment variables.
@@ -1010,7 +1011,7 @@ class ConfigMapEnvSource(HikaruBase):
 
 @dataclass
 class SecretEnvSource(HikaruBase):
-    """
+    r"""
     SecretEnvSource selects a Secret to populate the environment variables with. The
     contents of the target Secret's Data field will represent the key-value pairs as
     environment variables.
@@ -1029,7 +1030,7 @@ class SecretEnvSource(HikaruBase):
 
 @dataclass
 class EnvFromSource(HikaruBase):
-    """
+    r"""
     EnvFromSource represents the source of a set of ConfigMaps
 
     Full name: io.k8s.api.core.v1.EnvFromSource
@@ -1048,7 +1049,7 @@ class EnvFromSource(HikaruBase):
 
 @dataclass
 class ExecAction(HikaruBase):
-    """
+    r"""
     ExecAction describes a "run in container" action.
 
     Full name: io.k8s.api.core.v1.ExecAction
@@ -1065,7 +1066,7 @@ class ExecAction(HikaruBase):
 
 
 class IntOrString(str):
-    """
+    r"""
     IntOrString is a type that can hold an int32 or a string. When used in JSON or YAML
     marshalling and unmarshalling, it produces or consumes the inner type. This allows you
     to have, for example, a JSON field that can accept a name or number.
@@ -1076,7 +1077,7 @@ class IntOrString(str):
 
 @dataclass
 class HTTPHeader(HikaruBase):
-    """
+    r"""
     HTTPHeader describes a custom header to be used in HTTP probes
 
     Full name: io.k8s.api.core.v1.HTTPHeader
@@ -1092,7 +1093,7 @@ class HTTPHeader(HikaruBase):
 
 @dataclass
 class HTTPGetAction(HikaruBase):
-    """
+    r"""
     HTTPGetAction describes an action based on HTTP Get requests.
 
     Full name: io.k8s.api.core.v1.HTTPGetAction
@@ -1116,7 +1117,7 @@ class HTTPGetAction(HikaruBase):
 
 @dataclass
 class TCPSocketAction(HikaruBase):
-    """
+    r"""
     TCPSocketAction describes an action based on opening a socket
 
     Full name: io.k8s.api.core.v1.TCPSocketAction
@@ -1133,7 +1134,7 @@ class TCPSocketAction(HikaruBase):
 
 @dataclass
 class Handler(HikaruBase):
-    """
+    r"""
     Handler defines a specific action that should be taken
 
     Full name: io.k8s.api.core.v1.Handler
@@ -1153,7 +1154,7 @@ class Handler(HikaruBase):
 
 @dataclass
 class Lifecycle(HikaruBase):
-    """
+    r"""
     Lifecycle describes actions that the management system should take in response to
     container lifecycle events. For the PostStart and PreStop lifecycle handlers,
     management of the container blocks until the action is complete, unless the container
@@ -1184,7 +1185,7 @@ class Lifecycle(HikaruBase):
 
 @dataclass
 class Probe(HikaruBase):
-    """
+    r"""
     Probe describes a health check to be performed against a container to determine
     whether it is alive or ready to receive traffic.
 
@@ -1223,7 +1224,7 @@ class Probe(HikaruBase):
 
 @dataclass
 class ContainerPort(HikaruBase):
-    """
+    r"""
     ContainerPort represents a network port in a single container.
 
     Full name: io.k8s.api.core.v1.ContainerPort
@@ -1250,7 +1251,7 @@ class ContainerPort(HikaruBase):
 
 @dataclass
 class ResourceRequirements(HikaruBase):
-    """
+    r"""
     ResourceRequirements describes the compute resource requirements.
 
     Full name: io.k8s.api.core.v1.ResourceRequirements
@@ -1270,7 +1271,7 @@ class ResourceRequirements(HikaruBase):
 
 @dataclass
 class Capabilities(HikaruBase):
-    """
+    r"""
     Adds and removes POSIX capabilities from running containers.
 
     Full name: io.k8s.api.core.v1.Capabilities
@@ -1286,7 +1287,7 @@ class Capabilities(HikaruBase):
 
 @dataclass
 class SELinuxOptions(HikaruBase):
-    """
+    r"""
     SELinuxOptions are the labels to be applied to the container
 
     Full name: io.k8s.api.core.v1.SELinuxOptions
@@ -1306,7 +1307,7 @@ class SELinuxOptions(HikaruBase):
 
 @dataclass
 class SeccompProfile(HikaruBase):
-    """
+    r"""
     SeccompProfile defines a pod/container's seccomp profile settings. Only one profile
     source may be set.
 
@@ -1329,7 +1330,7 @@ class SeccompProfile(HikaruBase):
 
 @dataclass
 class WindowsSecurityContextOptions(HikaruBase):
-    """
+    r"""
     WindowsSecurityContextOptions contain Windows-specific options and credentials.
 
     Full name: io.k8s.api.core.v1.WindowsSecurityContextOptions
@@ -1353,7 +1354,7 @@ class WindowsSecurityContextOptions(HikaruBase):
 
 @dataclass
 class SecurityContext(HikaruBase):
-    """
+    r"""
     SecurityContext holds security configuration that will be applied to a container. Some
     fields are present in both SecurityContext and PodSecurityContext. When both are set,
     the values in SecurityContext take precedence.
@@ -1417,7 +1418,7 @@ class SecurityContext(HikaruBase):
 
 @dataclass
 class VolumeDevice(HikaruBase):
-    """
+    r"""
     volumeDevice describes a mapping of a raw block device within a container.
 
     Full name: io.k8s.api.core.v1.VolumeDevice
@@ -1434,7 +1435,7 @@ class VolumeDevice(HikaruBase):
 
 @dataclass
 class VolumeMount(HikaruBase):
-    """
+    r"""
     VolumeMount describes a mounting of a Volume within a container.
 
     Full name: io.k8s.api.core.v1.VolumeMount
@@ -1466,7 +1467,7 @@ class VolumeMount(HikaruBase):
 
 @dataclass
 class Container(HikaruBase):
-    """
+    r"""
     A single application container that you want to run within a pod.
 
     Full name: io.k8s.api.core.v1.Container
@@ -1584,7 +1585,7 @@ class Container(HikaruBase):
 
 @dataclass
 class NodeSelectorRequirement(HikaruBase):
-    """
+    r"""
     A node selector requirement is a selector that contains values, a key, and an operator
     that relates the key and values.
 
@@ -1608,7 +1609,7 @@ class NodeSelectorRequirement(HikaruBase):
 
 @dataclass
 class NodeSelectorTerm(HikaruBase):
-    """
+    r"""
     A null or empty node selector term matches no objects. The requirements of them are
     ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
 
@@ -1625,7 +1626,7 @@ class NodeSelectorTerm(HikaruBase):
 
 @dataclass
 class PreferredSchedulingTerm(HikaruBase):
-    """
+    r"""
     An empty preferred scheduling term matches all objects with implicit weight 0 (i.e.
     it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a
     no-op).
@@ -1644,7 +1645,7 @@ class PreferredSchedulingTerm(HikaruBase):
 
 @dataclass
 class NodeSelector(HikaruBase):
-    """
+    r"""
     A node selector represents the union of the results of one or more label queries over
     a set of nodes; that is, it represents the OR of the selectors represented by the node
     selector terms.
@@ -1660,7 +1661,7 @@ class NodeSelector(HikaruBase):
 
 @dataclass
 class NodeAffinity(HikaruBase):
-    """
+    r"""
     Node affinity is a group of node affinity scheduling rules.
 
     Full name: io.k8s.api.core.v1.NodeAffinity
@@ -1688,7 +1689,7 @@ class NodeAffinity(HikaruBase):
 
 @dataclass
 class PodAffinityTerm(HikaruBase):
-    """
+    r"""
     Defines a set of pods (namely those matching the labelSelector relative to the given
     namespace(s)) that this pod should be co-located (affinity) or not co-located
     (anti-affinity) with, where co-located is defined as running on a node whose value of
@@ -1715,7 +1716,7 @@ class PodAffinityTerm(HikaruBase):
 
 @dataclass
 class WeightedPodAffinityTerm(HikaruBase):
-    """
+    r"""
     The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to
     find the most preferred node(s)
 
@@ -1734,7 +1735,7 @@ class WeightedPodAffinityTerm(HikaruBase):
 
 @dataclass
 class PodAffinity(HikaruBase):
-    """
+    r"""
     Pod affinity is a group of inter pod affinity scheduling rules.
 
     Full name: io.k8s.api.core.v1.PodAffinity
@@ -1764,7 +1765,7 @@ class PodAffinity(HikaruBase):
 
 @dataclass
 class PodAntiAffinity(HikaruBase):
-    """
+    r"""
     Pod anti affinity is a group of inter pod anti affinity scheduling rules.
 
     Full name: io.k8s.api.core.v1.PodAntiAffinity
@@ -1794,7 +1795,7 @@ class PodAntiAffinity(HikaruBase):
 
 @dataclass
 class Affinity(HikaruBase):
-    """
+    r"""
     Affinity is a group of affinity scheduling rules.
 
     Full name: io.k8s.api.core.v1.Affinity
@@ -1814,7 +1815,7 @@ class Affinity(HikaruBase):
 
 @dataclass
 class PodDNSConfigOption(HikaruBase):
-    """
+    r"""
     PodDNSConfigOption defines DNS resolver options of a pod.
 
     Full name: io.k8s.api.core.v1.PodDNSConfigOption
@@ -1830,7 +1831,7 @@ class PodDNSConfigOption(HikaruBase):
 
 @dataclass
 class PodDNSConfig(HikaruBase):
-    """
+    r"""
     PodDNSConfig defines the DNS parameters of a pod in addition to those generated from
     DNSPolicy.
 
@@ -1854,7 +1855,7 @@ class PodDNSConfig(HikaruBase):
 
 @dataclass
 class EphemeralContainer(HikaruBase):
-    """
+    r"""
     An EphemeralContainer is a container that may be added temporarily to an existing pod
     for user-initiated activities such as debugging. Ephemeral containers have no resource
     or scheduling guarantees, and they will not be restarted when they exit or when a pod
@@ -1966,7 +1967,7 @@ class EphemeralContainer(HikaruBase):
 
 @dataclass
 class HostAlias(HikaruBase):
-    """
+    r"""
     HostAlias holds the mapping between IP and hostnames that will be injected as an entry
     in the pod's hosts file.
 
@@ -1983,7 +1984,7 @@ class HostAlias(HikaruBase):
 
 @dataclass
 class PodReadinessGate(HikaruBase):
-    """
+    r"""
     PodReadinessGate contains the reference to a pod condition
 
     Full name: io.k8s.api.core.v1.PodReadinessGate
@@ -1998,7 +1999,7 @@ class PodReadinessGate(HikaruBase):
 
 @dataclass
 class Sysctl(HikaruBase):
-    """
+    r"""
     Sysctl defines a kernel parameter to be set
 
     Full name: io.k8s.api.core.v1.Sysctl
@@ -2014,7 +2015,7 @@ class Sysctl(HikaruBase):
 
 @dataclass
 class PodSecurityContext(HikaruBase):
-    """
+    r"""
     PodSecurityContext holds pod-level security attributes and common container settings.
     Some fields are also present in container.securityContext. Field values of
     container.securityContext take precedence over field values of PodSecurityContext.
@@ -2079,7 +2080,7 @@ class PodSecurityContext(HikaruBase):
 
 @dataclass
 class Toleration(HikaruBase):
-    """
+    r"""
     The pod this Toleration is attached to tolerates any taint that matches the triple
     <key,value,effect> using the matching operator <operator>.
 
@@ -2113,7 +2114,7 @@ class Toleration(HikaruBase):
 
 @dataclass
 class TopologySpreadConstraint(HikaruBase):
-    """
+    r"""
     TopologySpreadConstraint specifies how to spread matching pods among the given
     topology.
 
@@ -2160,7 +2161,7 @@ class TopologySpreadConstraint(HikaruBase):
 
 @dataclass
 class AWSElasticBlockStoreVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Persistent Disk resource in AWS. An AWS EBS disk must exist before
     mounting to a container. The disk must also be in the same AWS zone as the kubelet. An
     AWS EBS disk can only be mounted as read/write once. AWS EBS volumes support ownership
@@ -2192,7 +2193,7 @@ class AWSElasticBlockStoreVolumeSource(HikaruBase):
 
 @dataclass
 class AzureDiskVolumeSource(HikaruBase):
-    """
+    r"""
     AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
 
     Full name: io.k8s.api.core.v1.AzureDiskVolumeSource
@@ -2221,7 +2222,7 @@ class AzureDiskVolumeSource(HikaruBase):
 
 @dataclass
 class AzureFileVolumeSource(HikaruBase):
-    """
+    r"""
     AzureFile represents an Azure File Service mount on the host and bind mount to the
     pod.
 
@@ -2241,7 +2242,7 @@ class AzureFileVolumeSource(HikaruBase):
 
 @dataclass
 class LocalObjectReference(HikaruBase):
-    """
+    r"""
     LocalObjectReference contains enough information to let you locate the referenced
     object inside the same namespace.
 
@@ -2257,7 +2258,7 @@ class LocalObjectReference(HikaruBase):
 
 @dataclass
 class CephFSVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Ceph Filesystem mount that lasts the lifetime of a pod Cephfs volumes do
     not support ownership management or SELinux relabeling.
 
@@ -2290,7 +2291,7 @@ class CephFSVolumeSource(HikaruBase):
 
 @dataclass
 class CinderVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a cinder volume resource in Openstack. A Cinder volume must exist before
     mounting to a container. The volume must also be in the same region as the kubelet.
     Cinder volumes support ownership management and SELinux relabeling.
@@ -2319,7 +2320,7 @@ class CinderVolumeSource(HikaruBase):
 
 @dataclass
 class KeyToPath(HikaruBase):
-    """
+    r"""
     Maps a string key to a path within a volume.
 
     Full name: io.k8s.api.core.v1.KeyToPath
@@ -2343,7 +2344,7 @@ class KeyToPath(HikaruBase):
 
 @dataclass
 class ConfigMapVolumeSource(HikaruBase):
-    """
+    r"""
     Adapts a ConfigMap into a volume. The contents of the target ConfigMap's Data field
     will be presented in a volume as files using the keys in the Data field as the file
     names, unless the items element is populated with specific mappings of keys to paths.
@@ -2378,7 +2379,7 @@ class ConfigMapVolumeSource(HikaruBase):
 
 @dataclass
 class CSIVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a source location of a volume to mount, managed by an external CSI driver
 
     Full name: io.k8s.api.core.v1.CSIVolumeSource
@@ -2409,7 +2410,7 @@ class CSIVolumeSource(HikaruBase):
 
 @dataclass
 class DownwardAPIVolumeFile(HikaruBase):
-    """
+    r"""
     DownwardAPIVolumeFile represents information to create the file containing the pod
     field
 
@@ -2440,7 +2441,7 @@ class DownwardAPIVolumeFile(HikaruBase):
 
 @dataclass
 class DownwardAPIVolumeSource(HikaruBase):
-    """
+    r"""
     DownwardAPIVolumeSource represents a volume containing downward API info. Downward API
     volumes support ownership management and SELinux relabeling.
 
@@ -2463,7 +2464,7 @@ class DownwardAPIVolumeSource(HikaruBase):
 
 @dataclass
 class EmptyDirVolumeSource(HikaruBase):
-    """
+    r"""
     Represents an empty directory for a pod. Empty directory volumes support ownership
     management and SELinux relabeling.
 
@@ -2487,7 +2488,7 @@ class EmptyDirVolumeSource(HikaruBase):
 
 @dataclass
 class TypedLocalObjectReference(HikaruBase):
-    """
+    r"""
     TypedLocalObjectReference contains enough information to let you locate the typed
     referenced object inside the same namespace.
 
@@ -2508,7 +2509,7 @@ class TypedLocalObjectReference(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaimSpec(HikaruBase):
-    """
+    r"""
     PersistentVolumeClaimSpec describes the common attributes of storage devices and
     allows a Source for provider-specific attributes
 
@@ -2547,7 +2548,7 @@ class PersistentVolumeClaimSpec(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaimTemplate(HikaruBase):
-    """
+    r"""
     PersistentVolumeClaimTemplate is used to produce PersistentVolumeClaim objects as part
     of an EphemeralVolumeSource.
 
@@ -2567,7 +2568,7 @@ class PersistentVolumeClaimTemplate(HikaruBase):
 
 @dataclass
 class EphemeralVolumeSource(HikaruBase):
-    """
+    r"""
     Represents an ephemeral volume that is handled by a normal storage driver.
 
     Full name: io.k8s.api.core.v1.EphemeralVolumeSource
@@ -2597,7 +2598,7 @@ class EphemeralVolumeSource(HikaruBase):
 
 @dataclass
 class FCVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Fibre Channel volume. Fibre Channel volumes can only be mounted as
     read/write once. Fibre Channel volumes support ownership management and SELinux
     relabeling.
@@ -2625,7 +2626,7 @@ class FCVolumeSource(HikaruBase):
 
 @dataclass
 class FlexVolumeSource(HikaruBase):
-    """
+    r"""
     FlexVolume represents a generic volume resource that is provisioned/attached using an
     exec based plugin.
 
@@ -2654,7 +2655,7 @@ class FlexVolumeSource(HikaruBase):
 
 @dataclass
 class FlockerVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Flocker volume mounted by the Flocker agent. One and only one of
     datasetName and datasetUUID should be set. Flocker volumes do not support ownership
     management or SELinux relabeling.
@@ -2673,7 +2674,7 @@ class FlockerVolumeSource(HikaruBase):
 
 @dataclass
 class GCEPersistentDiskVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Persistent Disk resource in Google Compute Engine. A GCE PD must exist
     before mounting to a container. The disk must also be in the same GCE project and zone
     as the kubelet. A GCE PD can only be mounted as read/write once or read-only many
@@ -2706,7 +2707,7 @@ class GCEPersistentDiskVolumeSource(HikaruBase):
 
 @dataclass
 class GitRepoVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a volume that is populated with the contents of a git repository. Git repo
     volumes do not support ownership management. Git repo volumes support SELinux
     relabeling. DEPRECATED: GitRepo is deprecated. To provision a container with a git
@@ -2731,7 +2732,7 @@ class GitRepoVolumeSource(HikaruBase):
 
 @dataclass
 class GlusterfsVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Glusterfs mount that lasts the lifetime of a pod. Glusterfs volumes do
     not support ownership management or SELinux relabeling.
 
@@ -2754,7 +2755,7 @@ class GlusterfsVolumeSource(HikaruBase):
 
 @dataclass
 class HostPathVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a host path mapped into a pod. Host path volumes do not support ownership
     management or SELinux relabeling.
 
@@ -2774,7 +2775,7 @@ class HostPathVolumeSource(HikaruBase):
 
 @dataclass
 class ISCSIVolumeSource(HikaruBase):
-    """
+    r"""
     Represents an ISCSI disk. ISCSI volumes can only be mounted as read/write once. ISCSI
     volumes support ownership management and SELinux relabeling.
 
@@ -2818,7 +2819,7 @@ class ISCSIVolumeSource(HikaruBase):
 
 @dataclass
 class NFSVolumeSource(HikaruBase):
-    """
+    r"""
     Represents an NFS mount that lasts the lifetime of a pod. NFS volumes do not support
     ownership management or SELinux relabeling.
 
@@ -2841,7 +2842,7 @@ class NFSVolumeSource(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaimVolumeSource(HikaruBase):
-    """
+    r"""
     PersistentVolumeClaimVolumeSource references the user's PVC in the same namespace.
     This volume finds the bound PV and mounts that volume for the pod. A
     PersistentVolumeClaimVolumeSource is, essentially, a wrapper around another type of
@@ -2862,7 +2863,7 @@ class PersistentVolumeClaimVolumeSource(HikaruBase):
 
 @dataclass
 class PhotonPersistentDiskVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Photon Controller persistent disk resource.
 
     Full name: io.k8s.api.core.v1.PhotonPersistentDiskVolumeSource
@@ -2880,7 +2881,7 @@ class PhotonPersistentDiskVolumeSource(HikaruBase):
 
 @dataclass
 class PortworxVolumeSource(HikaruBase):
-    """
+    r"""
     PortworxVolumeSource represents a Portworx volume resource.
 
     Full name: io.k8s.api.core.v1.PortworxVolumeSource
@@ -2901,7 +2902,7 @@ class PortworxVolumeSource(HikaruBase):
 
 @dataclass
 class ConfigMapProjection(HikaruBase):
-    """
+    r"""
     Adapts a ConfigMap into a projected volume. The contents of the target ConfigMap's
     Data field will be presented in a projected volume as files using the keys in the Data
     field as the file names, unless the items element is populated with specific mappings
@@ -2930,7 +2931,7 @@ class ConfigMapProjection(HikaruBase):
 
 @dataclass
 class DownwardAPIProjection(HikaruBase):
-    """
+    r"""
     Represents downward API info for projecting into a projected volume. Note that this is
     identical to a downwardAPI volume source without the default mode.
 
@@ -2945,7 +2946,7 @@ class DownwardAPIProjection(HikaruBase):
 
 @dataclass
 class SecretProjection(HikaruBase):
-    """
+    r"""
     Adapts a secret into a projected volume. The contents of the target Secret's Data
     field will be presented in a projected volume as files using the keys in the Data
     field as the file names. Note that this is identical to a secret volume source without
@@ -2972,7 +2973,7 @@ class SecretProjection(HikaruBase):
 
 @dataclass
 class ServiceAccountTokenProjection(HikaruBase):
-    """
+    r"""
     ServiceAccountTokenProjection represents a projected service account token volume.
     This projection can be used to insert a service account token into the pods runtime
     filesystem for use against APIs (Kubernetes API Server or otherwise).
@@ -3001,7 +3002,7 @@ class ServiceAccountTokenProjection(HikaruBase):
 
 @dataclass
 class VolumeProjection(HikaruBase):
-    """
+    r"""
     Projection that may be projected along with other supported volume types
 
     Full name: io.k8s.api.core.v1.VolumeProjection
@@ -3021,7 +3022,7 @@ class VolumeProjection(HikaruBase):
 
 @dataclass
 class ProjectedVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a projected volume source
 
     Full name: io.k8s.api.core.v1.ProjectedVolumeSource
@@ -3042,7 +3043,7 @@ class ProjectedVolumeSource(HikaruBase):
 
 @dataclass
 class QuobyteVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Quobyte mount that lasts the lifetime of a pod. Quobyte volumes do not
     support ownership management or SELinux relabeling.
 
@@ -3071,7 +3072,7 @@ class QuobyteVolumeSource(HikaruBase):
 
 @dataclass
 class RBDVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Rados Block Device mount that lasts the lifetime of a pod. RBD volumes
     support ownership management and SELinux relabeling.
 
@@ -3111,7 +3112,7 @@ class RBDVolumeSource(HikaruBase):
 
 @dataclass
 class ScaleIOVolumeSource(HikaruBase):
-    """
+    r"""
     ScaleIOVolumeSource represents a persistent ScaleIO volume
 
     Full name: io.k8s.api.core.v1.ScaleIOVolumeSource
@@ -3149,7 +3150,7 @@ class ScaleIOVolumeSource(HikaruBase):
 
 @dataclass
 class SecretVolumeSource(HikaruBase):
-    """
+    r"""
     Adapts a Secret into a volume. The contents of the target Secret's Data field will be
     presented in a volume as files using the keys in the Data field as the file names.
     Secret volumes support ownership management and SELinux relabeling.
@@ -3182,7 +3183,7 @@ class SecretVolumeSource(HikaruBase):
 
 @dataclass
 class StorageOSVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a StorageOS persistent volume resource.
 
     Full name: io.k8s.api.core.v1.StorageOSVolumeSource
@@ -3214,7 +3215,7 @@ class StorageOSVolumeSource(HikaruBase):
 
 @dataclass
 class VsphereVirtualDiskVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a vSphere volume resource.
 
     Full name: io.k8s.api.core.v1.VsphereVirtualDiskVolumeSource
@@ -3237,7 +3238,7 @@ class VsphereVirtualDiskVolumeSource(HikaruBase):
 
 @dataclass
 class Volume(HikaruBase):
-    """
+    r"""
     Volume represents a named volume in a pod that may be accessed by any container in the
     pod.
 
@@ -3357,7 +3358,7 @@ class Volume(HikaruBase):
 
 @dataclass
 class PodSpec(HikaruBase):
-    """
+    r"""
     PodSpec is a description of a pod.
 
     Full name: io.k8s.api.core.v1.PodSpec
@@ -3540,7 +3541,7 @@ class PodSpec(HikaruBase):
 
 @dataclass
 class PodTemplateSpec(HikaruBase):
-    """
+    r"""
     PodTemplateSpec describes the data a pod should have when created from a template
 
     Full name: io.k8s.api.core.v1.PodTemplateSpec
@@ -3558,7 +3559,7 @@ class PodTemplateSpec(HikaruBase):
 
 @dataclass
 class RollingUpdateDaemonSet(HikaruBase):
-    """
+    r"""
     Spec to control the desired behavior of daemon set rolling update.
 
     Full name: io.k8s.api.apps.v1.RollingUpdateDaemonSet
@@ -3600,7 +3601,7 @@ class RollingUpdateDaemonSet(HikaruBase):
 
 @dataclass
 class DaemonSetUpdateStrategy(HikaruBase):
-    """
+    r"""
     DaemonSetUpdateStrategy is a struct used to control the update strategy for a
     DaemonSet.
 
@@ -3618,7 +3619,7 @@ class DaemonSetUpdateStrategy(HikaruBase):
 
 @dataclass
 class DaemonSetSpec(HikaruBase):
-    """
+    r"""
     DaemonSetSpec is the specification of a daemon set.
 
     Full name: io.k8s.api.apps.v1.DaemonSetSpec
@@ -3649,7 +3650,7 @@ class DaemonSetSpec(HikaruBase):
 
 @dataclass
 class DaemonSetCondition(HikaruBase):
-    """
+    r"""
     DaemonSetCondition describes the state of a DaemonSet at a certain point.
 
     Full name: io.k8s.api.apps.v1.DaemonSetCondition
@@ -3671,7 +3672,7 @@ class DaemonSetCondition(HikaruBase):
 
 @dataclass
 class DaemonSetStatus(HikaruBase):
-    """
+    r"""
     DaemonSetStatus represents the current status of a daemon set.
 
     Full name: io.k8s.api.apps.v1.DaemonSetStatus
@@ -3717,7 +3718,7 @@ class DaemonSetStatus(HikaruBase):
 
 @dataclass
 class DaemonSet(HikaruDocumentBase):
-    """
+    r"""
     DaemonSet represents the configuration of a daemon set.
 
     Full name: io.k8s.api.apps.v1.DaemonSet
@@ -3750,7 +3751,7 @@ class DaemonSet(HikaruDocumentBase):
 
 @dataclass
 class DaemonSetList(HikaruDocumentBase):
-    """
+    r"""
     DaemonSetList is a collection of daemon sets.
 
     Full name: io.k8s.api.apps.v1.DaemonSetList
@@ -3778,7 +3779,7 @@ class DaemonSetList(HikaruDocumentBase):
 
 @dataclass
 class RollingUpdateDeployment(HikaruBase):
-    """
+    r"""
     Spec to control the desired behavior of rolling update.
 
     Full name: io.k8s.api.apps.v1.RollingUpdateDeployment
@@ -3809,7 +3810,7 @@ class RollingUpdateDeployment(HikaruBase):
 
 @dataclass
 class DeploymentStrategy(HikaruBase):
-    """
+    r"""
     DeploymentStrategy describes how to replace existing pods with new ones.
 
     Full name: io.k8s.api.apps.v1.DeploymentStrategy
@@ -3827,7 +3828,7 @@ class DeploymentStrategy(HikaruBase):
 
 @dataclass
 class DeploymentSpec(HikaruBase):
-    """
+    r"""
     DeploymentSpec is the specification of the desired behavior of the Deployment.
 
     Full name: io.k8s.api.apps.v1.DeploymentSpec
@@ -3866,7 +3867,7 @@ class DeploymentSpec(HikaruBase):
 
 @dataclass
 class DeploymentCondition(HikaruBase):
-    """
+    r"""
     DeploymentCondition describes the state of a deployment at a certain point.
 
     Full name: io.k8s.api.apps.v1.DeploymentCondition
@@ -3890,7 +3891,7 @@ class DeploymentCondition(HikaruBase):
 
 @dataclass
 class DeploymentStatus(HikaruBase):
-    """
+    r"""
     DeploymentStatus is the most recently observed status of the Deployment.
 
     Full name: io.k8s.api.apps.v1.DeploymentStatus
@@ -3927,7 +3928,7 @@ class DeploymentStatus(HikaruBase):
 
 @dataclass
 class Deployment(HikaruDocumentBase):
-    """
+    r"""
     Deployment enables declarative updates for Pods and ReplicaSets.
 
     Full name: io.k8s.api.apps.v1.Deployment
@@ -3956,7 +3957,7 @@ class Deployment(HikaruDocumentBase):
 
 @dataclass
 class DeploymentList(HikaruDocumentBase):
-    """
+    r"""
     DeploymentList is a list of Deployments.
 
     Full name: io.k8s.api.apps.v1.DeploymentList
@@ -3983,7 +3984,7 @@ class DeploymentList(HikaruDocumentBase):
 
 @dataclass
 class ReplicaSetSpec(HikaruBase):
-    """
+    r"""
     ReplicaSetSpec is the specification of a ReplicaSet.
 
     Full name: io.k8s.api.apps.v1.ReplicaSetSpec
@@ -4012,7 +4013,7 @@ class ReplicaSetSpec(HikaruBase):
 
 @dataclass
 class ReplicaSetCondition(HikaruBase):
-    """
+    r"""
     ReplicaSetCondition describes the state of a replica set at a certain point.
 
     Full name: io.k8s.api.apps.v1.ReplicaSetCondition
@@ -4035,7 +4036,7 @@ class ReplicaSetCondition(HikaruBase):
 
 @dataclass
 class ReplicaSetStatus(HikaruBase):
-    """
+    r"""
     ReplicaSetStatus represents the current status of a ReplicaSet.
 
     Full name: io.k8s.api.apps.v1.ReplicaSetStatus
@@ -4064,7 +4065,7 @@ class ReplicaSetStatus(HikaruBase):
 
 @dataclass
 class ReplicaSet(HikaruDocumentBase):
-    """
+    r"""
     ReplicaSet ensures that a specified number of pod replicas are running at any given
     time.
 
@@ -4101,7 +4102,7 @@ class ReplicaSet(HikaruDocumentBase):
 
 @dataclass
 class ReplicaSetList(HikaruDocumentBase):
-    """
+    r"""
     ReplicaSetList is a collection of ReplicaSets.
 
     Full name: io.k8s.api.apps.v1.ReplicaSetList
@@ -4130,7 +4131,7 @@ class ReplicaSetList(HikaruDocumentBase):
 
 @dataclass
 class RollingUpdateStatefulSetStrategy(HikaruBase):
-    """
+    r"""
     RollingUpdateStatefulSetStrategy is used to communicate parameter for
     RollingUpdateStatefulSetStrategyType.
 
@@ -4146,7 +4147,7 @@ class RollingUpdateStatefulSetStrategy(HikaruBase):
 
 @dataclass
 class StatefulSetUpdateStrategy(HikaruBase):
-    """
+    r"""
     StatefulSetUpdateStrategy indicates the strategy that the StatefulSet controller will
     use to perform updates. It includes any additional parameters necessary to perform the
     update for the indicated strategy.
@@ -4166,7 +4167,7 @@ class StatefulSetUpdateStrategy(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaimCondition(HikaruBase):
-    """
+    r"""
     PersistentVolumeClaimCondition contails details about state of pvc
 
     Full name: io.k8s.api.core.v1.PersistentVolumeClaimCondition
@@ -4192,7 +4193,7 @@ class PersistentVolumeClaimCondition(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaimStatus(HikaruBase):
-    """
+    r"""
     PersistentVolumeClaimStatus is the current status of a persistent volume claim.
 
     Full name: io.k8s.api.core.v1.PersistentVolumeClaimStatus
@@ -4215,7 +4216,7 @@ class PersistentVolumeClaimStatus(HikaruBase):
 
 @dataclass
 class PersistentVolumeClaim(HikaruDocumentBase):
-    """
+    r"""
     PersistentVolumeClaim is a user's request for and claim to a persistent volume
 
     Full name: io.k8s.api.core.v1.PersistentVolumeClaim
@@ -4249,7 +4250,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
 
 @dataclass
 class StatefulSetSpec(HikaruBase):
-    """
+    r"""
     A StatefulSetSpec is the specification of a StatefulSet.
 
     Full name: io.k8s.api.apps.v1.StatefulSetSpec
@@ -4304,7 +4305,7 @@ class StatefulSetSpec(HikaruBase):
 
 @dataclass
 class StatefulSetCondition(HikaruBase):
-    """
+    r"""
     StatefulSetCondition describes the state of a statefulset at a certain point.
 
     Full name: io.k8s.api.apps.v1.StatefulSetCondition
@@ -4326,7 +4327,7 @@ class StatefulSetCondition(HikaruBase):
 
 @dataclass
 class StatefulSetStatus(HikaruBase):
-    """
+    r"""
     StatefulSetStatus represents the current state of a StatefulSet.
 
     Full name: io.k8s.api.apps.v1.StatefulSetStatus
@@ -4366,7 +4367,7 @@ class StatefulSetStatus(HikaruBase):
 
 @dataclass
 class StatefulSet(HikaruDocumentBase):
-    """
+    r"""
     StatefulSet represents a set of pods with consistent identities. Identities are
     defined as: - Network: A single stable DNS and hostname. - Storage: As many
     VolumeClaims as requested. The StatefulSet guarantees that a given network identity
@@ -4399,7 +4400,7 @@ class StatefulSet(HikaruDocumentBase):
 
 @dataclass
 class StatefulSetList(HikaruDocumentBase):
-    """
+    r"""
     StatefulSetList is a collection of StatefulSets.
 
     Full name: io.k8s.api.apps.v1.StatefulSetList
@@ -4426,7 +4427,7 @@ class StatefulSetList(HikaruDocumentBase):
 
 @dataclass
 class BoundObjectReference(HikaruBase):
-    """
+    r"""
     BoundObjectReference is a reference to an object that a token is bound to.
 
     Full name: io.k8s.api.authentication.v1.BoundObjectReference
@@ -4446,7 +4447,7 @@ class BoundObjectReference(HikaruBase):
 
 @dataclass
 class TokenRequestSpec(HikaruBase):
-    """
+    r"""
     TokenRequestSpec contains client provided parameters of a token request.
 
     Full name: io.k8s.api.authentication.v1.TokenRequestSpec
@@ -4474,7 +4475,7 @@ class TokenRequestSpec(HikaruBase):
 
 @dataclass
 class TokenRequestStatus(HikaruBase):
-    """
+    r"""
     TokenRequestStatus is the result of a token request.
 
     Full name: io.k8s.api.authentication.v1.TokenRequestStatus
@@ -4491,7 +4492,7 @@ class TokenRequestStatus(HikaruBase):
 
 @dataclass
 class TokenReviewSpec(HikaruBase):
-    """
+    r"""
     TokenReviewSpec is a description of the token authentication request.
 
     Full name: io.k8s.api.authentication.v1.TokenReviewSpec
@@ -4511,7 +4512,7 @@ class TokenReviewSpec(HikaruBase):
 
 @dataclass
 class UserInfo(HikaruBase):
-    """
+    r"""
     UserInfo holds the information about the user needed to implement the user.Info
     interface.
 
@@ -4533,7 +4534,7 @@ class UserInfo(HikaruBase):
 
 @dataclass
 class TokenReviewStatus(HikaruBase):
-    """
+    r"""
     TokenReviewStatus is the result of the token authentication request.
 
     Full name: io.k8s.api.authentication.v1.TokenReviewStatus
@@ -4561,7 +4562,7 @@ class TokenReviewStatus(HikaruBase):
 
 @dataclass
 class TokenReview(HikaruDocumentBase):
-    """
+    r"""
     TokenReview attempts to authenticate a token to a known user. Note: TokenReview
     requests may be cached by the webhook token authenticator plugin in the
     kube-apiserver.
@@ -4593,7 +4594,7 @@ class TokenReview(HikaruDocumentBase):
 
 @dataclass
 class NonResourceAttributes(HikaruBase):
-    """
+    r"""
     NonResourceAttributes includes the authorization attributes available for non-resource
     requests to the Authorizer interface
 
@@ -4610,7 +4611,7 @@ class NonResourceAttributes(HikaruBase):
 
 @dataclass
 class ResourceAttributes(HikaruBase):
-    """
+    r"""
     ResourceAttributes includes the authorization attributes available for resource
     requests to the Authorizer interface
 
@@ -4643,7 +4644,7 @@ class ResourceAttributes(HikaruBase):
 
 @dataclass
 class SubjectAccessReviewSpec(HikaruBase):
-    """
+    r"""
     SubjectAccessReviewSpec is a description of the access request. Exactly one of
     ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
 
@@ -4672,7 +4673,7 @@ class SubjectAccessReviewSpec(HikaruBase):
 
 @dataclass
 class SubjectAccessReviewStatus(HikaruBase):
-    """
+    r"""
     SubjectAccessReviewStatus
 
     Full name: io.k8s.api.authorization.v1.SubjectAccessReviewStatus
@@ -4698,7 +4699,7 @@ class SubjectAccessReviewStatus(HikaruBase):
 
 @dataclass
 class LocalSubjectAccessReview(HikaruDocumentBase):
-    """
+    r"""
     LocalSubjectAccessReview checks whether or not a user or group can perform an action
     in a given namespace. Having a namespace scoped resource makes it much easier to grant
     namespace scoped policy that includes permissions checking.
@@ -4731,7 +4732,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
 @dataclass
 class SelfSubjectAccessReviewSpec(HikaruBase):
-    """
+    r"""
     SelfSubjectAccessReviewSpec is a description of the access request. Exactly one of
     ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
 
@@ -4750,7 +4751,7 @@ class SelfSubjectAccessReviewSpec(HikaruBase):
 
 @dataclass
 class SelfSubjectAccessReview(HikaruDocumentBase):
-    """
+    r"""
     SelfSubjectAccessReview checks whether or the current user can perform an action. Not
     filling in a spec.namespace means "in all namespaces". Self is a special case, because
     users should always be able to check whether they can perform an action
@@ -4783,7 +4784,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
 @dataclass
 class SelfSubjectRulesReviewSpec(HikaruBase):
-    """
+    r"""
 
     Full name: io.k8s.api.authorization.v1.SelfSubjectRulesReviewSpec
 
@@ -4796,7 +4797,7 @@ class SelfSubjectRulesReviewSpec(HikaruBase):
 
 @dataclass
 class NonResourceRule(HikaruBase):
-    """
+    r"""
     NonResourceRule holds information that describes a rule for the non-resource
 
     Full name: io.k8s.api.authorization.v1.NonResourceRule
@@ -4815,7 +4816,7 @@ class NonResourceRule(HikaruBase):
 
 @dataclass
 class ResourceRule(HikaruBase):
-    """
+    r"""
     ResourceRule is the list of actions the subject is allowed to perform on resources.
     The list ordering isn't significant, may contain duplicates, and possibly be
     incomplete.
@@ -4843,7 +4844,7 @@ class ResourceRule(HikaruBase):
 
 @dataclass
 class SubjectRulesReviewStatus(HikaruBase):
-    """
+    r"""
     SubjectRulesReviewStatus contains the result of a rules check. This check can be
     incomplete depending on the set of authorizers the server is configured with and any
     errors experienced during evaluation. Because authorization rules are additive, if a
@@ -4875,7 +4876,7 @@ class SubjectRulesReviewStatus(HikaruBase):
 
 @dataclass
 class SelfSubjectRulesReview(HikaruDocumentBase):
-    """
+    r"""
     SelfSubjectRulesReview enumerates the set of actions the current user can perform
     within a namespace. The returned list of actions may be incomplete depending on the
     server's authorization mode, and any errors experienced during the evaluation.
@@ -4913,7 +4914,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
 @dataclass
 class SubjectAccessReview(HikaruDocumentBase):
-    """
+    r"""
     SubjectAccessReview checks whether or not a user or group can perform an action.
 
     Full name: io.k8s.api.authorization.v1.SubjectAccessReview
@@ -4943,7 +4944,7 @@ class SubjectAccessReview(HikaruDocumentBase):
 
 @dataclass
 class CrossVersionObjectReference(HikaruBase):
-    """
+    r"""
     CrossVersionObjectReference contains enough information to let you identify the
     referred resource.
 
@@ -4964,7 +4965,7 @@ class CrossVersionObjectReference(HikaruBase):
 
 @dataclass
 class HorizontalPodAutoscalerSpec(HikaruBase):
-    """
+    r"""
     specification of a horizontal pod autoscaler.
 
     Full name: io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerSpec
@@ -4993,7 +4994,7 @@ class HorizontalPodAutoscalerSpec(HikaruBase):
 
 @dataclass
 class HorizontalPodAutoscalerStatus(HikaruBase):
-    """
+    r"""
     current status of a horizontal pod autoscaler
 
     Full name: io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerStatus
@@ -5018,7 +5019,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
 
 @dataclass
 class HorizontalPodAutoscaler(HikaruDocumentBase):
-    """
+    r"""
     configuration of a horizontal pod autoscaler.
 
     Full name: io.k8s.api.autoscaling.v1.HorizontalPodAutoscaler
@@ -5049,7 +5050,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
 @dataclass
 class HorizontalPodAutoscalerList(HikaruDocumentBase):
-    """
+    r"""
     list of horizontal pod autoscaler objects.
 
     Full name: io.k8s.api.autoscaling.v1.HorizontalPodAutoscalerList
@@ -5076,7 +5077,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
 
 @dataclass
 class ScaleSpec(HikaruBase):
-    """
+    r"""
     ScaleSpec describes the attributes of a scale subresource.
 
     Full name: io.k8s.api.autoscaling.v1.ScaleSpec
@@ -5090,7 +5091,7 @@ class ScaleSpec(HikaruBase):
 
 @dataclass
 class ScaleStatus(HikaruBase):
-    """
+    r"""
     ScaleStatus represents the current status of a scale subresource.
 
     Full name: io.k8s.api.autoscaling.v1.ScaleStatus
@@ -5109,7 +5110,7 @@ class ScaleStatus(HikaruBase):
 
 @dataclass
 class Scale(HikaruDocumentBase):
-    """
+    r"""
     Scale represents a scaling request for a resource.
 
     Full name: io.k8s.api.autoscaling.v1.Scale
@@ -5142,7 +5143,7 @@ class Scale(HikaruDocumentBase):
 
 @dataclass
 class JobSpec(HikaruBase):
-    """
+    r"""
     JobSpec describes how the job execution will look like.
 
     Full name: io.k8s.api.batch.v1.JobSpec
@@ -5199,7 +5200,7 @@ class JobSpec(HikaruBase):
 
 @dataclass
 class JobCondition(HikaruBase):
-    """
+    r"""
     JobCondition describes current state of a job.
 
     Full name: io.k8s.api.batch.v1.JobCondition
@@ -5223,7 +5224,7 @@ class JobCondition(HikaruBase):
 
 @dataclass
 class JobStatus(HikaruBase):
-    """
+    r"""
     JobStatus represents the current state of a Job.
 
     Full name: io.k8s.api.batch.v1.JobStatus
@@ -5254,7 +5255,7 @@ class JobStatus(HikaruBase):
 
 @dataclass
 class Job(HikaruDocumentBase):
-    """
+    r"""
     Job represents the configuration of a single job.
 
     Full name: io.k8s.api.batch.v1.Job
@@ -5286,7 +5287,7 @@ class Job(HikaruDocumentBase):
 
 @dataclass
 class JobList(HikaruDocumentBase):
-    """
+    r"""
     JobList is a collection of jobs.
 
     Full name: io.k8s.api.batch.v1.JobList
@@ -5314,7 +5315,7 @@ class JobList(HikaruDocumentBase):
 
 @dataclass
 class CertificateSigningRequestSpec(HikaruBase):
-    """
+    r"""
     CertificateSigningRequestSpec contains the certificate request.
 
     Full name: io.k8s.api.certificates.v1.CertificateSigningRequestSpec
@@ -5379,7 +5380,7 @@ class CertificateSigningRequestSpec(HikaruBase):
 
 @dataclass
 class CertificateSigningRequestCondition(HikaruBase):
-    """
+    r"""
     CertificateSigningRequestCondition describes a condition of a
     CertificateSigningRequest object
 
@@ -5416,7 +5417,7 @@ class CertificateSigningRequestCondition(HikaruBase):
 
 @dataclass
 class CertificateSigningRequestStatus(HikaruBase):
-    """
+    r"""
     CertificateSigningRequestStatus contains conditions used to indicate
     approved/denied/failed status of the request, and the issued certificate.
 
@@ -5450,7 +5451,7 @@ class CertificateSigningRequestStatus(HikaruBase):
 
 @dataclass
 class CertificateSigningRequest(HikaruDocumentBase):
-    """
+    r"""
     CertificateSigningRequest objects provide a mechanism to obtain x509 certificates by
     submitting a certificate signing request, and having it asynchronously approved and
     issued. Kubelets use this API to obtain: 1. client certificates to authenticate to
@@ -5491,7 +5492,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
 
 @dataclass
 class CertificateSigningRequestList(HikaruDocumentBase):
-    """
+    r"""
     CertificateSigningRequestList is a collection of CertificateSigningRequest objects
 
     Full name: io.k8s.api.certificates.v1.CertificateSigningRequestList
@@ -5517,7 +5518,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
 
 
 class MicroTime(str):
-    """
+    r"""
     MicroTime is version of Time with microsecond level precision.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.MicroTime
@@ -5526,7 +5527,7 @@ class MicroTime(str):
 
 @dataclass
 class LeaseSpec(HikaruBase):
-    """
+    r"""
     LeaseSpec is a specification of a Lease.
 
     Full name: io.k8s.api.coordination.v1.LeaseSpec
@@ -5552,7 +5553,7 @@ class LeaseSpec(HikaruBase):
 
 @dataclass
 class Lease(HikaruDocumentBase):
-    """
+    r"""
     Lease defines a lease concept.
 
     Full name: io.k8s.api.coordination.v1.Lease
@@ -5581,7 +5582,7 @@ class Lease(HikaruDocumentBase):
 
 @dataclass
 class LeaseList(HikaruDocumentBase):
-    """
+    r"""
     LeaseList is a list of Lease objects.
 
     Full name: io.k8s.api.coordination.v1.LeaseList
@@ -5609,7 +5610,7 @@ class LeaseList(HikaruDocumentBase):
 
 @dataclass
 class ObjectReference(HikaruBase):
-    """
+    r"""
     ObjectReference contains enough information to let you inspect or modify the referred
     object.
 
@@ -5649,7 +5650,7 @@ class ObjectReference(HikaruBase):
 
 @dataclass
 class Binding(HikaruDocumentBase):
-    """
+    r"""
     Binding ties one object to another; for example, a pod is bound to a node by a
     scheduler. Deprecated in 1.7, please use the bindings subresource of pods instead.
 
@@ -5678,7 +5679,7 @@ class Binding(HikaruDocumentBase):
 
 @dataclass
 class ComponentCondition(HikaruBase):
-    """
+    r"""
     Information about the condition of a component.
 
     Full name: io.k8s.api.core.v1.ComponentCondition
@@ -5700,7 +5701,7 @@ class ComponentCondition(HikaruBase):
 
 @dataclass
 class ComponentStatus(HikaruDocumentBase):
-    """
+    r"""
     ComponentStatus (and ComponentStatusList) holds the cluster validation info.
     Deprecated: This API is deprecated in v1.19+
 
@@ -5729,7 +5730,7 @@ class ComponentStatus(HikaruDocumentBase):
 
 @dataclass
 class ComponentStatusList(HikaruDocumentBase):
-    """
+    r"""
     Status of all the conditions for the component as a list of ComponentStatus objects.
     Deprecated: This API is deprecated in v1.19+
 
@@ -5758,7 +5759,7 @@ class ComponentStatusList(HikaruDocumentBase):
 
 @dataclass
 class ConfigMap(HikaruDocumentBase):
-    """
+    r"""
     ConfigMap holds configuration data for pods to consume.
 
     Full name: io.k8s.api.core.v1.ConfigMap
@@ -5799,7 +5800,7 @@ class ConfigMap(HikaruDocumentBase):
 
 @dataclass
 class ConfigMapList(HikaruDocumentBase):
-    """
+    r"""
     ConfigMapList is a resource containing a list of ConfigMap objects.
 
     Full name: io.k8s.api.core.v1.ConfigMapList
@@ -5827,7 +5828,7 @@ class ConfigMapList(HikaruDocumentBase):
 
 @dataclass
 class EndpointAddress(HikaruBase):
-    """
+    r"""
     EndpointAddress is a tuple that describes single IP address.
 
     Full name: io.k8s.api.core.v1.EndpointAddress
@@ -5851,7 +5852,7 @@ class EndpointAddress(HikaruBase):
 
 @dataclass
 class EndpointPort(HikaruBase):
-    """
+    r"""
     EndpointPort is a tuple that describes a single port.
 
     Full name: io.k8s.api.core.v1.EndpointPort
@@ -5877,7 +5878,7 @@ class EndpointPort(HikaruBase):
 
 @dataclass
 class EndpointSubset(HikaruBase):
-    """
+    r"""
     EndpointSubset is a group of addresses with a common set of ports. The expanded set of
     endpoints is the Cartesian product of Addresses x Ports. For example, given: {
     Addresses: [{"ip": "10.10.1.1"}, {"ip": "10.10.2.2"}], Ports: [{"name": "a", "port":
@@ -5902,7 +5903,7 @@ class EndpointSubset(HikaruBase):
 
 @dataclass
 class Endpoints(HikaruDocumentBase):
-    """
+    r"""
     Endpoints is a collection of endpoints that implement the actual service. Example:
     Name: "mysvc", Subsets: [ { Addresses: [{"ip": "10.10.1.1"}, {"ip": "10.10.2.2"}],
     Ports: [{"name": "a", "port": 8675}, {"name": "b", "port": 309}] }, { Addresses:
@@ -5940,7 +5941,7 @@ class Endpoints(HikaruDocumentBase):
 
 @dataclass
 class EndpointsList(HikaruDocumentBase):
-    """
+    r"""
     EndpointsList is a list of endpoints.
 
     Full name: io.k8s.api.core.v1.EndpointsList
@@ -5968,7 +5969,7 @@ class EndpointsList(HikaruDocumentBase):
 
 @dataclass
 class EphemeralContainers(HikaruDocumentBase):
-    """
+    r"""
     A list of ephemeral containers used with the Pod ephemeralcontainers subresource.
 
     Full name: io.k8s.api.core.v1.EphemeralContainers
@@ -5997,7 +5998,7 @@ class EphemeralContainers(HikaruDocumentBase):
 
 @dataclass
 class EventSource(HikaruBase):
-    """
+    r"""
     EventSource contains information for an event.
 
     Full name: io.k8s.api.core.v1.EventSource
@@ -6013,7 +6014,7 @@ class EventSource(HikaruBase):
 
 @dataclass
 class EventSeries(HikaruBase):
-    """
+    r"""
     EventSeries contain information on series of events, i.e. thing that was/is happening
     continuously for some time. How often to update the EventSeries is up to the event
     reporters. The default event reporter in
@@ -6035,7 +6036,7 @@ class EventSeries(HikaruBase):
 
 @dataclass
 class Event(HikaruDocumentBase):
-    """
+    r"""
     Event is a report of an event somewhere in the cluster. It generally denotes some
     state change in the system. Events have a limited retention time and triggers and
     messages may evolve with time. Event consumers should not rely on the timing of an
@@ -6112,7 +6113,7 @@ class Event(HikaruDocumentBase):
 
 @dataclass
 class EventList(HikaruDocumentBase):
-    """
+    r"""
     EventList is a list of Event objects.
 
     Full name: io.k8s.api.core.v1.EventList
@@ -6140,7 +6141,7 @@ class EventList(HikaruDocumentBase):
 
 @dataclass
 class LimitRangeItem(HikaruBase):
-    """
+    r"""
     LimitRangeItem defines a min/max usage limit for any resource that matches on kind.
 
     Full name: io.k8s.api.core.v1.LimitRangeItem
@@ -6169,7 +6170,7 @@ class LimitRangeItem(HikaruBase):
 
 @dataclass
 class LimitRangeSpec(HikaruBase):
-    """
+    r"""
     LimitRangeSpec defines a min/max usage limit for resources that match on kind.
 
     Full name: io.k8s.api.core.v1.LimitRangeSpec
@@ -6183,7 +6184,7 @@ class LimitRangeSpec(HikaruBase):
 
 @dataclass
 class LimitRange(HikaruDocumentBase):
-    """
+    r"""
     LimitRange sets resource usage limits for each kind of resource in a Namespace.
 
     Full name: io.k8s.api.core.v1.LimitRange
@@ -6212,7 +6213,7 @@ class LimitRange(HikaruDocumentBase):
 
 @dataclass
 class LimitRangeList(HikaruDocumentBase):
-    """
+    r"""
     LimitRangeList is a list of LimitRange items.
 
     Full name: io.k8s.api.core.v1.LimitRangeList
@@ -6241,7 +6242,7 @@ class LimitRangeList(HikaruDocumentBase):
 
 @dataclass
 class NamespaceSpec(HikaruBase):
-    """
+    r"""
     NamespaceSpec describes the attributes on a Namespace.
 
     Full name: io.k8s.api.core.v1.NamespaceSpec
@@ -6257,7 +6258,7 @@ class NamespaceSpec(HikaruBase):
 
 @dataclass
 class NamespaceCondition(HikaruBase):
-    """
+    r"""
     NamespaceCondition contains details about state of namespace.
 
     Full name: io.k8s.api.core.v1.NamespaceCondition
@@ -6279,7 +6280,7 @@ class NamespaceCondition(HikaruBase):
 
 @dataclass
 class NamespaceStatus(HikaruBase):
-    """
+    r"""
     NamespaceStatus is information about the current status of a Namespace.
 
     Full name: io.k8s.api.core.v1.NamespaceStatus
@@ -6297,7 +6298,7 @@ class NamespaceStatus(HikaruBase):
 
 @dataclass
 class Namespace(HikaruDocumentBase):
-    """
+    r"""
     Namespace provides a scope for Names. Use of multiple namespaces is optional.
 
     Full name: io.k8s.api.core.v1.Namespace
@@ -6329,7 +6330,7 @@ class Namespace(HikaruDocumentBase):
 
 @dataclass
 class NamespaceList(HikaruDocumentBase):
-    """
+    r"""
     NamespaceList is a list of Namespaces.
 
     Full name: io.k8s.api.core.v1.NamespaceList
@@ -6358,7 +6359,7 @@ class NamespaceList(HikaruDocumentBase):
 
 @dataclass
 class ConfigMapNodeConfigSource(HikaruBase):
-    """
+    r"""
     ConfigMapNodeConfigSource contains the information to reference a ConfigMap as a
     config source for the Node.
 
@@ -6387,7 +6388,7 @@ class ConfigMapNodeConfigSource(HikaruBase):
 
 @dataclass
 class NodeConfigSource(HikaruBase):
-    """
+    r"""
     NodeConfigSource specifies a source of node configuration. Exactly one subfield
     (excluding metadata) must be non-nil.
 
@@ -6402,7 +6403,7 @@ class NodeConfigSource(HikaruBase):
 
 @dataclass
 class Taint(HikaruBase):
-    """
+    r"""
     The node this Taint is attached to has the "effect" on any pod that does not tolerate
     the Taint.
 
@@ -6425,7 +6426,7 @@ class Taint(HikaruBase):
 
 @dataclass
 class NodeSpec(HikaruBase):
-    """
+    r"""
     NodeSpec describes the attributes that a node is created with.
 
     Full name: io.k8s.api.core.v1.NodeSpec
@@ -6459,7 +6460,7 @@ class NodeSpec(HikaruBase):
 
 @dataclass
 class NodeAddress(HikaruBase):
-    """
+    r"""
     NodeAddress contains information for the node's address.
 
     Full name: io.k8s.api.core.v1.NodeAddress
@@ -6475,7 +6476,7 @@ class NodeAddress(HikaruBase):
 
 @dataclass
 class NodeCondition(HikaruBase):
-    """
+    r"""
     NodeCondition contains condition information for a node.
 
     Full name: io.k8s.api.core.v1.NodeCondition
@@ -6499,7 +6500,7 @@ class NodeCondition(HikaruBase):
 
 @dataclass
 class NodeConfigStatus(HikaruBase):
-    """
+    r"""
     NodeConfigStatus describes the status of the config assigned by
     Node.Spec.ConfigSource.
 
@@ -6552,7 +6553,7 @@ class NodeConfigStatus(HikaruBase):
 
 @dataclass
 class DaemonEndpoint(HikaruBase):
-    """
+    r"""
     DaemonEndpoint contains information about a single Daemon endpoint.
 
     Full name: io.k8s.api.core.v1.DaemonEndpoint
@@ -6566,7 +6567,7 @@ class DaemonEndpoint(HikaruBase):
 
 @dataclass
 class NodeDaemonEndpoints(HikaruBase):
-    """
+    r"""
     NodeDaemonEndpoints lists ports opened by daemons running on the Node.
 
     Full name: io.k8s.api.core.v1.NodeDaemonEndpoints
@@ -6580,7 +6581,7 @@ class NodeDaemonEndpoints(HikaruBase):
 
 @dataclass
 class ContainerImage(HikaruBase):
-    """
+    r"""
     Describe a container image
 
     Full name: io.k8s.api.core.v1.ContainerImage
@@ -6597,7 +6598,7 @@ class ContainerImage(HikaruBase):
 
 @dataclass
 class NodeSystemInfo(HikaruBase):
-    """
+    r"""
     NodeSystemInfo is a set of ids/uuids to uniquely identify the node.
 
     Full name: io.k8s.api.core.v1.NodeSystemInfo
@@ -6636,7 +6637,7 @@ class NodeSystemInfo(HikaruBase):
 
 @dataclass
 class AttachedVolume(HikaruBase):
-    """
+    r"""
     AttachedVolume describes a volume attached to a node
 
     Full name: io.k8s.api.core.v1.AttachedVolume
@@ -6652,7 +6653,7 @@ class AttachedVolume(HikaruBase):
 
 @dataclass
 class NodeStatus(HikaruBase):
-    """
+    r"""
     NodeStatus is information about the current status of a node.
 
     Full name: io.k8s.api.core.v1.NodeStatus
@@ -6697,7 +6698,7 @@ class NodeStatus(HikaruBase):
 
 @dataclass
 class Node(HikaruDocumentBase):
-    """
+    r"""
     Node is a worker node in Kubernetes. Each node will have a unique identifier in the
     cache (i.e. in etcd).
 
@@ -6731,7 +6732,7 @@ class Node(HikaruDocumentBase):
 
 @dataclass
 class NodeList(HikaruDocumentBase):
-    """
+    r"""
     NodeList is the whole list of all Nodes which have been registered with master.
 
     Full name: io.k8s.api.core.v1.NodeList
@@ -6759,7 +6760,7 @@ class NodeList(HikaruDocumentBase):
 
 @dataclass
 class PersistentVolumeClaimList(HikaruDocumentBase):
-    """
+    r"""
     PersistentVolumeClaimList is a list of PersistentVolumeClaim items.
 
     Full name: io.k8s.api.core.v1.PersistentVolumeClaimList
@@ -6788,7 +6789,7 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
 
 @dataclass
 class AzureFilePersistentVolumeSource(HikaruBase):
-    """
+    r"""
     AzureFile represents an Azure File Service mount on the host and bind mount to the
     pod.
 
@@ -6811,7 +6812,7 @@ class AzureFilePersistentVolumeSource(HikaruBase):
 
 @dataclass
 class SecretReference(HikaruBase):
-    """
+    r"""
     SecretReference represents a Secret Reference. It has enough information to retrieve
     secret in any namespace
 
@@ -6828,7 +6829,7 @@ class SecretReference(HikaruBase):
 
 @dataclass
 class CephFSPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Ceph Filesystem mount that lasts the lifetime of a pod Cephfs volumes do
     not support ownership management or SELinux relabeling.
 
@@ -6861,7 +6862,7 @@ class CephFSPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class CinderPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a cinder volume resource in Openstack. A Cinder volume must exist before
     mounting to a container. The volume must also be in the same region as the kubelet.
     Cinder volumes support ownership management and SELinux relabeling.
@@ -6890,7 +6891,7 @@ class CinderPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class CSIPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents storage that is managed by an external CSI volume driver (Beta feature)
 
     Full name: io.k8s.api.core.v1.CSIPersistentVolumeSource
@@ -6940,7 +6941,7 @@ class CSIPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class FlexPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     FlexPersistentVolumeSource represents a generic persistent volume resource that is
     provisioned/attached using an exec based plugin.
 
@@ -6969,7 +6970,7 @@ class FlexPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class GlusterfsPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Glusterfs mount that lasts the lifetime of a pod. Glusterfs volumes do
     not support ownership management or SELinux relabeling.
 
@@ -6997,7 +6998,7 @@ class GlusterfsPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class ISCSIPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     ISCSIPersistentVolumeSource represents an ISCSI disk. ISCSI volumes can only be
     mounted as read/write once. ISCSI volumes support ownership management and SELinux
     relabeling.
@@ -7042,7 +7043,7 @@ class ISCSIPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class LocalVolumeSource(HikaruBase):
-    """
+    r"""
     Local represents directly-attached storage with node affinity (Beta feature)
 
     Full name: io.k8s.api.core.v1.LocalVolumeSource
@@ -7061,7 +7062,7 @@ class LocalVolumeSource(HikaruBase):
 
 @dataclass
 class VolumeNodeAffinity(HikaruBase):
-    """
+    r"""
     VolumeNodeAffinity defines constraints that limit what nodes this volume can be
     accessed from.
 
@@ -7076,7 +7077,7 @@ class VolumeNodeAffinity(HikaruBase):
 
 @dataclass
 class RBDPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a Rados Block Device mount that lasts the lifetime of a pod. RBD volumes
     support ownership management and SELinux relabeling.
 
@@ -7116,7 +7117,7 @@ class RBDPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class ScaleIOPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     ScaleIOPersistentVolumeSource represents a persistent ScaleIO volume
 
     Full name: io.k8s.api.core.v1.ScaleIOPersistentVolumeSource
@@ -7154,7 +7155,7 @@ class ScaleIOPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class StorageOSPersistentVolumeSource(HikaruBase):
-    """
+    r"""
     Represents a StorageOS persistent volume resource.
 
     Full name: io.k8s.api.core.v1.StorageOSPersistentVolumeSource
@@ -7186,7 +7187,7 @@ class StorageOSPersistentVolumeSource(HikaruBase):
 
 @dataclass
 class PersistentVolumeSpec(HikaruBase):
-    """
+    r"""
     PersistentVolumeSpec is the specification of a persistent volume.
 
     Full name: io.k8s.api.core.v1.PersistentVolumeSpec
@@ -7300,7 +7301,7 @@ class PersistentVolumeSpec(HikaruBase):
 
 @dataclass
 class PersistentVolumeStatus(HikaruBase):
-    """
+    r"""
     PersistentVolumeStatus is the current status of a persistent volume.
 
     Full name: io.k8s.api.core.v1.PersistentVolumeStatus
@@ -7322,7 +7323,7 @@ class PersistentVolumeStatus(HikaruBase):
 
 @dataclass
 class PersistentVolume(HikaruDocumentBase):
-    """
+    r"""
     PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
     analogous to a node. More info:
     https://kubernetes.io/docs/concepts/storage/persistent-volumes
@@ -7358,7 +7359,7 @@ class PersistentVolume(HikaruDocumentBase):
 
 @dataclass
 class PersistentVolumeList(HikaruDocumentBase):
-    """
+    r"""
     PersistentVolumeList is a list of PersistentVolume items.
 
     Full name: io.k8s.api.core.v1.PersistentVolumeList
@@ -7387,7 +7388,7 @@ class PersistentVolumeList(HikaruDocumentBase):
 
 @dataclass
 class PodCondition(HikaruBase):
-    """
+    r"""
     PodCondition contains details for the current condition of this pod.
 
     Full name: io.k8s.api.core.v1.PodCondition
@@ -7413,7 +7414,7 @@ class PodCondition(HikaruBase):
 
 @dataclass
 class ContainerStateRunning(HikaruBase):
-    """
+    r"""
     ContainerStateRunning is a running state of a container.
 
     Full name: io.k8s.api.core.v1.ContainerStateRunning
@@ -7427,7 +7428,7 @@ class ContainerStateRunning(HikaruBase):
 
 @dataclass
 class ContainerStateTerminated(HikaruBase):
-    """
+    r"""
     ContainerStateTerminated is a terminated state of a container.
 
     Full name: io.k8s.api.core.v1.ContainerStateTerminated
@@ -7453,7 +7454,7 @@ class ContainerStateTerminated(HikaruBase):
 
 @dataclass
 class ContainerStateWaiting(HikaruBase):
-    """
+    r"""
     ContainerStateWaiting is a waiting state of a container.
 
     Full name: io.k8s.api.core.v1.ContainerStateWaiting
@@ -7469,7 +7470,7 @@ class ContainerStateWaiting(HikaruBase):
 
 @dataclass
 class ContainerState(HikaruBase):
-    """
+    r"""
     ContainerState holds a possible state of container. Only one of its members may be
     specified. If none of them is specified, the default one is ContainerStateWaiting.
 
@@ -7488,7 +7489,7 @@ class ContainerState(HikaruBase):
 
 @dataclass
 class ContainerStatus(HikaruBase):
-    """
+    r"""
     ContainerStatus contains details for the current status of this container.
 
     Full name: io.k8s.api.core.v1.ContainerStatus
@@ -7526,7 +7527,7 @@ class ContainerStatus(HikaruBase):
 
 @dataclass
 class PodIP(HikaruBase):
-    """
+    r"""
     IP address information for entries in the (plural) PodIPs field. Each entry includes:
     IP: An IP address allocated to the pod. Routable at least within the cluster.
 
@@ -7541,7 +7542,7 @@ class PodIP(HikaruBase):
 
 @dataclass
 class PodStatus(HikaruBase):
-    """
+    r"""
     PodStatus represents information about the status of a pod. Status may trail the
     actual state of a system, especially if the node that hosts the pod cannot contact the
     control plane.
@@ -7620,7 +7621,7 @@ class PodStatus(HikaruBase):
 
 @dataclass
 class Pod(HikaruDocumentBase):
-    """
+    r"""
     Pod is a collection of containers that can run on a host. This resource is created by
     clients and scheduled onto hosts.
 
@@ -7654,7 +7655,7 @@ class Pod(HikaruDocumentBase):
 
 @dataclass
 class PodList(HikaruDocumentBase):
-    """
+    r"""
     PodList is a list of Pods.
 
     Full name: io.k8s.api.core.v1.PodList
@@ -7683,7 +7684,7 @@ class PodList(HikaruDocumentBase):
 
 @dataclass
 class PodTemplate(HikaruDocumentBase):
-    """
+    r"""
     PodTemplate describes a template for creating copies of a predefined pod.
 
     Full name: io.k8s.api.core.v1.PodTemplate
@@ -7712,7 +7713,7 @@ class PodTemplate(HikaruDocumentBase):
 
 @dataclass
 class PodTemplateList(HikaruDocumentBase):
-    """
+    r"""
     PodTemplateList is a list of PodTemplates.
 
     Full name: io.k8s.api.core.v1.PodTemplateList
@@ -7740,7 +7741,7 @@ class PodTemplateList(HikaruDocumentBase):
 
 @dataclass
 class ReplicationControllerSpec(HikaruBase):
-    """
+    r"""
     ReplicationControllerSpec is the specification of a replication controller.
 
     Full name: io.k8s.api.core.v1.ReplicationControllerSpec
@@ -7771,7 +7772,7 @@ class ReplicationControllerSpec(HikaruBase):
 
 @dataclass
 class ReplicationControllerCondition(HikaruBase):
-    """
+    r"""
     ReplicationControllerCondition describes the state of a replication controller at a
     certain point.
 
@@ -7795,7 +7796,7 @@ class ReplicationControllerCondition(HikaruBase):
 
 @dataclass
 class ReplicationControllerStatus(HikaruBase):
-    """
+    r"""
     ReplicationControllerStatus represents the current status of a replication controller.
 
     Full name: io.k8s.api.core.v1.ReplicationControllerStatus
@@ -7824,7 +7825,7 @@ class ReplicationControllerStatus(HikaruBase):
 
 @dataclass
 class ReplicationController(HikaruDocumentBase):
-    """
+    r"""
     ReplicationController represents the configuration of a replication controller.
 
     Full name: io.k8s.api.core.v1.ReplicationController
@@ -7861,7 +7862,7 @@ class ReplicationController(HikaruDocumentBase):
 
 @dataclass
 class ReplicationControllerList(HikaruDocumentBase):
-    """
+    r"""
     ReplicationControllerList is a collection of replication controllers.
 
     Full name: io.k8s.api.core.v1.ReplicationControllerList
@@ -7890,7 +7891,7 @@ class ReplicationControllerList(HikaruDocumentBase):
 
 @dataclass
 class ScopedResourceSelectorRequirement(HikaruBase):
-    """
+    r"""
     A scoped-resource selector requirement is a selector that contains values, a scope
     name, and an operator that relates the scope name and values.
 
@@ -7912,7 +7913,7 @@ class ScopedResourceSelectorRequirement(HikaruBase):
 
 @dataclass
 class ScopeSelector(HikaruBase):
-    """
+    r"""
     A scope selector represents the AND of the selectors represented by the
     scoped-resource selector requirements.
 
@@ -7927,7 +7928,7 @@ class ScopeSelector(HikaruBase):
 
 @dataclass
 class ResourceQuotaSpec(HikaruBase):
-    """
+    r"""
     ResourceQuotaSpec defines the desired hard limits to enforce for Quota.
 
     Full name: io.k8s.api.core.v1.ResourceQuotaSpec
@@ -7950,7 +7951,7 @@ class ResourceQuotaSpec(HikaruBase):
 
 @dataclass
 class ResourceQuotaStatus(HikaruBase):
-    """
+    r"""
     ResourceQuotaStatus defines the enforced hard limits and observed use.
 
     Full name: io.k8s.api.core.v1.ResourceQuotaStatus
@@ -7967,7 +7968,7 @@ class ResourceQuotaStatus(HikaruBase):
 
 @dataclass
 class ResourceQuota(HikaruDocumentBase):
-    """
+    r"""
     ResourceQuota sets aggregate quota restrictions enforced per namespace
 
     Full name: io.k8s.api.core.v1.ResourceQuota
@@ -7999,7 +8000,7 @@ class ResourceQuota(HikaruDocumentBase):
 
 @dataclass
 class ResourceQuotaList(HikaruDocumentBase):
-    """
+    r"""
     ResourceQuotaList is a list of ResourceQuota items.
 
     Full name: io.k8s.api.core.v1.ResourceQuotaList
@@ -8028,7 +8029,7 @@ class ResourceQuotaList(HikaruDocumentBase):
 
 @dataclass
 class Secret(HikaruDocumentBase):
-    """
+    r"""
     Secret holds secret data of a certain type. The total bytes of the values in the Data
     field must be less than MaxSecretSize bytes.
 
@@ -8071,7 +8072,7 @@ class Secret(HikaruDocumentBase):
 
 @dataclass
 class SecretList(HikaruDocumentBase):
-    """
+    r"""
     SecretList is a list of Secret.
 
     Full name: io.k8s.api.core.v1.SecretList
@@ -8100,7 +8101,7 @@ class SecretList(HikaruDocumentBase):
 
 @dataclass
 class ServiceAccount(HikaruDocumentBase):
-    """
+    r"""
     ServiceAccount binds together: * a name, understood by users, and perhaps by
     peripheral systems, for an identity * a principal that can be authenticated and
     authorized * a set of secrets
@@ -8143,7 +8144,7 @@ class ServiceAccount(HikaruDocumentBase):
 
 @dataclass
 class ServiceAccountList(HikaruDocumentBase):
-    """
+    r"""
     ServiceAccountList is a list of ServiceAccount objects
 
     Full name: io.k8s.api.core.v1.ServiceAccountList
@@ -8172,7 +8173,7 @@ class ServiceAccountList(HikaruDocumentBase):
 
 @dataclass
 class ServicePort(HikaruBase):
-    """
+    r"""
     ServicePort contains information on service's port.
 
     Full name: io.k8s.api.core.v1.ServicePort
@@ -8218,7 +8219,7 @@ class ServicePort(HikaruBase):
 
 @dataclass
 class ClientIPConfig(HikaruBase):
-    """
+    r"""
     ClientIPConfig represents the configurations of Client IP based session affinity.
 
     Full name: io.k8s.api.core.v1.ClientIPConfig
@@ -8234,7 +8235,7 @@ class ClientIPConfig(HikaruBase):
 
 @dataclass
 class SessionAffinityConfig(HikaruBase):
-    """
+    r"""
     SessionAffinityConfig represents the configurations of session affinity.
 
     Full name: io.k8s.api.core.v1.SessionAffinityConfig
@@ -8248,7 +8249,7 @@ class SessionAffinityConfig(HikaruBase):
 
 @dataclass
 class ServiceSpec(HikaruBase):
-    """
+    r"""
     ServiceSpec describes the attributes that a user creates on a service.
 
     Full name: io.k8s.api.core.v1.ServiceSpec
@@ -8425,7 +8426,7 @@ class ServiceSpec(HikaruBase):
 
 @dataclass
 class Condition(HikaruBase):
-    """
+    r"""
     Condition contains details for one aspect of the current state of this API Resource.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.Condition
@@ -8460,7 +8461,7 @@ class Condition(HikaruBase):
 
 @dataclass
 class PortStatus(HikaruBase):
-    """
+    r"""
 
     Full name: io.k8s.api.core.v1.PortStatus
 
@@ -8481,7 +8482,7 @@ class PortStatus(HikaruBase):
 
 @dataclass
 class LoadBalancerIngress(HikaruBase):
-    """
+    r"""
     LoadBalancerIngress represents the status of a load-balancer ingress point: traffic
     intended for the service should be sent to an ingress point.
 
@@ -8503,7 +8504,7 @@ class LoadBalancerIngress(HikaruBase):
 
 @dataclass
 class LoadBalancerStatus(HikaruBase):
-    """
+    r"""
     LoadBalancerStatus represents the status of a load-balancer.
 
     Full name: io.k8s.api.core.v1.LoadBalancerStatus
@@ -8518,7 +8519,7 @@ class LoadBalancerStatus(HikaruBase):
 
 @dataclass
 class ServiceStatus(HikaruBase):
-    """
+    r"""
     ServiceStatus represents the current status of a service.
 
     Full name: io.k8s.api.core.v1.ServiceStatus
@@ -8535,7 +8536,7 @@ class ServiceStatus(HikaruBase):
 
 @dataclass
 class Service(HikaruDocumentBase):
-    """
+    r"""
     Service is a named abstraction of software service (for example, mysql) consisting of
     local port (for example 3306) that the proxy listens on, and the selector that
     determines which pods will answer requests sent through the proxy.
@@ -8570,7 +8571,7 @@ class Service(HikaruDocumentBase):
 
 @dataclass
 class ServiceList(HikaruDocumentBase):
-    """
+    r"""
     ServiceList holds a list of services.
 
     Full name: io.k8s.api.core.v1.ServiceList
@@ -8598,7 +8599,7 @@ class ServiceList(HikaruDocumentBase):
 
 @dataclass
 class IngressClassSpec(HikaruBase):
-    """
+    r"""
     IngressClassSpec provides information about the class of an Ingress.
 
     Full name: io.k8s.api.networking.v1.IngressClassSpec
@@ -8621,7 +8622,7 @@ class IngressClassSpec(HikaruBase):
 
 @dataclass
 class IngressClass(HikaruDocumentBase):
-    """
+    r"""
     IngressClass represents the class of the Ingress, referenced by the Ingress Spec. The
     `ingressclass.kubernetes.io/is-default-class` annotation can be used to indicate that
     an IngressClass should be considered default. When a single IngressClass resource has
@@ -8654,7 +8655,7 @@ class IngressClass(HikaruDocumentBase):
 
 @dataclass
 class IngressClassList(HikaruDocumentBase):
-    """
+    r"""
     IngressClassList is a collection of IngressClasses.
 
     Full name: io.k8s.api.networking.v1.IngressClassList
@@ -8681,7 +8682,7 @@ class IngressClassList(HikaruDocumentBase):
 
 @dataclass
 class ServiceBackendPort(HikaruBase):
-    """
+    r"""
     ServiceBackendPort is the service port being referenced.
 
     Full name: io.k8s.api.networking.v1.ServiceBackendPort
@@ -8699,7 +8700,7 @@ class ServiceBackendPort(HikaruBase):
 
 @dataclass
 class IngressServiceBackend(HikaruBase):
-    """
+    r"""
     IngressServiceBackend references a Kubernetes Service as a Backend.
 
     Full name: io.k8s.api.networking.v1.IngressServiceBackend
@@ -8717,7 +8718,7 @@ class IngressServiceBackend(HikaruBase):
 
 @dataclass
 class IngressBackend(HikaruBase):
-    """
+    r"""
     IngressBackend describes all endpoints for a given service and port.
 
     Full name: io.k8s.api.networking.v1.IngressBackend
@@ -8736,7 +8737,7 @@ class IngressBackend(HikaruBase):
 
 @dataclass
 class HTTPIngressPath(HikaruBase):
-    """
+    r"""
     HTTPIngressPath associates a path with a backend. Incoming urls matching the path are
     forwarded to the backend.
 
@@ -8770,7 +8771,7 @@ class HTTPIngressPath(HikaruBase):
 
 @dataclass
 class HTTPIngressRuleValue(HikaruBase):
-    """
+    r"""
     HTTPIngressRuleValue is a list of http selectors pointing to backends. In the example:
     http://<host>/<path>?<searchpart> -> backend where where parts of the url correspond
     to RFC 3986, this resource will be used to match against everything after the last '/'
@@ -8787,7 +8788,7 @@ class HTTPIngressRuleValue(HikaruBase):
 
 @dataclass
 class IngressRule(HikaruBase):
-    """
+    r"""
     IngressRule represents the rules mapping the paths under a specified host to the
     related backend services. Incoming requests are first evaluated for a host match, then
     routed to the backend associated with the matching IngressRuleValue.
@@ -8822,7 +8823,7 @@ class IngressRule(HikaruBase):
 
 @dataclass
 class IngressTLS(HikaruBase):
-    """
+    r"""
     IngressTLS describes the transport layer security associated with an Ingress.
 
     Full name: io.k8s.api.networking.v1.IngressTLS
@@ -8845,7 +8846,7 @@ class IngressTLS(HikaruBase):
 
 @dataclass
 class IngressSpec(HikaruBase):
-    """
+    r"""
     IngressSpec describes the Ingress the user wishes to exist.
 
     Full name: io.k8s.api.networking.v1.IngressSpec
@@ -8880,7 +8881,7 @@ class IngressSpec(HikaruBase):
 
 @dataclass
 class IngressStatus(HikaruBase):
-    """
+    r"""
     IngressStatus describe the current state of the Ingress.
 
     Full name: io.k8s.api.networking.v1.IngressStatus
@@ -8894,7 +8895,7 @@ class IngressStatus(HikaruBase):
 
 @dataclass
 class Ingress(HikaruDocumentBase):
-    """
+    r"""
     Ingress is a collection of rules that allow inbound connections to reach the endpoints
     defined by a backend. An Ingress can be configured to give services
     externally-reachable urls, load balance traffic, terminate SSL, offer name based
@@ -8929,7 +8930,7 @@ class Ingress(HikaruDocumentBase):
 
 @dataclass
 class IngressList(HikaruDocumentBase):
-    """
+    r"""
     IngressList is a collection of Ingress.
 
     Full name: io.k8s.api.networking.v1.IngressList
@@ -8957,7 +8958,7 @@ class IngressList(HikaruDocumentBase):
 
 @dataclass
 class NetworkPolicyPort(HikaruBase):
-    """
+    r"""
     NetworkPolicyPort describes a port to allow traffic on
 
     Full name: io.k8s.api.networking.v1.NetworkPolicyPort
@@ -8982,7 +8983,7 @@ class NetworkPolicyPort(HikaruBase):
 
 @dataclass
 class IPBlock(HikaruBase):
-    """
+    r"""
     IPBlock describes a particular CIDR (Ex. "192.168.1.1/24","2001:db9::/64") that is
     allowed to the pods matched by a NetworkPolicySpec's podSelector. The except entry
     describes CIDRs that should not be included within this rule.
@@ -9003,7 +9004,7 @@ class IPBlock(HikaruBase):
 
 @dataclass
 class NetworkPolicyPeer(HikaruBase):
-    """
+    r"""
     NetworkPolicyPeer describes a peer to allow traffic to/from. Only certain combinations
     of fields are allowed
 
@@ -9032,7 +9033,7 @@ class NetworkPolicyPeer(HikaruBase):
 
 @dataclass
 class NetworkPolicyEgressRule(HikaruBase):
-    """
+    r"""
     NetworkPolicyEgressRule describes a particular set of traffic that is allowed out of
     pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
     and to. This type is beta-level in 1.8
@@ -9058,7 +9059,7 @@ class NetworkPolicyEgressRule(HikaruBase):
 
 @dataclass
 class NetworkPolicyIngressRule(HikaruBase):
-    """
+    r"""
     NetworkPolicyIngressRule describes a particular set of traffic that is allowed to the
     pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
     and from.
@@ -9084,7 +9085,7 @@ class NetworkPolicyIngressRule(HikaruBase):
 
 @dataclass
 class NetworkPolicySpec(HikaruBase):
-    """
+    r"""
     NetworkPolicySpec provides the specification of a NetworkPolicy
 
     Full name: io.k8s.api.networking.v1.NetworkPolicySpec
@@ -9129,7 +9130,7 @@ class NetworkPolicySpec(HikaruBase):
 
 @dataclass
 class NetworkPolicy(HikaruDocumentBase):
-    """
+    r"""
     NetworkPolicy describes what network traffic is allowed for a set of Pods
 
     Full name: io.k8s.api.networking.v1.NetworkPolicy
@@ -9157,7 +9158,7 @@ class NetworkPolicy(HikaruDocumentBase):
 
 @dataclass
 class NetworkPolicyList(HikaruDocumentBase):
-    """
+    r"""
     NetworkPolicyList is a list of NetworkPolicy objects.
 
     Full name: io.k8s.api.networking.v1.NetworkPolicyList
@@ -9185,7 +9186,7 @@ class NetworkPolicyList(HikaruDocumentBase):
 
 @dataclass
 class Overhead(HikaruBase):
-    """
+    r"""
     Overhead structure represents the resource overhead associated with running a pod.
 
     Full name: io.k8s.api.node.v1alpha1.Overhead
@@ -9200,7 +9201,7 @@ class Overhead(HikaruBase):
 
 @dataclass
 class Scheduling(HikaruBase):
-    """
+    r"""
     Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
 
     Full name: io.k8s.api.node.v1alpha1.Scheduling
@@ -9222,7 +9223,7 @@ class Scheduling(HikaruBase):
 
 @dataclass
 class RuntimeClassSpec(HikaruBase):
-    """
+    r"""
     RuntimeClassSpec is a specification of a RuntimeClass. It contains parameters that are
     required to describe the RuntimeClass to the Container Runtime Interface (CRI)
     implementation, as well as any other components that need to understand how the pod
@@ -9256,7 +9257,7 @@ class RuntimeClassSpec(HikaruBase):
 
 @dataclass
 class RuntimeClass(HikaruDocumentBase):
-    """
+    r"""
     RuntimeClass defines a class of container runtime supported in the cluster. The
     RuntimeClass is used to determine which container runtime is used to run all
     containers in a pod. RuntimeClasses are (currently) manually defined by a user or
@@ -9290,7 +9291,7 @@ class RuntimeClass(HikaruDocumentBase):
 
 @dataclass
 class RuntimeClassList(HikaruDocumentBase):
-    """
+    r"""
     RuntimeClassList is a list of RuntimeClass objects.
 
     Full name: io.k8s.api.node.v1alpha1.RuntimeClassList
@@ -9318,7 +9319,7 @@ class RuntimeClassList(HikaruDocumentBase):
 
 @dataclass
 class Preconditions(HikaruBase):
-    """
+    r"""
     Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
     out.
 
@@ -9335,7 +9336,7 @@ class Preconditions(HikaruBase):
 
 @dataclass
 class DeleteOptions(HikaruBase):
-    """
+    r"""
     DeleteOptions may be provided when deleting an API object.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions
@@ -9383,7 +9384,7 @@ class DeleteOptions(HikaruBase):
 
 @dataclass
 class RoleRef(HikaruBase):
-    """
+    r"""
     RoleRef contains information that points to the role being used
 
     Full name: io.k8s.api.rbac.v1alpha1.RoleRef
@@ -9401,7 +9402,7 @@ class RoleRef(HikaruBase):
 
 @dataclass
 class Subject(HikaruBase):
-    """
+    r"""
     Subject contains a reference to the object or user identities a role binding applies
     to. This can either hold a direct API object reference, or a value for non-objects
     such as user and group names.
@@ -9429,7 +9430,7 @@ class Subject(HikaruBase):
 
 @dataclass
 class ClusterRoleBinding(HikaruDocumentBase):
-    """
+    r"""
     ClusterRoleBinding references a ClusterRole, but not contain it. It can reference a
     ClusterRole in the global namespace, and adds who information via Subject. Deprecated
     in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRoleBinding, and will no
@@ -9462,7 +9463,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
 @dataclass
 class ClusterRoleBindingList(HikaruDocumentBase):
-    """
+    r"""
     ClusterRoleBindingList is a collection of ClusterRoleBindings. Deprecated in v1.17 in
     favor of rbac.authorization.k8s.io/v1 ClusterRoleBindings, and will no longer be
     served in v1.22.
@@ -9491,7 +9492,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
 @dataclass
 class AggregationRule(HikaruBase):
-    """
+    r"""
     AggregationRule describes how to locate ClusterRoles to aggregate into the ClusterRole
 
     Full name: io.k8s.api.rbac.v1alpha1.AggregationRule
@@ -9507,7 +9508,7 @@ class AggregationRule(HikaruBase):
 
 @dataclass
 class PolicyRule(HikaruBase):
-    """
+    r"""
     PolicyRule holds information that describes a policy rule, but does not contain
     information about who the rule applies to or which namespace the rule applies to.
 
@@ -9540,7 +9541,7 @@ class PolicyRule(HikaruBase):
 
 @dataclass
 class ClusterRole(HikaruDocumentBase):
-    """
+    r"""
     ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
     as a unit by a RoleBinding or ClusterRoleBinding. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 ClusterRole, and will no longer be served in v1.22.
@@ -9573,7 +9574,7 @@ class ClusterRole(HikaruDocumentBase):
 
 @dataclass
 class ClusterRoleList(HikaruDocumentBase):
-    """
+    r"""
     ClusterRoleList is a collection of ClusterRoles. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 ClusterRoles, and will no longer be served in v1.22.
 
@@ -9601,7 +9602,7 @@ class ClusterRoleList(HikaruDocumentBase):
 
 @dataclass
 class RoleBinding(HikaruDocumentBase):
-    """
+    r"""
     RoleBinding references a role, but does not contain it. It can reference a Role in the
     same namespace or a ClusterRole in the global namespace. It adds who information via
     Subjects and namespace information by which namespace it exists in. RoleBindings in a
@@ -9636,7 +9637,7 @@ class RoleBinding(HikaruDocumentBase):
 
 @dataclass
 class RoleBindingList(HikaruDocumentBase):
-    """
+    r"""
     RoleBindingList is a collection of RoleBindings Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleBindingList, and will no longer be served in v1.22.
 
@@ -9664,7 +9665,7 @@ class RoleBindingList(HikaruDocumentBase):
 
 @dataclass
 class Role(HikaruDocumentBase):
-    """
+    r"""
     Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit
     by a RoleBinding. Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 Role,
     and will no longer be served in v1.22.
@@ -9693,7 +9694,7 @@ class Role(HikaruDocumentBase):
 
 @dataclass
 class RoleList(HikaruDocumentBase):
-    """
+    r"""
     RoleList is a collection of Roles. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleList, and will no longer be served in v1.22.
 
@@ -9721,7 +9722,7 @@ class RoleList(HikaruDocumentBase):
 
 @dataclass
 class PriorityClass(HikaruDocumentBase):
-    """
+    r"""
     DEPRECATED - This group version of PriorityClass is deprecated by
     scheduling.k8s.io/v1/PriorityClass. PriorityClass defines mapping from a priority
     class name to the priority integer value. The value can be any valid integer.
@@ -9765,7 +9766,7 @@ class PriorityClass(HikaruDocumentBase):
 
 @dataclass
 class PriorityClassList(HikaruDocumentBase):
-    """
+    r"""
     PriorityClassList is a collection of priority classes.
 
     Full name: io.k8s.api.scheduling.v1alpha1.PriorityClassList
@@ -9793,7 +9794,7 @@ class PriorityClassList(HikaruDocumentBase):
 
 @dataclass
 class TokenRequest(HikaruDocumentBase):
-    """
+    r"""
     TokenRequest contains parameters of a service account token.
 
     Full name: io.k8s.api.authentication.v1.TokenRequest
@@ -9813,7 +9814,7 @@ class TokenRequest(HikaruDocumentBase):
 
 @dataclass
 class CSIDriverSpec(HikaruBase):
-    """
+    r"""
     CSIDriverSpec is the specification of a CSIDriver.
 
     Full name: io.k8s.api.storage.v1.CSIDriverSpec
@@ -9900,7 +9901,7 @@ class CSIDriverSpec(HikaruBase):
 
 @dataclass
 class CSIDriver(HikaruDocumentBase):
-    """
+    r"""
     CSIDriver captures information about a Container Storage Interface (CSI) volume driver
     deployed on the cluster. Kubernetes attach detach controller uses this object to
     determine whether attach is required. Kubelet uses this object to determine whether
@@ -9935,7 +9936,7 @@ class CSIDriver(HikaruDocumentBase):
 
 @dataclass
 class CSIDriverList(HikaruDocumentBase):
-    """
+    r"""
     CSIDriverList is a collection of CSIDriver objects.
 
     Full name: io.k8s.api.storage.v1.CSIDriverList
@@ -9963,7 +9964,7 @@ class CSIDriverList(HikaruDocumentBase):
 
 @dataclass
 class VolumeNodeResources(HikaruBase):
-    """
+    r"""
     VolumeNodeResources is a set of resource limits for scheduling of volumes.
 
     Full name: io.k8s.api.storage.v1.VolumeNodeResources
@@ -9981,7 +9982,7 @@ class VolumeNodeResources(HikaruBase):
 
 @dataclass
 class CSINodeDriver(HikaruBase):
-    """
+    r"""
     CSINodeDriver holds information about the specification of one CSI driver installed on
     a node
 
@@ -10019,7 +10020,7 @@ class CSINodeDriver(HikaruBase):
 
 @dataclass
 class CSINodeSpec(HikaruBase):
-    """
+    r"""
     CSINodeSpec holds information about the specification of all CSI drivers installed on
     a node
 
@@ -10035,7 +10036,7 @@ class CSINodeSpec(HikaruBase):
 
 @dataclass
 class CSINode(HikaruDocumentBase):
-    """
+    r"""
     CSINode holds information about all CSI drivers installed on a node. CSI drivers do
     not need to create the CSINode object directly. As long as they use the
     node-driver-registrar sidecar container, the kubelet will automatically populate the
@@ -10069,7 +10070,7 @@ class CSINode(HikaruDocumentBase):
 
 @dataclass
 class CSINodeList(HikaruDocumentBase):
-    """
+    r"""
     CSINodeList is a collection of CSINode objects.
 
     Full name: io.k8s.api.storage.v1.CSINodeList
@@ -10097,7 +10098,7 @@ class CSINodeList(HikaruDocumentBase):
 
 @dataclass
 class TopologySelectorLabelRequirement(HikaruBase):
-    """
+    r"""
     A topology selector requirement is a selector that matches given label. This is an
     alpha feature and may change in the future.
 
@@ -10115,7 +10116,7 @@ class TopologySelectorLabelRequirement(HikaruBase):
 
 @dataclass
 class TopologySelectorTerm(HikaruBase):
-    """
+    r"""
     A topology selector term represents the result of label queries. A null or empty
     topology selector term matches no objects. The requirements of them are ANDed. It
     provides a subset of functionality as NodeSelectorTerm. This is an alpha feature and
@@ -10132,7 +10133,7 @@ class TopologySelectorTerm(HikaruBase):
 
 @dataclass
 class StorageClass(HikaruDocumentBase):
-    """
+    r"""
     StorageClass describes the parameters for a class of storage for which
     PersistentVolumes can be dynamically provisioned. StorageClasses are non-namespaced;
     the name of the storage class according to etcd is in ObjectMeta.Name.
@@ -10184,7 +10185,7 @@ class StorageClass(HikaruDocumentBase):
 
 @dataclass
 class StorageClassList(HikaruDocumentBase):
-    """
+    r"""
     StorageClassList is a collection of storage classes.
 
     Full name: io.k8s.api.storage.v1.StorageClassList
@@ -10212,7 +10213,7 @@ class StorageClassList(HikaruDocumentBase):
 
 @dataclass
 class VolumeAttachmentSource(HikaruBase):
-    """
+    r"""
     VolumeAttachmentSource represents a volume that should be attached. Right now only
     PersistenVolumes can be attached via external attacher, in future we may allow also
     inline volumes in pods. Exactly one member can be set.
@@ -10234,7 +10235,7 @@ class VolumeAttachmentSource(HikaruBase):
 
 @dataclass
 class VolumeAttachmentSpec(HikaruBase):
-    """
+    r"""
     VolumeAttachmentSpec is the specification of a VolumeAttachment request.
 
     Full name: io.k8s.api.storage.v1alpha1.VolumeAttachmentSpec
@@ -10253,7 +10254,7 @@ class VolumeAttachmentSpec(HikaruBase):
 
 @dataclass
 class VolumeError(HikaruBase):
-    """
+    r"""
     VolumeError captures an error encountered during a volume operation.
 
     Full name: io.k8s.api.storage.v1alpha1.VolumeError
@@ -10270,7 +10271,7 @@ class VolumeError(HikaruBase):
 
 @dataclass
 class VolumeAttachmentStatus(HikaruBase):
-    """
+    r"""
     VolumeAttachmentStatus is the status of a VolumeAttachment request.
 
     Full name: io.k8s.api.storage.v1alpha1.VolumeAttachmentStatus
@@ -10298,7 +10299,7 @@ class VolumeAttachmentStatus(HikaruBase):
 
 @dataclass
 class VolumeAttachment(HikaruDocumentBase):
-    """
+    r"""
     VolumeAttachment captures the intent to attach or detach the specified volume to/from
     the specified node. VolumeAttachment objects are non-namespaced.
 
@@ -10331,7 +10332,7 @@ class VolumeAttachment(HikaruDocumentBase):
 
 @dataclass
 class VolumeAttachmentList(HikaruDocumentBase):
-    """
+    r"""
     VolumeAttachmentList is a collection of VolumeAttachment objects.
 
     Full name: io.k8s.api.storage.v1alpha1.VolumeAttachmentList
@@ -10358,8 +10359,642 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
 
 @dataclass
-class GroupVersionForDiscovery(HikaruBase):
+class CustomResourceDefinitionNames(HikaruBase):
+    r"""
+    CustomResourceDefinitionNames indicates the names to serve this
+    CustomResourceDefinition
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionNames
+
+    Attributes:
+    kind: kind is the serialized kind of the resource. It is normally CamelCase and
+        singular. Custom resource instances will use this value as the `kind` attribute in
+        API calls.
+    plural: plural is the plural name of the resource to serve. The custom resources are
+        served under `/apis/<group>/<version>/.../<plural>`. Must match the name of the
+        CustomResourceDefinition (in the form `<names.plural>.<group>`). Must be all
+        lowercase.
+    listKind: listKind is the serialized kind of the list for this resource. Defaults to
+        "`kind`List".
+    singular: singular is the singular name of the resource. It must be all lowercase.
+        Defaults to lowercased `kind`.
+    categories: categories is a list of grouped resources this custom resource belongs to
+        (e.g. 'all'). This is published in API discovery documents, and used by clients to
+        support invocations like `kubectl get all`.
+    shortNames: shortNames are short names for the resource, exposed in API discovery
+        documents, and used by clients to support invocations like `kubectl get
+        <shortname>`. It must be all lowercase.
     """
+
+    kind: str
+    plural: str
+    listKind: Optional[str] = None
+    singular: Optional[str] = None
+    categories: Optional[List[str]] = field(default_factory=list)
+    shortNames: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class CustomResourceColumnDefinition(HikaruBase):
+    r"""
+    CustomResourceColumnDefinition specifies a column for server side printing.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceColumnDefinition
+
+    Attributes:
+    jsonPath: jsonPath is a simple JSON path (i.e. with array notation) which is evaluated
+        against each custom resource to produce the value for this column.
+    name: name is a human readable name for the column.
+    type: type is an OpenAPI type definition for this column. See
+        https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
+        for details.
+    description: description is a human readable description of this column.
+    format: format is an optional OpenAPI type definition for this column. The 'name'
+        format is applied to the primary identifier column to assist in clients
+        identifying column is the resource name. See
+        https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#data-types
+        for details.
+    priority: priority is an integer defining the relative importance of this column
+        compared to others. Lower numbers are considered higher priority. Columns that may
+        be omitted in limited space scenarios should be given a priority greater than 0.
+    """
+
+    jsonPath: str
+    name: str
+    type: str
+    description: Optional[str] = None
+    format: Optional[str] = None
+    priority: Optional[int] = None
+
+
+@dataclass
+class JSONSchemaPropsOrBool(HikaruBase):
+    r"""
+    JSONSchemaPropsOrBool represents JSONSchemaProps or a boolean value. Defaults to true
+    for the boolean property.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool
+
+    Attributes:
+    """
+
+
+@dataclass
+class JSON(HikaruBase):
+    r"""
+    JSON represents any valid JSON value. These types are supported: bool, int64, float64,
+    string, []interface{}, map[string]interface{} and nil.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON
+
+    Attributes:
+    """
+
+
+@dataclass
+class ExternalDocumentation(HikaruBase):
+    r"""
+    ExternalDocumentation allows referencing an external resource for extended
+    documentation.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.ExternalDocumentation
+
+    Attributes:
+    description:
+    url:
+    """
+
+    description: Optional[str] = None
+    url: Optional[str] = None
+
+
+@dataclass
+class JSONSchemaPropsOrArray(HikaruBase):
+    r"""
+    JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an
+    array of JSONSchemaProps. Mainly here for serialization purposes.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray
+
+    Attributes:
+    """
+
+
+@dataclass
+class JSONSchemaPropsBase(HikaruBase):
+    r"""
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps
+
+    Attributes:
+    additionalItems:
+    additionalProperties:
+    default: default is a default value for undefined object fields. Defaulting is a beta
+        feature under the CustomResourceDefaulting feature gate. Defaulting requires
+        spec.preserveUnknownFields to be false.
+    description:
+    dollar_ref:
+    dollar_schema:
+    example:
+    exclusiveMaximum:
+    exclusiveMinimum:
+    externalDocs:
+    format: format is an OpenAPI v3 format string. Unknown formats are ignored. The
+        following formats are validated: - bsonobjectid: a bson object ID, i.e. a 24
+        characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI -
+        email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a
+        valid representation for an Internet host name, as defined by RFC 1034, section
+        3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6
+        IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang
+        net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an
+        UUID that allows uppercase defined by the regex
+        (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an
+        UUID3 that allows uppercase defined by the regex
+        (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4:
+        an UUID4 that allows uppercase defined by the regex
+        (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ -
+        uuid5: an UUID5 that allows uppercase defined by the regex
+        (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ -
+        isbn: an ISBN10 or ISBN13 number string like "0321751043" or "978-0321751041" -
+        isbn10: an ISBN10 number string like "0321751043" - isbn13: an ISBN13 number
+        string like "978-0321751041" - creditcard: a credit card number defined by the
+        regex
+        ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$
+        with any non digit characters mixed in - ssn: a U.S. social security number
+        following the regex ^\d{3}[- ]?\d{2}[- ]?\d{4}$ - hexcolor: an hexadecimal color
+        code like "#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ -
+        rgbcolor: an RGB color code like rgb like "rgb(255,255,2559" - byte: base64
+        encoded binary data - password: any kind of string - date: a date string like
+        "2006-01-02" as defined by full-date in RFC3339 - duration: a duration string like
+        "22 ns" as parsed by Golang time.ParseDuration or compatible with Scala duration
+        format - datetime: a date time string like "2014-12-15T19:30:20.000Z" as defined
+        by date-time in RFC3339.
+    id:
+    items:
+    maxItems:
+    maxLength:
+    maxProperties:
+    maximum:
+    minItems:
+    minLength:
+    minProperties:
+    minimum:
+    multipleOf:
+    nullable:
+    pattern:
+    title:
+    type:
+    uniqueItems:
+    x_kubernetes_embedded_resource: x-kubernetes-embedded-resource defines that the value
+        is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type
+        must be object. It is allowed to further restrict the embedded object. kind,
+        apiVersion and metadata are validated automatically.
+        x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to
+        be if the object is fully specified (up to kind, apiVersion, metadata).
+    x_kubernetes_int_or_string: x-kubernetes-int-or-string specifies that this value is
+        either an integer or a string. If this is true, an empty type is allowed and type
+        as child of anyOf is permitted if following one of the following patterns: 1)
+        anyOf: - type: integer - type: string 2) allOf: - anyOf: - type: integer - type:
+        string - ... zero or more
+    x_kubernetes_list_type: x-kubernetes-list-type annotates an array to further describe
+        its topology. This extension must only be used on lists and may have 3 possible
+        values: 1) `atomic`: the list is treated as a single entity, like a scalar. Atomic
+        lists will be entirely replaced when updated. This extension may be used on any
+        type of list (struct, scalar, ...). 2) `set`: Sets are lists that must not have
+        multiple items with the same value. Each value must be a scalar, an object with
+        x-kubernetes-map-type `atomic` or an array with x-kubernetes-list-type `atomic`.
+        3) `map`: These lists are like maps in that their elements have a non-index key
+        used to identify them. Order is preserved upon merge. The map tag must only be
+        used on a list with elements of type object. Defaults to atomic for arrays.
+    x_kubernetes_map_type: x-kubernetes-map-type annotates an object to further describe
+        its topology. This extension must only be used when type is object and may have 2
+        possible values: 1) `granular`: These maps are actual maps (key-value pairs) and
+        each fields are independent from each other (they can each be manipulated by
+        separate actors). This is the default behaviour for all maps. 2) `atomic`: the
+        list is treated as a single entity, like a scalar. Atomic maps will be entirely
+        replaced when updated.
+    x_kubernetes_preserve_unknown_fields: x-kubernetes-preserve-unknown-fields stops the
+        API server decoding step from pruning fields which are not specified in the
+        validation schema. This affects fields recursively, but switches back to normal
+        pruning behaviour if nested properties or additionalProperties are specified in
+        the schema. This can either be true or undefined. False is forbidden.
+    definitions:
+    dependencies:
+    enum:
+    patternProperties:
+    properties:
+    required:
+    x_kubernetes_list_map_keys: x-kubernetes-list-map-keys annotates an array with the
+        x-kubernetes-list-type `map` by specifying the keys used as the index of the map.
+        This tag MUST only be used on lists that have the "x-kubernetes-list-type"
+        extension set to "map". Also, the values specified for this attribute must be a
+        scalar typed field of the child structure (no nesting is supported). The
+        properties specified must either be required or have a default value, to ensure
+        those properties are present for all list items.
+    """
+
+    additionalItems: Optional[JSONSchemaPropsOrBool] = None
+    additionalProperties: Optional[JSONSchemaPropsOrBool] = None
+    default: Optional[JSON] = None
+    description: Optional[str] = None
+    dollar_ref: Optional[str] = None
+    dollar_schema: Optional[str] = None
+    example: Optional[JSON] = None
+    exclusiveMaximum: Optional[bool] = None
+    exclusiveMinimum: Optional[bool] = None
+    externalDocs: Optional[ExternalDocumentation] = None
+    format: Optional[str] = None
+    id: Optional[str] = None
+    items: Optional[JSONSchemaPropsOrArray] = None
+    maxItems: Optional[int] = None
+    maxLength: Optional[int] = None
+    maxProperties: Optional[int] = None
+    maximum: Optional[float] = None
+    minItems: Optional[int] = None
+    minLength: Optional[int] = None
+    minProperties: Optional[int] = None
+    minimum: Optional[float] = None
+    multipleOf: Optional[float] = None
+    nullable: Optional[bool] = None
+    pattern: Optional[str] = None
+    title: Optional[str] = None
+    type: Optional[str] = None
+    uniqueItems: Optional[bool] = None
+    x_kubernetes_embedded_resource: Optional[bool] = None
+    x_kubernetes_int_or_string: Optional[bool] = None
+    x_kubernetes_list_type: Optional[str] = None
+    x_kubernetes_map_type: Optional[str] = None
+    x_kubernetes_preserve_unknown_fields: Optional[bool] = None
+    definitions: Optional[Dict[str, str]] = field(default_factory=dict)
+    dependencies: Optional[Dict[str, str]] = field(default_factory=dict)
+    enum: Optional[List[JSON]] = field(default_factory=list)
+    patternProperties: Optional[Dict[str, str]] = field(default_factory=dict)
+    properties: Optional[Dict[str, str]] = field(default_factory=dict)
+    required: Optional[List[str]] = field(default_factory=list)
+    x_kubernetes_list_map_keys: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class JSONSchemaProps(JSONSchemaPropsBase):
+    r"""
+    JSONSchemaProps is a JSON-Schema following Specification Draft 4
+    (http://json-schema.org/).
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps
+
+    Attributes:
+    not_:
+    allOf:
+    anyOf:
+    oneOf:
+    """
+
+    not_: Optional[JSONSchemaPropsBase] = None
+    allOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
+    anyOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
+    oneOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
+
+
+@dataclass
+class CustomResourceValidation(HikaruBase):
+    r"""
+    CustomResourceValidation is a list of validation methods for CustomResources.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceValidation
+
+    Attributes:
+    openAPIV3Schema: openAPIV3Schema is the OpenAPI v3 schema to use for validation and
+        pruning.
+    """
+
+    openAPIV3Schema: Optional[JSONSchemaProps] = None
+
+
+@dataclass
+class CustomResourceSubresourceScale(HikaruBase):
+    r"""
+    CustomResourceSubresourceScale defines how to serve the scale subresource for
+    CustomResources.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresourceScale
+
+    Attributes:
+    specReplicasPath: specReplicasPath defines the JSON path inside of a custom resource
+        that corresponds to Scale `spec.replicas`. Only JSON paths without the array
+        notation are allowed. Must be a JSON Path under `.spec`. If there is no value
+        under the given path in the custom resource, the `/scale` subresource will return
+        an error on GET.
+    statusReplicasPath: statusReplicasPath defines the JSON path inside of a custom
+        resource that corresponds to Scale `status.replicas`. Only JSON paths without the
+        array notation are allowed. Must be a JSON Path under `.status`. If there is no
+        value under the given path in the custom resource, the `status.replicas` value in
+        the `/scale` subresource will default to 0.
+    labelSelectorPath: labelSelectorPath defines the JSON path inside of a custom resource
+        that corresponds to Scale `status.selector`. Only JSON paths without the array
+        notation are allowed. Must be a JSON Path under `.status` or `.spec`. Must be set
+        to work with HorizontalPodAutoscaler. The field pointed by this JSON path must be
+        a string field (not a complex selector struct) which contains a serialized label
+        selector in string form. More info:
+        https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions#scale-subresource
+        If there is no value under the given path in the custom resource, the
+        `status.selector` value in the `/scale` subresource will default to the empty
+        string.
+    """
+
+    specReplicasPath: str
+    statusReplicasPath: str
+    labelSelectorPath: Optional[str] = None
+
+
+@dataclass
+class CustomResourceSubresourceStatus(HikaruBase):
+    r"""
+    CustomResourceSubresourceStatus defines how to serve the status subresource for
+    CustomResources. Status is represented by the `.status` JSON path inside of a
+    CustomResource. When set, * exposes a /status subresource for the custom resource *
+    PUT requests to the /status subresource take a custom resource object, and ignore
+    changes to anything except the status stanza * PUT/POST/PATCH requests to the custom
+    resource ignore changes to the status stanza
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresourceStatus
+
+    Attributes:
+    """
+
+
+@dataclass
+class CustomResourceSubresources(HikaruBase):
+    r"""
+    CustomResourceSubresources defines the status and scale subresources for
+    CustomResources.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceSubresources
+
+    Attributes:
+    scale: scale indicates the custom resource should serve a `/scale` subresource that
+        returns an `autoscaling/v1` Scale object.
+    status: status indicates the custom resource should serve a `/status` subresource.
+        When enabled: 1. requests to the custom resource primary endpoint ignore changes
+        to the `status` stanza of the object. 2. requests to the custom resource `/status`
+        subresource ignore changes to anything other than the `status` stanza of the
+        object.
+    """
+
+    scale: Optional[CustomResourceSubresourceScale] = None
+    status: Optional[CustomResourceSubresourceStatus] = None
+
+
+@dataclass
+class CustomResourceDefinitionVersion(HikaruBase):
+    r"""
+    CustomResourceDefinitionVersion describes a version for CRD.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionVersion
+
+    Attributes:
+    name: name is the version name, e.g. “v1”, “v2beta1”, etc. The custom resources are
+        served under this version at `/apis/<group>/<version>/...` if `served` is true.
+    served: served is a flag enabling/disabling this version from being served via REST
+        APIs
+    storage: storage indicates this version should be used when persisting custom
+        resources to storage. There must be exactly one version with storage=true.
+    deprecated: deprecated indicates this version of the custom resource API is
+        deprecated. When set to true, API requests to this version receive a warning
+        header in the server response. Defaults to false.
+    deprecationWarning: deprecationWarning overrides the default warning returned to API
+        clients. May only be set when `deprecated` is true. The default warning indicates
+        this version is deprecated and recommends use of the newest served version of
+        equal or greater stability, if one exists.
+    schema: schema describes the schema used for validation, pruning, and defaulting of
+        this version of the custom resource.
+    subresources: subresources specify what subresources this version of the defined
+        custom resource have.
+    additionalPrinterColumns: additionalPrinterColumns specifies additional columns
+        returned in Table output. See
+        https://kubernetes.io/docs/reference/using-api/api-concepts/#receiving-resources-as-tables
+        for details. If no columns are specified, a single column displaying the age of
+        the custom resource is used.
+    """
+
+    name: str
+    served: bool
+    storage: bool
+    deprecated: Optional[bool] = None
+    deprecationWarning: Optional[str] = None
+    schema: Optional[CustomResourceValidation] = None
+    subresources: Optional[CustomResourceSubresources] = None
+    additionalPrinterColumns: Optional[List[CustomResourceColumnDefinition]] = field(default_factory=list)
+
+
+@dataclass
+class WebhookConversion(HikaruBase):
+    r"""
+    WebhookConversion describes how to call a conversion webhook
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.WebhookConversion
+
+    Attributes:
+    conversionReviewVersions: conversionReviewVersions is an ordered list of preferred
+        `ConversionReview` versions the Webhook expects. The API server will use the first
+        version in the list which it supports. If none of the versions specified in this
+        list are supported by API server, conversion will fail for the custom resource. If
+        a persisted Webhook configuration specifies allowed versions and does not include
+        any versions known to the API Server, calls to the webhook will fail.
+    clientConfig: clientConfig is the instructions for how to call the webhook if strategy
+        is `Webhook`.
+    """
+
+    conversionReviewVersions: List[str]
+    clientConfig: Optional[WebhookClientConfig] = None
+
+
+@dataclass
+class CustomResourceConversion(HikaruBase):
+    r"""
+    CustomResourceConversion describes how to convert different versions of a CR.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceConversion
+
+    Attributes:
+    strategy: strategy specifies how custom resources are converted between versions.
+        Allowed values are: - `None`: The converter only change the apiVersion and would
+        not touch any other field in the custom resource. - `Webhook`: API Server will
+        call to an external webhook to do the conversion. Additional information is needed
+        for this option. This requires spec.preserveUnknownFields to be false, and
+        spec.conversion.webhook to be set.
+    webhook: webhook describes how to call the conversion webhook. Required when
+        `strategy` is set to `Webhook`.
+    """
+
+    strategy: str
+    webhook: Optional[WebhookConversion] = None
+
+
+@dataclass
+class CustomResourceDefinitionSpec(HikaruBase):
+    r"""
+    CustomResourceDefinitionSpec describes how a user wants their resource to appear
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionSpec
+
+    Attributes:
+    group: group is the API group of the defined custom resource. The custom resources are
+        served under `/apis/<group>/...`. Must match the name of the
+        CustomResourceDefinition (in the form `<names.plural>.<group>`).
+    names: names specify the resource and kind names for the custom resource.
+    scope: scope indicates whether the defined custom resource is cluster- or
+        namespace-scoped. Allowed values are `Cluster` and `Namespaced`.
+    versions: versions is the list of all API versions of the defined custom resource.
+        Version names are used to compute the order in which served versions are listed in
+        API discovery. If the version string is "kube-like", it will sort above non
+        "kube-like" version strings, which are ordered lexicographically. "Kube-like"
+        versions start with a "v", then are followed by a number (the major version), then
+        optionally the string "alpha" or "beta" and another number (the minor version).
+        These are sorted first by GA > beta > alpha (where GA is a version with no suffix
+        such as beta or alpha), and then by comparing major version, then minor version.
+        An example sorted list of versions: v10, v2, v1, v11beta2, v10beta3, v3beta1,
+        v12alpha1, v11alpha2, foo1, foo10.
+    conversion: conversion defines conversion settings for the CRD.
+    preserveUnknownFields: preserveUnknownFields indicates that object fields which are
+        not specified in the OpenAPI schema should be preserved when persisting to
+        storage. apiVersion, kind, metadata and known fields inside metadata are always
+        preserved. This field is deprecated in favor of setting
+        `x-preserve-unknown-fields` to true in `spec.versions[*].schema.openAPIV3Schema`.
+        See
+        https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#pruning-versus-preserving-unknown-fields
+        for details.
+    """
+
+    group: str
+    names: CustomResourceDefinitionNames
+    scope: str
+    versions: List[CustomResourceDefinitionVersion]
+    conversion: Optional[CustomResourceConversion] = None
+    preserveUnknownFields: Optional[bool] = None
+
+
+@dataclass
+class CustomResourceDefinitionCondition(HikaruBase):
+    r"""
+    CustomResourceDefinitionCondition contains details for the current condition of this
+    pod.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionCondition
+
+    Attributes:
+    status: status is the status of the condition. Can be True, False, Unknown.
+    type: type is the type of the condition. Types include Established, NamesAccepted and
+        Terminating.
+    lastTransitionTime: lastTransitionTime last time the condition transitioned from one
+        status to another.
+    message: message is a human-readable message indicating details about last transition.
+    reason: reason is a unique, one-word, CamelCase reason for the condition's last
+        transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[Time] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class CustomResourceDefinitionStatus(HikaruBase):
+    r"""
+    CustomResourceDefinitionStatus indicates the state of the CustomResourceDefinition
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionStatus
+
+    Attributes:
+    acceptedNames: acceptedNames are the names that are actually being used to serve
+        discovery. They may be different than the names in spec.
+    conditions: conditions indicate state for particular aspects of a
+        CustomResourceDefinition
+    storedVersions: storedVersions lists all versions of CustomResources that were ever
+        persisted. Tracking these versions allows a migration path for stored versions in
+        etcd. The field is mutable so a migration controller can finish a migration to
+        another version (ensuring no old objects are left in storage), and then remove the
+        rest of the versions from this list. Versions may not be removed from
+        `spec.versions` while they exist in this list.
+    """
+
+    acceptedNames: Optional[CustomResourceDefinitionNames] = None
+    conditions: Optional[List[CustomResourceDefinitionCondition]] = field(default_factory=list)
+    storedVersions: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class CustomResourceDefinition(HikaruDocumentBase):
+    r"""
+    CustomResourceDefinition represents a resource that should be exposed on the API
+    server. Its name MUST be in the format <.spec.name>.<.spec.group>.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinition
+
+    Attributes:
+    spec: spec describes how the user wants the resources to appear
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    status: status indicates the actual state of the CustomResourceDefinition
+    """
+
+    _version = 'v1'
+    spec: CustomResourceDefinitionSpec
+    apiVersion: Optional[str] = None
+    kind: Optional[str] = None
+    metadata: Optional[ObjectMeta] = None
+    status: Optional[CustomResourceDefinitionStatus] = None
+
+
+@dataclass
+class CustomResourceDefinitionList(HikaruDocumentBase):
+    r"""
+    CustomResourceDefinitionList is a list of CustomResourceDefinition objects.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.CustomResourceDefinitionList
+
+    Attributes:
+    items: items list individual CustomResourceDefinition objects
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    """
+
+    _version = 'v1'
+    items: List[CustomResourceDefinition]
+    apiVersion: Optional[str] = None
+    kind: Optional[str] = None
+    metadata: Optional[ListMeta] = None
+
+
+@dataclass
+class JSONSchemaPropsOrStringArray(HikaruBase):
+    r"""
+    JSONSchemaPropsOrStringArray represents a JSONSchemaProps or a string array.
+
+    Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrStringArray
+
+    Attributes:
+    """
+
+
+@dataclass
+class GroupVersionForDiscovery(HikaruBase):
+    r"""
     GroupVersion contains the "group/version" and "version" string of a version. It is
     made a struct to keep extensibility.
 
@@ -10378,7 +11013,7 @@ class GroupVersionForDiscovery(HikaruBase):
 
 @dataclass
 class ServerAddressByClientCIDR(HikaruBase):
-    """
+    r"""
     ServerAddressByClientCIDR helps the client to determine the server address that they
     should use, depending on the clientCIDR that they match.
 
@@ -10397,7 +11032,7 @@ class ServerAddressByClientCIDR(HikaruBase):
 
 @dataclass
 class APIGroup(HikaruBase):
-    """
+    r"""
     APIGroup contains the name, the supported versions, and the preferred version of a
     group.
 
@@ -10436,7 +11071,7 @@ class APIGroup(HikaruBase):
 
 @dataclass
 class APIGroupList(HikaruBase):
-    """
+    r"""
     APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.APIGroupList
@@ -10460,7 +11095,7 @@ class APIGroupList(HikaruBase):
 
 @dataclass
 class APIResource(HikaruBase):
-    """
+    r"""
     APIResource specifies the name of a resource and whether it is namespaced.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.APIResource
@@ -10506,7 +11141,7 @@ class APIResource(HikaruBase):
 
 @dataclass
 class APIResourceList(HikaruBase):
-    """
+    r"""
     APIResourceList is a list of APIResource, it is used to expose the name of the
     resources supported in a specific group and version, and if the resource is
     namespaced.
@@ -10534,7 +11169,7 @@ class APIResourceList(HikaruBase):
 
 @dataclass
 class APIVersions(HikaruBase):
-    """
+    r"""
     APIVersions lists the versions that are available, to allow clients to discover the
     API at /api, which is the root path of the legacy v1 API.
 
@@ -10568,7 +11203,7 @@ class APIVersions(HikaruBase):
 
 @dataclass
 class Patch(HikaruBase):
-    """
+    r"""
     Patch is provided to give a concrete name and type to the Kubernetes PATCH request
     body.
 
@@ -10580,7 +11215,7 @@ class Patch(HikaruBase):
 
 @dataclass
 class StatusCause(HikaruBase):
-    """
+    r"""
     StatusCause provides more information about an api.Status failure, including cases
     when multiple errors are encountered.
 
@@ -10606,7 +11241,7 @@ class StatusCause(HikaruBase):
 
 @dataclass
 class StatusDetails(HikaruBase):
-    """
+    r"""
     StatusDetails is a set of additional properties that MAY be set by the server to
     provide additional information about a response. The Reason field of a Status object
     defines what attributes will be set. Clients must ignore fields that do not match the
@@ -10642,7 +11277,7 @@ class StatusDetails(HikaruBase):
 
 @dataclass
 class Status(HikaruDocumentBase):
-    """
+    r"""
     Status is a return value for calls that don't return other objects.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.Status
@@ -10683,7 +11318,7 @@ class Status(HikaruDocumentBase):
 
 @dataclass
 class WatchEvent(HikaruBase):
-    """
+    r"""
     Event represents a single event to a watched resource.
 
     Full name: io.k8s.apimachinery.pkg.apis.meta.v1.WatchEvent
@@ -10701,7 +11336,7 @@ class WatchEvent(HikaruBase):
 
 @dataclass
 class APIServiceSpec(HikaruBase):
-    """
+    r"""
     APIServiceSpec contains information for locating and communicating with a server. Only
     https is supported, though you are able to disable certificate verification.
 
@@ -10755,7 +11390,7 @@ class APIServiceSpec(HikaruBase):
 
 @dataclass
 class APIServiceCondition(HikaruBase):
-    """
+    r"""
     APIServiceCondition describes the state of an APIService at a particular point
 
     Full name: io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceCondition
@@ -10777,7 +11412,7 @@ class APIServiceCondition(HikaruBase):
 
 @dataclass
 class APIServiceStatus(HikaruBase):
-    """
+    r"""
     APIServiceStatus contains derived information about an API server
 
     Full name: io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceStatus
@@ -10791,7 +11426,7 @@ class APIServiceStatus(HikaruBase):
 
 @dataclass
 class APIService(HikaruDocumentBase):
-    """
+    r"""
     APIService represents a server for a particular GroupVersion. Name must be
     "version.group".
 
@@ -10821,7 +11456,7 @@ class APIService(HikaruDocumentBase):
 
 @dataclass
 class APIServiceList(HikaruDocumentBase):
-    """
+    r"""
     APIServiceList is a list of APIService objects.
 
     Full name: io.k8s.kube-aggregator.pkg.apis.apiregistration.v1.APIServiceList
@@ -10848,7 +11483,7 @@ class APIServiceList(HikaruDocumentBase):
 
 @dataclass
 class StorageVersionSpec(HikaruBase):
-    """
+    r"""
     StorageVersionSpec is an empty spec.
 
     Full name: io.k8s.api.apiserverinternal.v1alpha1.StorageVersionSpec
@@ -10859,7 +11494,7 @@ class StorageVersionSpec(HikaruBase):
 
 @dataclass
 class StorageVersionCondition(HikaruBase):
-    """
+    r"""
     Describes the state of the storageVersion at a certain point.
 
     Full name: io.k8s.api.apiserverinternal.v1alpha1.StorageVersionCondition
@@ -10884,7 +11519,7 @@ class StorageVersionCondition(HikaruBase):
 
 @dataclass
 class ServerStorageVersion(HikaruBase):
-    """
+    r"""
     An API server instance reports the version it can decode and the version it encodes
     objects to when persisting objects in the backend.
 
@@ -10905,7 +11540,7 @@ class ServerStorageVersion(HikaruBase):
 
 @dataclass
 class StorageVersionStatus(HikaruBase):
-    """
+    r"""
     API server instances report the versions they can decode and the version they encode
     objects to when persisting objects in the backend.
 
@@ -10927,7 +11562,7 @@ class StorageVersionStatus(HikaruBase):
 
 @dataclass
 class StorageVersion(HikaruDocumentBase):
-    """
+    r"""
     Storage version of a specific resource.
 
     Full name: io.k8s.api.apiserverinternal.v1alpha1.StorageVersion
@@ -10957,7 +11592,7 @@ class StorageVersion(HikaruDocumentBase):
 
 @dataclass
 class StorageVersionList(HikaruDocumentBase):
-    """
+    r"""
     A list of StorageVersions.
 
     Full name: io.k8s.api.apiserverinternal.v1alpha1.StorageVersionList
@@ -10984,7 +11619,7 @@ class StorageVersionList(HikaruDocumentBase):
 
 @dataclass
 class PriorityLevelConfigurationReference(HikaruBase):
-    """
+    r"""
     PriorityLevelConfigurationReference contains information that points to the
     "request-priority" being used.
 
@@ -11000,7 +11635,7 @@ class PriorityLevelConfigurationReference(HikaruBase):
 
 @dataclass
 class FlowDistinguisherMethod(HikaruBase):
-    """
+    r"""
     FlowDistinguisherMethod specifies the method of a flow distinguisher.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.FlowDistinguisherMethod
@@ -11015,7 +11650,7 @@ class FlowDistinguisherMethod(HikaruBase):
 
 @dataclass
 class NonResourcePolicyRule(HikaruBase):
-    """
+    r"""
     NonResourcePolicyRule is a predicate that matches non-resource requests according to
     their verb and the target non-resource URL. A NonResourcePolicyRule matches a request
     if and only if both (a) at least one member of verbs matches the request and (b) at
@@ -11039,7 +11674,7 @@ class NonResourcePolicyRule(HikaruBase):
 
 @dataclass
 class ResourcePolicyRule(HikaruBase):
-    """
+    r"""
     ResourcePolicyRule is a predicate that matches some resource requests, testing the
     request's verb and the target resource. A ResourcePolicyRule matches a resource
     request if and only if: (a) at least one member of verbs matches the request, (b) at
@@ -11079,7 +11714,7 @@ class ResourcePolicyRule(HikaruBase):
 
 @dataclass
 class PolicyRulesWithSubjects(HikaruBase):
-    """
+    r"""
     PolicyRulesWithSubjects prescribes a test that applies to a request to an apiserver.
     The test considers the subject making the request, the verb being requested, and the
     resource to be acted upon. This PolicyRulesWithSubjects matches a request if and only
@@ -11107,7 +11742,7 @@ class PolicyRulesWithSubjects(HikaruBase):
 
 @dataclass
 class FlowSchemaSpec(HikaruBase):
-    """
+    r"""
     FlowSchemaSpec describes how the FlowSchema's specification looks like.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.FlowSchemaSpec
@@ -11137,7 +11772,7 @@ class FlowSchemaSpec(HikaruBase):
 
 @dataclass
 class FlowSchemaCondition(HikaruBase):
-    """
+    r"""
     FlowSchemaCondition describes conditions for a FlowSchema.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.FlowSchemaCondition
@@ -11163,7 +11798,7 @@ class FlowSchemaCondition(HikaruBase):
 
 @dataclass
 class FlowSchemaStatus(HikaruBase):
-    """
+    r"""
     FlowSchemaStatus represents the current state of a FlowSchema.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.FlowSchemaStatus
@@ -11177,7 +11812,7 @@ class FlowSchemaStatus(HikaruBase):
 
 @dataclass
 class FlowSchema(HikaruDocumentBase):
-    """
+    r"""
     FlowSchema defines the schema of a group of flows. Note that a flow is made up of a
     set of inbound API requests with similar attributes and is identified by a pair of
     strings: the name of the FlowSchema and a "flow distinguisher".
@@ -11211,7 +11846,7 @@ class FlowSchema(HikaruDocumentBase):
 
 @dataclass
 class FlowSchemaList(HikaruDocumentBase):
-    """
+    r"""
     FlowSchemaList is a list of FlowSchema objects.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.FlowSchemaList
@@ -11239,7 +11874,7 @@ class FlowSchemaList(HikaruDocumentBase):
 
 @dataclass
 class GroupSubject(HikaruBase):
-    """
+    r"""
     GroupSubject holds detailed information for group-kind subject.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.GroupSubject
@@ -11255,7 +11890,7 @@ class GroupSubject(HikaruBase):
 
 @dataclass
 class QueuingConfiguration(HikaruBase):
-    """
+    r"""
     QueuingConfiguration holds the configuration parameters for queuing
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.QueuingConfiguration
@@ -11286,7 +11921,7 @@ class QueuingConfiguration(HikaruBase):
 
 @dataclass
 class LimitResponse(HikaruBase):
-    """
+    r"""
     LimitResponse defines how to handle requests that can not be executed right now.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.LimitResponse
@@ -11306,7 +11941,7 @@ class LimitResponse(HikaruBase):
 
 @dataclass
 class LimitedPriorityLevelConfiguration(HikaruBase):
-    """
+    r"""
     LimitedPriorityLevelConfiguration specifies how to handle requests that are subject to
     limits. It addresses two issues: * How are requests for this priority level limited? *
     What should be done with requests that exceed the limit?
@@ -11334,7 +11969,7 @@ class LimitedPriorityLevelConfiguration(HikaruBase):
 
 @dataclass
 class PriorityLevelConfigurationSpec(HikaruBase):
-    """
+    r"""
     PriorityLevelConfigurationSpec specifies the configuration of a priority level.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.PriorityLevelConfigurationSpec
@@ -11357,7 +11992,7 @@ class PriorityLevelConfigurationSpec(HikaruBase):
 
 @dataclass
 class PriorityLevelConfigurationCondition(HikaruBase):
-    """
+    r"""
     PriorityLevelConfigurationCondition defines the condition of priority level.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.PriorityLevelConfigurationCondition
@@ -11383,7 +12018,7 @@ class PriorityLevelConfigurationCondition(HikaruBase):
 
 @dataclass
 class PriorityLevelConfigurationStatus(HikaruBase):
-    """
+    r"""
     PriorityLevelConfigurationStatus represents the current state of a "request-priority".
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.PriorityLevelConfigurationStatus
@@ -11397,7 +12032,7 @@ class PriorityLevelConfigurationStatus(HikaruBase):
 
 @dataclass
 class PriorityLevelConfiguration(HikaruDocumentBase):
-    """
+    r"""
     PriorityLevelConfiguration represents the configuration of a priority level.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.PriorityLevelConfiguration
@@ -11430,7 +12065,7 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
 
 @dataclass
 class PriorityLevelConfigurationList(HikaruDocumentBase):
-    """
+    r"""
     PriorityLevelConfigurationList is a list of PriorityLevelConfiguration objects.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.PriorityLevelConfigurationList
@@ -11458,7 +12093,7 @@ class PriorityLevelConfigurationList(HikaruDocumentBase):
 
 @dataclass
 class ServiceAccountSubject(HikaruBase):
-    """
+    r"""
     ServiceAccountSubject holds detailed information for service-account-kind subject.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.ServiceAccountSubject
@@ -11475,7 +12110,7 @@ class ServiceAccountSubject(HikaruBase):
 
 @dataclass
 class UserSubject(HikaruBase):
-    """
+    r"""
     UserSubject holds detailed information for user-kind subject.
 
     Full name: io.k8s.api.flowcontrol.v1alpha1.UserSubject
@@ -11489,7 +12124,7 @@ class UserSubject(HikaruBase):
 
 @dataclass
 class CSIStorageCapacity(HikaruDocumentBase):
-    """
+    r"""
     CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given
     StorageClass, this describes the available capacity in a particular topology segment.
     This can be used when considering where to instantiate new PersistentVolumes. For
@@ -11546,7 +12181,7 @@ class CSIStorageCapacity(HikaruDocumentBase):
 
 @dataclass
 class CSIStorageCapacityList(HikaruDocumentBase):
-    """
+    r"""
     CSIStorageCapacityList is a collection of CSIStorageCapacity objects.
 
     Full name: io.k8s.api.storage.v1alpha1.CSIStorageCapacityList

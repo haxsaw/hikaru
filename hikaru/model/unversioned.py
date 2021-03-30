@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class RawExtension(HikaruBase):
-    """
+    r"""
     RawExtension is used to hold extensions in external versions. To use this, make a
     field which has RawExtension as its type in your external, versioned struct, and
     Object in your internal struct. You also need to register your various plugin types.
@@ -58,7 +58,7 @@ class RawExtension(HikaruBase):
 
 
 class IntOrString(str):
-    """
+    r"""
     IntOrString is a type that can hold an int32 or a string. When used in JSON or YAML
     marshalling and unmarshalling, it produces or consumes the inner type. This allows you
     to have, for example, a JSON field that can accept a name or number.
@@ -68,7 +68,7 @@ class IntOrString(str):
 
 
 class Quantity(str):
-    """
+    r"""
     Quantity is a fixed-point representation of a number. It provides convenient
     marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64()
     accessors. The serialization format is: <quantity> ::= <signedNumber><suffix> (Note
@@ -104,7 +104,7 @@ class Quantity(str):
 
 @dataclass
 class Info(HikaruBase):
-    """
+    r"""
     Info contains versioning information. how we'll want to distribute that information.
 
     Full name: io.k8s.apimachinery.pkg.version.Info

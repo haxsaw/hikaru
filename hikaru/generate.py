@@ -77,9 +77,12 @@ def _clean_dict(d: dict) -> dict:
     # returns a new dict missing any keys in d that have None for its value
     clean = {}
     for k, v in d.items():
-        k = k.strip("_")
+        assert isinstance(k, str)
         if k.startswith(dprefix):
-            k = f'${k.strip(dprefix)}'
+            k = f'${k.replace(dprefix, "")}'
+        k = k.replace('_', '-')
+        if k.endswith("-"):
+            k = k[:-1]
         if v is None:
             continue
         if isinstance(v, (list, dict)) and not v:  # this is an empty container

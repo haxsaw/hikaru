@@ -1148,6 +1148,31 @@ def test101():
     assert expected in src
 
 
+def test102():
+    """
+    ensure that the $-starting attrs get rendered properly
+    """
+    x = JSONSchemaProps(dollar_ref='wibble',
+                        x_kubernetes_list_type='wobble')
+    d = get_clean_dict(x)
+    assert '$ref' in d
+    assert 'x-kubernetes-list-type' in d
+    y = get_yaml(x)
+    assert '$ref' in y
+    assert 'x-kubernetes-list-type' in y
+
+
+def test103():
+    """
+    ensure that keywords are transformed properly when exporting
+    """
+    ipb = IPBlock("192.168.6.1/32", except_=['wibble', 'wobble'])
+    d = get_clean_dict(ipb)
+    assert 'except' in d
+    y = get_yaml(ipb)
+    assert 'except' in y
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
