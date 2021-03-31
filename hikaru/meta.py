@@ -27,7 +27,7 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Type, Any
 from dataclasses import fields, dataclass, is_dataclass
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
@@ -51,7 +51,14 @@ CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
 TypeWarning = namedtuple('TypeWarning', ['cls', 'attrname', 'path', 'warning'])
 
-DiffDetail = namedtuple('DiffDetail', ['cls', 'attrname', 'path', 'report'])
+@dataclass
+class DiffDetail:
+    cls: Type
+    attrname: str
+    path: List[str]
+    report: str
+    value: Any = None
+    other_value: Any = None
 
 
 @dataclass
@@ -430,17 +437,22 @@ class HikaruBase(object):
                 diffs.append(DiffDetail(self.__class__, f.name, [f.name],
                                         f"Type mismatch:"
                                         f"self.{f.name} is a {type(self_attr)}"
-                                        f" but other's is a {type(other_attr)}"))
+                                        f" but other's is a {type(other_attr)}",
+                                        self_attr,
+                                        other_attr))
             elif issubclass(type(self_attr), (str, int, float, bool, NoneType)):
                 if self_attr != other_attr:
+                    print(f"self={self_attr} and other is {other_attr}")
                     diffs.append(DiffDetail(self.__class__, f.name, [f.name],
                                             f"Value mismatch:"
                                             f"self.{f.name} is {self_attr}"
-                                            f" but other's is {other_attr}"))
+                                            f" but other's is {other_attr}",
+                                            self_attr,
+                                            other_attr))
             elif isinstance(self_attr, HikaruBase):
                 inner_diffs = self_attr.diff(other_attr)
                 diffs.extend([DiffDetail(d.cls, d.attrname, [f.name] + d.path,
-                                         d.report) for d in inner_diffs])
+                                         d.report, d.value, d.other_value) for d in inner_diffs])
             elif isinstance(self_attr, dict):
                 self_keys = set(self_attr.keys())
                 other_keys = set(other_attr.keys())
@@ -486,7 +498,7 @@ class HikaruBase(object):
                             inner_diffs = self_element.diff(other_element)
                             diffs.extend([DiffDetail(d.cls, d.attrname,
                                                      [f.name, i] + d.path,
-                                                     d.report)
+                                                     d.report, d.value, d.other_value)
                                           for d in inner_diffs])
                         else:
                             raise NotImplementedError(f"Internal error! Don't know how to "
