@@ -10427,7 +10427,7 @@ class JSONSchemaPropsOrArray(HikaruBase):
 
 
 @dataclass
-class JSONSchemaPropsBase(HikaruBase):
+class JSONSchemaPropsHikaruBase(HikaruBase):
     r"""
 
     Full name: io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaProps
@@ -10582,7 +10582,7 @@ class JSONSchemaPropsBase(HikaruBase):
 
 
 @dataclass
-class JSONSchemaProps(JSONSchemaPropsBase):
+class JSONSchemaProps(JSONSchemaPropsHikaruBase):
     r"""
     JSONSchemaProps is a JSON-Schema following Specification Draft 4
     (http://json-schema.org/).
@@ -10596,10 +10596,10 @@ class JSONSchemaProps(JSONSchemaPropsBase):
     oneOf:
     """
 
-    not_: Optional[JSONSchemaPropsBase] = None
-    allOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
-    anyOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
-    oneOf: Optional[List[JSONSchemaPropsBase]] = field(default_factory=list)
+    not_: Optional[JSONSchemaPropsHikaruBase] = None
+    allOf: Optional[List[JSONSchemaPropsHikaruBase]] = field(default_factory=list)
+    anyOf: Optional[List[JSONSchemaPropsHikaruBase]] = field(default_factory=list)
+    oneOf: Optional[List[JSONSchemaPropsHikaruBase]] = field(default_factory=list)
 
 
 @dataclass
