@@ -88,6 +88,19 @@ def make_swagger_name(group: str, version: str, name: str) -> str:
     return f"{group}.{version}.{name}"
 
 
+def camel_to_pep8(name: str) -> str:
+    """
+    Converts a camelcase identifier name a PEP8 param name using underscores
+    :param name: string; a possibly camel-cased name
+    :return: a PEP8 equivalent with the upper case leter mapped to '_<lower>'
+
+    NOTE: will turn strings like 'FQDN' to '_f_q_d_n'; probably not what you want.
+    """
+    letters = [a if a.islower() else f"_{a.lower()}"
+               for a in name]
+    return ''.join(letters)
+
+
 # mapping the group in apiVersion to the swagger group string
 _api_group_swagger_map = {
     "admissionregistration.k8s.io": "io.k8s.api.admissionregistration",
