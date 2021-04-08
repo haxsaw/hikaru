@@ -1168,9 +1168,9 @@ def test103():
     """
     ipb = IPBlock("192.168.6.1/32", except_=['wibble', 'wobble'])
     d = get_clean_dict(ipb)
-    assert 'except' in d
+    assert 'except_' not in d and 'except' in d
     y = get_yaml(ipb)
-    assert 'except' in y
+    assert 'except_' not in y and 'except' in y
 
 
 if __name__ == "__main__":
