@@ -9,20 +9,36 @@ In the Kubernetes swagger file, there are some property names that are Python re
 **except**, **continue**, and **from**. Since Python won't allow these words as attribute names,
 they have had a '_' appended to them for use within Python, but get translated back to their
 original versions when going back to YAML. So within Python, you'll use **except_**,
-**continue_**, and **from_**.
+**continue_**, and **from_**. These are converted back to their official swagger names when YAML, JSON, or Python dicts are generated from Hikaru objects.
 
-Skipped API groups
-------------------
 
-To make type annotations on Python dataclasses, the type needs to be defined before the annotation
-can be created. However, the **apiextensions** group in the API file contains a reference cycle
-in terms of the defined types, and hence a topological sort to determine the order of writing
-classes for these objects isn't possible. Therefore, there is currently no support for the 
-objects defined in the ``apiextensions`` group in Hikaru. Solutions for this problem are being
-considered.
+Workarounds for JSONSchemProps
+------------------------------
 
-Long run times for getting formatted Python code
-------------------------------------------------
+The `apiextensions` group wasn't previously modeled by Hikaru as it contained a recusively-
+defined object that couldn't be modelled using the techniques in earlier releases. From
+**0.3a0** onwards, this group and its objects are now part of Hikaru, including the recursive 
+object.
+
+This object is **JSONSchemaProps**. In order to create Python dataclasses that provide a
+similar feel to the others in Hikaru, this object has been broken into two parts, one
+inheriting from the other. The class **JSONSchemaPropsHikaruBase** contains all the non-
+recursive fields from the original JSONSchemaProps swagger definition. The **JSONSchemaProps**
+class inherits from JSONSchemaPropsHikaruBase, and only contains the attributes that
+originally refered back to JSONSchemaProps, but now refer instead to the parent class,
+JSONSchemaPropsHikaruBase. In general, you will only need to create instances of
+JSONSchemaProps, not its parent class. Anywhere there is an argument or attribute that
+is annotated as needing a `JSONSchemaPropsHikaruBase` instance, you are free to use
+`JSONSchemProps` instead, and your IDE won't have any complaints, and ``get_type_warnings()``
+shouldn't raise any warnings.
+
+JSONSchemaProps has two more incompatible surprises: it's definition contains property names
+**$ref** and **$schema**. In Hikaru Python classes, these are transformed into **dollar_ref** and
+**dollar_schema**, respectively. These are rendered back to their original form whenever you
+leave Hikaru objects for YAML, JSON, or a Python dict.
+
+Long-ish run times for formatting Python code
+--------------------------------------------------------------
 
 Hikaru uses the ``autopep`` and ``black`` packages to reformat generated code to be PEP8 compliant. However,
 these packages can run into some issues with the kinds of deeply nested object instantiation

@@ -380,7 +380,8 @@ class HikaruBase(object):
                                                                           bool,
                                                                           float))) or
                     (is_dataclass(initial_type) and
-                     issubclass(initial_type, HikaruBase))):
+                     issubclass(initial_type, HikaruBase)) or
+                    initial_type is object):
                 # this is a type that can default to None
                 kw_args[p.name] = None
             else:
@@ -548,7 +549,8 @@ class HikaruBase(object):
             # current value of initial_type:
             # ok, now we have either a scaler (int, bool, str, etc),
             # a subclass of HikaruBase,
-            # or a container (Dict, List)
+            # or a container (Dict, List),
+            # or plain ol' object for older releases
             # now we want the attr's real type (scalars, dict, list, HikaruBase)
             # and if list, we want the contained type
             contained_type = None
@@ -560,10 +562,12 @@ class HikaruBase(object):
             elif origin is dict:
                 attr_type = dict
             elif (type(initial_type) != type or
-                    not issubclass(initial_type, (str, int,  float,
-                                                  bool, HikaruBase))):
+                  (not issubclass(initial_type, (str, int,  float,
+                                                  bool, HikaruBase)) and
+                  initial_type is not object)):
                 raise NotImplementedError(f"Internal error! Some other kind of type:"
-                                          f" {initial_type}, name={f.name}."
+                                          f" {initial_type}, attr={f.name}"
+                                          f" in class {self.__class__.__name__}."
                                           f" Please file a bug report.")
             attrval = getattr(self, f.name)
             if attrval is None:
@@ -662,8 +666,9 @@ class HikaruBase(object):
                 raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}")
             if val is None:
                 continue
-            if type(initial_type) == type and issubclass(initial_type, (int, str,
-                                                                        bool, float)):
+            if (type(initial_type) == type and issubclass(initial_type, (int, str,
+                                                                        bool, float))
+                    or initial_type == object):
                 # take as is
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):

@@ -22,6 +22,7 @@ from hikaru import *
 import json
 from build import *
 from hikaru.naming import make_swagger_name
+from hikaru.version_kind import get_version_kind_class
 
 p = None
 
@@ -417,7 +418,7 @@ def test39():
 
 def test40():
     """
-    check that a twiddled dup'd object isn't equals
+    check that a twiddled dup'd object isn't equal
     """
     assert isinstance(p, Pod)
     q: Pod = p.dup()
@@ -1171,6 +1172,46 @@ def test103():
     assert 'except_' not in d and 'except' in d
     y = get_yaml(ipb)
     assert 'except_' not in y and 'except' in y
+
+
+def test104():
+    """
+    ensure that you can acquire a version of the v1 Pod class
+    """
+    pod = get_version_kind_class('v1', 'Pod')
+    assert pod is not None
+
+
+def test105():
+    """
+    ensure that you can acquire a version of the v1alpha1 Pod class
+    """
+    pod = get_version_kind_class('v1alpha1', 'Pod')
+    assert pod is not None
+
+
+def test106():
+    """
+    ensure that you can acquire a version of the v1beta1 Pod class
+    """
+    pod = get_version_kind_class('v1beta1', 'Pod')
+    assert pod is not None
+
+
+def test107():
+    """
+    ensure that you can acquire a version of the v2beta1 Pod class
+    """
+    pod = get_version_kind_class('v2beta1', 'Pod')
+    assert pod is not None
+
+
+def test108():
+    """
+    ensure that you can acquire a version of the v2beta2 Pod class
+    """
+    pod = get_version_kind_class('v2beta2', 'Pod')
+    assert pod is not None
 
 
 if __name__ == "__main__":

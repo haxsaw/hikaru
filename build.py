@@ -64,7 +64,7 @@ method; can find how many required positional args there are.
 from itertools import chain
 from pathlib import Path
 import sys
-from typing import *
+from typing import List, Dict, Optional, Union, Tuple
 import json
 import networkx
 from hikaru.naming import (process_swagger_name, full_swagger_name,
@@ -174,7 +174,7 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     print(file=stream)
     print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
           file=stream)
-    print("from typing import *", file=stream)
+    print("from typing import List, Dict, Optional, Any", file=stream)
     print("from dataclasses import dataclass, field", file=stream)
     if other_imports is not None:
         for line in other_imports:
@@ -537,7 +537,15 @@ class PropertyDescriptor(object):
             else:
                 raise TypeError(f"Unknown type: {self.item_type} in property {self.name}")
         elif ctype == "object":
-            self.container_type = dict
+            # This can be a couple of things, depending on the release
+            # of the spec. Sometimes it's just used to allow any content,
+            # and sometimes it's for a untyped key/value object
+            # We'll look for the presence of 'additionalProperties' and if
+            # found, we'll treat it as a dict, otherwise an object
+            if 'additionalProperties' in d:
+                self.container_type = dict
+            else:
+                self.container_type = object
         else:
             self.container_type = None
 
@@ -590,9 +598,13 @@ class PropertyDescriptor(object):
                                               as_required))
         elif self.container_type is dict:
             parts.append(self.as_required("Dict[str, str]", as_required))
+        elif self.container_type is object:
+            parts.append(self.as_required("object", as_required))
         else:
             raise TypeError(f"Unknown attribute {self.name} in "
-                            f"{self.containing_class.short_name}")
+                            f"{self.containing_class.short_name}, "
+                            f"prop_type:{self.prop_type}, "
+                            f"container:{self.container_type}")
         # now check if we should add a field default
         if not as_required:
             # then we need to add a default value so we don't have to
@@ -934,15 +946,15 @@ def build_it(swagger_file: str):
     :param swagger_file: string; path to the swagger file to process
     """
     load_stable(swagger_file)
-    v1ops = get_version_ops("v1")
-    for key, objops in v1ops.object_ops.items():
-        print(f"class {key}")
-        for k, op in objops.operations.items():
-            print(f"\t{k} {op.as_python_method()}")
+    # v1ops = get_version_ops("v1")
+    # for key, objops in v1ops.object_ops.items():
+    #     print(f"class {key}")
+    #     for k, op in objops.operations.items():
+    #         print(f"\t{k} {op.as_python_method()}")
     # analyze_obj_mismatches()
     # analyze_response_mismatches()
-    # prep_package(model_package)
-    # write_modules(model_package)
+    prep_package(model_package)
+    write_modules(model_package)
 
 
 if __name__ == "__main__":

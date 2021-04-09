@@ -27,10 +27,10 @@ from autopep8 import fix_code
 from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
-from hikaru.model import *
+# from hikaru.model import *
 from hikaru.meta import HikaruBase
 from hikaru.naming import process_api_version, dprefix
-from hikaru.version_kind import version_kind_map
+from hikaru.version_kind import get_version_kind_class
 
 
 def get_python_source(obj: HikaruBase, assign_to: str = None,
@@ -310,7 +310,7 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     for i, doc in enumerate(docs):
         _, api_version = process_api_version(doc.get('apiVersion', ""))
         kind = doc.get('kind', "")
-        klass = version_kind_map.get((api_version, kind))
+        klass = get_version_kind_class(api_version, kind)
         if klass is None:
             raise RuntimeError(f"Doc number {i} in the supplied YAML has an"
                                f" unrecognized api_version ({api_version}) and"
