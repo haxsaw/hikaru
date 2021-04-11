@@ -28,10 +28,11 @@ https://github.com/kubernetes-client/python/tree/master/kubernetes/e2e_test/test
 
 import pathlib
 from hikaru import *
+from hikaru.naming import get_default_release
 
 
 def make_instance_from_source(version, source):
-    exec(f'from hikaru.model.{version} import *')
+    exec(f'from hikaru.model.{get_default_release()}.{version} import *')
     x = eval(source, globals(), locals())
     return x
 

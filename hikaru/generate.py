@@ -28,7 +28,7 @@ from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
 # from hikaru.model import *
-from hikaru.meta import HikaruBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.naming import process_api_version, dprefix
 from hikaru.version_kind import get_version_kind_class
 
@@ -279,7 +279,7 @@ def get_processors(path: str = None, stream: TextIO = None,
 
 
 def load_full_yaml(path: str = None, stream: TextIO = None,
-                   yaml: str = None) -> List[HikaruBase]:
+                   yaml: str = None, release: Optional[str] = None) -> List[HikaruBase]:
     """
     Parse/process the indicated Kubernetes yaml file and return a list of Hikaru objects
 
@@ -300,6 +300,13 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     :param path: string; path to a yaml file that will be opened, read, and processed
     :param stream: return of the open() function, or any file-like (TextIO) object
     :param yaml: string; the actual YAML to process
+    :param release: optional string; if supplied, indicates which release to load classes
+        from. Must be one of the subpackage of hikaru.model, such as rel_1_16 or
+        rel_unversioned. If unspecified, the release specified from
+        hikaru.naming.set_default_release() is used; if that hasn't been called,
+        then the default from when hikaru was built will be used.
+        NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
+        Python client; use appropriately.
     :return: list of HikaruBase subclasses, one for each document in the YAML file
     :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
         api_version/kind pair; Hikaru can't determine what class to instantiate, or
@@ -310,12 +317,13 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     for i, doc in enumerate(docs):
         _, api_version = process_api_version(doc.get('apiVersion', ""))
         kind = doc.get('kind', "")
-        klass = get_version_kind_class(api_version, kind)
+        klass = get_version_kind_class(api_version, kind, release)
         if klass is None:
             raise RuntimeError(f"Doc number {i} in the supplied YAML has an"
                                f" unrecognized api_version ({api_version}) and"
                                f" kind ({kind}) pair; can't determine the class"
                                f" to instantiate")
+        assert issubclass(klass, HikaruDocumentBase)
         inst = klass.from_yaml(doc)
         objs.append(inst)
 

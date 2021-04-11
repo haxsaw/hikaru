@@ -18,11 +18,55 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict
+from threading import current_thread, Thread
 
 
 # this is the prefix to use for attributes that otherwise start with '$'
 dprefix = 'dollar_'
+
+
+_default_release = None
+
+_default_release_by_thread: Dict[str, str] = {}
+
+
+def get_default_release() -> Optional[str]:
+    """
+    Returns the currently set default release to use when loading YAML/JSON
+
+    :return: string; the value of the default release for the current thread.
+        If unknown, the current global default release is returned, whatever
+        the value (possibly None).
+    """
+    ct: Thread = current_thread()
+    def_rel = _default_release_by_thread.get(ct.name)
+    if def_rel is None:
+        def_rel = _default_release
+    return def_rel
+
+
+def set_default_release(relname: str):
+    """
+    Sets the default release for the current thread.
+    :param relname: string; the name of the release to use for this same thread
+    """
+    ct: Thread = current_thread()
+    _default_release_by_thread[ct.name] = relname
+
+
+def set_global_default_release(relname: str):
+    """
+    Sets the global default release to use to the specified release
+
+    This is the release value used if there is no per-thread default release
+
+    :param relname: string; the name of a release module in the model
+        package. NOTE: there is no checking that this release package
+        exists!
+    """
+    global _default_release
+    _default_release = relname
 
 
 def process_api_version(api_version: str) -> Tuple[str, str]:

@@ -72,20 +72,7 @@ from hikaru.naming import (process_swagger_name, full_swagger_name,
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 
 
-python_reserved = {"except", "continue", "from", "not", "or"}
-
-
-types_map = {"boolean": "bool",
-             "integer": "int",
-             "string": "str",
-             "float": "float",
-             "number": "float"}
-
-
 NoneType = type(None)
-
-
-unversioned_module_name = "unversioned"
 
 
 def _clean_directory(dirpath: str, including_dirpath=False):
@@ -107,12 +94,7 @@ except ImportError:
     pass"""
 
 
-def prep_package(directory: str):
-    """
-    This function empties the directory named 'directory', creating it if needed
-    :param directory: string; name of an empty directory to create. Creates it
-        if needed, and removes any existing content if it's already there.
-    """
+def _setup_dir(directory: str) -> Path:
     path = Path(directory)
     if not path.exists():
         path.mkdir(parents=True)
@@ -120,6 +102,33 @@ def prep_package(directory: str):
         if not path.is_dir():
             path.unlink()
             path.mkdir(parents=True)
+    return path
+
+
+def prep_model_root(directory: str) -> Path:
+    path = _setup_dir(directory)
+    return path
+
+
+def make_root_init(directory: str, default_rel: str):
+    path = Path(directory)
+    init = path / "__init__.py"
+    if init.exists():
+        init.unlink()
+    f = init.open('w')
+    f.write(_module_docstring)
+    f.write(f"from .{default_rel} import *\n")
+    f.write(f"default_release = '{default_rel}'\n")
+    f.close()
+
+
+def prep_rel_package(directory: str) -> Path:
+    """
+    This function empties the directory named 'directory', creating it if needed
+    :param directory: string; name of an empty directory to create. Creates it
+        if needed, and removes any existing content if it's already there.
+    """
+    path = _setup_dir(directory)
     # once here, the directory exists and is a directory; clean it out
     _clean_directory(str(path))
     init = path / "__init__.py"
@@ -129,6 +138,7 @@ def prep_package(directory: str):
     print(_package_init_code, file=f)
     print(file=f)
     output_footer(stream=f)
+    return path
 
 
 _copyright_string = \
@@ -468,9 +478,6 @@ class ModuleDef(object):
         output_footer(stream=stream)
 
 
-_all_module_defs = {}
-
-
 def get_module_def(version) -> ModuleDef:
     md = _all_module_defs.get(version)
     if md is None:
@@ -619,9 +626,6 @@ class PropertyDescriptor(object):
         return "".join(parts)
 
 
-model_package = "hikaru/model"
-
-
 class OpParameter(object):
     def __init__(self, name: str, ptype: str, description: str, required: bool):
         self.name = name
@@ -746,9 +750,6 @@ class APIVersionOperations(object):
         qops.add_operation(op.op_id, op)
 
 
-ops_by_version: Dict[str, APIVersionOperations] = {}
-
-
 def get_version_ops(version: str) -> APIVersionOperations:
     vops = ops_by_version.get(version)
     if vops is None:
@@ -776,14 +777,6 @@ def get_path_domain(path: str):
     else:
         domain = None
     return domain
-
-
-# @TEMPORARY
-objop_param_mismatches: Dict[str, Operation] = {}
-
-
-# @TEMPORARY
-response_mismatches: Dict[str, Operation] = {}
 
 
 def process_params_and_responses(path: str, verb: str, op_id: str,
@@ -858,7 +851,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         vops.add_query_operation(domain, new_op)
 
 
-def load_stable(swagger_file_path: str) -> NoneType:
+def load_stable(swagger_file_path: str) -> str:
     f = open(swagger_file_path, 'r')
     d = json.load(f)
     for k, v in d["definitions"].items():
@@ -889,77 +882,70 @@ def load_stable(swagger_file_path: str) -> NoneType:
             last_verb = verb
             last_opid = op_id
 
-
-def analyze_obj_mismatches():
-    matches: Dict[str, Tuple[str, str, Operation]] = {}
-    print("\n")
-    for pname, op in objop_param_mismatches.items():
-        version = get_path_version(op.op_path)
-        for altver in ['v1alpha1', 'v1beta1', 'v1beta2', 'v1', 'v2beta1']:
-            if altver == version:
-                continue
-            altpath = op.op_path.replace(version, altver)
-            vops = get_version_ops(altver)
-            altop = vops.object_ops.get(altpath)
-            if altop:
-                matches[pname] = (version, altver, op)
-                break
-        else:
-            print(f"No other version for '{pname}' in "
-                  f"{op.op_path}:{op.verb}")
-
-    print("\nOBJECT MATCHES:")
-    for k, (ver, altver, op) in matches.items():
-        print(f"{k}: {ver}, {altver} {op.op_id}")
+    info = d.get('info')
+    rel_version = info.get("version")
+    relnum = rel_version.split("-")[-1].replace(".", "_")
+    release_name = f"rel_{relnum}"
+    return release_name
 
 
-def analyze_response_mismatches():
-    matches: Dict[str, Tuple[str, str, Operation]] = {}
-    print("\n")
-    for key, op in response_mismatches.items():
-        version = get_path_version(op.op_path)
-        domain = get_path_domain(op.op_path)
-        for altver in ['v1alpha1', 'v1beta1', 'v1beta2', 'v1', 'v2beta1']:
-            if altver == version:
-                continue
-            altpath = op.op_path.replace(version, altver)
-            vops = get_version_ops(altver)
-            altdomain = vops.query_ops.get(domain)
-            if altdomain is None:
-                print(f"NO DOMAIN {domain} in {altver}")
-                continue
-            altop = altdomain.operations.get(op.op_id)
-            if altop:
-                matches[key] = (version, altver, op)
-        else:
-            print(f"No other version for {key} in "
-                  f"{op.op_path}:{op.verb}")
-    print("\nQUERY MATCHES")
-    for k, (ver, altver, op) in matches.items():
-        print(f"{k}: {ver}, {altver} {op.op_id}")
+python_reserved = {"except", "continue", "from", "not", "or"}
 
 
-def build_it(swagger_file: str):
+types_map = {"boolean": "bool",
+             "integer": "int",
+             "string": "str",
+             "float": "float",
+             "number": "float"}
+
+
+unversioned_module_name = "unversioned"
+
+
+objop_param_mismatches: Dict[str, Operation] = {}
+
+
+response_mismatches: Dict[str, Operation] = {}
+
+
+_all_module_defs = {}
+
+
+model_package = "hikaru/model"
+
+
+ops_by_version: Dict[str, APIVersionOperations] = {}
+
+
+def reset_all():
+    objop_param_mismatches.clear()
+    response_mismatches.clear()
+    _all_module_defs.clear()
+    ops_by_version.clear()
+
+
+def build_it(swagger_file: str, main_rel: str):
     """
     Initiate the swagger-file-driven model package build
 
     :param swagger_file: string; path to the swagger file to process
     """
-    load_stable(swagger_file)
-    # v1ops = get_version_ops("v1")
-    # for key, objops in v1ops.object_ops.items():
-    #     print(f"class {key}")
-    #     for k, op in objops.operations.items():
-    #         print(f"\t{k} {op.as_python_method()}")
-    # analyze_obj_mismatches()
-    # analyze_response_mismatches()
-    prep_package(model_package)
-    write_modules(model_package)
+    reset_all()
+    relname = load_stable(swagger_file)
+    path = prep_model_root(model_package)
+    relpath = path / relname
+    prep_rel_package(str(relpath))
+    write_modules(str(relpath))
+    if main_rel == relname:
+        # this is the main release; make the root package default to it
+        make_root_init(model_package, main_rel)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"usage: {sys.argv[0]} <path-to-swagger-json-file>")
+        print(f"usage: {sys.argv[0]} <main-rel-name> <swagger-json-file>+")
         sys.exit(1)
-    build_it(sys.argv[1])
+    main_rel = sys.argv[1]
+    for swagger_file in sys.argv[2:]:
+        build_it(swagger_file, main_rel)
     sys.exit(0)

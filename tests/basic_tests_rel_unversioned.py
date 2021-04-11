@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from hikaru import *
+from hikaru.model.rel_unversioned import *
 import json
 from build import *
 from hikaru.naming import make_swagger_name
@@ -28,6 +29,7 @@ p = None
 
 
 def setup_pod() -> Pod:
+    set_default_release('rel_unversioned')
     docs = load_full_yaml(stream=open("test.yaml", "r"))
     pod = docs[0]
     assert isinstance(pod, Pod)

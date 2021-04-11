@@ -21,21 +21,26 @@
 import importlib
 from typing import Dict, Optional
 from hikaru.meta import HikaruDocumentBase
-# try:
-#     from hikaru.model.versions import versions
-# except ImportError:
-#     versions = []
+from hikaru.naming import get_default_release
 
-_version_kind_class_cache: Dict[str, Dict[str, HikaruDocumentBase]] = {}
+_release_version_kind_class_cache: Dict[str, Dict[str, Dict[str, type]]] = {}
 
 
-def get_version_kind_class(version: str, kind: str) -> Optional[type]:
+def get_version_kind_class(version: str, kind: str,
+                           release: Optional[str] = None) -> Optional[type]:
     """
     Return a class for a subclasses of HikaruDocumentBase for a specific K8s version
 
     :param version: string; name of the version in which to look for the object
     :param kind: string; value of the 'kind' parameter for a document; same as
         the name of the class that models the document
+    :param release: optional string; if supplied, indicates which release to load classes
+        from. Must be one of the subpackage of hikaru.model, such as rel_1_16 or
+        rel_unversioned. If unspecified, the release specified from
+        hikaru.naming.set_default_release() is used; if that hasn't been called,
+        then the default from when hikaru was built will be used.
+        NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
+        Python client; use appropriately.
     :return: a class object that is a subclass of HikaruDocumentBase
 
     NOTE: this function does lazy loading of modules in order to avoid
@@ -43,12 +48,17 @@ def get_version_kind_class(version: str, kind: str) -> Optional[type]:
         requested from a version the function may run a bit longer as it loads
         up the needed modules and processes its symbols
     """
-    kind_dict = _version_kind_class_cache.get(version)
+    use_release = release if release is not None else get_default_release()
+    version_kind = _release_version_kind_class_cache.get(use_release)
+    if version_kind is None:
+        version_kind = {}
+        _release_version_kind_class_cache[use_release] = version_kind
+    kind_dict = version_kind.get(version)
     if kind_dict is None:
-        kind_dict: Dict[str, HikaruDocumentBase] = {}
-        _version_kind_class_cache[version] = kind_dict
+        kind_dict = {}
+        version_kind[version] = kind_dict
         try:
-            mod = importlib.import_module(f".{version}", "hikaru.model")
+            mod = importlib.import_module(f".{version}", f"hikaru.model.{use_release}")
         except ImportError:
             pass
         else:

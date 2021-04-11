@@ -591,7 +591,8 @@ class HikaruBase(object):
                                                 f"Attribute {f.name} is None but"
                                                 f" should be at least an empty dict"))
             elif (attr_type != type(attrval) and
-                  not issubclass(attr_type, type(attrval))):
+                  not issubclass(attr_type, type(attrval)) and
+                  attr_type is not object):
                 warnings.append(TypeWarning(self.__class__, f.name,
                                             [f.name],
                                             f"Was expecting type {attr_type.__name__},"
