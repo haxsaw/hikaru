@@ -64,9 +64,10 @@ method; can find how many required positional args there are.
 from itertools import chain
 from pathlib import Path
 import sys
-from typing import List, Dict, Optional, Union, Tuple
+from typing import List, Dict, Optional, Union, Tuple, Any
 import json
 import networkx
+from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            make_swagger_name, dprefix, camel_to_pep8)
 from hikaru.meta import HikaruBase, HikaruDocumentBase
@@ -222,6 +223,7 @@ def build_digraph(all_classes: dict) -> networkx.DiGraph:
 def write_classes(class_list, stream=sys.stdout):
     for dc in class_list:
         print(dc.as_python_class(), file=stream)
+        print(file=stream)
 
 
 def write_modules(pkgpath: str):
@@ -254,6 +256,74 @@ def write_modules(pkgpath: str):
     f.close()
 
 
+class Operation(object):
+    """
+    A single operation from paths; associated with a verb such as 'get' or 'post'
+
+    The same path may have multiple operations with different verbs, and hence
+    may also involve different input params/outputs
+    """
+    def __init__(self, verb: str, op_path: str, op_id: str, description: str):
+        self.verb = verb
+        self.op_path = op_path
+        self.op_id = op_id
+        self.description = description
+        self.parameters: List[OpParameter] = list()
+        self.self_param: Optional[OpParameter] = None
+        self.returns = {}
+
+    def add_parameter(self, name: str, ptype: Any, description: str,
+                      required: bool = False):
+        ptype = types_map.get(ptype, ptype)
+        if self.self_param is None and isinstance(ptype, ClassDescriptor):
+            self.self_param = OpParameter(name, ptype, description, required)
+        else:
+            self.parameters.append(OpParameter(name, ptype, description, required))
+
+    def add_return(self, code: str, ptype: Optional[str], description: str):
+        ptype = types_map.get(ptype, ptype)
+        self.returns[code] = OpResponse(code, description, ref=ptype)
+
+    def as_python_method(self) -> List[str]:
+        version = get_path_version(self.op_path)
+        if version is None:
+            version = ""
+        else:
+            version = version.replace('v', 'V')
+        stmt_name = self.op_id.replace(version, '')
+        parts = [f"def {stmt_name}("]
+        required = [p for p in self.parameters if p.required]
+        optional = [p for p in self.parameters if not p.required]
+        params = ["self"]
+        params.extend([p.as_python()
+                       for p in chain(required, optional)])
+        parts.append(", ".join(params))
+        parts.append("):")
+        docstring_parts = ['    r"""', f'    {self.description}']
+        if self.parameters:
+            docstring_parts.append("")
+            for p in self.parameters:
+                docstring_parts.append(f'   {p.docstring()}')
+        docstring_parts.append('   """')
+        docstring = '\n'.join(docstring_parts)
+        defline = "".join(parts)
+        passline = "    pass"
+        final = [defline, docstring, passline] if docstring else [defline, passline]
+        return final
+
+
+class ObjectOperations(object):
+    """
+    This object captures all of the operations that a doc is input for
+    """
+    def __init__(self, full_k8s_name: str):
+        self.full_k8s_name = full_k8s_name
+        self.operations: Dict[str, Operation] = {}
+
+    def add_operation(self, op_id: str, operation: Operation):
+        self.operations[op_id] = operation
+
+
 class ClassDescriptor(object):
     def __init__(self, key, d):
         self.full_name = full_swagger_name(key)
@@ -268,10 +338,14 @@ class ClassDescriptor(object):
         self.is_subclass_of = None
         self.is_document = False
         self.alternate_base = None
+        self.operations: Dict[str, ObjectOperations] = {}
 
         self.required_props = []
         self.optional_props = []
         self.update(d)
+
+    def add_operation(self, op: Operation):
+        self.operations[op.op_id] = op
 
     def has_alternate_base(self) -> bool:
         return self.alternate_base is not None
@@ -354,13 +428,17 @@ class ClassDescriptor(object):
         return alt_base
 
     @staticmethod
-    def split_line(line, prefix: str = "   ", hanging_indent: str = "") -> List[str]:
+    def split_line(line, prefix: str = "   ", hanging_indent: str = "",
+                   linelen: int = 90) -> List[str]:
         parts = []
         if line is not None:
             words = line.split()
             current_line = [prefix]
             for w in words:
-                if sum(len(s) for s in current_line) + len(current_line) + len(w) > 90:
+                w = w.strip()
+                if not w:
+                    continue
+                if sum(len(s) for s in current_line) + len(current_line) + len(w) > linelen:
                     parts.append(" ".join(current_line))
                     current_line = [prefix]
                     if hanging_indent:
@@ -417,9 +495,18 @@ class ClassDescriptor(object):
             for p in (x for x in self.optional_props if x.container_type is not None):
                 lines.append(p.as_python_typeanno(False))
         lines.append("")
-        lines.append("")
+        for op in self.operations.values():
+            assert isinstance(op, Operation)
+            method_lines = [f"    {line}" for line in op.as_python_method()]
+            method_lines.append("")
+            lines.extend(method_lines)
 
-        return "\n".join(lines)
+        code = "\n".join(lines)
+        try:
+            code = format_file_contents(code, fast=False, mode=FileMode())
+        except NothingChanged:
+            pass
+        return code
 
     def depends_on(self, include_external=False) -> list:
         r = [p.depends_on() for p in self.required_props]
@@ -527,8 +614,6 @@ class PropertyDescriptor(object):
                         item_ref = ClassDescriptor(fullname, {})  # make a placeholder
                         mod_def.save_class_desc(item_ref)
                 else:
-                    print(f"No $ref for property:{name}, class"
-                          f":{self.containing_class.full_name}")
                     itype = items.get("type")
                     if itype:
                         if itype == "object":
@@ -627,21 +712,34 @@ class PropertyDescriptor(object):
 
 
 class OpParameter(object):
-    def __init__(self, name: str, ptype: str, description: str, required: bool):
+    def __init__(self, name: str, ptype: Any, description: str, required: bool):
         self.name = name
         self.ptype = ptype
         self.description = description
         self.required = required
 
+    def docstring(self):
+        name = camel_to_pep8(self.name)
+        name = f"{name}_" if name in python_reserved else name
+        line = f':param {name}: {self.description}'
+        final_lines = ClassDescriptor.split_line(line, prefix="",
+                                                 hanging_indent="      ",
+                                                 linelen=70)
+        return "\n".join(final_lines)
+
     def as_python(self) -> str:
         if type(self.ptype) == type:
             ptype = self.ptype.__name__
+        elif isinstance(self.ptype, ClassDescriptor):
+            ptype = self.ptype.short_name
         else:
             ptype = self.ptype
         ptype = (ptype
                  if self.required
                  else f"Optional[{ptype}] = None")
-        return f"{camel_to_pep8(self.name)}: {ptype}"
+        name = camel_to_pep8(self.name)
+        name = f"{name}_" if name in python_reserved else name
+        return f"{name}: {ptype}"
 
 
 class OpResponse(object):
@@ -649,59 +747,6 @@ class OpResponse(object):
         self.code = code
         self.description = description
         self.ref = ref
-
-
-class Operation(object):
-    """
-    A single operation from paths; associated with a verb such as 'get' or 'post'
-
-    The same path may have multiple operations with different verbs, and hence
-    may also involve different input params/outputs
-    """
-    def __init__(self, verb: str, op_path: str, op_id: str):
-        self.verb = verb
-        self.op_path = op_path
-        self.op_id = op_id
-        self.parameters: List[OpParameter] = list()
-        self.self_param: Optional[OpParameter] = None
-        self.returns = {}
-
-    def add_parameter(self, name: str, ptype: str, description: str,
-                      required: bool = False):
-        ptype = types_map.get(ptype, ptype)
-        if self.self_param is None:
-            self.self_param = OpParameter(name, ptype, description, required)
-        else:
-            self.parameters.append(OpParameter(name, ptype, description, required))
-
-    def add_return(self, code: str, ptype: Optional[str], description: str):
-        ptype = types_map.get(ptype, ptype)
-        self.returns[code] = OpResponse(code, description, ref=ptype)
-
-    def as_python_method(self) -> str:
-        version = get_path_version(self.op_path).replace('v', 'V')
-        stmt_name = self.op_id.replace(version, '')
-        parts = [f"def {stmt_name}("]
-        required = [p for p in self.parameters if p.required]
-        optional = [p for p in self.parameters if not p.required]
-        params = ["self"]
-        params.extend([p.as_python()
-                       for p in chain(required, optional)])
-        parts.append(", ".join(params))
-        parts.append("):")
-        return "".join(parts)
-
-
-class ObjectOperations(object):
-    """
-    This object captures all of the operations that a doc is input for
-    """
-    def __init__(self, full_k8s_name: str):
-        self.full_k8s_name = full_k8s_name
-        self.operations: Dict[str, Operation] = {}
-
-    def add_operation(self, op_id: str, operation: Operation):
-        self.operations[op_id] = operation
 
 
 class QueryDomainOperations(object):
@@ -780,12 +825,13 @@ def get_path_domain(path: str):
 
 
 def process_params_and_responses(path: str, verb: str, op_id: str,
-                                 params: list, responses: dict):
+                                 params: list, responses: dict, description: str):
     version = get_path_version(path)
     vops = get_version_ops(version)
     domain = get_path_domain(path)
-    new_op = Operation(verb, path, op_id)
+    new_op = Operation(verb, path, op_id, description)
     k8s_name = None  # used as a flag that an object is an input param
+    cd: ClassDescriptor = None
     for param in params:
         has_mismatch = False
         name = param["name"]
@@ -800,11 +846,10 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 k8s_name = full_swagger_name(pref)
                 _, sver, ptype = process_swagger_name(k8s_name)
                 if version and sver != version:
-                    # print(f"Param ver mismatch on op {new_op.op_id}"
-                    #       f" than the path: {path},"
-                    #       f" {verb}, {name}, pathver={version}, pver={sver}")
-                    has_mismatch = True  # @TEMPORARY
-                    # FIXME: probably need to do something more here
+                    has_mismatch = True
+                mod_def = get_module_def(sver)
+                cd = mod_def.get_class_desc(ptype)
+                ptype = mod_def.get_class_desc(ptype)
             else:
                 ptype = schema.get("type")
                 if not ptype:
@@ -812,14 +857,13 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                                        f"in path {path}, verb {verb}")
                 elif ptype == "object":
                     ptype = "Any"
+                # otherwise, leave it alone
         else:
             raise RuntimeError(f"Don't know what to do with param"
                                f" {path}.{verb}.{name}")
         new_op.add_parameter(name, ptype, description, required)
-        # @TEMPORARY
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
-            _ = 1
 
     for code, response in responses.items():
         has_mismatch = False
@@ -829,9 +873,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 ref = full_swagger_name(response['schema']['$ref'])
                 _, sver, ptype = process_swagger_name(ref)
                 if version and sver != version:
-                    # print(f"Got a return with different version"
-                    #       f" than the path: {path},"
-                    #       f" {verb}, {code}, pathver={version}, rver={sver}")
                     has_mismatch = True
             elif 'type' in response['schema']:
                 ptype = response['schema']['type']
@@ -846,7 +887,11 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 
     if k8s_name is not None:
-        vops.add_obj_operation(k8s_name, new_op)
+        if cd is None:
+            raise RuntimeError(f"Couldn't find a ClassDescriptor for type {k8s_name} "
+                               f"in {op_id}")
+        else:
+            cd.add_operation(new_op)
     else:
         vops.add_query_operation(domain, new_op)
 
@@ -873,12 +918,14 @@ def load_stable(swagger_file_path: str) -> str:
         for verb, details in v.items():
             if verb == "parameters" and type(details) == list:
                 process_params_and_responses(k, last_verb, last_opid, details,
-                                             {})
+                                             {}, '')
                 continue
+            description = details.get('description', '')
             op_id = details["operationId"]
             process_params_and_responses(k, verb, op_id,
                                          details.get("parameters", []),
-                                         details.get("responses", {}))
+                                         details.get("responses", {}),
+                                         description)
             last_verb = verb
             last_opid = op_id
 

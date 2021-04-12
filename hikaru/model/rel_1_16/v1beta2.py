@@ -100,7 +100,7 @@ class OwnerReference(HikaruDocumentBase):
     controller: If true, this reference points to the managing controller.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: str
     kind: str
     name: str
@@ -339,12 +339,18 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         perform.
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: SelfSubjectRulesReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectRulesReviewStatus] = None
+
+    def createSelfSubjectRulesReview(self):
+        r"""
+        create a SelfSubjectRulesReview
+        """
+        pass
 
 
 @dataclass
@@ -1069,7 +1075,9 @@ class NodeSelectorTerm(HikaruBase):
     matchFields: A list of node selector requirements by node's fields.
     """
 
-    matchExpressions: Optional[List[NodeSelectorRequirement]] = field(default_factory=list)
+    matchExpressions: Optional[List[NodeSelectorRequirement]] = field(
+        default_factory=list
+    )
     matchFields: Optional[List[NodeSelectorRequirement]] = field(default_factory=list)
 
 
@@ -1133,7 +1141,9 @@ class NodeAffinity(HikaruBase):
     """
 
     requiredDuringSchedulingIgnoredDuringExecution: Optional[NodeSelector] = None
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[List[PreferredSchedulingTerm]] = field(default_factory=list)
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List[PreferredSchedulingTerm]
+    ] = field(default_factory=list)
 
 
 @dataclass
@@ -1176,7 +1186,9 @@ class LabelSelector(HikaruBase):
         requirements are ANDed.
     """
 
-    matchExpressions: Optional[List[LabelSelectorRequirement]] = field(default_factory=list)
+    matchExpressions: Optional[List[LabelSelectorRequirement]] = field(
+        default_factory=list
+    )
     matchLabels: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
@@ -1252,8 +1264,12 @@ class PodAffinity(HikaruBase):
         intersected, i.e. all terms must be satisfied.
     """
 
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[List[WeightedPodAffinityTerm]] = field(default_factory=list)
-    requiredDuringSchedulingIgnoredDuringExecution: Optional[List[PodAffinityTerm]] = field(default_factory=list)
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List[WeightedPodAffinityTerm]
+    ] = field(default_factory=list)
+    requiredDuringSchedulingIgnoredDuringExecution: Optional[
+        List[PodAffinityTerm]
+    ] = field(default_factory=list)
 
 
 @dataclass
@@ -1282,8 +1298,12 @@ class PodAntiAffinity(HikaruBase):
         podAffinityTerm are intersected, i.e. all terms must be satisfied.
     """
 
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[List[WeightedPodAffinityTerm]] = field(default_factory=list)
-    requiredDuringSchedulingIgnoredDuringExecution: Optional[List[PodAffinityTerm]] = field(default_factory=list)
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List[WeightedPodAffinityTerm]
+    ] = field(default_factory=list)
+    requiredDuringSchedulingIgnoredDuringExecution: Optional[
+        List[PodAffinityTerm]
+    ] = field(default_factory=list)
 
 
 @dataclass
@@ -2866,7 +2886,9 @@ class PodSpec(HikaruBase):
     shareProcessNamespace: Optional[bool] = None
     subdomain: Optional[str] = None
     terminationGracePeriodSeconds: Optional[int] = None
-    ephemeralContainers: Optional[List[EphemeralContainer]] = field(default_factory=list)
+    ephemeralContainers: Optional[List[EphemeralContainer]] = field(
+        default_factory=list
+    )
     hostAliases: Optional[List[HostAlias]] = field(default_factory=list)
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     initContainers: Optional[List[Container]] = field(default_factory=list)
@@ -2874,7 +2896,9 @@ class PodSpec(HikaruBase):
     overhead: Optional[Dict[str, str]] = field(default_factory=dict)
     readinessGates: Optional[List[PodReadinessGate]] = field(default_factory=list)
     tolerations: Optional[List[Toleration]] = field(default_factory=list)
-    topologySpreadConstraints: Optional[List[TopologySpreadConstraint]] = field(default_factory=list)
+    topologySpreadConstraints: Optional[List[TopologySpreadConstraint]] = field(
+        default_factory=list
+    )
     volumes: Optional[List[Volume]] = field(default_factory=list)
 
 
@@ -3106,7 +3130,9 @@ class PodStatus(HikaruBase):
     startTime: Optional[str] = None
     conditions: Optional[List[PodCondition]] = field(default_factory=list)
     containerStatuses: Optional[List[ContainerStatus]] = field(default_factory=list)
-    ephemeralContainerStatuses: Optional[List[ContainerStatus]] = field(default_factory=list)
+    ephemeralContainerStatuses: Optional[List[ContainerStatus]] = field(
+        default_factory=list
+    )
     initContainerStatuses: Optional[List[ContainerStatus]] = field(default_factory=list)
     podIPs: Optional[List[PodIP]] = field(default_factory=list)
 
@@ -3137,12 +3163,69 @@ class Pod(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PodSpec] = None
     status: Optional[PodStatus] = None
+
+    def createNamespacedPod(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Pod
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedPod(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Pod
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedPodStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Pod
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3209,7 +3292,7 @@ class PodList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Pod]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3246,13 +3329,51 @@ class Secret(HikaruDocumentBase):
         reading from the API.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     type: Optional[str] = None
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     stringData: Optional[Dict[str, str]] = field(default_factory=dict)
+
+    def createNamespacedSecret(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Secret
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedSecret(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Secret
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3277,7 +3398,7 @@ class SecretList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Secret]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3383,7 +3504,9 @@ class ReplicationControllerStatus(HikaruBase):
     fullyLabeledReplicas: Optional[int] = None
     observedGeneration: Optional[int] = None
     readyReplicas: Optional[int] = None
-    conditions: Optional[List[ReplicationControllerCondition]] = field(default_factory=list)
+    conditions: Optional[List[ReplicationControllerCondition]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -3415,12 +3538,69 @@ class ReplicationController(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicationControllerSpec] = None
     status: Optional[ReplicationControllerStatus] = None
+
+    def createNamespacedReplicationController(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ReplicationController
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedReplicationController(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ReplicationController
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedReplicationControllerStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified ReplicationController
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3445,7 +3625,7 @@ class ReplicationControllerList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ReplicationController]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3525,12 +3705,50 @@ class ClusterRole(HikaruDocumentBase):
     rules: Rules holds all the PolicyRules for this ClusterRole
     """
 
-    _version = 'v1'
+    _version = "v1"
     aggregationRule: Optional[AggregationRule] = None
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
+
+    def createClusterRole(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ClusterRole
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceClusterRole(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ClusterRole
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3553,7 +3771,7 @@ class ClusterRoleList(HikaruDocumentBase):
     metadata: Standard object's metadata.
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ClusterRole]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3603,7 +3821,7 @@ class ComponentStatus(HikaruDocumentBase):
     conditions: List of component conditions observed
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
@@ -3631,7 +3849,7 @@ class ComponentStatusList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ComponentStatus]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3710,12 +3928,50 @@ class RoleBinding(HikaruDocumentBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
-    _version = 'v1'
+    _version = "v1"
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
+
+    def createNamespacedRoleBinding(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a RoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedRoleBinding(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified RoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3738,7 +3994,7 @@ class RoleBindingList(HikaruDocumentBase):
     metadata: Standard object's metadata.
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[RoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3879,12 +4135,69 @@ class APIService(HikaruDocumentBase):
     status: Status contains derived information about an API server
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[APIServiceSpec] = None
     status: Optional[APIServiceStatus] = None
+
+    def createAPIService(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create an APIService
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceAPIService(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified APIService
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceAPIServiceStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified APIService
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -3907,7 +4220,7 @@ class APIServiceList(HikaruDocumentBase):
     metadata:
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[APIService]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -3948,7 +4261,9 @@ class ScopeSelector(HikaruBase):
     matchExpressions: A list of scope selector requirements by scope of the resources.
     """
 
-    matchExpressions: Optional[List[ScopedResourceSelectorRequirement]] = field(default_factory=list)
+    matchExpressions: Optional[List[ScopedResourceSelectorRequirement]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -4015,12 +4330,69 @@ class ResourceQuota(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ResourceQuotaSpec] = None
     status: Optional[ResourceQuotaStatus] = None
+
+    def createNamespacedResourceQuota(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ResourceQuota
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedResourceQuota(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ResourceQuota
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedResourceQuotaStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified ResourceQuota
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -4045,7 +4417,7 @@ class ResourceQuotaList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ResourceQuota]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4158,7 +4530,9 @@ class PersistentVolumeClaimStatus(HikaruBase):
     phase: Optional[str] = None
     accessModes: Optional[List[str]] = field(default_factory=list)
     capacity: Optional[Dict[str, str]] = field(default_factory=dict)
-    conditions: Optional[List[PersistentVolumeClaimCondition]] = field(default_factory=list)
+    conditions: Optional[List[PersistentVolumeClaimCondition]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -4187,12 +4561,69 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeClaimSpec] = None
     status: Optional[PersistentVolumeClaimStatus] = None
+
+    def createNamespacedPersistentVolumeClaim(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a PersistentVolumeClaim
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedPersistentVolumeClaim(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified PersistentVolumeClaim
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedPersistentVolumeClaimStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified PersistentVolumeClaim
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -4217,7 +4648,7 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[PersistentVolumeClaim]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -4354,12 +4785,18 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         or not
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: SubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+
+    def createNamespacedLocalSubjectAccessReview(self):
+        r"""
+        create a LocalSubjectAccessReview
+        """
+        pass
 
 
 @dataclass
@@ -4759,7 +5196,7 @@ class ObjectReference(HikaruDocumentBase):
         https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     fieldPath: Optional[str] = None
     kind: Optional[str] = None
@@ -4965,12 +5402,69 @@ class PersistentVolume(HikaruDocumentBase):
         https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeSpec] = None
     status: Optional[PersistentVolumeStatus] = None
+
+    def createPersistentVolume(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a PersistentVolume
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replacePersistentVolume(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified PersistentVolume
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replacePersistentVolumeStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified PersistentVolume
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -4995,7 +5489,7 @@ class PersistentVolumeList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[PersistentVolume]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5050,11 +5544,49 @@ class Lease(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LeaseSpec] = None
+
+    def createNamespacedLease(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Lease
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedLease(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Lease
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -5078,7 +5610,7 @@ class LeaseList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Lease]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5167,12 +5699,75 @@ class Namespace(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NamespaceSpec] = None
     status: Optional[NamespaceStatus] = None
+
+    def createNamespace(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Namespace
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespace(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Namespace
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespaceFinalize(self):
+        r"""
+        replace finalize of the specified Namespace
+        """
+        pass
+
+    def replaceNamespaceStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Namespace
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -5197,7 +5792,7 @@ class NamespaceList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Namespace]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5303,11 +5898,49 @@ class Endpoints(HikaruDocumentBase):
         service.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subsets: Optional[List[EndpointSubset]] = field(default_factory=list)
+
+    def createNamespacedEndpoints(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create Endpoints
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedEndpoints(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Endpoints
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -5331,7 +5964,7 @@ class EndpointsList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Endpoints]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5430,7 +6063,7 @@ class Status(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     code: Optional[int] = None
     details: Optional[StatusDetails] = None
@@ -5506,11 +6139,49 @@ class LimitRange(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LimitRangeSpec] = None
+
+    def createNamespacedLimitRange(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a LimitRange
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedLimitRange(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified LimitRange
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -5535,7 +6206,7 @@ class LimitRangeList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[LimitRange]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5653,12 +6324,69 @@ class ReplicaSet(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicaSetSpec] = None
     status: Optional[ReplicaSetStatus] = None
+
+    def createNamespacedReplicaSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ReplicaSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedReplicaSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ReplicaSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedReplicaSetStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified ReplicaSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -5683,7 +6411,7 @@ class ReplicaSetList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     items: List[ReplicaSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -5759,13 +6487,15 @@ class APIGroup(HikaruDocumentBase):
         X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
     """
 
-    _version = 'v1'
+    _version = "v1"
     name: str
     versions: List[GroupVersionForDiscovery]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     preferredVersion: Optional[GroupVersionForDiscovery] = None
-    serverAddressByClientCIDRs: Optional[List[ServerAddressByClientCIDR]] = field(default_factory=list)
+    serverAddressByClientCIDRs: Optional[List[ServerAddressByClientCIDR]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -5787,7 +6517,7 @@ class APIGroupList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     groups: List[APIGroup]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6122,7 +6852,9 @@ class CustomResourceDefinitionVersion(HikaruBase):
     storage: bool
     schema: Optional[CustomResourceValidation] = None
     subresources: Optional[CustomResourceSubresources] = None
-    additionalPrinterColumns: Optional[List[CustomResourceColumnDefinition]] = field(default_factory=list)
+    additionalPrinterColumns: Optional[List[CustomResourceColumnDefinition]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -6297,7 +7029,9 @@ class CustomResourceDefinitionStatus(HikaruBase):
 
     acceptedNames: CustomResourceDefinitionNames
     storedVersions: List[str]
-    conditions: Optional[List[CustomResourceDefinitionCondition]] = field(default_factory=list)
+    conditions: Optional[List[CustomResourceDefinitionCondition]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -6322,12 +7056,69 @@ class CustomResourceDefinition(HikaruDocumentBase):
     status: status indicates the actual state of the CustomResourceDefinition
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: CustomResourceDefinitionSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[CustomResourceDefinitionStatus] = None
+
+    def createCustomResourceDefinition(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a CustomResourceDefinition
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceCustomResourceDefinition(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified CustomResourceDefinition
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceCustomResourceDefinitionStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified CustomResourceDefinition
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -6350,7 +7141,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     metadata:
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[CustomResourceDefinition]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6401,12 +7192,18 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         or not
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: SelfSubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+
+    def createSelfSubjectAccessReview(self):
+        r"""
+        create a SelfSubjectAccessReview
+        """
+        pass
 
 
 @dataclass
@@ -6465,7 +7262,7 @@ class DeleteOptions(HikaruDocumentBase):
         processed
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     gracePeriodSeconds: Optional[int] = None
     kind: Optional[str] = None
@@ -6473,6 +7270,6516 @@ class DeleteOptions(HikaruDocumentBase):
     preconditions: Optional[Preconditions] = None
     propagationPolicy: Optional[str] = None
     dryRun: Optional[List[str]] = field(default_factory=list)
+
+    def deleteCollectionNamespacedConfigMap(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ConfigMap
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedConfigMap(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ConfigMap
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedEndpoints(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Endpoints
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedEndpoints(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete Endpoints
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedEvent(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Event
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedEvent(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete an Event
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedLimitRange(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of LimitRange
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedLimitRange(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a LimitRange
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedPersistentVolumeClaim(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PersistentVolumeClaim
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedPersistentVolumeClaim(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PersistentVolumeClaim
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedPod(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Pod
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedPod(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Pod
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedPodTemplate(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PodTemplate
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedPodTemplate(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PodTemplate
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedReplicationController(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ReplicationController
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedReplicationController(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ReplicationController
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedResourceQuota(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ResourceQuota
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedResourceQuota(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ResourceQuota
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedSecret(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Secret
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedSecret(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Secret
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedServiceAccount(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ServiceAccount
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedServiceAccount(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ServiceAccount
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteNamespacedService(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Service
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteNamespace(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Namespace
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNode(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Node
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNode(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Node
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionPersistentVolume(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PersistentVolume
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deletePersistentVolume(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PersistentVolume
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionMutatingWebhookConfiguration(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of MutatingWebhookConfiguration
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteMutatingWebhookConfiguration(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a MutatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionValidatingWebhookConfiguration(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ValidatingWebhookConfiguration
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteValidatingWebhookConfiguration(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ValidatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionCustomResourceDefinition(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of CustomResourceDefinition
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteCustomResourceDefinition(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a CustomResourceDefinition
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionAPIService(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of APIService
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteAPIService(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete an APIService
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedControllerRevision(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ControllerRevision
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedControllerRevision(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ControllerRevision
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedDaemonSet(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of DaemonSet
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedDaemonSet(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a DaemonSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedDeployment(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Deployment
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedDeployment(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Deployment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedReplicaSet(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ReplicaSet
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedReplicaSet(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ReplicaSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedStatefulSet(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of StatefulSet
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedStatefulSet(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a StatefulSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionAuditSink(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of AuditSink
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteAuditSink(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete an AuditSink
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedHorizontalPodAutoscaler(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of HorizontalPodAutoscaler
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedHorizontalPodAutoscaler(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a HorizontalPodAutoscaler
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedJob(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Job
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedJob(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Job
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedCronJob(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of CronJob
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedCronJob(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a CronJob
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionCertificateSigningRequest(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of CertificateSigningRequest
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteCertificateSigningRequest(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a CertificateSigningRequest
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedLease(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Lease
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedLease(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Lease
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedEndpointSlice(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of EndpointSlice
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedEndpointSlice(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete an EndpointSlice
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedIngress(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Ingress
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedIngress(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete an Ingress
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedNetworkPolicy(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of NetworkPolicy
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedNetworkPolicy(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a NetworkPolicy
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionPodSecurityPolicy(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PodSecurityPolicy
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deletePodSecurityPolicy(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PodSecurityPolicy
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionRuntimeClass(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of RuntimeClass
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteRuntimeClass(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a RuntimeClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedPodDisruptionBudget(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PodDisruptionBudget
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedPodDisruptionBudget(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PodDisruptionBudget
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionClusterRoleBinding(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ClusterRoleBinding
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteClusterRoleBinding(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ClusterRoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionClusterRole(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of ClusterRole
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteClusterRole(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a ClusterRole
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedRoleBinding(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of RoleBinding
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedRoleBinding(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a RoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedRole(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of Role
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedRole(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a Role
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionPriorityClass(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PriorityClass
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deletePriorityClass(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PriorityClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedPodPreset(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of PodPreset
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteNamespacedPodPreset(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a PodPreset
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionStorageClass(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of StorageClass
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteStorageClass(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a StorageClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionVolumeAttachment(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of VolumeAttachment
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteVolumeAttachment(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a VolumeAttachment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionCSIDriver(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of CSIDriver
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteCSIDriver(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a CSIDriver
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionCSINode(
+        self,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ):
+        r"""
+        delete collection of CSINode
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        """
+        pass
+
+    def deleteCSINode(
+        self,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+    ):
+        r"""
+        delete a CSINode
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        """
+        pass
+
+    def deleteCollectionNamespacedCustomObject(
+        self,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        dry_run: Optional[str] = None,
+    ):
+        r"""
+        Delete collection of namespace scoped custom objects
+
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        """
+        pass
+
+    def deleteCollectionClusterCustomObject(
+        self,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        dry_run: Optional[str] = None,
+    ):
+        r"""
+        Delete collection of cluster scoped custom objects
+
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        """
+        pass
+
+    def deleteNamespacedCustomObject(
+        self,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        dry_run: Optional[str] = None,
+    ):
+        r"""
+        Deletes the specified namespace scoped custom object
+
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        """
+        pass
+
+    def deleteClusterCustomObject(
+        self,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        dry_run: Optional[str] = None,
+    ):
+        r"""
+        Deletes the specified cluster scoped custom object
+
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        """
+        pass
 
 
 @dataclass
@@ -6538,12 +13845,69 @@ class Scale(HikaruDocumentBase):
         Read-only.
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ScaleSpec] = None
     status: Optional[ScaleStatus] = None
+
+    def replaceNamespacedDeploymentScale(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace scale of the specified Deployment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedReplicaSetScale(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace scale of the specified ReplicaSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedStatefulSetScale(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace scale of the specified StatefulSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -6578,7 +13942,7 @@ class BoundObjectReference(HikaruDocumentBase):
     uid: UID of the referent.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     name: Optional[str] = None
@@ -6651,12 +14015,18 @@ class TokenRequest(HikaruDocumentBase):
     status:
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: TokenRequestSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenRequestStatus] = None
+
+    def createNamespacedServiceAccountToken(self):
+        r"""
+        create token of a ServiceAccount
+        """
+        pass
 
 
 @dataclass
@@ -6682,12 +14052,50 @@ class ClusterRoleBinding(HikaruDocumentBase):
     subjects: Subjects holds references to the objects the role applies to.
     """
 
-    _version = 'v1'
+    _version = "v1"
     roleRef: RoleRef
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
+
+    def createClusterRoleBinding(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ClusterRoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceClusterRoleBinding(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ClusterRoleBinding
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -6710,7 +14118,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     metadata: Standard object's metadata.
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ClusterRoleBinding]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6881,11 +14289,49 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     webhooks: Webhooks is a list of webhooks and the affected resources and operations.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[MutatingWebhook]] = field(default_factory=list)
+
+    def createMutatingWebhookConfiguration(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a MutatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceMutatingWebhookConfiguration(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified MutatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -6909,7 +14355,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[MutatingWebhookConfiguration]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -6948,7 +14394,9 @@ class TopologySelectorTerm(HikaruBase):
     matchLabelExpressions: A list of topology selector requirements by labels.
     """
 
-    matchLabelExpressions: Optional[List[TopologySelectorLabelRequirement]] = field(default_factory=list)
+    matchLabelExpressions: Optional[List[TopologySelectorLabelRequirement]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -6990,7 +14438,7 @@ class StorageClass(HikaruDocumentBase):
         volumes of this storage class.
     """
 
-    _version = 'v1'
+    _version = "v1"
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
     apiVersion: Optional[str] = None
@@ -6998,9 +14446,49 @@ class StorageClass(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     reclaimPolicy: Optional[str] = None
     volumeBindingMode: Optional[str] = None
-    allowedTopologies: Optional[List[TopologySelectorTerm]] = field(default_factory=list)
+    allowedTopologies: Optional[List[TopologySelectorTerm]] = field(
+        default_factory=list
+    )
     mountOptions: Optional[List[str]] = field(default_factory=list)
     parameters: Optional[Dict[str, str]] = field(default_factory=dict)
+
+    def createStorageClass(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a StorageClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceStorageClass(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified StorageClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7024,7 +14512,7 @@ class StorageClassList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[StorageClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7276,12 +14764,69 @@ class Service(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ServiceSpec] = None
     status: Optional[ServiceStatus] = None
+
+    def createNamespacedService(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Service
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedService(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Service
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedServiceStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Service
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7305,7 +14850,7 @@ class ServiceList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Service]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7333,11 +14878,49 @@ class Role(HikaruDocumentBase):
     rules: Rules holds all the PolicyRules for this Role
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
+
+    def createNamespacedRole(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Role
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedRole(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Role
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7360,7 +14943,7 @@ class RoleList(HikaruDocumentBase):
     metadata: Standard object's metadata.
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Role]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7479,11 +15062,49 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     webhooks: Webhooks is a list of webhooks and the affected resources and operations.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[ValidatingWebhook]] = field(default_factory=list)
+
+    def createValidatingWebhookConfiguration(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ValidatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceValidatingWebhookConfiguration(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ValidatingWebhookConfiguration
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7507,7 +15128,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ValidatingWebhookConfiguration]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7602,7 +15223,9 @@ class StatefulSetSpec(HikaruBase):
     replicas: Optional[int] = None
     revisionHistoryLimit: Optional[int] = None
     updateStrategy: Optional[StatefulSetUpdateStrategy] = None
-    volumeClaimTemplates: Optional[List[PersistentVolumeClaim]] = field(default_factory=list)
+    volumeClaimTemplates: Optional[List[PersistentVolumeClaim]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -7693,12 +15316,69 @@ class StatefulSet(HikaruDocumentBase):
         of date by some window of time.
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[StatefulSetSpec] = None
     status: Optional[StatefulSetStatus] = None
+
+    def createNamespacedStatefulSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a StatefulSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedStatefulSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified StatefulSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedStatefulSetStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified StatefulSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7721,7 +15401,7 @@ class StatefulSetList(HikaruDocumentBase):
     metadata:
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     items: List[StatefulSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7762,13 +15442,51 @@ class ServiceAccount(HikaruDocumentBase):
         https://kubernetes.io/docs/concepts/configuration/secret
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     automountServiceAccountToken: Optional[bool] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     secrets: Optional[List[ObjectReference]] = field(default_factory=list)
+
+    def createNamespacedServiceAccount(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ServiceAccount
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedServiceAccount(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ServiceAccount
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7793,7 +15511,7 @@ class ServiceAccountList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ServiceAccount]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7875,7 +15593,7 @@ class Event(HikaruDocumentBase):
     type: Type of this event (Normal, Warning), new types could be added in the future
     """
 
-    _version = 'v1'
+    _version = "v1"
     involvedObject: ObjectReference
     metadata: ObjectMeta
     action: Optional[str] = None
@@ -7893,6 +15611,44 @@ class Event(HikaruDocumentBase):
     series: Optional[EventSeries] = None
     source: Optional[EventSource] = None
     type: Optional[str] = None
+
+    def createNamespacedEvent(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create an Event
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedEvent(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Event
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -7916,7 +15672,7 @@ class EventList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Event]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -7951,7 +15707,7 @@ class APIVersions(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     serverAddressByClientCIDRs: List[ServerAddressByClientCIDR]
     versions: List[str]
     apiVersion: Optional[str] = None
@@ -8052,12 +15808,18 @@ class TokenReview(HikaruDocumentBase):
         authenticated.
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: TokenReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenReviewStatus] = None
+
+    def createTokenReview(self):
+        r"""
+        create a TokenReview
+        """
+        pass
 
 
 @dataclass
@@ -8194,12 +15956,69 @@ class Job(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[JobSpec] = None
     status: Optional[JobStatus] = None
+
+    def createNamespacedJob(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Job
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedJob(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Job
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedJobStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Job
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -8223,7 +16042,7 @@ class JobList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Job]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8298,7 +16117,7 @@ class APIResourceList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     groupVersion: str
     resources: List[APIResource]
     apiVersion: Optional[str] = None
@@ -8327,11 +16146,49 @@ class PodTemplate(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     template: Optional[PodTemplateSpec] = None
+
+    def createNamespacedPodTemplate(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a PodTemplate
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedPodTemplate(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified PodTemplate
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -8355,7 +16212,7 @@ class PodTemplateList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[PodTemplate]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8378,7 +16235,7 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     apiVersion: API version of the referent
     """
 
-    _version = 'v1'
+    _version = "v1"
     kind: str
     name: str
     apiVersion: Optional[str] = None
@@ -8461,12 +16318,69 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     status: current information about the autoscaler.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[HorizontalPodAutoscalerSpec] = None
     status: Optional[HorizontalPodAutoscalerStatus] = None
+
+    def createNamespacedHorizontalPodAutoscaler(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a HorizontalPodAutoscaler
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedHorizontalPodAutoscaler(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified HorizontalPodAutoscaler
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedHorizontalPodAutoscalerStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified HorizontalPodAutoscaler
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -8489,7 +16403,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
     metadata: Standard list metadata.
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[HorizontalPodAutoscaler]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -8518,11 +16432,23 @@ class Binding(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     target: ObjectReference
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+
+    def createNamespacedBinding(self):
+        r"""
+        create a Binding
+        """
+        pass
+
+    def createNamespacedPodBinding(self):
+        r"""
+        create binding of a Pod
+        """
+        pass
 
 
 @dataclass
@@ -8890,12 +16816,69 @@ class Node(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NodeSpec] = None
     status: Optional[NodeStatus] = None
+
+    def createNode(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Node
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNode(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Node
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNodeStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Node
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -8919,7 +16902,7 @@ class NodeList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[Node]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9098,12 +17081,69 @@ class Deployment(HikaruDocumentBase):
     status: Most recently observed status of the Deployment.
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DeploymentSpec] = None
     status: Optional[DeploymentStatus] = None
+
+    def createNamespacedDeployment(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a Deployment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedDeployment(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified Deployment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedDeploymentStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified Deployment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9126,7 +17166,7 @@ class DeploymentList(HikaruDocumentBase):
     metadata: Standard list metadata.
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     items: List[Deployment]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9318,11 +17358,49 @@ class NetworkPolicy(HikaruDocumentBase):
     spec: Specification of the desired behavior for this NetworkPolicy.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NetworkPolicySpec] = None
+
+    def createNamespacedNetworkPolicy(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a NetworkPolicy
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedNetworkPolicy(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified NetworkPolicy
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9346,7 +17424,7 @@ class NetworkPolicyList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[NetworkPolicy]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9385,12 +17463,50 @@ class ControllerRevision(HikaruDocumentBase):
     data: Data is the serialized representation of the state.
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     revision: int
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     data: Optional[object] = field(default_factory=dict)
+
+    def createNamespacedControllerRevision(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ControllerRevision
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedControllerRevision(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ControllerRevision
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9414,7 +17530,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     items: List[ControllerRevision]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9450,12 +17566,50 @@ class ConfigMap(HikaruDocumentBase):
         BinaryData field, this is enforced during validation process.
     """
 
-    _version = 'v1'
+    _version = "v1"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     binaryData: Optional[Dict[str, str]] = field(default_factory=dict)
     data: Optional[Dict[str, str]] = field(default_factory=dict)
+
+    def createNamespacedConfigMap(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a ConfigMap
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedConfigMap(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified ConfigMap
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9479,7 +17633,7 @@ class ConfigMapList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[ConfigMap]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9508,12 +17662,18 @@ class SubjectAccessReview(HikaruDocumentBase):
         or not
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: SubjectAccessReviewSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+
+    def createSubjectAccessReview(self):
+        r"""
+        create a SubjectAccessReview
+        """
+        pass
 
 
 @dataclass
@@ -9550,7 +17710,7 @@ class PriorityClass(HikaruDocumentBase):
         NonPreemptingPriority feature.
     """
 
-    _version = 'v1'
+    _version = "v1"
     value: int
     apiVersion: Optional[str] = None
     description: Optional[str] = None
@@ -9558,6 +17718,44 @@ class PriorityClass(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     preemptionPolicy: Optional[str] = None
+
+    def createPriorityClass(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a PriorityClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replacePriorityClass(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified PriorityClass
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9581,7 +17779,7 @@ class PriorityClassList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[PriorityClass]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9756,12 +17954,69 @@ class DaemonSet(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DaemonSetSpec] = None
     status: Optional[DaemonSetStatus] = None
+
+    def createNamespacedDaemonSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a DaemonSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedDaemonSet(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified DaemonSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceNamespacedDaemonSetStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified DaemonSet
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9785,7 +18040,7 @@ class DaemonSetList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1beta2'
+    _version = "v1beta2"
     items: List[DaemonSet]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
@@ -9903,12 +18158,69 @@ class VolumeAttachment(HikaruDocumentBase):
         attach or detach operation, i.e. the external-attacher.
     """
 
-    _version = 'v1'
+    _version = "v1"
     spec: VolumeAttachmentSpec
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[VolumeAttachmentStatus] = None
+
+    def createVolumeAttachment(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        create a VolumeAttachment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceVolumeAttachment(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace the specified VolumeAttachment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
+
+    def replaceVolumeAttachmentStatus(
+        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+    ):
+        r"""
+        replace status of the specified VolumeAttachment
+
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        """
+        pass
 
 
 @dataclass
@@ -9932,7 +18244,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
-    _version = 'v1'
+    _version = "v1"
     items: List[VolumeAttachment]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None

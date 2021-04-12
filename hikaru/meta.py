@@ -798,3 +798,7 @@ class HikaruBase(object):
 @dataclass
 class HikaruDocumentBase(HikaruBase):
     _version = 'UNKNOWN'
+
+    def _dispatch(self, k8s_func, *args, client=None, **kwargs):
+        pass
+

@@ -279,7 +279,8 @@ def get_processors(path: str = None, stream: TextIO = None,
 
 
 def load_full_yaml(path: str = None, stream: TextIO = None,
-                   yaml: str = None, release: Optional[str] = None) -> List[HikaruBase]:
+                   yaml: str = None,
+                   release: Optional[str] = None) -> List[HikaruDocumentBase]:
     """
     Parse/process the indicated Kubernetes yaml file and return a list of Hikaru objects
 
@@ -307,7 +308,7 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
         then the default from when hikaru was built will be used.
         NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
         Python client; use appropriately.
-    :return: list of HikaruBase subclasses, one for each document in the YAML file
+    :return: list of HikaruDocumentBase subclasses, one for each document in the YAML file
     :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
         api_version/kind pair; Hikaru can't determine what class to instantiate, or
         if none of the YAML input sources have been specified.
