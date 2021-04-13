@@ -186,7 +186,7 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
           file=stream)
     print("from typing import List, Dict, Optional, Any", file=stream)
-    print("from dataclasses import dataclass, field", file=stream)
+    print("from dataclasses import dataclass, field, InitVar", file=stream)
     if other_imports is not None:
         for line in other_imports:
             print(line, file=stream)
@@ -297,6 +297,9 @@ class Operation(object):
         params = ["self"]
         params.extend([p.as_python()
                        for p in chain(required, optional)])
+        # here, we add any standard parmeter(s) that a all should have:
+        params.append('client=None')
+        # end standards
         parts.append(", ".join(params))
         parts.append("):")
         docstring_parts = ['    r"""', f'    {self.description}']
@@ -494,6 +497,9 @@ class ClassDescriptor(object):
                 lines.append(p.as_python_typeanno(False))
             for p in (x for x in self.optional_props if x.container_type is not None):
                 lines.append(p.as_python_typeanno(False))
+            if self.is_document:
+                lines.append("    # noinspection PyDataclass")
+                lines.append("    client: InitVar[Any] = None")
         lines.append("")
         for op in self.operations.values():
             assert isinstance(op, Operation)

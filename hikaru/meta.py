@@ -27,8 +27,8 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
-from typing import Union, List, Dict
-from dataclasses import fields, dataclass, is_dataclass
+from typing import Union, List, Dict, Any
+from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 
@@ -368,7 +368,7 @@ class HikaruBase(object):
         kw_args = {}
         sig = signature(cls.__init__)
         for p in sig.parameters.values():
-            if p.name == 'self':
+            if p.name == 'self' or p.name == 'client':
                 continue
             f = field_map[p.name]
             initial_type = f.type
@@ -728,7 +728,7 @@ class HikaruBase(object):
             code.append(f'{assign_to} = ')
         all_fields = fields(self)
         sig = signature(self.__init__)
-        if len(all_fields) != len(sig.parameters):
+        if len(all_fields) != len([k for k in sig.parameters if k != 'client']):
             raise NotImplementedError(f"Internal error! Uneven number of params for"
                                       f" {self.__class__.__name__}. Please file"
                                       f" a bug report.")
@@ -799,6 +799,10 @@ class HikaruBase(object):
 class HikaruDocumentBase(HikaruBase):
     _version = 'UNKNOWN'
 
-    def _dispatch(self, k8s_func, *args, client=None, **kwargs):
-        pass
+    # noinspection PyDataclass
+    def __post_init__(self, client: Any = None):
+        super(HikaruDocumentBase, self).__post_init__()
+        self.client = client
 
+    def _dispatch(self, k8s_func, *args, **kwargs):
+        pass

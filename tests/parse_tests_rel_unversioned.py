@@ -29,6 +29,20 @@ https://github.com/kubernetes-client/python/tree/master/kubernetes/e2e_test/test
 import pathlib
 from hikaru import *
 from hikaru.naming import get_default_release
+import pytest
+
+
+def setup():
+    set_default_release('rel_unversioned')
+
+
+test_parms = []
+path = pathlib.Path("test_yaml")
+for p in path.iterdir():
+    if str(p).endswith("/list.yaml"):
+        test_parms.append(pytest.param(p, marks=pytest.mark.xfail))
+    else:
+        test_parms.append(p,)
 
 
 def make_instance_from_source(version, source):
@@ -37,7 +51,8 @@ def make_instance_from_source(version, source):
     return x
 
 
-def process_yaml(yamlpath: pathlib.Path):
+@pytest.mark.parametrize("yamlpath", test_parms)
+def test_yaml(yamlpath: pathlib.Path):
     f = yamlpath.open("r")
     docs = load_full_yaml(stream=f)
     assert len(docs) > 0, f"For path {yamlpath}, only got {len(docs)} docs"
@@ -94,7 +109,7 @@ def do_all():
     path = pathlib.Path("test_yaml")
     for p in path.iterdir():
         try:
-            process_yaml(p)
+            test_yaml(p)
         except Exception as e:
             if str(p) == "test_yaml/list.yaml":
                 print(f"WARNING! Still failed on list.yaml; no support in the "
@@ -103,12 +118,12 @@ def do_all():
                 print(f"Failed on {p} with {e}")
 
 
-def test_all():
-    path = pathlib.Path("test_yaml")
-    for p in path.iterdir():
-        if str(p).endswith("/list.yaml"):
-            continue
-        process_yaml(p)
+# def test_all():
+#     path = pathlib.Path("test_yaml")
+#     for p in path.iterdir():
+#         if str(p).endswith("/list.yaml"):
+#             continue
+#         process_yaml(p)
 
 
 if __name__ == "__main__":

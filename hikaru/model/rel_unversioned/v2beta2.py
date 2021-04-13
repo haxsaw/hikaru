@@ -28,7 +28,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import List, Dict, Optional, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from .unversioned import *
 
 
@@ -123,6 +123,8 @@ class OwnerReference(HikaruDocumentBase):
     uid: str
     blockOwnerDeletion: Optional[bool] = None
     controller: Optional[bool] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -525,9 +527,14 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[MutatingWebhook]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAdmissionregistrationMutatingWebhookConfiguration(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a MutatingWebhookConfiguration
@@ -546,7 +553,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         pass
 
     def replaceAdmissionregistrationMutatingWebhookConfiguration(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified MutatingWebhookConfiguration
@@ -633,6 +643,8 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -752,9 +764,14 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[ValidatingWebhook]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAdmissionregistrationValidatingWebhookConfiguration(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ValidatingWebhookConfiguration
@@ -773,7 +790,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         pass
 
     def replaceAdmissionregistrationValidatingWebhookConfiguration(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ValidatingWebhookConfiguration
@@ -818,6 +838,8 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -882,9 +904,14 @@ class ControllerRevision(HikaruDocumentBase):
     data: Optional[RawExtension] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAppsNamespacedControllerRevision(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ControllerRevision
@@ -903,7 +930,10 @@ class ControllerRevision(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedControllerRevision(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ControllerRevision
@@ -948,6 +978,8 @@ class ControllerRevisionList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -3880,9 +3912,14 @@ class DaemonSet(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DaemonSetSpec] = None
     status: Optional[DaemonSetStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAppsNamespacedDaemonSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a DaemonSet
@@ -3901,7 +3938,10 @@ class DaemonSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedDaemonSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified DaemonSet
@@ -3920,7 +3960,10 @@ class DaemonSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedDaemonSetStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified DaemonSet
@@ -3965,6 +4008,8 @@ class DaemonSetList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -4143,9 +4188,14 @@ class Deployment(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DeploymentSpec] = None
     status: Optional[DeploymentStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAppsNamespacedDeployment(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Deployment
@@ -4164,7 +4214,10 @@ class Deployment(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedDeployment(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Deployment
@@ -4183,7 +4236,10 @@ class Deployment(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedDeploymentStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Deployment
@@ -4227,6 +4283,8 @@ class DeploymentList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -4345,9 +4403,14 @@ class ReplicaSet(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicaSetSpec] = None
     status: Optional[ReplicaSetStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAppsNamespacedReplicaSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ReplicaSet
@@ -4366,7 +4429,10 @@ class ReplicaSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedReplicaSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ReplicaSet
@@ -4385,7 +4451,10 @@ class ReplicaSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedReplicaSetStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified ReplicaSet
@@ -4431,6 +4500,8 @@ class ReplicaSetList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -4552,9 +4623,14 @@ class PersistentVolumeClaim(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeClaimSpec] = None
     status: Optional[PersistentVolumeClaimStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedPersistentVolumeClaim(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a PersistentVolumeClaim
@@ -4573,7 +4649,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedPersistentVolumeClaim(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified PersistentVolumeClaim
@@ -4592,7 +4671,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedPersistentVolumeClaimStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified PersistentVolumeClaim
@@ -4761,9 +4843,14 @@ class StatefulSet(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[StatefulSetSpec] = None
     status: Optional[StatefulSetStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAppsNamespacedStatefulSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a StatefulSet
@@ -4782,7 +4869,10 @@ class StatefulSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedStatefulSet(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified StatefulSet
@@ -4801,7 +4891,10 @@ class StatefulSet(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedStatefulSetStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified StatefulSet
@@ -4845,6 +4938,8 @@ class StatefulSetList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -4866,6 +4961,8 @@ class BoundObjectReference(HikaruDocumentBase):
     kind: Optional[str] = None
     name: Optional[str] = None
     uid: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -5013,8 +5110,10 @@ class TokenReview(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenReviewStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createAuthenticationTokenReview(self):
+    def createAuthenticationTokenReview(self, client=None):
         r"""
         create a TokenReview
         """
@@ -5157,8 +5256,10 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createAuthorizationNamespacedLocalSubjectAccessReview(self):
+    def createAuthorizationNamespacedLocalSubjectAccessReview(self, client=None):
         r"""
         create a LocalSubjectAccessReview
         """
@@ -5215,8 +5316,10 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createAuthorizationSelfSubjectAccessReview(self):
+    def createAuthorizationSelfSubjectAccessReview(self, client=None):
         r"""
         create a SelfSubjectAccessReview
         """
@@ -5351,8 +5454,10 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectRulesReviewStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createAuthorizationSelfSubjectRulesReview(self):
+    def createAuthorizationSelfSubjectRulesReview(self, client=None):
         r"""
         create a SelfSubjectRulesReview
         """
@@ -5387,8 +5492,10 @@ class SubjectAccessReview(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createAuthorizationSubjectAccessReview(self):
+    def createAuthorizationSubjectAccessReview(self, client=None):
         r"""
         create a SubjectAccessReview
         """
@@ -5573,6 +5680,8 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     kind: str
     name: str
     apiVersion: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -5959,9 +6068,14 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[HorizontalPodAutoscalerSpec] = None
     status: Optional[HorizontalPodAutoscalerStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createAutoscalingNamespacedHorizontalPodAutoscaler(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a HorizontalPodAutoscaler
@@ -5980,7 +6094,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         pass
 
     def replaceAutoscalingNamespacedHorizontalPodAutoscaler(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified HorizontalPodAutoscaler
@@ -5999,7 +6116,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         pass
 
     def replaceAutoscalingNamespacedHorizontalPodAutoscalerStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified HorizontalPodAutoscaler
@@ -6043,6 +6163,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -6109,9 +6231,14 @@ class Scale(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ScaleSpec] = None
     status: Optional[ScaleStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def replaceCoreNamespacedReplicationControllerScale(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace scale of the specified ReplicationController
@@ -6130,7 +6257,10 @@ class Scale(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedDeploymentScale(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace scale of the specified Deployment
@@ -6149,7 +6279,10 @@ class Scale(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedReplicaSetScale(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace scale of the specified ReplicaSet
@@ -6168,7 +6301,10 @@ class Scale(HikaruDocumentBase):
         pass
 
     def replaceAppsNamespacedStatefulSetScale(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace scale of the specified StatefulSet
@@ -6329,9 +6465,14 @@ class Job(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[JobSpec] = None
     status: Optional[JobStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createBatchNamespacedJob(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Job
@@ -6350,7 +6491,10 @@ class Job(HikaruDocumentBase):
         pass
 
     def replaceBatchNamespacedJob(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Job
@@ -6369,7 +6513,10 @@ class Job(HikaruDocumentBase):
         pass
 
     def replaceBatchNamespacedJobStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Job
@@ -6414,6 +6561,8 @@ class JobList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -6593,9 +6742,14 @@ class CertificateSigningRequest(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[CertificateSigningRequestStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCertificatesCertificateSigningRequest(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a CertificateSigningRequest
@@ -6614,7 +6768,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         pass
 
     def replaceCertificatesCertificateSigningRequest(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified CertificateSigningRequest
@@ -6633,7 +6790,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         pass
 
     def replaceCertificatesCertificateSigningRequestApproval(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace approval of the specified CertificateSigningRequest
@@ -6652,7 +6812,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         pass
 
     def replaceCertificatesCertificateSigningRequestStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified CertificateSigningRequest
@@ -6696,6 +6859,8 @@ class CertificateSigningRequestList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 class MicroTime(str):
@@ -6759,9 +6924,14 @@ class Lease(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LeaseSpec] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoordinationNamespacedLease(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Lease
@@ -6780,7 +6950,10 @@ class Lease(HikaruDocumentBase):
         pass
 
     def replaceCoordinationNamespacedLease(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Lease
@@ -6825,6 +6998,8 @@ class LeaseList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -6866,6 +7041,8 @@ class ObjectReference(HikaruDocumentBase):
     namespace: Optional[str] = None
     resourceVersion: Optional[str] = None
     uid: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -6895,14 +7072,16 @@ class Binding(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createCoreNamespacedBinding(self):
+    def createCoreNamespacedBinding(self, client=None):
         r"""
         create a Binding
         """
         pass
 
-    def createCoreNamespacedPodBinding(self):
+    def createCoreNamespacedPodBinding(self, client=None):
         r"""
         create binding of a Pod
         """
@@ -6958,6 +7137,8 @@ class ComponentStatus(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     conditions: Optional[List[ComponentCondition]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -6987,6 +7168,8 @@ class ComponentStatusList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -7028,9 +7211,14 @@ class ConfigMap(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     binaryData: Optional[Dict[str, str]] = field(default_factory=dict)
     data: Optional[Dict[str, str]] = field(default_factory=dict)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedConfigMap(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ConfigMap
@@ -7049,7 +7237,10 @@ class ConfigMap(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedConfigMap(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ConfigMap
@@ -7094,6 +7285,8 @@ class ConfigMapList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -7207,9 +7400,14 @@ class Endpoints(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subsets: Optional[List[EndpointSubset]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedEndpoints(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create Endpoints
@@ -7228,7 +7426,10 @@ class Endpoints(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedEndpoints(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Endpoints
@@ -7273,6 +7474,8 @@ class EndpointsList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -7302,9 +7505,14 @@ class EphemeralContainers(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def replaceCoreNamespacedPodEphemeralcontainers(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace ephemeralcontainers of the specified Pod
@@ -7436,9 +7644,14 @@ class Event(HikaruDocumentBase):
     reportingInstance: Optional[str] = None
     series: Optional[EventSeries] = None
     type: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedEvent(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create an Event
@@ -7457,7 +7670,10 @@ class Event(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedEvent(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Event
@@ -7476,7 +7692,10 @@ class Event(HikaruDocumentBase):
         pass
 
     def createEventsNamespacedEvent(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create an Event
@@ -7495,7 +7714,10 @@ class Event(HikaruDocumentBase):
         pass
 
     def replaceEventsNamespacedEvent(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Event
@@ -7540,6 +7762,8 @@ class EventList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -7612,9 +7836,14 @@ class LimitRange(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LimitRangeSpec] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedLimitRange(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a LimitRange
@@ -7633,7 +7862,10 @@ class LimitRange(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedLimitRange(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified LimitRange
@@ -7679,6 +7911,8 @@ class LimitRangeList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -7767,9 +8001,14 @@ class Namespace(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NamespaceSpec] = None
     status: Optional[NamespaceStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespace(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Namespace
@@ -7788,7 +8027,10 @@ class Namespace(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespace(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Namespace
@@ -7806,14 +8048,17 @@ class Namespace(HikaruDocumentBase):
         """
         pass
 
-    def replaceCoreNamespaceFinalize(self):
+    def replaceCoreNamespaceFinalize(self, client=None):
         r"""
         replace finalize of the specified Namespace
         """
         pass
 
     def replaceCoreNamespaceStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Namespace
@@ -7859,6 +8104,8 @@ class NamespaceList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -8232,9 +8479,14 @@ class Node(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NodeSpec] = None
     status: Optional[NodeStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNode(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Node
@@ -8253,7 +8505,10 @@ class Node(HikaruDocumentBase):
         pass
 
     def replaceCoreNode(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Node
@@ -8272,7 +8527,10 @@ class Node(HikaruDocumentBase):
         pass
 
     def replaceCoreNodeStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Node
@@ -8317,6 +8575,8 @@ class NodeList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -8346,6 +8606,8 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -8916,9 +9178,14 @@ class PersistentVolume(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeSpec] = None
     status: Optional[PersistentVolumeStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCorePersistentVolume(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a PersistentVolume
@@ -8937,7 +9204,10 @@ class PersistentVolume(HikaruDocumentBase):
         pass
 
     def replaceCorePersistentVolume(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified PersistentVolume
@@ -8956,7 +9226,10 @@ class PersistentVolume(HikaruDocumentBase):
         pass
 
     def replaceCorePersistentVolumeStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified PersistentVolume
@@ -9002,6 +9275,8 @@ class PersistentVolumeList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -9271,9 +9546,14 @@ class Pod(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PodSpec] = None
     status: Optional[PodStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedPod(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Pod
@@ -9292,7 +9572,10 @@ class Pod(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedPod(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Pod
@@ -9311,7 +9594,10 @@ class Pod(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedPodStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Pod
@@ -9357,6 +9643,8 @@ class PodList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -9386,9 +9674,14 @@ class PodTemplate(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     template: Optional[PodTemplateSpec] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedPodTemplate(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a PodTemplate
@@ -9407,7 +9700,10 @@ class PodTemplate(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedPodTemplate(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified PodTemplate
@@ -9452,6 +9748,8 @@ class PodTemplateList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -9575,9 +9873,14 @@ class ReplicationController(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicationControllerSpec] = None
     status: Optional[ReplicationControllerStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedReplicationController(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ReplicationController
@@ -9596,7 +9899,10 @@ class ReplicationController(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedReplicationController(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ReplicationController
@@ -9615,7 +9921,10 @@ class ReplicationController(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedReplicationControllerStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified ReplicationController
@@ -9661,6 +9970,8 @@ class ReplicationControllerList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -9772,9 +10083,14 @@ class ResourceQuota(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ResourceQuotaSpec] = None
     status: Optional[ResourceQuotaStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedResourceQuota(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ResourceQuota
@@ -9793,7 +10109,10 @@ class ResourceQuota(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedResourceQuota(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ResourceQuota
@@ -9812,7 +10131,10 @@ class ResourceQuota(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedResourceQuotaStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified ResourceQuota
@@ -9858,6 +10180,8 @@ class ResourceQuotaList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -9901,9 +10225,14 @@ class Secret(HikaruDocumentBase):
     type: Optional[str] = None
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     stringData: Optional[Dict[str, str]] = field(default_factory=dict)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedSecret(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Secret
@@ -9922,7 +10251,10 @@ class Secret(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedSecret(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Secret
@@ -9968,6 +10300,8 @@ class SecretList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -10011,9 +10345,14 @@ class ServiceAccount(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     secrets: Optional[List[ObjectReference]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedServiceAccount(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ServiceAccount
@@ -10032,7 +10371,10 @@ class ServiceAccount(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedServiceAccount(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ServiceAccount
@@ -10078,6 +10420,8 @@ class ServiceAccountList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -10476,9 +10820,14 @@ class Service(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ServiceSpec] = None
     status: Optional[ServiceStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createCoreNamespacedService(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Service
@@ -10497,7 +10846,10 @@ class Service(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedService(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Service
@@ -10516,7 +10868,10 @@ class Service(HikaruDocumentBase):
         pass
 
     def replaceCoreNamespacedServiceStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Service
@@ -10561,6 +10916,8 @@ class ServiceList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -10617,9 +10974,14 @@ class IngressClass(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[IngressClassSpec] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createNetworkingIngressClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create an IngressClass
@@ -10638,7 +11000,10 @@ class IngressClass(HikaruDocumentBase):
         pass
 
     def replaceNetworkingIngressClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified IngressClass
@@ -10682,6 +11047,8 @@ class IngressClassList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -10930,9 +11297,14 @@ class Ingress(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[IngressSpec] = None
     status: Optional[IngressStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createNetworkingNamespacedIngress(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create an Ingress
@@ -10951,7 +11323,10 @@ class Ingress(HikaruDocumentBase):
         pass
 
     def replaceNetworkingNamespacedIngress(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Ingress
@@ -10970,7 +11345,10 @@ class Ingress(HikaruDocumentBase):
         pass
 
     def replaceNetworkingNamespacedIngressStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified Ingress
@@ -11015,6 +11393,8 @@ class IngressList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -11215,9 +11595,14 @@ class NetworkPolicy(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NetworkPolicySpec] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createNetworkingNamespacedNetworkPolicy(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a NetworkPolicy
@@ -11236,7 +11621,10 @@ class NetworkPolicy(HikaruDocumentBase):
         pass
 
     def replaceNetworkingNamespacedNetworkPolicy(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified NetworkPolicy
@@ -11281,6 +11669,8 @@ class NetworkPolicyList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -11368,9 +11758,14 @@ class RuntimeClass(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     overhead: Optional[Overhead] = None
     scheduling: Optional[Scheduling] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createNodeRuntimeClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a RuntimeClass
@@ -11389,7 +11784,10 @@ class RuntimeClass(HikaruDocumentBase):
         pass
 
     def replaceNodeRuntimeClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified RuntimeClass
@@ -11434,6 +11832,8 @@ class RuntimeClassList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -11500,6 +11900,8 @@ class DeleteOptions(HikaruDocumentBase):
     preconditions: Optional[Preconditions] = None
     propagationPolicy: Optional[str] = None
     dryRun: Optional[List[str]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def deleteCoreCollectionNamespacedConfigMap(
         self,
@@ -11514,6 +11916,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ConfigMap
@@ -11614,6 +12017,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ConfigMap
@@ -11660,6 +12064,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Endpoints
@@ -11760,6 +12165,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete Endpoints
@@ -11806,6 +12212,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Event
@@ -11906,6 +12313,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Event
@@ -11952,6 +12360,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of LimitRange
@@ -12052,6 +12461,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a LimitRange
@@ -12098,6 +12508,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PersistentVolumeClaim
@@ -12198,6 +12609,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PersistentVolumeClaim
@@ -12244,6 +12656,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Pod
@@ -12344,6 +12757,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Pod
@@ -12390,6 +12804,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PodTemplate
@@ -12490,6 +12905,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PodTemplate
@@ -12536,6 +12952,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ReplicationController
@@ -12636,6 +13053,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ReplicationController
@@ -12682,6 +13100,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ResourceQuota
@@ -12782,6 +13201,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ResourceQuota
@@ -12828,6 +13248,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Secret
@@ -12928,6 +13349,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Secret
@@ -12974,6 +13396,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ServiceAccount
@@ -13074,6 +13497,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ServiceAccount
@@ -13113,6 +13537,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Service
@@ -13152,6 +13577,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Namespace
@@ -13198,6 +13624,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Node
@@ -13298,6 +13725,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Node
@@ -13344,6 +13772,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PersistentVolume
@@ -13444,6 +13873,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PersistentVolume
@@ -13490,6 +13920,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of MutatingWebhookConfiguration
@@ -13590,6 +14021,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a MutatingWebhookConfiguration
@@ -13636,6 +14068,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ValidatingWebhookConfiguration
@@ -13736,6 +14169,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ValidatingWebhookConfiguration
@@ -13782,6 +14216,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of MutatingWebhookConfiguration
@@ -13882,6 +14317,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a MutatingWebhookConfiguration
@@ -13928,6 +14364,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ValidatingWebhookConfiguration
@@ -14028,6 +14465,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ValidatingWebhookConfiguration
@@ -14074,6 +14512,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CustomResourceDefinition
@@ -14174,6 +14613,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CustomResourceDefinition
@@ -14220,6 +14660,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CustomResourceDefinition
@@ -14320,6 +14761,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CustomResourceDefinition
@@ -14366,6 +14808,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of APIService
@@ -14466,6 +14909,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an APIService
@@ -14512,6 +14956,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of APIService
@@ -14612,6 +15057,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an APIService
@@ -14658,6 +15104,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ControllerRevision
@@ -14758,6 +15205,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ControllerRevision
@@ -14804,6 +15252,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of DaemonSet
@@ -14904,6 +15353,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a DaemonSet
@@ -14950,6 +15400,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Deployment
@@ -15050,6 +15501,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Deployment
@@ -15096,6 +15548,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ReplicaSet
@@ -15196,6 +15649,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ReplicaSet
@@ -15242,6 +15696,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of StatefulSet
@@ -15342,6 +15797,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a StatefulSet
@@ -15388,6 +15844,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of HorizontalPodAutoscaler
@@ -15488,6 +15945,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a HorizontalPodAutoscaler
@@ -15534,6 +15992,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of HorizontalPodAutoscaler
@@ -15634,6 +16093,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a HorizontalPodAutoscaler
@@ -15680,6 +16140,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of HorizontalPodAutoscaler
@@ -15780,6 +16241,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a HorizontalPodAutoscaler
@@ -15826,6 +16288,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Job
@@ -15926,6 +16389,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Job
@@ -15972,6 +16436,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CronJob
@@ -16072,6 +16537,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CronJob
@@ -16118,6 +16584,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CertificateSigningRequest
@@ -16218,6 +16685,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CertificateSigningRequest
@@ -16264,6 +16732,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CertificateSigningRequest
@@ -16364,6 +16833,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CertificateSigningRequest
@@ -16410,6 +16880,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Lease
@@ -16510,6 +16981,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Lease
@@ -16556,6 +17028,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Lease
@@ -16656,6 +17129,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Lease
@@ -16702,6 +17176,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of EndpointSlice
@@ -16802,6 +17277,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an EndpointSlice
@@ -16848,6 +17324,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Event
@@ -16948,6 +17425,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Event
@@ -16994,6 +17472,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Event
@@ -17094,6 +17573,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Event
@@ -17140,6 +17620,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Ingress
@@ -17240,6 +17721,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Ingress
@@ -17286,6 +17768,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of FlowSchema
@@ -17386,6 +17869,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a FlowSchema
@@ -17432,6 +17916,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PriorityLevelConfiguration
@@ -17532,6 +18017,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PriorityLevelConfiguration
@@ -17578,6 +18064,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of FlowSchema
@@ -17678,6 +18165,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a FlowSchema
@@ -17724,6 +18212,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PriorityLevelConfiguration
@@ -17824,6 +18313,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PriorityLevelConfiguration
@@ -17870,6 +18360,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of StorageVersion
@@ -17970,6 +18461,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a StorageVersion
@@ -18016,6 +18508,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of IngressClass
@@ -18116,6 +18609,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an IngressClass
@@ -18162,6 +18656,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Ingress
@@ -18262,6 +18757,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Ingress
@@ -18308,6 +18804,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of NetworkPolicy
@@ -18408,6 +18905,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a NetworkPolicy
@@ -18454,6 +18952,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of IngressClass
@@ -18554,6 +19053,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an IngressClass
@@ -18600,6 +19100,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Ingress
@@ -18700,6 +19201,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete an Ingress
@@ -18746,6 +19248,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RuntimeClass
@@ -18846,6 +19349,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RuntimeClass
@@ -18892,6 +19396,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RuntimeClass
@@ -18992,6 +19497,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RuntimeClass
@@ -19038,6 +19544,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RuntimeClass
@@ -19138,6 +19645,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RuntimeClass
@@ -19184,6 +19692,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PodDisruptionBudget
@@ -19284,6 +19793,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PodDisruptionBudget
@@ -19330,6 +19840,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PodSecurityPolicy
@@ -19430,6 +19941,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PodSecurityPolicy
@@ -19476,6 +19988,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRoleBinding
@@ -19576,6 +20089,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRoleBinding
@@ -19622,6 +20136,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRole
@@ -19722,6 +20237,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRole
@@ -19768,6 +20284,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RoleBinding
@@ -19868,6 +20385,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RoleBinding
@@ -19914,6 +20432,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Role
@@ -20014,6 +20533,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Role
@@ -20060,6 +20580,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRoleBinding
@@ -20160,6 +20681,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRoleBinding
@@ -20206,6 +20728,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRole
@@ -20306,6 +20829,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRole
@@ -20352,6 +20876,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RoleBinding
@@ -20452,6 +20977,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RoleBinding
@@ -20498,6 +21024,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Role
@@ -20598,6 +21125,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Role
@@ -20644,6 +21172,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRoleBinding
@@ -20744,6 +21273,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRoleBinding
@@ -20790,6 +21320,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of ClusterRole
@@ -20890,6 +21421,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a ClusterRole
@@ -20936,6 +21468,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of RoleBinding
@@ -21036,6 +21569,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a RoleBinding
@@ -21082,6 +21616,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of Role
@@ -21182,6 +21717,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a Role
@@ -21228,6 +21764,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PriorityClass
@@ -21328,6 +21865,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PriorityClass
@@ -21374,6 +21912,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PriorityClass
@@ -21474,6 +22013,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PriorityClass
@@ -21520,6 +22060,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of PriorityClass
@@ -21620,6 +22161,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a PriorityClass
@@ -21666,6 +22208,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CSIDriver
@@ -21766,6 +22309,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CSIDriver
@@ -21812,6 +22356,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CSINode
@@ -21912,6 +22457,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CSINode
@@ -21958,6 +22504,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of StorageClass
@@ -22058,6 +22605,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a StorageClass
@@ -22104,6 +22652,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of VolumeAttachment
@@ -22204,6 +22753,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a VolumeAttachment
@@ -22250,6 +22800,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CSIStorageCapacity
@@ -22350,6 +22901,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CSIStorageCapacity
@@ -22396,6 +22948,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of VolumeAttachment
@@ -22496,6 +23049,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a VolumeAttachment
@@ -22542,6 +23096,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CSIDriver
@@ -22642,6 +23197,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CSIDriver
@@ -22688,6 +23244,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of CSINode
@@ -22788,6 +23345,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a CSINode
@@ -22834,6 +23392,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of StorageClass
@@ -22934,6 +23493,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a StorageClass
@@ -22980,6 +23540,7 @@ class DeleteOptions(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         resource_version_match: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        client=None,
     ):
         r"""
         delete collection of VolumeAttachment
@@ -23080,6 +23641,7 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
+        client=None,
     ):
         r"""
         delete a VolumeAttachment
@@ -23189,9 +23751,14 @@ class ClusterRoleBinding(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createRbacAuthorizationClusterRoleBinding(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ClusterRoleBinding
@@ -23210,7 +23777,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         pass
 
     def replaceRbacAuthorizationClusterRoleBinding(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ClusterRoleBinding
@@ -23254,6 +23824,8 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -23335,9 +23907,14 @@ class ClusterRole(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createRbacAuthorizationClusterRole(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a ClusterRole
@@ -23356,7 +23933,10 @@ class ClusterRole(HikaruDocumentBase):
         pass
 
     def replaceRbacAuthorizationClusterRole(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified ClusterRole
@@ -23400,6 +23980,8 @@ class ClusterRoleList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -23434,9 +24016,14 @@ class RoleBinding(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createRbacAuthorizationNamespacedRoleBinding(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a RoleBinding
@@ -23455,7 +24042,10 @@ class RoleBinding(HikaruDocumentBase):
         pass
 
     def replaceRbacAuthorizationNamespacedRoleBinding(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified RoleBinding
@@ -23499,6 +24089,8 @@ class RoleBindingList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -23527,9 +24119,14 @@ class Role(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createRbacAuthorizationNamespacedRole(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a Role
@@ -23548,7 +24145,10 @@ class Role(HikaruDocumentBase):
         pass
 
     def replaceRbacAuthorizationNamespacedRole(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified Role
@@ -23592,6 +24192,8 @@ class RoleList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -23635,9 +24237,14 @@ class PriorityClass(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     preemptionPolicy: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createSchedulingPriorityClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a PriorityClass
@@ -23656,7 +24263,10 @@ class PriorityClass(HikaruDocumentBase):
         pass
 
     def replaceSchedulingPriorityClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified PriorityClass
@@ -23701,6 +24311,8 @@ class PriorityClassList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -23721,8 +24333,10 @@ class TokenRequest(HikaruDocumentBase):
     _version = "v1"
     audience: str
     expirationSeconds: Optional[int] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
-    def createCoreNamespacedServiceAccountToken(self):
+    def createCoreNamespacedServiceAccountToken(self, client=None):
         r"""
         create token of a ServiceAccount
         """
@@ -23849,9 +24463,14 @@ class CSIDriver(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createStorageCSIDriver(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a CSIDriver
@@ -23870,7 +24489,10 @@ class CSIDriver(HikaruDocumentBase):
         pass
 
     def replaceStorageCSIDriver(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified CSIDriver
@@ -23915,6 +24537,8 @@ class CSIDriverList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -24021,9 +24645,14 @@ class CSINode(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createStorageCSINode(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a CSINode
@@ -24042,7 +24671,10 @@ class CSINode(HikaruDocumentBase):
         pass
 
     def replaceStorageCSINode(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified CSINode
@@ -24087,6 +24719,8 @@ class CSINodeList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -24178,9 +24812,14 @@ class StorageClass(HikaruDocumentBase):
     )
     mountOptions: Optional[List[str]] = field(default_factory=list)
     parameters: Optional[Dict[str, str]] = field(default_factory=dict)
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createStorageStorageClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a StorageClass
@@ -24199,7 +24838,10 @@ class StorageClass(HikaruDocumentBase):
         pass
 
     def replaceStorageStorageClass(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified StorageClass
@@ -24244,6 +24886,8 @@ class StorageClassList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -24363,9 +25007,14 @@ class VolumeAttachment(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[VolumeAttachmentStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createStorageVolumeAttachment(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a VolumeAttachment
@@ -24384,7 +25033,10 @@ class VolumeAttachment(HikaruDocumentBase):
         pass
 
     def replaceStorageVolumeAttachment(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified VolumeAttachment
@@ -24403,7 +25055,10 @@ class VolumeAttachment(HikaruDocumentBase):
         pass
 
     def replaceStorageVolumeAttachmentStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified VolumeAttachment
@@ -24448,6 +25103,8 @@ class VolumeAttachmentList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25048,9 +25705,14 @@ class CustomResourceDefinition(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     status: Optional[CustomResourceDefinitionStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createApiextensionsCustomResourceDefinition(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create a CustomResourceDefinition
@@ -25069,7 +25731,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         pass
 
     def replaceApiextensionsCustomResourceDefinition(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified CustomResourceDefinition
@@ -25088,7 +25753,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         pass
 
     def replaceApiextensionsCustomResourceDefinitionStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified CustomResourceDefinition
@@ -25132,6 +25800,8 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25223,6 +25893,8 @@ class APIGroup(HikaruDocumentBase):
     serverAddressByClientCIDRs: Optional[List[ServerAddressByClientCIDR]] = field(
         default_factory=list
     )
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25248,6 +25920,8 @@ class APIGroupList(HikaruDocumentBase):
     groups: List[APIGroup]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25323,6 +25997,8 @@ class APIResourceList(HikaruDocumentBase):
     resources: List[APIResource]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25358,6 +26034,8 @@ class APIVersions(HikaruDocumentBase):
     versions: List[str]
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -25376,6 +26054,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ConfigMap
@@ -25404,6 +26083,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Endpoints
@@ -25432,6 +26112,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Event
@@ -25460,6 +26141,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified LimitRange
@@ -25488,6 +26170,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PersistentVolumeClaim
@@ -25516,6 +26199,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified PersistentVolumeClaim
@@ -25544,6 +26228,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Pod
@@ -25572,6 +26257,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update ephemeralcontainers of the specified Pod
@@ -25600,6 +26286,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Pod
@@ -25628,6 +26315,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PodTemplate
@@ -25656,6 +26344,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ReplicationController
@@ -25684,6 +26373,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update scale of the specified ReplicationController
@@ -25712,6 +26402,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified ReplicationController
@@ -25740,6 +26431,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ResourceQuota
@@ -25768,6 +26460,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified ResourceQuota
@@ -25796,6 +26489,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Secret
@@ -25824,6 +26518,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ServiceAccount
@@ -25852,6 +26547,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Service
@@ -25880,6 +26576,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Service
@@ -25908,6 +26605,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Namespace
@@ -25936,6 +26634,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Namespace
@@ -25964,6 +26663,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Node
@@ -25992,6 +26692,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Node
@@ -26020,6 +26721,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PersistentVolume
@@ -26048,6 +26750,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified PersistentVolume
@@ -26076,6 +26779,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified MutatingWebhookConfiguration
@@ -26104,6 +26808,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ValidatingWebhookConfiguration
@@ -26132,6 +26837,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified MutatingWebhookConfiguration
@@ -26160,6 +26866,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ValidatingWebhookConfiguration
@@ -26188,6 +26895,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CustomResourceDefinition
@@ -26216,6 +26924,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified CustomResourceDefinition
@@ -26244,6 +26953,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CustomResourceDefinition
@@ -26272,6 +26982,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified CustomResourceDefinition
@@ -26300,6 +27011,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified APIService
@@ -26328,6 +27040,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified APIService
@@ -26356,6 +27069,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified APIService
@@ -26384,6 +27098,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified APIService
@@ -26412,6 +27127,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ControllerRevision
@@ -26440,6 +27156,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified DaemonSet
@@ -26468,6 +27185,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified DaemonSet
@@ -26496,6 +27214,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Deployment
@@ -26524,6 +27243,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update scale of the specified Deployment
@@ -26552,6 +27272,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Deployment
@@ -26580,6 +27301,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ReplicaSet
@@ -26608,6 +27330,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update scale of the specified ReplicaSet
@@ -26636,6 +27359,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified ReplicaSet
@@ -26664,6 +27388,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified StatefulSet
@@ -26692,6 +27417,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update scale of the specified StatefulSet
@@ -26720,6 +27446,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified StatefulSet
@@ -26748,6 +27475,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified HorizontalPodAutoscaler
@@ -26776,6 +27504,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified HorizontalPodAutoscaler
@@ -26804,6 +27533,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified HorizontalPodAutoscaler
@@ -26832,6 +27562,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified HorizontalPodAutoscaler
@@ -26860,6 +27591,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified HorizontalPodAutoscaler
@@ -26888,6 +27620,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified HorizontalPodAutoscaler
@@ -26916,6 +27649,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Job
@@ -26944,6 +27678,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Job
@@ -26972,6 +27707,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CronJob
@@ -27000,6 +27736,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified CronJob
@@ -27028,6 +27765,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CertificateSigningRequest
@@ -27056,6 +27794,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update approval of the specified CertificateSigningRequest
@@ -27084,6 +27823,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified CertificateSigningRequest
@@ -27112,6 +27852,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CertificateSigningRequest
@@ -27140,6 +27881,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update approval of the specified CertificateSigningRequest
@@ -27168,6 +27910,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified CertificateSigningRequest
@@ -27196,6 +27939,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Lease
@@ -27224,6 +27968,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Lease
@@ -27252,6 +27997,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified EndpointSlice
@@ -27280,6 +28026,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Event
@@ -27308,6 +28055,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Event
@@ -27336,6 +28084,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Ingress
@@ -27364,6 +28113,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Ingress
@@ -27392,6 +28142,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified FlowSchema
@@ -27420,6 +28171,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified FlowSchema
@@ -27448,6 +28200,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PriorityLevelConfiguration
@@ -27476,6 +28229,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified PriorityLevelConfiguration
@@ -27504,6 +28258,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified FlowSchema
@@ -27532,6 +28287,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified FlowSchema
@@ -27560,6 +28316,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PriorityLevelConfiguration
@@ -27588,6 +28345,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified PriorityLevelConfiguration
@@ -27616,6 +28374,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified StorageVersion
@@ -27644,6 +28403,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified StorageVersion
@@ -27672,6 +28432,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified IngressClass
@@ -27700,6 +28461,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Ingress
@@ -27728,6 +28490,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Ingress
@@ -27756,6 +28519,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified NetworkPolicy
@@ -27784,6 +28548,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified IngressClass
@@ -27812,6 +28577,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Ingress
@@ -27840,6 +28606,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified Ingress
@@ -27868,6 +28635,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RuntimeClass
@@ -27896,6 +28664,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RuntimeClass
@@ -27924,6 +28693,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RuntimeClass
@@ -27952,6 +28722,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PodDisruptionBudget
@@ -27980,6 +28751,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified PodDisruptionBudget
@@ -28008,6 +28780,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PodSecurityPolicy
@@ -28036,6 +28809,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRoleBinding
@@ -28064,6 +28838,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRole
@@ -28092,6 +28867,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RoleBinding
@@ -28120,6 +28896,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Role
@@ -28148,6 +28925,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRoleBinding
@@ -28176,6 +28954,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRole
@@ -28204,6 +28983,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RoleBinding
@@ -28232,6 +29012,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Role
@@ -28260,6 +29041,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRoleBinding
@@ -28288,6 +29070,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified ClusterRole
@@ -28316,6 +29099,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified RoleBinding
@@ -28344,6 +29128,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified Role
@@ -28372,6 +29157,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PriorityClass
@@ -28400,6 +29186,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PriorityClass
@@ -28428,6 +29215,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified PriorityClass
@@ -28456,6 +29244,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CSIDriver
@@ -28484,6 +29273,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CSINode
@@ -28512,6 +29302,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified StorageClass
@@ -28540,6 +29331,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified VolumeAttachment
@@ -28568,6 +29360,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update status of the specified VolumeAttachment
@@ -28596,6 +29389,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CSIStorageCapacity
@@ -28624,6 +29418,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified VolumeAttachment
@@ -28652,6 +29447,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CSIDriver
@@ -28680,6 +29476,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified CSINode
@@ -28708,6 +29505,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified StorageClass
@@ -28736,6 +29534,7 @@ class Patch(HikaruBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
+        client=None,
     ):
         r"""
         partially update the specified VolumeAttachment
@@ -28861,6 +29660,8 @@ class Status(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     reason: Optional[str] = None
     status: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 @dataclass
@@ -28999,9 +29800,14 @@ class APIService(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[APIServiceSpec] = None
     status: Optional[APIServiceStatus] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
     def createApiregistrationAPIService(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         create an APIService
@@ -29020,7 +29826,10 @@ class APIService(HikaruDocumentBase):
         pass
 
     def replaceApiregistrationAPIService(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace the specified APIService
@@ -29039,7 +29848,10 @@ class APIService(HikaruDocumentBase):
         pass
 
     def replaceApiregistrationAPIServiceStatus(
-        self, dry_run: Optional[str] = None, field_manager: Optional[str] = None
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client=None,
     ):
         r"""
         replace status of the specified APIService
@@ -29083,6 +29895,8 @@ class APIServiceList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
+    # noinspection PyDataclass
+    client: InitVar[Any] = None
 
 
 globs = dict(globals())

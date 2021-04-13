@@ -28,7 +28,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from typing import List, Dict, Optional, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 
 
 @dataclass
