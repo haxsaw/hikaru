@@ -220,9 +220,9 @@ def build_digraph(all_classes: dict) -> networkx.DiGraph:
     return dg
 
 
-def write_classes(class_list, stream=sys.stdout):
+def write_classes(class_list, for_version: str, stream=sys.stdout):
     for dc in class_list:
-        print(dc.as_python_class(), file=stream)
+        print(dc.as_python_class(for_version), file=stream)
         print(file=stream)
 
 
@@ -266,6 +266,7 @@ class Operation(object):
     def __init__(self, verb: str, op_path: str, op_id: str, description: str):
         self.verb = verb
         self.op_path = op_path
+        self.version = get_path_version(self.op_path)
         self.op_id = op_id
         self.description = description
         self.parameters: List[OpParameter] = list()
@@ -297,7 +298,7 @@ class Operation(object):
         params = ["self"]
         params.extend([p.as_python()
                        for p in chain(required, optional)])
-        # here, we add any standard parmeter(s) that a all should have:
+        # here, we add any standard parmeter(s) that all should have:
         params.append('client=None')
         # end standards
         parts.append(", ".join(params))
@@ -341,7 +342,7 @@ class ClassDescriptor(object):
         self.is_subclass_of = None
         self.is_document = False
         self.alternate_base = None
-        self.operations: Dict[str, ObjectOperations] = {}
+        self.operations: Dict[str, Operation] = {}
 
         self.required_props = []
         self.optional_props = []
@@ -452,7 +453,7 @@ class ClassDescriptor(object):
                     parts.append(" ".join(current_line))
         return parts
 
-    def as_python_class(self) -> str:
+    def as_python_class(self, for_version: str) -> str:
         lines = list()
         # start of class statement
         if self.is_subclass_of is not None:
@@ -501,7 +502,8 @@ class ClassDescriptor(object):
                 lines.append("    # noinspection PyDataclass")
                 lines.append("    client: InitVar[Any] = None")
         lines.append("")
-        for op in self.operations.values():
+        # now the operations
+        for op in (o for o in self.operations.values() if o.version == for_version):
             assert isinstance(op, Operation)
             method_lines = [f"    {line}" for line in op.as_python_method()]
             method_lines.append("")
@@ -567,7 +569,7 @@ class ModuleDef(object):
         traversal = list(reversed(list(networkx.topological_sort(g))))
         if not traversal:
             traversal = list(self.all_classes.values())
-        write_classes(traversal, stream=stream)
+        write_classes(traversal, self.version, stream=stream)
         output_footer(stream=stream)
 
 

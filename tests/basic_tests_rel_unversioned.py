@@ -1129,7 +1129,7 @@ def test100():
         break
     ab = cd.alternate_base
     assert isinstance(ab, ClassDescriptor)
-    src = ab.as_python_class()
+    src = ab.as_python_class(for_version='v1')
     assert src
 
 
@@ -1147,7 +1147,7 @@ def test101():
     ab = cd.alternate_base
     assert isinstance(ab, ClassDescriptor)
     expected = f'{cd.short_name}({ab.short_name})'
-    src = cd.as_python_class()
+    src = cd.as_python_class(for_version='v1')
     assert expected in src
 
 
