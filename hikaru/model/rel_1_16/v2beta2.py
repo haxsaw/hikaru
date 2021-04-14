@@ -6604,6 +6604,10 @@ class DeleteOptions(HikaruDocumentBase):
         r"""
         delete collection of HorizontalPodAutoscaler
 
+        operationID: deleteCollectionNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers
+
+
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6702,6 +6706,10 @@ class DeleteOptions(HikaruDocumentBase):
     ):
         r"""
         delete a HorizontalPodAutoscaler
+
+        operationID: deleteNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -9115,6 +9123,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         r"""
         create a HorizontalPodAutoscaler
 
+        operationID: createNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9137,6 +9149,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         r"""
         replace the specified HorizontalPodAutoscaler
 
+        operationID: replaceNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9158,6 +9174,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     ):
         r"""
         replace status of the specified HorizontalPodAutoscaler
+
+        operationID: replaceNamespacedHorizontalPodAutoscalerStatus
+        path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will

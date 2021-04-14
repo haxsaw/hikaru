@@ -304,6 +304,10 @@ class Operation(object):
         parts.append(", ".join(params))
         parts.append("):")
         docstring_parts = ['    r"""', f'    {self.description}']
+        docstring_parts.append("")
+        docstring_parts.append(f'    operationID: {self.op_id}')
+        docstring_parts.append(f'    path: {self.op_path}')
+        docstring_parts.append("")
         if self.parameters:
             docstring_parts.append("")
             for p in self.parameters:

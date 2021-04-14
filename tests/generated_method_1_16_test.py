@@ -10,13 +10,17 @@ import pytest
 set_default_release('rel_1_16')
 
 
+special_classes_to_test = {'Patch'}
+
+
 all_params = []
 for version in versions:
     test_classes = []
     mod = importlib.import_module(f".{version}", 'hikaru.model.rel_1_16')
     for c in vars(mod).values():
-        if (type(c) is type and issubclass(c, HikaruDocumentBase) and
-                c is not HikaruDocumentBase):
+        if (type(c) is type and ((issubclass(c, HikaruDocumentBase) and
+                c is not HikaruDocumentBase) or
+                c.__name__ in special_classes_to_test)):
             test_classes.append(c)
     for cls in test_classes:
         for name, attr in vars(cls).items():

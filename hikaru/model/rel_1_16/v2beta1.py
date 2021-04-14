@@ -8959,6 +8959,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         r"""
         create a HorizontalPodAutoscaler
 
+        operationID: createNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8981,6 +8985,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         r"""
         replace the specified HorizontalPodAutoscaler
 
+        operationID: replaceNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9002,6 +9010,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     ):
         r"""
         replace status of the specified HorizontalPodAutoscaler
+
+        operationID: replaceNamespacedHorizontalPodAutoscalerStatus
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will

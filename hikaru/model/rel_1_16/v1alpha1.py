@@ -3582,6 +3582,10 @@ class ClusterRole(HikaruDocumentBase):
         r"""
         create a ClusterRole
 
+        operationID: createClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3603,6 +3607,10 @@ class ClusterRole(HikaruDocumentBase):
     ):
         r"""
         replace the specified ClusterRole
+
+        operationID: replaceClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -3822,6 +3830,10 @@ class RoleBinding(HikaruDocumentBase):
         r"""
         create a RoleBinding
 
+        operationID: createNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3843,6 +3855,10 @@ class RoleBinding(HikaruDocumentBase):
     ):
         r"""
         replace the specified RoleBinding
+
+        operationID: replaceNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -6696,6 +6712,10 @@ class DeleteOptions(HikaruDocumentBase):
         r"""
         delete collection of AuditSink
 
+        operationID: deleteCollectionAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks
+
+
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6795,6 +6815,10 @@ class DeleteOptions(HikaruDocumentBase):
         r"""
         delete an AuditSink
 
+        operationID: deleteAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6840,6 +6864,10 @@ class DeleteOptions(HikaruDocumentBase):
     ):
         r"""
         delete collection of EndpointSlice
+
+        operationID: deleteCollectionNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
+
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -6940,6 +6968,10 @@ class DeleteOptions(HikaruDocumentBase):
         r"""
         delete an EndpointSlice
 
+        operationID: deleteNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6985,6 +7017,10 @@ class DeleteOptions(HikaruDocumentBase):
     ):
         r"""
         delete collection of PodPreset
+
+        operationID: deleteCollectionNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
+
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -7084,6 +7120,10 @@ class DeleteOptions(HikaruDocumentBase):
     ):
         r"""
         delete a PodPreset
+
+        operationID: deleteNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -7341,6 +7381,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         r"""
         create a ClusterRoleBinding
 
+        operationID: createClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7362,6 +7406,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
     ):
         r"""
         replace the specified ClusterRoleBinding
+
+        operationID: replaceClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -8055,6 +8103,10 @@ class Role(HikaruDocumentBase):
         r"""
         create a Role
 
+        operationID: createNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8076,6 +8128,10 @@ class Role(HikaruDocumentBase):
     ):
         r"""
         replace the specified Role
+
+        operationID: replaceNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -10381,6 +10437,10 @@ class PriorityClass(HikaruDocumentBase):
         r"""
         create a PriorityClass
 
+        operationID: createPriorityClass
+        path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10402,6 +10462,10 @@ class PriorityClass(HikaruDocumentBase):
     ):
         r"""
         replace the specified PriorityClass
+
+        operationID: replacePriorityClass
+        path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -10782,6 +10846,10 @@ class VolumeAttachment(HikaruDocumentBase):
         r"""
         create a VolumeAttachment
 
+        operationID: createVolumeAttachment
+        path: /apis/storage.k8s.io/v1alpha1/volumeattachments
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10803,6 +10871,10 @@ class VolumeAttachment(HikaruDocumentBase):
     ):
         r"""
         replace the specified VolumeAttachment
+
+        operationID: replaceVolumeAttachment
+        path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -10909,6 +10981,10 @@ class PodPreset(HikaruDocumentBase):
         r"""
         create a PodPreset
 
+        operationID: createNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10930,6 +11006,10 @@ class PodPreset(HikaruDocumentBase):
     ):
         r"""
         replace the specified PodPreset
+
+        operationID: replaceNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -11136,6 +11216,10 @@ class AuditSink(HikaruDocumentBase):
         r"""
         create an AuditSink
 
+        operationID: createAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11157,6 +11241,10 @@ class AuditSink(HikaruDocumentBase):
     ):
         r"""
         replace the specified AuditSink
+
+        operationID: replaceAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -11328,6 +11416,10 @@ class EndpointSlice(HikaruDocumentBase):
         r"""
         create an EndpointSlice
 
+        operationID: createNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11349,6 +11441,10 @@ class EndpointSlice(HikaruDocumentBase):
     ):
         r"""
         replace the specified EndpointSlice
+
+        operationID: replaceNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -11508,6 +11604,10 @@ class RuntimeClass(HikaruDocumentBase):
         r"""
         create a RuntimeClass
 
+        operationID: createRuntimeClass
+        path: /apis/node.k8s.io/v1alpha1/runtimeclasses
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11529,6 +11629,10 @@ class RuntimeClass(HikaruDocumentBase):
     ):
         r"""
         replace the specified RuntimeClass
+
+        operationID: replaceRuntimeClass
+        path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will

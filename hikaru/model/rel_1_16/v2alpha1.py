@@ -6604,6 +6604,10 @@ class DeleteOptions(HikaruDocumentBase):
         r"""
         delete collection of CronJob
 
+        operationID: deleteCollectionNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
+
+
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6702,6 +6706,10 @@ class DeleteOptions(HikaruDocumentBase):
     ):
         r"""
         delete a CronJob
+
+        operationID: deleteNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
@@ -10403,6 +10411,10 @@ class CronJob(HikaruDocumentBase):
         r"""
         create a CronJob
 
+        operationID: createNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10425,6 +10437,10 @@ class CronJob(HikaruDocumentBase):
         r"""
         replace the specified CronJob
 
+        operationID: replaceNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+
+
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10446,6 +10462,10 @@ class CronJob(HikaruDocumentBase):
     ):
         r"""
         replace status of the specified CronJob
+
+        operationID: replaceNamespacedCronJobStatus
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}/status
+
 
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
