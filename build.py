@@ -66,6 +66,7 @@ from pathlib import Path
 import sys
 from typing import List, Dict, Optional, Union, Tuple, Any
 import json
+import re
 import networkx
 from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
@@ -263,6 +264,9 @@ class Operation(object):
     The same path may have multiple operations with different verbs, and hence
     may also involve different input params/outputs
     """
+
+    regexp = re.compile(r'{(?P<pname>[a-z]+)}')
+
     def __init__(self, verb: str, op_path: str, op_id: str, description: str):
         self.verb = verb
         self.op_path = op_path
@@ -272,6 +276,18 @@ class Operation(object):
         self.parameters: List[OpParameter] = list()
         self.self_param: Optional[OpParameter] = None
         self.returns = {}
+        # OK, now we need to check for implicit params in the path
+        # itself; we'll record these as OpParam objects
+        search_str = self.op_path
+        match = self.regexp.search(search_str)
+        url_params = []
+        while match is not None:
+            url_params.append(match.group('pname'))
+            search_str = search_str[match.end():]
+            match = self.regexp.search(search_str)
+        url_params.sort()
+        for pname in url_params:
+            self.add_parameter(pname, "str", "part of the URL path", required=True)
 
     def add_parameter(self, name: str, ptype: Any, description: str,
                       required: bool = False):
@@ -307,7 +323,6 @@ class Operation(object):
         docstring_parts.append("")
         docstring_parts.append(f'    operationID: {self.op_id}')
         docstring_parts.append(f'    path: {self.op_path}')
-        docstring_parts.append("")
         if self.parameters:
             docstring_parts.append("")
             for p in self.parameters:

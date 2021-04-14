@@ -8952,6 +8952,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def createNamespacedHorizontalPodAutoscaler(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8962,7 +8963,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: createNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8978,6 +8979,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def replaceNamespacedHorizontalPodAutoscaler(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8988,7 +8991,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: replaceNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9004,6 +9008,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9014,7 +9020,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: replaceNamespacedHorizontalPodAutoscalerStatus
         path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the

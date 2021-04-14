@@ -356,7 +356,6 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
         operationID: createSelfSubjectRulesReview
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectrulesreviews
-
         """
         pass
 
@@ -3595,7 +3594,6 @@ class ClusterRole(HikaruDocumentBase):
         operationID: createClusterRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3611,6 +3609,7 @@ class ClusterRole(HikaruDocumentBase):
 
     def replaceClusterRole(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -3621,7 +3620,7 @@ class ClusterRole(HikaruDocumentBase):
         operationID: replaceClusterRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3830,6 +3829,7 @@ class RoleBinding(HikaruDocumentBase):
 
     def createNamespacedRoleBinding(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -3840,7 +3840,7 @@ class RoleBinding(HikaruDocumentBase):
         operationID: createNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3856,6 +3856,8 @@ class RoleBinding(HikaruDocumentBase):
 
     def replaceNamespacedRoleBinding(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -3866,7 +3868,8 @@ class RoleBinding(HikaruDocumentBase):
         operationID: replaceNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -4062,7 +4065,6 @@ class APIService(HikaruDocumentBase):
         operationID: createAPIService
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -4078,6 +4080,7 @@ class APIService(HikaruDocumentBase):
 
     def replaceAPIService(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -4088,7 +4091,7 @@ class APIService(HikaruDocumentBase):
         operationID: replaceAPIService
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -4104,6 +4107,7 @@ class APIService(HikaruDocumentBase):
 
     def replaceAPIServiceStatus(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -4114,7 +4118,7 @@ class APIService(HikaruDocumentBase):
         operationID: replaceAPIServiceStatus
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -4619,13 +4623,14 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Any] = None
 
-    def createNamespacedLocalSubjectAccessReview(self, client=None):
+    def createNamespacedLocalSubjectAccessReview(self, namespace: str, client=None):
         r"""
         create a LocalSubjectAccessReview
 
         operationID: createNamespacedLocalSubjectAccessReview
         path: /apis/authorization.k8s.io/v1beta1/namespaces/{namespace}/localsubjectaccessreviews
 
+        :param namespace: part of the URL path
         """
         pass
 
@@ -5334,6 +5339,7 @@ class Lease(HikaruDocumentBase):
 
     def createNamespacedLease(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -5344,7 +5350,7 @@ class Lease(HikaruDocumentBase):
         operationID: createNamespacedLease
         path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -5360,6 +5366,8 @@ class Lease(HikaruDocumentBase):
 
     def replaceNamespacedLease(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -5370,7 +5378,8 @@ class Lease(HikaruDocumentBase):
         operationID: replaceNamespacedLease
         path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6009,6 +6018,7 @@ class ReplicaSet(HikaruDocumentBase):
 
     def createNamespacedReplicaSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -6019,7 +6029,7 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: createNamespacedReplicaSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6035,6 +6045,8 @@ class ReplicaSet(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -6045,7 +6057,8 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6061,6 +6074,8 @@ class ReplicaSet(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -6071,7 +6086,8 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSetStatus
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6803,7 +6819,6 @@ class CustomResourceDefinition(HikaruDocumentBase):
         operationID: createCustomResourceDefinition
         path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6819,6 +6834,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     def replaceCustomResourceDefinition(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -6829,7 +6845,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         operationID: replaceCustomResourceDefinition
         path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6845,6 +6861,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     def replaceCustomResourceDefinitionStatus(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -6855,7 +6872,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         operationID: replaceCustomResourceDefinitionStatus
         path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}/status
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6958,7 +6975,6 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
         operationID: createSelfSubjectAccessReview
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectaccessreviews
-
         """
         pass
 
@@ -7037,6 +7053,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedDeploymentScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7047,7 +7065,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedDeploymentScale
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7063,6 +7082,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSetScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7073,7 +7094,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSetScale
         path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7089,6 +7111,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSetScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7099,7 +7123,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSetScale
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7115,6 +7140,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedReplicationControllerDummyScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7125,7 +7152,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedReplicationControllerDummyScale
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicationcontrollers/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7301,7 +7329,6 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: createClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7317,6 +7344,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     def replaceClusterRoleBinding(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7327,7 +7355,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: replaceClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7556,7 +7584,6 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         operationID: createMutatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7572,6 +7599,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
 
     def replaceMutatingWebhookConfiguration(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7582,7 +7610,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         operationID: replaceMutatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7731,7 +7759,6 @@ class StorageClass(HikaruDocumentBase):
         operationID: createStorageClass
         path: /apis/storage.k8s.io/v1beta1/storageclasses
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7747,6 +7774,7 @@ class StorageClass(HikaruDocumentBase):
 
     def replaceStorageClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7757,7 +7785,7 @@ class StorageClass(HikaruDocumentBase):
         operationID: replaceStorageClass
         path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8118,6 +8146,7 @@ class Role(HikaruDocumentBase):
 
     def createNamespacedRole(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8128,7 +8157,7 @@ class Role(HikaruDocumentBase):
         operationID: createNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8144,6 +8173,8 @@ class Role(HikaruDocumentBase):
 
     def replaceNamespacedRole(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8154,7 +8185,8 @@ class Role(HikaruDocumentBase):
         operationID: replaceNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8332,7 +8364,6 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         operationID: createValidatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8348,6 +8379,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
 
     def replaceValidatingWebhookConfiguration(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8358,7 +8390,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         operationID: replaceValidatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8595,6 +8627,7 @@ class StatefulSet(HikaruDocumentBase):
 
     def createNamespacedStatefulSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8605,7 +8638,7 @@ class StatefulSet(HikaruDocumentBase):
         operationID: createNamespacedStatefulSet
         path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8621,6 +8654,8 @@ class StatefulSet(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8631,7 +8666,8 @@ class StatefulSet(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSet
         path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8647,6 +8683,8 @@ class StatefulSet(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8657,7 +8695,8 @@ class StatefulSet(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSetStatus
         path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8881,6 +8920,7 @@ class Event(HikaruDocumentBase):
 
     def createNamespacedEvent(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8891,7 +8931,7 @@ class Event(HikaruDocumentBase):
         operationID: createNamespacedEvent
         path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8907,6 +8947,8 @@ class Event(HikaruDocumentBase):
 
     def replaceNamespacedEvent(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8917,7 +8959,8 @@ class Event(HikaruDocumentBase):
         operationID: replaceNamespacedEvent
         path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9108,7 +9151,6 @@ class TokenReview(HikaruDocumentBase):
 
         operationID: createTokenReview
         path: /apis/authentication.k8s.io/v1beta1/tokenreviews
-
         """
         pass
 
@@ -10203,6 +10245,7 @@ class Deployment(HikaruDocumentBase):
 
     def createNamespacedDeployment(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10213,7 +10256,7 @@ class Deployment(HikaruDocumentBase):
         operationID: createNamespacedDeployment
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10229,6 +10272,8 @@ class Deployment(HikaruDocumentBase):
 
     def replaceNamespacedDeployment(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10239,7 +10284,8 @@ class Deployment(HikaruDocumentBase):
         operationID: replaceNamespacedDeployment
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10255,6 +10301,8 @@ class Deployment(HikaruDocumentBase):
 
     def replaceNamespacedDeploymentStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10265,7 +10313,8 @@ class Deployment(HikaruDocumentBase):
         operationID: replaceNamespacedDeploymentStatus
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10511,6 +10560,7 @@ class NetworkPolicy(HikaruDocumentBase):
 
     def createNamespacedNetworkPolicy(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10521,7 +10571,7 @@ class NetworkPolicy(HikaruDocumentBase):
         operationID: createNamespacedNetworkPolicy
         path: /apis/extensions/v1beta1/namespaces/{namespace}/networkpolicies
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10537,6 +10587,8 @@ class NetworkPolicy(HikaruDocumentBase):
 
     def replaceNamespacedNetworkPolicy(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10547,7 +10599,8 @@ class NetworkPolicy(HikaruDocumentBase):
         operationID: replaceNamespacedNetworkPolicy
         path: /apis/extensions/v1beta1/namespaces/{namespace}/networkpolicies/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10637,6 +10690,7 @@ class ControllerRevision(HikaruDocumentBase):
 
     def createNamespacedControllerRevision(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10647,7 +10701,7 @@ class ControllerRevision(HikaruDocumentBase):
         operationID: createNamespacedControllerRevision
         path: /apis/apps/v1beta1/namespaces/{namespace}/controllerrevisions
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10663,6 +10717,8 @@ class ControllerRevision(HikaruDocumentBase):
 
     def replaceNamespacedControllerRevision(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10673,7 +10729,8 @@ class ControllerRevision(HikaruDocumentBase):
         operationID: replaceNamespacedControllerRevision
         path: /apis/apps/v1beta1/namespaces/{namespace}/controllerrevisions/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10882,7 +10939,6 @@ class SubjectAccessReview(HikaruDocumentBase):
 
         operationID: createSubjectAccessReview
         path: /apis/authorization.k8s.io/v1beta1/subjectaccessreviews
-
         """
         pass
 
@@ -10945,7 +11001,6 @@ class PriorityClass(HikaruDocumentBase):
         operationID: createPriorityClass
         path: /apis/scheduling.k8s.io/v1beta1/priorityclasses
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10961,6 +11016,7 @@ class PriorityClass(HikaruDocumentBase):
 
     def replacePriorityClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10971,7 +11027,7 @@ class PriorityClass(HikaruDocumentBase):
         operationID: replacePriorityClass
         path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11196,6 +11252,7 @@ class DaemonSet(HikaruDocumentBase):
 
     def createNamespacedDaemonSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11206,7 +11263,7 @@ class DaemonSet(HikaruDocumentBase):
         operationID: createNamespacedDaemonSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11222,6 +11279,8 @@ class DaemonSet(HikaruDocumentBase):
 
     def replaceNamespacedDaemonSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11232,7 +11291,8 @@ class DaemonSet(HikaruDocumentBase):
         operationID: replaceNamespacedDaemonSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11248,6 +11308,8 @@ class DaemonSet(HikaruDocumentBase):
 
     def replaceNamespacedDaemonSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11258,7 +11320,8 @@ class DaemonSet(HikaruDocumentBase):
         operationID: replaceNamespacedDaemonSetStatus
         path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11435,7 +11498,6 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: createVolumeAttachment
         path: /apis/storage.k8s.io/v1beta1/volumeattachments
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11451,6 +11513,7 @@ class VolumeAttachment(HikaruDocumentBase):
 
     def replaceVolumeAttachment(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11461,7 +11524,7 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: replaceVolumeAttachment
         path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11537,13 +11600,17 @@ class DeploymentRollback(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Any] = None
 
-    def createNamespacedDeploymentRollback(self, client=None):
+    def createNamespacedDeploymentRollback(
+        self, name: str, namespace: str, client=None
+    ):
         r"""
         create rollback of a Deployment
 
         operationID: createNamespacedDeploymentRollback
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/rollback
 
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         """
         pass
 
@@ -11647,7 +11714,6 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: createRuntimeClass
         path: /apis/node.k8s.io/v1beta1/runtimeclasses
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11663,6 +11729,7 @@ class RuntimeClass(HikaruDocumentBase):
 
     def replaceRuntimeClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11673,7 +11740,7 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: replaceRuntimeClass
         path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11812,6 +11879,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
 
     def createNamespacedPodDisruptionBudget(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11822,7 +11890,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         operationID: createNamespacedPodDisruptionBudget
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11838,6 +11906,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
 
     def replaceNamespacedPodDisruptionBudget(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11848,7 +11918,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         operationID: replaceNamespacedPodDisruptionBudget
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11864,6 +11935,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
 
     def replaceNamespacedPodDisruptionBudgetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -11874,7 +11947,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         operationID: replaceNamespacedPodDisruptionBudgetStatus
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11987,6 +12061,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedEvent(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -12005,7 +12080,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedEvent
         path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -12096,6 +12171,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedEvent(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12108,7 +12185,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedEvent
         path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12157,7 +12235,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionMutatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -12249,6 +12326,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteMutatingWebhookConfiguration(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12261,7 +12339,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteMutatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12310,7 +12388,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionValidatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -12402,6 +12479,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteValidatingWebhookConfiguration(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12414,7 +12492,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteValidatingWebhookConfiguration
         path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12463,7 +12541,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionCustomResourceDefinition
         path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -12555,6 +12632,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCustomResourceDefinition(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12567,7 +12645,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCustomResourceDefinition
         path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12616,7 +12694,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionAPIService
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -12708,6 +12785,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteAPIService(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12720,7 +12798,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteAPIService
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12752,6 +12830,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedDaemonSet(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -12770,7 +12849,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedDaemonSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -12861,6 +12940,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedDaemonSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -12873,7 +12954,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedDaemonSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12905,6 +12987,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedDeployment(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -12923,7 +13006,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedDeployment
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -13014,6 +13097,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedDeployment(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13026,7 +13111,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedDeployment
         path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13058,6 +13144,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedReplicaSet(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -13076,7 +13163,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedReplicaSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -13167,6 +13254,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedReplicaSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13179,7 +13268,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedReplicaSet
         path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13228,7 +13318,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionCertificateSigningRequest
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -13320,6 +13409,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCertificateSigningRequest(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13332,7 +13422,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCertificateSigningRequest
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13364,6 +13454,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedLease(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -13382,7 +13473,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedLease
         path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -13473,6 +13564,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedLease(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13485,7 +13578,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedLease
         path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13517,6 +13611,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedIngress(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -13535,7 +13630,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedIngress
         path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -13626,6 +13721,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedIngress(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13638,7 +13735,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedIngress
         path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13687,7 +13785,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionPodSecurityPolicy
         path: /apis/policy/v1beta1/podsecuritypolicies
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -13779,6 +13876,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deletePodSecurityPolicy(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13791,7 +13889,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deletePodSecurityPolicy
         path: /apis/policy/v1beta1/podsecuritypolicies/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13840,7 +13938,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionRuntimeClass
         path: /apis/node.k8s.io/v1beta1/runtimeclasses
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -13932,6 +14029,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteRuntimeClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -13944,7 +14042,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteRuntimeClass
         path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -13976,6 +14074,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedPodDisruptionBudget(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -13994,7 +14093,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedPodDisruptionBudget
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -14085,6 +14184,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedPodDisruptionBudget(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14097,7 +14198,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedPodDisruptionBudget
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14146,7 +14248,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -14238,6 +14339,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteClusterRoleBinding(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14250,7 +14352,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14299,7 +14401,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionClusterRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -14391,6 +14492,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteClusterRole(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14403,7 +14505,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteClusterRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14435,6 +14537,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedRoleBinding(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -14453,7 +14556,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -14544,6 +14647,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedRoleBinding(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14556,7 +14661,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14588,6 +14694,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedRole(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -14606,7 +14713,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -14697,6 +14804,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedRole(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14709,7 +14818,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14758,7 +14868,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionPriorityClass
         path: /apis/scheduling.k8s.io/v1beta1/priorityclasses
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -14850,6 +14959,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deletePriorityClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -14862,7 +14972,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deletePriorityClass
         path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14911,7 +15021,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionStorageClass
         path: /apis/storage.k8s.io/v1beta1/storageclasses
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -15003,6 +15112,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteStorageClass(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -15015,7 +15125,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteStorageClass
         path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15064,7 +15174,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionVolumeAttachment
         path: /apis/storage.k8s.io/v1beta1/volumeattachments
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -15156,6 +15265,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteVolumeAttachment(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -15168,7 +15278,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteVolumeAttachment
         path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15217,7 +15327,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionCSIDriver
         path: /apis/storage.k8s.io/v1beta1/csidrivers
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -15309,6 +15418,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCSIDriver(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -15321,7 +15431,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCSIDriver
         path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15370,7 +15480,6 @@ class DeleteOptions(HikaruDocumentBase):
 
         operationID: deleteCollectionCSINode
         path: /apis/storage.k8s.io/v1beta1/csinodes
-
 
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
@@ -15462,6 +15571,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCSINode(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -15474,7 +15584,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCSINode
         path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15717,6 +15827,7 @@ class Ingress(HikaruDocumentBase):
 
     def createNamespacedIngress(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -15727,7 +15838,7 @@ class Ingress(HikaruDocumentBase):
         operationID: createNamespacedIngress
         path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15743,6 +15854,8 @@ class Ingress(HikaruDocumentBase):
 
     def replaceNamespacedIngress(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -15753,7 +15866,8 @@ class Ingress(HikaruDocumentBase):
         operationID: replaceNamespacedIngress
         path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15769,6 +15883,8 @@ class Ingress(HikaruDocumentBase):
 
     def replaceNamespacedIngressStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -15779,7 +15895,8 @@ class Ingress(HikaruDocumentBase):
         operationID: replaceNamespacedIngressStatus
         path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15927,7 +16044,6 @@ class CSIDriver(HikaruDocumentBase):
         operationID: createCSIDriver
         path: /apis/storage.k8s.io/v1beta1/csidrivers
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15943,6 +16059,7 @@ class CSIDriver(HikaruDocumentBase):
 
     def replaceCSIDriver(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -15953,7 +16070,7 @@ class CSIDriver(HikaruDocumentBase):
         operationID: replaceCSIDriver
         path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16117,7 +16234,6 @@ class CSINode(HikaruDocumentBase):
         operationID: createCSINode
         path: /apis/storage.k8s.io/v1beta1/csinodes
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16133,6 +16249,7 @@ class CSINode(HikaruDocumentBase):
 
     def replaceCSINode(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16143,7 +16260,7 @@ class CSINode(HikaruDocumentBase):
         operationID: replaceCSINode
         path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16295,6 +16412,7 @@ class CronJob(HikaruDocumentBase):
 
     def createNamespacedCronJob(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16305,7 +16423,7 @@ class CronJob(HikaruDocumentBase):
         operationID: createNamespacedCronJob
         path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16321,6 +16439,8 @@ class CronJob(HikaruDocumentBase):
 
     def replaceNamespacedCronJob(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16331,7 +16451,8 @@ class CronJob(HikaruDocumentBase):
         operationID: replaceNamespacedCronJob
         path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16347,6 +16468,8 @@ class CronJob(HikaruDocumentBase):
 
     def replaceNamespacedCronJobStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16357,7 +16480,8 @@ class CronJob(HikaruDocumentBase):
         operationID: replaceNamespacedCronJobStatus
         path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16751,7 +16875,6 @@ class PodSecurityPolicy(HikaruDocumentBase):
         operationID: createPodSecurityPolicy
         path: /apis/policy/v1beta1/podsecuritypolicies
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16767,6 +16890,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
 
     def replacePodSecurityPolicy(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16777,7 +16901,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         operationID: replacePodSecurityPolicy
         path: /apis/policy/v1beta1/podsecuritypolicies/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16932,7 +17056,6 @@ class CertificateSigningRequest(HikaruDocumentBase):
         operationID: createCertificateSigningRequest
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests
 
-
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16948,6 +17071,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
 
     def replaceCertificateSigningRequest(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16958,7 +17082,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         operationID: replaceCertificateSigningRequest
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16972,18 +17096,20 @@ class CertificateSigningRequest(HikaruDocumentBase):
         """
         pass
 
-    def replaceCertificateSigningRequestApproval(self, client=None):
+    def replaceCertificateSigningRequestApproval(self, name: str, client=None):
         r"""
         replace approval of the specified CertificateSigningRequest
 
         operationID: replaceCertificateSigningRequestApproval
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/approval
 
+        :param name: part of the URL path
         """
         pass
 
     def replaceCertificateSigningRequestStatus(
         self,
+        name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -16994,7 +17120,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         operationID: replaceCertificateSigningRequestStatus
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/status
 
-
+        :param name: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the

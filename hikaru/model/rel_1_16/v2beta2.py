@@ -6589,6 +6589,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedHorizontalPodAutoscaler(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -6607,7 +6608,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6698,6 +6699,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedHorizontalPodAutoscaler(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -6710,7 +6713,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9116,6 +9120,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def createNamespacedHorizontalPodAutoscaler(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9126,7 +9131,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: createNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9142,6 +9147,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def replaceNamespacedHorizontalPodAutoscaler(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9152,7 +9159,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: replaceNamespacedHorizontalPodAutoscaler
         path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9168,6 +9176,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9178,7 +9188,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         operationID: replaceNamespacedHorizontalPodAutoscalerStatus
         path: /apis/autoscaling/v2beta2/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the

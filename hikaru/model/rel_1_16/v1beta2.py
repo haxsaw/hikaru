@@ -5756,6 +5756,7 @@ class ReplicaSet(HikaruDocumentBase):
 
     def createNamespacedReplicaSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -5766,7 +5767,7 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: createNamespacedReplicaSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/replicasets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -5782,6 +5783,8 @@ class ReplicaSet(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -5792,7 +5795,8 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/replicasets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -5808,6 +5812,8 @@ class ReplicaSet(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -5818,7 +5824,8 @@ class ReplicaSet(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSetStatus
         path: /apis/apps/v1beta2/namespaces/{namespace}/replicasets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6668,6 +6675,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedControllerRevision(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -6686,7 +6694,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedControllerRevision
         path: /apis/apps/v1beta2/namespaces/{namespace}/controllerrevisions
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6777,6 +6785,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedControllerRevision(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -6789,7 +6799,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedControllerRevision
         path: /apis/apps/v1beta2/namespaces/{namespace}/controllerrevisions/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -6821,6 +6832,7 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteCollectionNamespacedStatefulSet(
         self,
+        namespace: str,
         continue_: Optional[str] = None,
         dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
@@ -6839,7 +6851,7 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedStatefulSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets
 
-
+        :param namespace: part of the URL path
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -6930,6 +6942,8 @@ class DeleteOptions(HikaruDocumentBase):
 
     def deleteNamespacedStatefulSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
@@ -6942,7 +6956,8 @@ class DeleteOptions(HikaruDocumentBase):
         operationID: deleteNamespacedStatefulSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7047,6 +7062,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedDeploymentScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7057,7 +7074,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedDeploymentScale
         path: /apis/apps/v1beta2/namespaces/{namespace}/deployments/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7073,6 +7091,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedReplicaSetScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7083,7 +7103,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedReplicaSetScale
         path: /apis/apps/v1beta2/namespaces/{namespace}/replicasets/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -7099,6 +7120,8 @@ class Scale(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSetScale(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -7109,7 +7132,8 @@ class Scale(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSetScale
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets/{name}/scale
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8316,6 +8340,7 @@ class StatefulSet(HikaruDocumentBase):
 
     def createNamespacedStatefulSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8326,7 +8351,7 @@ class StatefulSet(HikaruDocumentBase):
         operationID: createNamespacedStatefulSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8342,6 +8367,8 @@ class StatefulSet(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8352,7 +8379,8 @@ class StatefulSet(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -8368,6 +8396,8 @@ class StatefulSet(HikaruDocumentBase):
 
     def replaceNamespacedStatefulSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -8378,7 +8408,8 @@ class StatefulSet(HikaruDocumentBase):
         operationID: replaceNamespacedStatefulSetStatus
         path: /apis/apps/v1beta2/namespaces/{namespace}/statefulsets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9837,6 +9868,7 @@ class Deployment(HikaruDocumentBase):
 
     def createNamespacedDeployment(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9847,7 +9879,7 @@ class Deployment(HikaruDocumentBase):
         operationID: createNamespacedDeployment
         path: /apis/apps/v1beta2/namespaces/{namespace}/deployments
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9863,6 +9895,8 @@ class Deployment(HikaruDocumentBase):
 
     def replaceNamespacedDeployment(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9873,7 +9907,8 @@ class Deployment(HikaruDocumentBase):
         operationID: replaceNamespacedDeployment
         path: /apis/apps/v1beta2/namespaces/{namespace}/deployments/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9889,6 +9924,8 @@ class Deployment(HikaruDocumentBase):
 
     def replaceNamespacedDeploymentStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -9899,7 +9936,8 @@ class Deployment(HikaruDocumentBase):
         operationID: replaceNamespacedDeploymentStatus
         path: /apis/apps/v1beta2/namespaces/{namespace}/deployments/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10210,6 +10248,7 @@ class ControllerRevision(HikaruDocumentBase):
 
     def createNamespacedControllerRevision(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10220,7 +10259,7 @@ class ControllerRevision(HikaruDocumentBase):
         operationID: createNamespacedControllerRevision
         path: /apis/apps/v1beta2/namespaces/{namespace}/controllerrevisions
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10236,6 +10275,8 @@ class ControllerRevision(HikaruDocumentBase):
 
     def replaceNamespacedControllerRevision(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10246,7 +10287,8 @@ class ControllerRevision(HikaruDocumentBase):
         operationID: replaceNamespacedControllerRevision
         path: /apis/apps/v1beta2/namespaces/{namespace}/controllerrevisions/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10647,6 +10689,7 @@ class DaemonSet(HikaruDocumentBase):
 
     def createNamespacedDaemonSet(
         self,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10657,7 +10700,7 @@ class DaemonSet(HikaruDocumentBase):
         operationID: createNamespacedDaemonSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/daemonsets
 
-
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10673,6 +10716,8 @@ class DaemonSet(HikaruDocumentBase):
 
     def replaceNamespacedDaemonSet(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10683,7 +10728,8 @@ class DaemonSet(HikaruDocumentBase):
         operationID: replaceNamespacedDaemonSet
         path: /apis/apps/v1beta2/namespaces/{namespace}/daemonsets/{name}
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10699,6 +10745,8 @@ class DaemonSet(HikaruDocumentBase):
 
     def replaceNamespacedDaemonSetStatus(
         self,
+        name: str,
+        namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client=None,
@@ -10709,7 +10757,8 @@ class DaemonSet(HikaruDocumentBase):
         operationID: replaceNamespacedDaemonSetStatus
         path: /apis/apps/v1beta2/namespaces/{namespace}/daemonsets/{name}/status
 
-
+        :param name: part of the URL path
+        :param namespace: part of the URL path
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the

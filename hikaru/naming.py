@@ -170,3 +170,7 @@ _api_group_swagger_map = {
     "scheduling.k8s.io": "io.k8s.api.scheduling",
     "storage.k8s.io": "io.k8s.api.storage"
 }
+
+
+# inverted version of the above map
+swagger_to_api_group_map = {v: k for k, v in _api_group_swagger_map.items()}
