@@ -7488,7 +7488,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedConfigMap(
@@ -7697,7 +7697,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedEndpoints(
@@ -7906,7 +7906,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedLimitRange(
@@ -8117,7 +8117,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedPersistentVolumeClaim(
@@ -8326,7 +8326,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedPod(
@@ -8535,7 +8535,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedPodTemplate(
@@ -8746,7 +8746,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedReplicationController(
@@ -8955,7 +8955,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedResourceQuota(
@@ -9164,7 +9164,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedSecret(
@@ -9373,7 +9373,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedServiceAccount(
@@ -9700,7 +9700,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNode(
@@ -9903,7 +9903,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deletePersistentVolume(
@@ -10109,7 +10109,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedJob(
@@ -10318,7 +10318,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedNetworkPolicy(

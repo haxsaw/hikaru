@@ -268,7 +268,7 @@ the_method = getattr(inst, '{k8s_method_name}')
 all_args = dict()
 {arg_assignment_lines}
 body = get_clean_dict(self)
-all_args['body'] = body
+all_args['{body_key}'] = body
 return the_method(**all_args)
 """
 
@@ -335,14 +335,23 @@ class Operation(object):
         self.returns[code] = OpResponse(code, description, ref=ptype)
 
     def _get_method_body(self, k8s_class_name: str, k8s_method_name: str,
-                         arg_assignment_lines: List[str]) -> List[str]:
+                         arg_assignment_lines: List[str],
+                         body_key: str = 'body') -> List[str]:
         rez = _method_body_template.format(k8s_class_name=k8s_class_name,
                                            k8s_method_name=k8s_method_name,
+                                           body_key=body_key,
                                            arg_assignment_lines="\n".join(
                                                 arg_assignment_lines))
         return rez.split("\n")
 
-    def as_python_method(self) -> List[str]:
+    # this prefix is used to detect methods in rel_1_15 for DeleteOptions
+    # where the instead of the object being the 'body' parameter it is the
+    # (UNSPECIFIED!) 'v1_delete_options' parameter. Horrifying...
+    del_collection_prefix = "delete_collection"
+
+    def as_python_method(self, cd=None) -> List[str]:
+        if cd is not None:
+            assert isinstance(cd, ClassDescriptor)
         version = get_path_version(self.op_path)
         if version is None:
             version = ""
@@ -383,9 +392,16 @@ class Operation(object):
             else:
                 assignment_list.append(f"all_args['{camel_to_pep8(p.name)}'] = "
                                        f"{camel_to_pep8(p.name)}")
+        if (cd and cd.short_name == "DeleteOptions"
+                and _release_in_process == 'rel_1_15' and
+                self.k8s_access_tuple[3].startswith(self.del_collection_prefix)):
+            body_key = 'v1_delete_options'
+        else:
+            body_key = 'body'
         body_lines = self._get_method_body(self.k8s_access_tuple[2],
                                            self.k8s_access_tuple[3],
-                                           assignment_list)
+                                           assignment_list,
+                                           body_key=body_key)
         body = [f"    {bl}" for bl in body_lines]
         final = [defline, docstring] if docstring else [defline]
         final.extend(body)
@@ -589,7 +605,7 @@ class ClassDescriptor(object):
         # now the operations
         for op in (o for o in self.operations.values() if o.version == for_version):
             assert isinstance(op, Operation)
-            method_lines = [f"    {line}" for line in op.as_python_method()
+            method_lines = [f"    {line}" for line in op.as_python_method(self)
                             if op.should_render]
             method_lines.append("")
             lines.extend(method_lines)
@@ -1179,6 +1195,9 @@ def reset_all():
     ops_by_version.clear()
 
 
+_release_in_process = None
+
+
 def build_it(swagger_file: str, main_rel: str):
     """
     Initiate the swagger-file-driven model package build
@@ -1187,8 +1206,10 @@ def build_it(swagger_file: str, main_rel: str):
     :param main_rel: the name of a release to treat as default; if this swagger
         file is that release, then make it the default release for Hikaru
     """
+    global _release_in_process
     reset_all()
     relname = load_stable(swagger_file)
+    _release_in_process = relname
     path = prep_model_root(model_package)
     relpath = path / relname
     prep_rel_package(str(relpath))
@@ -1196,6 +1217,7 @@ def build_it(swagger_file: str, main_rel: str):
     if main_rel == relname:
         # this is the main release; make the root package default to it
         make_root_init(model_package, main_rel)
+    _release_in_process = None
 
 
 if __name__ == "__main__":

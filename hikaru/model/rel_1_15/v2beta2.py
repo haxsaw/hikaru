@@ -5943,7 +5943,7 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["v1_delete_options"] = body
         return the_method(**all_args)
 
     def deleteNamespacedHorizontalPodAutoscaler(

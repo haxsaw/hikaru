@@ -1158,6 +1158,7 @@ def test102():
     """
     ensure that the $-starting attrs get rendered properly
     """
+    raise SkipTest("JSONSchemaProps isn't part of 1.15")
     x = JSONSchemaProps(dollar_ref='wibble',
                         x_kubernetes_list_type='wobble')
     d = get_clean_dict(x)
