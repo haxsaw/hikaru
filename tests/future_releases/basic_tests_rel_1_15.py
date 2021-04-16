@@ -30,7 +30,7 @@ p = None
 
 
 def setup_pod() -> Pod:
-    docs = load_full_yaml(stream=open("test.yaml", "r"))
+    docs = load_full_yaml(stream=open("../test.yaml", "r"))
     pod = docs[0]
     # assert isinstance(pod, Pod)
     return pod
@@ -1009,7 +1009,7 @@ def test91():
     """
     Check using a path for get_processors()
     """
-    p = get_processors(path="test.yaml")
+    p = get_processors(path="../test.yaml")
     assert len(p) == 2
 
 
@@ -1018,7 +1018,7 @@ def test92():
     Check that a bad apiVersion/kind raises a RuntimeError
     """
     try:
-        docs = load_full_yaml(path="bad.yaml")
+        docs = load_full_yaml(path="../bad.yaml")
         assert False, f"num docs: {len(docs)}"
     except RuntimeError:
         pass
@@ -1040,7 +1040,7 @@ def test94():
     Check we get a TypeError when parsing YAML with missing required prop
     """
     try:
-        _ = load_full_yaml(path="bad2.yaml")
+        _ = load_full_yaml(path="../bad2.yaml")
         assert False, "Should have raised a TypeError"
     except TypeError:
         pass
@@ -1062,7 +1062,7 @@ def test96():
     """
     Test processing the group, version, name back into a swagger name
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     for k, v in jdict.items():
         cd = ClassDescriptor(k, v)
@@ -1078,7 +1078,7 @@ def test97():
     """
     Check that we can detect a recursively defined swagger object
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     cd = None
     for k, v in jdict.items():
@@ -1092,7 +1092,7 @@ def test98():
     """
     Check that we get a new ClassDescriptor as an alternate base
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     cd = None
     for k, v in jdict.items():
@@ -1107,7 +1107,7 @@ def test99():
     """
     Check that an existing ClassDecriptor depends on its alternate base
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     cd = None
     for k, v in jdict.items():
@@ -1123,7 +1123,7 @@ def test100():
     """
     Check that we can generate sane Python source for the alternate base
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     cd = None
     for k, v in jdict.items():
@@ -1140,7 +1140,7 @@ def test101():
     """
     Check that if there's an alternate base it is the base class for the parsed one
     """
-    f = open("recursive.json", "r")
+    f = open("../recursive.json", "r")
     jdict = json.load(f)
     cd = None
     for k, v in jdict.items():

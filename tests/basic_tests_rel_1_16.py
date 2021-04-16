@@ -1238,6 +1238,7 @@ def test111():
     """
     check that you can set the proper default release
     """
+    raise SkipTest("This release has been removed for the time being")
     from hikaru.model.rel_1_15 import Pod
     defrel = get_default_release()
     set_default_release('rel_1_15')

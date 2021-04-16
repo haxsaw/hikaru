@@ -37,7 +37,7 @@ def setup():
 
 
 test_parms = []
-path = pathlib.Path("test_yaml")
+path = pathlib.Path("../test_yaml")
 for p in path.iterdir():
     if str(p).endswith("/list.yaml"):
         test_parms.append(pytest.param(p, marks=pytest.mark.xfail))
@@ -106,7 +106,7 @@ def test_yaml(yamlpath: pathlib.Path):
 
 
 def do_all():
-    path = pathlib.Path("test_yaml")
+    path = pathlib.Path("../test_yaml")
     for p in path.iterdir():
         try:
             test_yaml(p)
