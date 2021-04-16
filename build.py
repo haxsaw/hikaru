@@ -62,6 +62,7 @@ inspect.signature() can give the argument signature for a
 method; can find how many required positional args there are.
 """
 from itertools import chain
+import importlib
 from pathlib import Path
 import sys
 from typing import List, Dict, Optional, Union, Tuple, Any
@@ -186,12 +187,12 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     print(file=stream)
     print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
           file=stream)
+    print("from hikaru.generate import get_clean_dict", file=stream)
     print("from typing import List, Dict, Optional, Any", file=stream)
     print("from dataclasses import dataclass, field, InitVar", file=stream)
     if other_imports is not None:
         for line in other_imports:
             print(line, file=stream)
-    print(file=stream)
     print(file=stream)
 
 
@@ -256,6 +257,20 @@ def write_modules(pkgpath: str):
     print(f"versions = {str(mod_names)}", file=f)
     f.close()
 
+# the following string is used to format an Operation's method body
+_method_body_template = \
+"""if client is not None:
+    client_to_use = client
+else:
+    client_to_use = self.client
+inst = {k8s_class_name}(api_client=client_to_use)
+the_method = getattr(inst, '{k8s_method_name}')
+all_args = dict()
+{arg_assignment_lines}
+body = get_clean_dict(self)
+all_args['body'] = body
+return the_method(**all_args)
+"""
 
 class Operation(object):
     """
@@ -267,15 +282,21 @@ class Operation(object):
 
     regexp = re.compile(r'{(?P<pname>[a-z]+)}')
 
-    def __init__(self, verb: str, op_path: str, op_id: str, description: str):
+    def __init__(self, verb: str, op_path: str, op_id: str, description: str,
+                 gvk_dict: dict):
+        self.should_render = True
         self.verb = verb
         self.op_path = op_path
         self.version = get_path_version(self.op_path)
+        self.gvk_version = gvk_dict.get('version')
+        self.group = gvk_dict.get('group', 'custom_objects')
+        self.kind = gvk_dict.get('kind')
         self.op_id = op_id
         self.description = description
         self.parameters: List[OpParameter] = list()
         self.self_param: Optional[OpParameter] = None
         self.returns = {}
+        self.k8s_access_tuple = None
         # OK, now we need to check for implicit params in the path
         # itself; we'll record these as OpParam objects
         search_str = self.op_path
@@ -297,9 +318,29 @@ class Operation(object):
         else:
             self.parameters.append(OpParameter(name, ptype, description, required))
 
+    def set_k8s_access(self, t):
+        """
+        Stores the names that tie this operation to the k8s client method
+        :param t: a 4-tuple of strings consisting of:
+            pkg, mod, cls, meth
+            pkg: the package name to use in importlib.import_module
+            mod: the module name to use in the above function
+            cls: the class name to get out of the module
+            meth: the method name to access in the class for the operation
+        """
+        self.k8s_access_tuple = t
+
     def add_return(self, code: str, ptype: Optional[str], description: str):
         ptype = types_map.get(ptype, ptype)
         self.returns[code] = OpResponse(code, description, ref=ptype)
+
+    def _get_method_body(self, k8s_class_name: str, k8s_method_name: str,
+                         arg_assignment_lines: List[str]) -> List[str]:
+        rez = _method_body_template.format(k8s_class_name=k8s_class_name,
+                                           k8s_method_name=k8s_method_name,
+                                           arg_assignment_lines="\n".join(
+                                                arg_assignment_lines))
+        return rez.split("\n")
 
     def as_python_method(self) -> List[str]:
         version = get_path_version(self.op_path)
@@ -330,8 +371,24 @@ class Operation(object):
         docstring_parts.append('   """')
         docstring = '\n'.join(docstring_parts)
         defline = "".join(parts)
-        passline = "    pass"
-        final = [defline, docstring, passline] if docstring else [defline, passline]
+        # do the work to create the method body; we need a list of assignment
+        # statements that captures the data in each parameter that came into
+        # the method to be passed to the k8s method. These are to be assigned
+        # to keys in the 'all_args' dict
+        assignment_list = []
+        for p in chain(required, optional):
+            assert isinstance(p, OpParameter)
+            if p.name in python_reserved:
+                assignment_list.append(f"all_args['_{p.name}'] = {p.name}_")
+            else:
+                assignment_list.append(f"all_args['{camel_to_pep8(p.name)}'] = "
+                                       f"{camel_to_pep8(p.name)}")
+        body_lines = self._get_method_body(self.k8s_access_tuple[2],
+                                           self.k8s_access_tuple[3],
+                                           assignment_list)
+        body = [f"    {bl}" for bl in body_lines]
+        final = [defline, docstring] if docstring else [defline]
+        final.extend(body)
         return final
 
 
@@ -352,7 +409,8 @@ class ClassDescriptor(object):
         self.full_name = full_swagger_name(key)
         group, version, name = process_swagger_name(self.full_name)
         self.short_name = name
-        self.group = group
+        self.group = None
+        self.kind = None
         self.version = version
         self.description = "None"
         self.all_properties = {}
@@ -374,6 +432,13 @@ class ClassDescriptor(object):
         return self.alternate_base is not None
 
     def update(self, d: dict):
+        x_k8s = d.get("x-kubernetes-group-version-kind")
+        if x_k8s is not None:
+            x_k8s = x_k8s[0]
+            self.group = x_k8s["group"].replace(".k8s.io", "")
+            if self.group == "":
+                self.group = "core"
+            self.kind = x_k8s["kind"]
         self.description = d.get("description")
         self.all_properties = d.get("properties", {})
         self.required = d.get("required", [])
@@ -524,7 +589,8 @@ class ClassDescriptor(object):
         # now the operations
         for op in (o for o in self.operations.values() if o.version == for_version):
             assert isinstance(op, Operation)
-            method_lines = [f"    {line}" for line in op.as_python_method()]
+            method_lines = [f"    {line}" for line in op.as_python_method()
+                            if op.should_render]
             method_lines.append("")
             lines.extend(method_lines)
 
@@ -584,7 +650,21 @@ class ModuleDef(object):
             all_classes.update(emod.all_classes)
         all_classes.update(self.all_classes)
         g = build_digraph(all_classes)
+        # compute & output all the imports needed from Kubernetes
+        k8s_imports = {"ApiClient"}
+        for cd in self.all_classes.values():
+            for op in cd.operations.values():
+                assert isinstance(op, Operation)
+                if not op.should_render:
+                    continue
+                k8s_imports.add(op.k8s_access_tuple[2])
+        k8s_imports = list(k8s_imports)
+        k8s_imports.sort()
         output_boilerplate(stream=stream, other_imports=other_imports)
+        for k8s_class in k8s_imports:
+            print(f"from kubernetes.client import {k8s_class}", file=stream)
+        print("\n", file=stream)
+        # compute the order of Hikaru classes to generate
         traversal = list(reversed(list(networkx.topological_sort(g))))
         if not traversal:
             traversal = list(self.all_classes.values())
@@ -852,11 +932,12 @@ def get_path_domain(path: str):
 
 
 def process_params_and_responses(path: str, verb: str, op_id: str,
-                                 params: list, responses: dict, description: str):
+                                 params: list, responses: dict, description: str,
+                                 gvk_dict: dict):
     version = get_path_version(path)
     vops = get_version_ops(version)
     domain = get_path_domain(path)
-    new_op = Operation(verb, path, op_id, description)
+    new_op = Operation(verb, path, op_id, description, gvk_dict)
     k8s_name = None  # used as a flag that an object is an input param
     cd: ClassDescriptor = None
     for param in params:
@@ -923,6 +1004,91 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         vops.add_query_operation(domain, new_op)
 
 
+_dont_remove_groups = {"storage", "policy"}
+
+
+def make_method_name(op: Operation, cd: ClassDescriptor) -> str:
+    under_name = camel_to_pep8(op.op_id)
+    parts = under_name.split("_")
+    group = op.group.replace(".k8s.io", "") if op.group else ""
+    try:
+        parts.remove(cd.version)
+    except ValueError:
+        pass
+    try:
+        if group not in _dont_remove_groups:
+            parts.remove(group)
+    except ValueError:
+        pass
+    result = "_".join(parts)
+    # icky patch for when we've split apart 'API', 'CSI', or 'V<number>'
+    return (result.replace("a_p_i", "api").replace("c_s_i", "csi").
+            replace('v_1', 'v1').replace('v_2', 'v2').replace('beta_1', 'beta1').
+            replace('beta_2', 'beta2').replace('alpha_1', 'alpha1'))
+
+
+def _search_for_method(group: str, version: str, kind: str,
+                       methname: str) -> Union[NoneType,
+                                               Tuple[str, str, str, str]]:
+    package_name = 'kubernetes.client.api'
+    mgroup = group if group else 'core'
+    mgroup = mgroup.replace(".k8s.io", "").replace(".", "_")
+    module_name = f'.{mgroup}_{version}_api' if version else f'.{mgroup}_api'
+    try:
+        mod = importlib.import_module(module_name, package_name)
+    except ModuleNotFoundError:
+        result = None
+    else:
+        class_group = group if group else 'core'
+        class_group = class_group.replace(".k8s.io", "")
+        class_group = "".join(f.capitalize() for f in class_group.split("_"))
+        if "." in class_group:
+            class_group = "".join([w.capitalize() for w in class_group.split('.')])
+        class_name = (f'{class_group}{version.capitalize()}Api'
+                      if version else
+                      f'{class_group}Api')
+        cls = getattr(mod, class_name, None)
+        if cls is None:
+            result = None
+        else:
+            meth = getattr(cls, methname, None)
+            if meth is not None:
+                result = package_name, module_name, class_name, methname
+            else:
+                result = None
+    return result
+
+
+def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
+        Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
+    """
+    from a reference path determine the Kubernete Python client's module and class
+    :param cd: a ClassDescriptor instance for which to find the API class
+    :param op: Operation, optional. provides extra info to find the required
+        method.
+    :return: 4 tuple:
+        - string: import path before the name of the module where the class lives
+        - string: name of the module where the class lives
+        - string: name of the class
+        - string: method name
+        If the method can't be resolved, a tuple of Nones is returned
+    """
+    method_name = make_method_name(op, cd)
+    search_args = [(cd.group, cd.version, cd.kind),
+                   (op.group, op.version, op.kind),
+                   ('core', op.version, op.kind),
+                   ('apps', op.version, op.kind)]
+    pkg = mod = cls = meth = None
+    for group, version, kind in search_args:
+        details = _search_for_method(group, version, kind, method_name)
+        if details is not None:
+            pkg, mod, cls, meth = details
+            break
+    else:
+        print(f"Can't find p/m/c/m for {method_name} in {cd.group} or {op.group}")
+    return pkg, mod, cls, meth
+
+
 def load_stable(swagger_file_path: str) -> str:
     f = open(swagger_file_path, 'r')
     d = json.load(f)
@@ -945,16 +1111,31 @@ def load_stable(swagger_file_path: str) -> str:
         for verb, details in v.items():
             if verb == "parameters" and type(details) == list:
                 process_params_and_responses(k, last_verb, last_opid, details,
-                                             {}, '')
+                                             {}, '', {})
                 continue
+            gvk = details.get("x-kubernetes-group-version-kind", {})
             description = details.get('description', '')
             op_id = details["operationId"]
             process_params_and_responses(k, verb, op_id,
                                          details.get("parameters", []),
                                          details.get("responses", {}),
-                                         description)
+                                         description, gvk)
             last_verb = verb
             last_opid = op_id
+
+    for mod in _all_module_defs.values():
+        assert isinstance(mod, ModuleDef)
+        for cd in mod.all_classes.values():
+            assert isinstance(cd, ClassDescriptor)
+            if cd.is_document and cd.operations:
+                for op in cd.operations.values():
+                    pkg, mod, cls, meth = determine_k8s_mod_class(cd, op)
+                    if pkg is not None:
+                        op.set_k8s_access((pkg, mod, cls, meth))
+                    else:
+                        # we can't find the underlying k8s client func;
+                        # mark this as something we shouldn't render
+                        op.should_render = False
 
     info = d.get('info')
     rel_version = info.get("version")
@@ -1003,6 +1184,8 @@ def build_it(swagger_file: str, main_rel: str):
     Initiate the swagger-file-driven model package build
 
     :param swagger_file: string; path to the swagger file to process
+    :param main_rel: the name of a release to treat as default; if this swagger
+        file is that release, then make it the default release for Hikaru
     """
     reset_all()
     relname = load_stable(swagger_file)
@@ -1021,5 +1204,6 @@ if __name__ == "__main__":
         sys.exit(1)
     main_rel = sys.argv[1]
     for swagger_file in sys.argv[2:]:
+        print(f">>>Processing {swagger_file}")
         build_it(swagger_file, main_rel)
     sys.exit(0)
