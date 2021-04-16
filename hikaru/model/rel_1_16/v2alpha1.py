@@ -27,8 +27,12 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.generate import get_clean_dict
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+
+from kubernetes.client import ApiClient
+from kubernetes.client import BatchV2alpha1Api
 
 
 @dataclass
@@ -6695,7 +6699,27 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_cron_job")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteNamespacedCronJob(
         self,
@@ -6742,7 +6766,22 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_cron_job")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -10431,7 +10470,19 @@ class CronJob(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_cron_job")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedCronJob(
         self,
@@ -10460,7 +10511,20 @@ class CronJob(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_cron_job")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -10489,7 +10553,20 @@ class CronJob(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_cron_job_status")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass

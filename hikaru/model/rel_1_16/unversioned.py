@@ -27,8 +27,11 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.generate import get_clean_dict
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+
+from kubernetes.client import ApiClient
 
 
 @dataclass

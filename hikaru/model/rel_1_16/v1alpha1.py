@@ -27,8 +27,18 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.generate import get_clean_dict
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+
+from kubernetes.client import ApiClient
+from kubernetes.client import AuditregistrationV1alpha1Api
+from kubernetes.client import DiscoveryV1alpha1Api
+from kubernetes.client import NodeV1alpha1Api
+from kubernetes.client import RbacAuthorizationV1alpha1Api
+from kubernetes.client import SchedulingV1alpha1Api
+from kubernetes.client import SettingsV1alpha1Api
+from kubernetes.client import StorageV1alpha1Api
 
 
 @dataclass
@@ -3596,7 +3606,18 @@ class ClusterRole(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_cluster_role")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceClusterRole(
         self,
@@ -3623,7 +3644,19 @@ class ClusterRole(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_cluster_role")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -3846,7 +3879,19 @@ class RoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_role_binding")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedRoleBinding(
         self,
@@ -3875,7 +3920,20 @@ class RoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_role_binding")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -6805,7 +6863,26 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_audit_sink")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteAuditSink(
         self,
@@ -6850,7 +6927,21 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_audit_sink")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteCollectionNamespacedEndpointSlice(
         self,
@@ -6960,7 +7051,27 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = DiscoveryV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_endpoint_slice")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteNamespacedEndpointSlice(
         self,
@@ -7007,7 +7118,22 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = DiscoveryV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_endpoint_slice")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteCollectionNamespacedPodPreset(
         self,
@@ -7117,7 +7243,27 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SettingsV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_pod_preset")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteNamespacedPodPreset(
         self,
@@ -7164,7 +7310,22 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SettingsV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_pod_preset")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -7407,7 +7568,18 @@ class ClusterRoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_cluster_role_binding")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceClusterRoleBinding(
         self,
@@ -7434,7 +7606,19 @@ class ClusterRoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_cluster_role_binding")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -8131,7 +8315,19 @@ class Role(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_role")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedRole(
         self,
@@ -8160,7 +8356,20 @@ class Role(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_role")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -10467,7 +10676,18 @@ class PriorityClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SchedulingV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_priority_class")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replacePriorityClass(
         self,
@@ -10494,7 +10714,19 @@ class PriorityClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SchedulingV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_priority_class")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -10876,7 +11108,18 @@ class VolumeAttachment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = StorageV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_volume_attachment")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceVolumeAttachment(
         self,
@@ -10903,7 +11146,19 @@ class VolumeAttachment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = StorageV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_volume_attachment")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -11013,7 +11268,19 @@ class PodPreset(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SettingsV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_pod_preset")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedPodPreset(
         self,
@@ -11042,7 +11309,20 @@ class PodPreset(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = SettingsV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_pod_preset")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -11250,7 +11530,18 @@ class AuditSink(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_audit_sink")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceAuditSink(
         self,
@@ -11277,7 +11568,19 @@ class AuditSink(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_audit_sink")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -11452,7 +11755,19 @@ class EndpointSlice(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = DiscoveryV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_endpoint_slice")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedEndpointSlice(
         self,
@@ -11481,7 +11796,20 @@ class EndpointSlice(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = DiscoveryV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_endpoint_slice")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -11642,7 +11970,18 @@ class RuntimeClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = NodeV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_runtime_class")
+        all_args = dict()
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceRuntimeClass(
         self,
@@ -11669,7 +12008,19 @@ class RuntimeClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = NodeV1alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_runtime_class")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass

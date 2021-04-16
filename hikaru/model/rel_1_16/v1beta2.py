@@ -27,8 +27,12 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.generate import get_clean_dict
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+
+from kubernetes.client import ApiClient
+from kubernetes.client import AppsV1beta2Api
 
 
 @dataclass
@@ -5779,7 +5783,19 @@ class ReplicaSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_replica_set")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedReplicaSet(
         self,
@@ -5808,7 +5824,20 @@ class ReplicaSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_replica_set")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedReplicaSetStatus(
         self,
@@ -5837,7 +5866,20 @@ class ReplicaSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_replica_set_status")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -6781,7 +6823,27 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_controller_revision")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteNamespacedControllerRevision(
         self,
@@ -6828,7 +6890,22 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_controller_revision")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteCollectionNamespacedStatefulSet(
         self,
@@ -6938,7 +7015,27 @@ class DeleteOptions(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_stateful_set")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def deleteNamespacedStatefulSet(
         self,
@@ -6985,7 +7082,22 @@ class DeleteOptions(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_stateful_set")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -7087,7 +7199,20 @@ class Scale(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_deployment_scale")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedReplicaSetScale(
         self,
@@ -7116,7 +7241,20 @@ class Scale(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_replica_set_scale")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedStatefulSetScale(
         self,
@@ -7145,7 +7283,20 @@ class Scale(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_stateful_set_scale")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -8363,7 +8514,19 @@ class StatefulSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_stateful_set")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedStatefulSet(
         self,
@@ -8392,7 +8555,20 @@ class StatefulSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_stateful_set")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedStatefulSetStatus(
         self,
@@ -8421,7 +8597,20 @@ class StatefulSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_stateful_set_status")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -9891,7 +10080,19 @@ class Deployment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_deployment")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedDeployment(
         self,
@@ -9920,7 +10121,20 @@ class Deployment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_deployment")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedDeploymentStatus(
         self,
@@ -9949,7 +10163,20 @@ class Deployment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_deployment_status")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -10271,7 +10498,19 @@ class ControllerRevision(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_controller_revision")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedControllerRevision(
         self,
@@ -10300,7 +10539,20 @@ class ControllerRevision(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_controller_revision")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass
@@ -10712,7 +10964,19 @@ class DaemonSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_daemon_set")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedDaemonSet(
         self,
@@ -10741,7 +11005,20 @@ class DaemonSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_daemon_set")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
     def replaceNamespacedDaemonSetStatus(
         self,
@@ -10770,7 +11047,20 @@ class DaemonSet(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         """
-        pass
+        if client is not None:
+            client_to_use = client
+        else:
+            client_to_use = self.client
+        inst = AppsV1beta2Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_daemon_set_status")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        return the_method(**all_args)
 
 
 @dataclass

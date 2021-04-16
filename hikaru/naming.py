@@ -116,6 +116,8 @@ def process_swagger_name(sname: str) -> Tuple[str, str, str]:
     else:
         version = None
         swagger_group = ".".join(name_parts[:-1])
+    if not swagger_group:
+        swagger_group = None
     return swagger_group, version, name
 
 
@@ -129,7 +131,7 @@ def make_swagger_name(group: str, version: str, name: str) -> str:
         be fed to process_swagger_name() and receive the original broken-out
         parts.
     """
-    return f"{group}.{version}.{name}"
+    return f"{group}.{version}.{name}" if group is not None else f"{version}.{name}"
 
 
 def camel_to_pep8(name: str) -> str:
