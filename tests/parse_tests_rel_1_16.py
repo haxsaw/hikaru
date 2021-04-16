@@ -118,13 +118,5 @@ def do_all():
                 print(f"Failed on {p} with {e}")
 
 
-# def test_all():
-#     path = pathlib.Path("test_yaml")
-#     for p in path.iterdir():
-#         if str(p).endswith("/list.yaml"):
-#             continue
-#         process_yaml(p)
-
-
 if __name__ == "__main__":
     do_all()

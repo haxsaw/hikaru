@@ -33,7 +33,7 @@ import pytest
 
 
 def setup():
-    set_default_release('rel_unversioned')
+    set_default_release('rel_1_15')
 
 
 test_parms = []
@@ -116,14 +116,6 @@ def do_all():
                       f"swagger file for List. Ignoring failure")
             else:
                 print(f"Failed on {p} with {e}")
-
-
-# def test_all():
-#     path = pathlib.Path("test_yaml")
-#     for p in path.iterdir():
-#         if str(p).endswith("/list.yaml"):
-#             continue
-#         process_yaml(p)
 
 
 if __name__ == "__main__":

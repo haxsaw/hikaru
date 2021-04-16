@@ -19,24 +19,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from hikaru import *
-from hikaru.model.rel_unversioned import *
+from hikaru.model.rel_1_15 import *
 import json
 from build import *
 from hikaru.naming import make_swagger_name
 from hikaru.version_kind import get_version_kind_class
+from unittest import SkipTest
 
 p = None
 
 
 def setup_pod() -> Pod:
-    set_default_release('rel_unversioned')
     docs = load_full_yaml(stream=open("test.yaml", "r"))
     pod = docs[0]
-    assert isinstance(pod, Pod)
+    # assert isinstance(pod, Pod)
     return pod
 
 
 def setup():
+    set_default_release('rel_1_15')
     global p
     p = setup_pod()
 
@@ -256,6 +257,7 @@ def test22():
     """
     check the seccompProfile settings of securityContext
     """
+    raise SkipTest("this field doesn't exist in release 1.16")
     assert isinstance(p, Pod)
     assert p.spec.containers[1].securityContext.seccompProfile.type == "summat"
     assert p.spec.containers[1].securityContext.seccompProfile.localhostProfile == \
@@ -277,6 +279,7 @@ def test24():
     """
     check the windowsOptions item of securityContext
     """
+    raise SkipTest("the field tested here isn't in this release")
     assert isinstance(p, Pod)
     assert p.spec.containers[
         1].securityContext.windowsOptions.gmsaCredentialSpec == "horrible", 'no horrible'
@@ -1214,6 +1217,61 @@ def test108():
     """
     pod = get_version_kind_class('v2beta2', 'Pod')
     assert pod is not None
+
+
+def test109():
+    """
+    ensure that you can acquire a version of the v1beta2 Pod class
+    """
+    pod = get_version_kind_class('v1beta2', 'Pod')
+    assert pod is not None
+
+
+def test110():
+    """
+    ensure that you can acquire a version of the v2alpha1 Pod class
+    """
+    pod = get_version_kind_class('v2alpha1', 'Pod')
+    assert pod is not None
+
+
+def test111():
+    """
+    check that you can set the proper default release
+    """
+    from hikaru.model.rel_1_15 import Pod
+    defrel = get_default_release()
+    set_default_release('rel_1_15')
+    pod = setup_pod()
+    set_default_release(defrel)
+    assert pod.__class__ is Pod
+
+
+def test112():
+    """
+    Check for an error when passing the wrong arg into process_api_version
+    """
+    try:
+        _, _ = process_api_version(5)
+        assert False, "should have complained about the arg type"
+    except TypeError:
+        pass
+
+
+def test113():
+    """
+    Check that we get a None version if one is missing in the swagger name
+    """
+    _, version, _ = process_swagger_name('first.second.Pod')
+    assert version is None
+
+
+def test114():
+    """
+    Check we can turn camel case to pep8 format
+    """
+    pep8 = camel_to_pep8('thisIsCamelCase')
+    assert pep8 == 'this_is_camel_case'
 
 
 if __name__ == "__main__":

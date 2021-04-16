@@ -1238,9 +1238,9 @@ def test111():
     """
     check that you can set the proper default release
     """
-    from hikaru.model.rel_unversioned import Pod
+    from hikaru.model.rel_1_15 import Pod
     defrel = get_default_release()
-    set_default_release('rel_unversioned')
+    set_default_release('rel_1_15')
     pod = setup_pod()
     set_default_release(defrel)
     assert pod.__class__ is Pod

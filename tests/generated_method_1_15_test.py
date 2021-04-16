@@ -4,12 +4,12 @@ from typing import List
 from random import choice
 from inspect import signature
 from hikaru.meta import HikaruDocumentBase
-from hikaru.model.rel_1_16.versions import versions
+from hikaru.model.rel_1_15.versions import versions
 from hikaru import set_default_release
 import pytest
 
 
-set_default_release('rel_1_16')
+set_default_release('rel_1_15')
 
 
 special_classes_to_test = {'Patch'}
@@ -44,7 +44,7 @@ class MockApiClient(object):
 all_params = []
 for version in versions:
     test_classes = []
-    mod = importlib.import_module(f".{version}", 'hikaru.model.rel_1_16')
+    mod = importlib.import_module(f".{version}", 'hikaru.model.rel_1_15')
     for c in vars(mod).values():
         if (type(c) is type and ((issubclass(c, HikaruDocumentBase) and
                 c is not HikaruDocumentBase) or
