@@ -28,8 +28,10 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.generate import get_clean_dict
+from hikaru.utils import Response
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+from kubernetes.client.api_client import ApiClient
 
 from kubernetes.client import ApiClient
 from kubernetes.client import BatchV2alpha1Api
@@ -112,7 +114,7 @@ class OwnerReference(HikaruDocumentBase):
     blockOwnerDeletion: Optional[bool] = None
     controller: Optional[bool] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -352,7 +354,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectRulesReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3172,7 +3174,7 @@ class Pod(HikaruDocumentBase):
     spec: Optional[PodSpec] = None
     status: Optional[PodStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3245,7 +3247,7 @@ class PodList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3286,7 +3288,7 @@ class Secret(HikaruDocumentBase):
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     stringData: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3317,7 +3319,7 @@ class SecretList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3460,7 +3462,7 @@ class ReplicationController(HikaruDocumentBase):
     spec: Optional[ReplicationControllerSpec] = None
     status: Optional[ReplicationControllerStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3491,7 +3493,7 @@ class ReplicationControllerList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3574,7 +3576,7 @@ class ClusterRole(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3603,7 +3605,7 @@ class ClusterRoleList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3655,7 +3657,7 @@ class ComponentStatus(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     conditions: Optional[List[ComponentCondition]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3685,7 +3687,7 @@ class ComponentStatusList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3767,7 +3769,7 @@ class RoleBinding(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3796,7 +3798,7 @@ class RoleBindingList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3940,7 +3942,7 @@ class APIService(HikaruDocumentBase):
     spec: Optional[APIServiceSpec] = None
     status: Optional[APIServiceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3969,7 +3971,7 @@ class APIServiceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4082,7 +4084,7 @@ class ResourceQuota(HikaruDocumentBase):
     spec: Optional[ResourceQuotaSpec] = None
     status: Optional[ResourceQuotaStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4113,7 +4115,7 @@ class ResourceQuotaList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4260,7 +4262,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
     spec: Optional[PersistentVolumeClaimSpec] = None
     status: Optional[PersistentVolumeClaimStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4291,7 +4293,7 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4431,7 +4433,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4840,7 +4842,7 @@ class ObjectReference(HikaruDocumentBase):
     resourceVersion: Optional[str] = None
     uid: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5046,7 +5048,7 @@ class PersistentVolume(HikaruDocumentBase):
     spec: Optional[PersistentVolumeSpec] = None
     status: Optional[PersistentVolumeStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5077,7 +5079,7 @@ class PersistentVolumeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5134,7 +5136,7 @@ class Lease(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LeaseSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5164,7 +5166,7 @@ class LeaseList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5256,7 +5258,7 @@ class Namespace(HikaruDocumentBase):
     spec: Optional[NamespaceSpec] = None
     status: Optional[NamespaceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5287,7 +5289,7 @@ class NamespaceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5395,7 +5397,7 @@ class Endpoints(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subsets: Optional[List[EndpointSubset]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5425,7 +5427,7 @@ class EndpointsList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5530,7 +5532,7 @@ class Status(HikaruDocumentBase):
     reason: Optional[str] = None
     status: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5604,7 +5606,7 @@ class LimitRange(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LimitRangeSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5635,7 +5637,7 @@ class LimitRangeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5755,7 +5757,7 @@ class ReplicaSet(HikaruDocumentBase):
     spec: Optional[ReplicaSetSpec] = None
     status: Optional[ReplicaSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5786,7 +5788,7 @@ class ReplicaSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5868,7 +5870,7 @@ class APIGroup(HikaruDocumentBase):
         default_factory=list
     )
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5895,7 +5897,7 @@ class APIGroupList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6438,7 +6440,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[CustomResourceDefinitionStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6467,7 +6469,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6521,7 +6523,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6589,7 +6591,7 @@ class DeleteOptions(HikaruDocumentBase):
     propagationPolicy: Optional[str] = None
     dryRun: Optional[List[str]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def deleteCollectionNamespacedCronJob(
         self,
@@ -6604,8 +6606,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of CronJob
 
@@ -6698,13 +6700,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_cron_job")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_cron_job_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -6719,7 +6728,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedCronJob(
         self,
@@ -6729,8 +6740,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a CronJob
 
@@ -6765,13 +6776,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_cron_job")
+        the_method = getattr(inst, "delete_namespaced_cron_job_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -6781,7 +6798,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -6849,7 +6868,7 @@ class Scale(HikaruDocumentBase):
     spec: Optional[ScaleSpec] = None
     status: Optional[ScaleStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6890,7 +6909,7 @@ class BoundObjectReference(HikaruDocumentBase):
     name: Optional[str] = None
     uid: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6966,7 +6985,7 @@ class TokenRequest(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenRequestStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6999,7 +7018,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7028,7 +7047,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7201,7 +7220,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[MutatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7231,7 +7250,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7324,7 +7343,7 @@ class StorageClass(HikaruDocumentBase):
     mountOptions: Optional[List[str]] = field(default_factory=list)
     parameters: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7354,7 +7373,7 @@ class StorageClassList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7609,7 +7628,7 @@ class Service(HikaruDocumentBase):
     spec: Optional[ServiceSpec] = None
     status: Optional[ServiceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7639,7 +7658,7 @@ class ServiceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7669,7 +7688,7 @@ class Role(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7698,7 +7717,7 @@ class RoleList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7819,7 +7838,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[ValidatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7849,7 +7868,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8039,7 +8058,7 @@ class StatefulSet(HikaruDocumentBase):
     spec: Optional[StatefulSetSpec] = None
     status: Optional[StatefulSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8068,7 +8087,7 @@ class StatefulSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8113,7 +8132,7 @@ class ServiceAccount(HikaruDocumentBase):
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     secrets: Optional[List[ObjectReference]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8144,7 +8163,7 @@ class ServiceAccountList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8241,7 +8260,7 @@ class Event(HikaruDocumentBase):
     source: Optional[EventSource] = None
     type: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8271,7 +8290,7 @@ class EventList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8308,7 +8327,7 @@ class APIVersions(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8412,7 +8431,7 @@ class TokenReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8556,7 +8575,7 @@ class Job(HikaruDocumentBase):
     spec: Optional[JobSpec] = None
     status: Optional[JobStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8586,7 +8605,7 @@ class JobList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8663,7 +8682,7 @@ class APIResourceList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8694,7 +8713,7 @@ class PodTemplate(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     template: Optional[PodTemplateSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8724,7 +8743,7 @@ class PodTemplateList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8748,7 +8767,7 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     name: str
     apiVersion: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8835,7 +8854,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     spec: Optional[HorizontalPodAutoscalerSpec] = None
     status: Optional[HorizontalPodAutoscalerStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8864,7 +8883,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8895,7 +8914,7 @@ class Binding(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9270,7 +9289,7 @@ class Node(HikaruDocumentBase):
     spec: Optional[NodeSpec] = None
     status: Optional[NodeStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9300,7 +9319,7 @@ class NodeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9480,7 +9499,7 @@ class Deployment(HikaruDocumentBase):
     spec: Optional[DeploymentSpec] = None
     status: Optional[DeploymentStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9509,7 +9528,7 @@ class DeploymentList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9703,7 +9722,7 @@ class NetworkPolicy(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NetworkPolicySpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9733,7 +9752,7 @@ class NetworkPolicyList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9773,7 +9792,7 @@ class ControllerRevision(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     data: Optional[object] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9803,7 +9822,7 @@ class ControllerRevisionList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9842,7 +9861,7 @@ class ConfigMap(HikaruDocumentBase):
     binaryData: Optional[Dict[str, str]] = field(default_factory=dict)
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9872,7 +9891,7 @@ class ConfigMapList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9904,7 +9923,7 @@ class SubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9950,7 +9969,7 @@ class PriorityClass(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     preemptionPolicy: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9980,7 +9999,7 @@ class PriorityClassList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10156,7 +10175,7 @@ class DaemonSet(HikaruDocumentBase):
     spec: Optional[DaemonSetSpec] = None
     status: Optional[DaemonSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10186,7 +10205,7 @@ class DaemonSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10307,7 +10326,7 @@ class VolumeAttachment(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[VolumeAttachmentStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10337,7 +10356,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10443,15 +10462,15 @@ class CronJob(HikaruDocumentBase):
     spec: Optional[CronJobSpec] = None
     status: Optional[CronJobStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedCronJob(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CronJob
 
@@ -10469,20 +10488,29 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          202   CronJob    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_cron_job")
+        the_method = getattr(inst, "create_namespaced_cron_job_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedCronJob(
         self,
@@ -10490,8 +10518,8 @@ class CronJob(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CronJob
 
@@ -10510,13 +10538,19 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_cron_job")
+        the_method = getattr(inst, "replace_namespaced_cron_job_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10524,7 +10558,9 @@ class CronJob(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -10532,8 +10568,8 @@ class CronJob(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified CronJob
 
@@ -10552,13 +10588,19 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_cron_job_status")
+        the_method = getattr(inst, "replace_namespaced_cron_job_status_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10566,7 +10608,9 @@ class CronJob(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -10596,7 +10640,7 @@ class CronJobList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 globs = dict(globals())

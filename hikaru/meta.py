@@ -804,5 +804,13 @@ class HikaruDocumentBase(HikaruBase):
         super(HikaruDocumentBase, self).__post_init__()
         self.client = client
 
-    def _dispatch(self, k8s_func, *args, **kwargs):
-        pass
+    def set_client(self, client: Any):
+        """
+        Set the k8s ApiClient on an already created Hikaru instance
+
+        Sets the client that will be used if this object is involved in
+        calls to K8s.
+
+        :param client: instance of kubernetes.client.api_client.ApiClient
+        """
+        self.client = client

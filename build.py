@@ -188,8 +188,10 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
           file=stream)
     print("from hikaru.generate import get_clean_dict", file=stream)
+    print("from hikaru.utils import Response", file=stream)
     print("from typing import List, Dict, Optional, Any", file=stream)
     print("from dataclasses import dataclass, field, InitVar", file=stream)
+    print("from kubernetes.client.api_client import ApiClient", file=stream)
     if other_imports is not None:
         for line in other_imports:
             print(line, file=stream)
@@ -264,13 +266,16 @@ _method_body_template = \
 else:
     client_to_use = self.client
 inst = {k8s_class_name}(api_client=client_to_use)
-the_method = getattr(inst, '{k8s_method_name}')
+the_method = getattr(inst, '{k8s_method_name}_with_http_info')
 all_args = dict()
 {arg_assignment_lines}
 body = get_clean_dict(self)
 all_args['{body_key}'] = body
-return the_method(**all_args)
+result = the_method(**all_args)
+codes_returning_objects = {codes_returning_objects}
+return Response(result, codes_returning_objects)
 """
+
 
 class Operation(object):
     """
@@ -295,7 +300,7 @@ class Operation(object):
         self.description = description
         self.parameters: List[OpParameter] = list()
         self.self_param: Optional[OpParameter] = None
-        self.returns = {}
+        self.returns: Dict[int, OpResponse] = {}
         self.k8s_access_tuple = None
         # OK, now we need to check for implicit params in the path
         # itself; we'll record these as OpParam objects
@@ -332,16 +337,24 @@ class Operation(object):
 
     def add_return(self, code: str, ptype: Optional[str], description: str):
         ptype = types_map.get(ptype, ptype)
+        code = int(code)
         self.returns[code] = OpResponse(code, description, ref=ptype)
+
+    def response_codes_returning_object(self) -> List[int]:
+        return [r.code for r in self.returns.values()
+                if r.is_object()]
 
     def _get_method_body(self, k8s_class_name: str, k8s_method_name: str,
                          arg_assignment_lines: List[str],
+                         codes_returning_objects: str,
                          body_key: str = 'body') -> List[str]:
         rez = _method_body_template.format(k8s_class_name=k8s_class_name,
                                            k8s_method_name=k8s_method_name,
                                            body_key=body_key,
                                            arg_assignment_lines="\n".join(
-                                                arg_assignment_lines))
+                                                arg_assignment_lines),
+                                           codes_returning_objects=
+                                           codes_returning_objects)
         return rez.split("\n")
 
     # this prefix is used to detect methods in rel_1_15 for DeleteOptions
@@ -365,10 +378,10 @@ class Operation(object):
         params.extend([p.as_python()
                        for p in chain(required, optional)])
         # here, we add any standard parmeter(s) that all should have:
-        params.append('client=None')
+        params.append('client: ApiClient = None')
         # end standards
         parts.append(", ".join(params))
-        parts.append("):")
+        parts.append(") -> Response:")
         docstring_parts = ['    r"""', f'    {self.description}']
         docstring_parts.append("")
         docstring_parts.append(f'    operationID: {self.op_id}')
@@ -377,6 +390,17 @@ class Operation(object):
             docstring_parts.append("")
             for p in self.parameters:
                 docstring_parts.append(f'   {p.docstring()}')
+        docstring_parts.append("    :param client: optional; instance of "
+                               "kubernetes.client.api_client.ApiClient")
+        if self.returns:
+            docstring_parts.append("")
+            docstring_parts.append("    :return: hikaru.utils.Response instance with "
+                                   "the following codes and obj value types:")
+            for ret in self.returns.values():
+                rettype = (ret.ref.short_name if isinstance(ret.ref, ClassDescriptor)
+                           else ret.ref)
+                docstring_parts.append(f"      {ret.code}   {rettype}  "
+                                       f"  {ret.description}")
         docstring_parts.append('   """')
         docstring = '\n'.join(docstring_parts)
         defline = "".join(parts)
@@ -398,9 +422,11 @@ class Operation(object):
             body_key = 'v1_delete_options'
         else:
             body_key = 'body'
+        object_response_codes = str(tuple(self.response_codes_returning_object()))
         body_lines = self._get_method_body(self.k8s_access_tuple[2],
                                            self.k8s_access_tuple[3],
                                            assignment_list,
+                                           object_response_codes,
                                            body_key=body_key)
         body = [f"    {bl}" for bl in body_lines]
         final = [defline, docstring] if docstring else [defline]
@@ -600,7 +626,7 @@ class ClassDescriptor(object):
                 lines.append(p.as_python_typeanno(False))
             if self.is_document:
                 lines.append("    # noinspection PyDataclass")
-                lines.append("    client: InitVar[Any] = None")
+                lines.append("    client: InitVar[Optional[ApiClient]] = None")
         lines.append("")
         # now the operations
         for op in (o for o in self.operations.values() if o.version == for_version):
@@ -634,7 +660,7 @@ class ClassDescriptor(object):
 class ModuleDef(object):
     def __init__(self, version):
         self.version = version
-        self.all_classes = {}
+        self.all_classes: Dict[str, ClassDescriptor] = {}
 
     def get_class_desc(self, sname: str) -> Optional[ClassDescriptor]:
         return self.all_classes.get(sname)
@@ -866,10 +892,13 @@ class OpParameter(object):
 
 
 class OpResponse(object):
-    def __init__(self, code: str, description: str, ref: Optional[str] = None):
+    def __init__(self, code: int, description: str, ref: Optional[str] = None):
         self.code = code
         self.description = description
         self.ref = ref
+
+    def is_object(self) -> bool:
+        return isinstance(self.ref, ClassDescriptor)
 
 
 class QueryDomainOperations(object):
@@ -972,7 +1001,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 if version and sver != version:
                     has_mismatch = True
                 mod_def = get_module_def(sver)
-                cd = mod_def.get_class_desc(ptype)
+                cd = mod_def.get_class_desc(ptype)  # you need this later...
                 ptype = mod_def.get_class_desc(ptype)
             else:
                 ptype = schema.get("type")
@@ -998,6 +1027,8 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 _, sver, ptype = process_swagger_name(ref)
                 if version and sver != version:
                     has_mismatch = True
+                mod_def = get_module_def(sver)
+                ptype = mod_def.get_class_desc(ptype)
             elif 'type' in response['schema']:
                 ptype = response['schema']['type']
                 ptype = types_map.get(ptype, ptype)
@@ -1006,7 +1037,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                                    f" schema: {response['schema']}")
         else:
             ptype = None
-        new_op.add_return(code, description, ptype)
+        new_op.add_return(code, ptype, description)
         if has_mismatch:
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 

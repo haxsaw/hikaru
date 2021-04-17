@@ -28,8 +28,10 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.generate import get_clean_dict
+from hikaru.utils import Response
 from typing import List, Dict, Optional, Any
 from dataclasses import dataclass, field, InitVar
+from kubernetes.client.api_client import ApiClient
 
 from kubernetes.client import AdmissionregistrationV1beta1Api
 from kubernetes.client import ApiClient
@@ -129,7 +131,7 @@ class OwnerReference(HikaruDocumentBase):
     blockOwnerDeletion: Optional[bool] = None
     controller: Optional[bool] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -369,26 +371,35 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectRulesReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
-    def createSelfSubjectRulesReview(self, client=None):
+    def createSelfSubjectRulesReview(self, client: ApiClient = None) -> Response:
         r"""
         create a SelfSubjectRulesReview
 
         operationID: createSelfSubjectRulesReview
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectrulesreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   SelfSubjectRulesReview    OK
+          201   SelfSubjectRulesReview    Created
+          202   SelfSubjectRulesReview    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_self_subject_rules_review")
+        the_method = getattr(inst, "create_self_subject_rules_review_with_http_info")
         all_args = dict()
 
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -3208,7 +3219,7 @@ class Pod(HikaruDocumentBase):
     spec: Optional[PodSpec] = None
     status: Optional[PodStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3281,7 +3292,7 @@ class PodList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3322,7 +3333,7 @@ class Secret(HikaruDocumentBase):
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     stringData: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3353,7 +3364,7 @@ class SecretList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3496,7 +3507,7 @@ class ReplicationController(HikaruDocumentBase):
     spec: Optional[ReplicationControllerSpec] = None
     status: Optional[ReplicationControllerStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3527,7 +3538,7 @@ class ReplicationControllerList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3611,14 +3622,14 @@ class ClusterRole(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createClusterRole(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a ClusterRole
 
@@ -3635,27 +3646,36 @@ class ClusterRole(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRole    OK
+          201   ClusterRole    Created
+          202   ClusterRole    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_cluster_role")
+        the_method = getattr(inst, "create_cluster_role_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceClusterRole(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified ClusterRole
 
@@ -3673,20 +3693,28 @@ class ClusterRole(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRole    OK
+          201   ClusterRole    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_cluster_role")
+        the_method = getattr(inst, "replace_cluster_role_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -3715,7 +3743,7 @@ class ClusterRoleList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3767,7 +3795,7 @@ class ComponentStatus(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     conditions: Optional[List[ComponentCondition]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3797,7 +3825,7 @@ class ComponentStatusList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -3879,15 +3907,15 @@ class RoleBinding(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedRoleBinding(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a RoleBinding
 
@@ -3905,20 +3933,29 @@ class RoleBinding(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBinding    OK
+          201   RoleBinding    Created
+          202   RoleBinding    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_role_binding")
+        the_method = getattr(inst, "create_namespaced_role_binding_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedRoleBinding(
         self,
@@ -3926,8 +3963,8 @@ class RoleBinding(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified RoleBinding
 
@@ -3946,13 +3983,19 @@ class RoleBinding(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBinding    OK
+          201   RoleBinding    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_role_binding")
+        the_method = getattr(inst, "replace_namespaced_role_binding_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -3960,7 +4003,9 @@ class RoleBinding(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -3989,7 +4034,7 @@ class RoleBindingList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4130,14 +4175,14 @@ class APIService(HikaruDocumentBase):
     spec: Optional[APIServiceSpec] = None
     status: Optional[APIServiceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createAPIService(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create an APIService
 
@@ -4154,27 +4199,36 @@ class APIService(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          201   APIService    Created
+          202   APIService    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_api_service")
+        the_method = getattr(inst, "create_api_service_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceAPIService(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified APIService
 
@@ -4192,28 +4246,36 @@ class APIService(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          201   APIService    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_api_service")
+        the_method = getattr(inst, "replace_api_service_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceAPIServiceStatus(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified APIService
 
@@ -4231,20 +4293,28 @@ class APIService(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          201   APIService    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_api_service_status")
+        the_method = getattr(inst, "replace_api_service_status_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -4273,7 +4343,7 @@ class APIServiceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4386,7 +4456,7 @@ class ResourceQuota(HikaruDocumentBase):
     spec: Optional[ResourceQuotaSpec] = None
     status: Optional[ResourceQuotaStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4417,7 +4487,7 @@ class ResourceQuotaList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4564,7 +4634,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
     spec: Optional[PersistentVolumeClaimSpec] = None
     status: Optional[PersistentVolumeClaimStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4595,7 +4665,7 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4735,9 +4805,11 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
-    def createNamespacedLocalSubjectAccessReview(self, namespace: str, client=None):
+    def createNamespacedLocalSubjectAccessReview(
+        self, namespace: str, client: ApiClient = None
+    ) -> Response:
         r"""
         create a LocalSubjectAccessReview
 
@@ -4745,18 +4817,29 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1beta1/namespaces/{namespace}/localsubjectaccessreviews
 
         :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   LocalSubjectAccessReview    OK
+          201   LocalSubjectAccessReview    Created
+          202   LocalSubjectAccessReview    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_local_subject_access_review")
+        the_method = getattr(
+            inst, "create_namespaced_local_subject_access_review_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -5165,7 +5248,7 @@ class ObjectReference(HikaruDocumentBase):
     resourceVersion: Optional[str] = None
     uid: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5371,7 +5454,7 @@ class PersistentVolume(HikaruDocumentBase):
     spec: Optional[PersistentVolumeSpec] = None
     status: Optional[PersistentVolumeStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5402,7 +5485,7 @@ class PersistentVolumeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5459,15 +5542,15 @@ class Lease(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LeaseSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedLease(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a Lease
 
@@ -5485,20 +5568,29 @@ class Lease(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Lease    OK
+          201   Lease    Created
+          202   Lease    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_lease")
+        the_method = getattr(inst, "create_namespaced_lease_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedLease(
         self,
@@ -5506,8 +5598,8 @@ class Lease(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified Lease
 
@@ -5526,13 +5618,19 @@ class Lease(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Lease    OK
+          201   Lease    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_lease")
+        the_method = getattr(inst, "replace_namespaced_lease_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -5540,7 +5638,9 @@ class Lease(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -5570,7 +5670,7 @@ class LeaseList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5662,7 +5762,7 @@ class Namespace(HikaruDocumentBase):
     spec: Optional[NamespaceSpec] = None
     status: Optional[NamespaceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5693,7 +5793,7 @@ class NamespaceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5801,7 +5901,7 @@ class Endpoints(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subsets: Optional[List[EndpointSubset]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5831,7 +5931,7 @@ class EndpointsList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5936,7 +6036,7 @@ class Status(HikaruDocumentBase):
     reason: Optional[str] = None
     status: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6010,7 +6110,7 @@ class LimitRange(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LimitRangeSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6041,7 +6141,7 @@ class LimitRangeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6163,15 +6263,15 @@ class ReplicaSet(HikaruDocumentBase):
     spec: Optional[ReplicaSetSpec] = None
     status: Optional[ReplicaSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedReplicaSet(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a ReplicaSet
 
@@ -6189,20 +6289,29 @@ class ReplicaSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          201   ReplicaSet    Created
+          202   ReplicaSet    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_replica_set")
+        the_method = getattr(inst, "create_namespaced_replica_set_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicaSet(
         self,
@@ -6210,8 +6319,8 @@ class ReplicaSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified ReplicaSet
 
@@ -6230,13 +6339,19 @@ class ReplicaSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          201   ReplicaSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_replica_set")
+        the_method = getattr(inst, "replace_namespaced_replica_set_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -6244,7 +6359,9 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicaSetStatus(
         self,
@@ -6252,8 +6369,8 @@ class ReplicaSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified ReplicaSet
 
@@ -6272,13 +6389,21 @@ class ReplicaSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          201   ReplicaSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_replica_set_status")
+        the_method = getattr(
+            inst, "replace_namespaced_replica_set_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -6286,7 +6411,9 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -6317,7 +6444,7 @@ class ReplicaSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6399,7 +6526,7 @@ class APIGroup(HikaruDocumentBase):
         default_factory=list
     )
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6426,7 +6553,7 @@ class APIGroupList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -6992,14 +7119,14 @@ class CustomResourceDefinition(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[CustomResourceDefinitionStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createCustomResourceDefinition(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CustomResourceDefinition
 
@@ -7016,27 +7143,36 @@ class CustomResourceDefinition(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          201   CustomResourceDefinition    Created
+          202   CustomResourceDefinition    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_custom_resource_definition")
+        the_method = getattr(inst, "create_custom_resource_definition_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceCustomResourceDefinition(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CustomResourceDefinition
 
@@ -7054,28 +7190,36 @@ class CustomResourceDefinition(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          201   CustomResourceDefinition    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_custom_resource_definition")
+        the_method = getattr(inst, "replace_custom_resource_definition_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceCustomResourceDefinitionStatus(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified CustomResourceDefinition
 
@@ -7093,20 +7237,30 @@ class CustomResourceDefinition(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          201   CustomResourceDefinition    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_custom_resource_definition_status")
+        the_method = getattr(
+            inst, "replace_custom_resource_definition_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7135,7 +7289,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7189,26 +7343,35 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
-    def createSelfSubjectAccessReview(self, client=None):
+    def createSelfSubjectAccessReview(self, client: ApiClient = None) -> Response:
         r"""
         create a SelfSubjectAccessReview
 
         operationID: createSelfSubjectAccessReview
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectaccessreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   SelfSubjectAccessReview    OK
+          201   SelfSubjectAccessReview    Created
+          202   SelfSubjectAccessReview    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_self_subject_access_review")
+        the_method = getattr(inst, "create_self_subject_access_review_with_http_info")
         all_args = dict()
 
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7281,7 +7444,7 @@ class Scale(HikaruDocumentBase):
     spec: Optional[ScaleSpec] = None
     status: Optional[ScaleStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def replaceNamespacedDeploymentScale(
         self,
@@ -7289,8 +7452,8 @@ class Scale(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace scale of the specified Deployment
 
@@ -7309,13 +7472,19 @@ class Scale(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          201   Scale    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_deployment_scale")
+        the_method = getattr(inst, "replace_namespaced_deployment_scale_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -7323,7 +7492,9 @@ class Scale(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetScale(
         self,
@@ -7331,8 +7502,8 @@ class Scale(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace scale of the specified StatefulSet
 
@@ -7351,13 +7522,21 @@ class Scale(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          201   Scale    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_stateful_set_scale")
+        the_method = getattr(
+            inst, "replace_namespaced_stateful_set_scale_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -7365,7 +7544,9 @@ class Scale(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicaSetScale(
         self,
@@ -7373,8 +7554,8 @@ class Scale(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace scale of the specified ReplicaSet
 
@@ -7393,13 +7574,21 @@ class Scale(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          201   Scale    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_replica_set_scale")
+        the_method = getattr(
+            inst, "replace_namespaced_replica_set_scale_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -7407,7 +7596,9 @@ class Scale(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicationControllerDummyScale(
         self,
@@ -7415,8 +7606,8 @@ class Scale(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace scale of the specified ReplicationControllerDummy
 
@@ -7435,6 +7626,12 @@ class Scale(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          201   Scale    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
@@ -7442,7 +7639,7 @@ class Scale(HikaruDocumentBase):
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
         the_method = getattr(
-            inst, "replace_namespaced_replication_controller_dummy_scale"
+            inst, "replace_namespaced_replication_controller_dummy_scale_with_http_info"
         )
         all_args = dict()
         all_args["name"] = name
@@ -7451,7 +7648,9 @@ class Scale(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7492,7 +7691,7 @@ class BoundObjectReference(HikaruDocumentBase):
     name: Optional[str] = None
     uid: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7568,7 +7767,7 @@ class TokenRequest(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenRequestStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7601,14 +7800,14 @@ class ClusterRoleBinding(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createClusterRoleBinding(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a ClusterRoleBinding
 
@@ -7625,27 +7824,36 @@ class ClusterRoleBinding(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleBinding    OK
+          201   ClusterRoleBinding    Created
+          202   ClusterRoleBinding    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_cluster_role_binding")
+        the_method = getattr(inst, "create_cluster_role_binding_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceClusterRoleBinding(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified ClusterRoleBinding
 
@@ -7663,20 +7871,28 @@ class ClusterRoleBinding(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleBinding    OK
+          201   ClusterRoleBinding    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_cluster_role_binding")
+        the_method = getattr(inst, "replace_cluster_role_binding_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7705,7 +7921,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -7879,14 +8095,14 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[MutatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createMutatingWebhookConfiguration(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a MutatingWebhookConfiguration
 
@@ -7903,27 +8119,38 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   MutatingWebhookConfiguration    OK
+          201   MutatingWebhookConfiguration    Created
+          202   MutatingWebhookConfiguration    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_mutating_webhook_configuration")
+        the_method = getattr(
+            inst, "create_mutating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceMutatingWebhookConfiguration(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified MutatingWebhookConfiguration
 
@@ -7941,20 +8168,30 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   MutatingWebhookConfiguration    OK
+          201   MutatingWebhookConfiguration    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_mutating_webhook_configuration")
+        the_method = getattr(
+            inst, "replace_mutating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7984,7 +8221,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8077,14 +8314,14 @@ class StorageClass(HikaruDocumentBase):
     mountOptions: Optional[List[str]] = field(default_factory=list)
     parameters: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createStorageClass(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a StorageClass
 
@@ -8101,27 +8338,36 @@ class StorageClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StorageClass    OK
+          201   StorageClass    Created
+          202   StorageClass    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_storage_class")
+        the_method = getattr(inst, "create_storage_class_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceStorageClass(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified StorageClass
 
@@ -8139,20 +8385,28 @@ class StorageClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StorageClass    OK
+          201   StorageClass    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_storage_class")
+        the_method = getattr(inst, "replace_storage_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8182,7 +8436,7 @@ class StorageClassList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8437,7 +8691,7 @@ class Service(HikaruDocumentBase):
     spec: Optional[ServiceSpec] = None
     status: Optional[ServiceStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8467,7 +8721,7 @@ class ServiceList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8497,15 +8751,15 @@ class Role(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedRole(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a Role
 
@@ -8523,20 +8777,29 @@ class Role(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Role    OK
+          201   Role    Created
+          202   Role    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_role")
+        the_method = getattr(inst, "create_namespaced_role_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedRole(
         self,
@@ -8544,8 +8807,8 @@ class Role(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified Role
 
@@ -8564,13 +8827,19 @@ class Role(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Role    OK
+          201   Role    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_role")
+        the_method = getattr(inst, "replace_namespaced_role_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -8578,7 +8847,9 @@ class Role(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8607,7 +8878,7 @@ class RoleList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -8730,14 +9001,14 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[ValidatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createValidatingWebhookConfiguration(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a ValidatingWebhookConfiguration
 
@@ -8754,27 +9025,38 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ValidatingWebhookConfiguration    OK
+          201   ValidatingWebhookConfiguration    Created
+          202   ValidatingWebhookConfiguration    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_validating_webhook_configuration")
+        the_method = getattr(
+            inst, "create_validating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceValidatingWebhookConfiguration(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified ValidatingWebhookConfiguration
 
@@ -8792,20 +9074,30 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ValidatingWebhookConfiguration    OK
+          201   ValidatingWebhookConfiguration    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_validating_webhook_configuration")
+        the_method = getattr(
+            inst, "replace_validating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8835,7 +9127,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9026,15 +9318,15 @@ class StatefulSet(HikaruDocumentBase):
     spec: Optional[StatefulSetSpec] = None
     status: Optional[StatefulSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedStatefulSet(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a StatefulSet
 
@@ -9052,20 +9344,29 @@ class StatefulSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          201   StatefulSet    Created
+          202   StatefulSet    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_stateful_set")
+        the_method = getattr(inst, "create_namespaced_stateful_set_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedStatefulSet(
         self,
@@ -9073,8 +9374,8 @@ class StatefulSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified StatefulSet
 
@@ -9093,13 +9394,19 @@ class StatefulSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          201   StatefulSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_stateful_set")
+        the_method = getattr(inst, "replace_namespaced_stateful_set_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -9107,7 +9414,9 @@ class StatefulSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetStatus(
         self,
@@ -9115,8 +9424,8 @@ class StatefulSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified StatefulSet
 
@@ -9135,13 +9444,21 @@ class StatefulSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          201   StatefulSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_stateful_set_status")
+        the_method = getattr(
+            inst, "replace_namespaced_stateful_set_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -9149,7 +9466,9 @@ class StatefulSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9178,7 +9497,7 @@ class StatefulSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9223,7 +9542,7 @@ class ServiceAccount(HikaruDocumentBase):
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     secrets: Optional[List[ObjectReference]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9254,7 +9573,7 @@ class ServiceAccountList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9357,15 +9676,15 @@ class Event(HikaruDocumentBase):
     series: Optional[EventSeries] = None
     type: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedEvent(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create an Event
 
@@ -9383,20 +9702,29 @@ class Event(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Event    OK
+          201   Event    Created
+          202   Event    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_event")
+        the_method = getattr(inst, "create_namespaced_event_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedEvent(
         self,
@@ -9404,8 +9732,8 @@ class Event(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified Event
 
@@ -9424,13 +9752,19 @@ class Event(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Event    OK
+          201   Event    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_event")
+        the_method = getattr(inst, "replace_namespaced_event_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -9438,7 +9772,9 @@ class Event(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9468,7 +9804,7 @@ class EventList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9505,7 +9841,7 @@ class APIVersions(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9609,26 +9945,35 @@ class TokenReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
-    def createTokenReview(self, client=None):
+    def createTokenReview(self, client: ApiClient = None) -> Response:
         r"""
         create a TokenReview
 
         operationID: createTokenReview
         path: /apis/authentication.k8s.io/v1beta1/tokenreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   TokenReview    OK
+          201   TokenReview    Created
+          202   TokenReview    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AuthenticationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_token_review")
+        the_method = getattr(inst, "create_token_review_with_http_info")
         all_args = dict()
 
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9772,7 +10117,7 @@ class Job(HikaruDocumentBase):
     spec: Optional[JobSpec] = None
     status: Optional[JobStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9802,7 +10147,7 @@ class JobList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9879,7 +10224,7 @@ class APIResourceList(HikaruDocumentBase):
     apiVersion: Optional[str] = None
     kind: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9910,7 +10255,7 @@ class PodTemplate(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     template: Optional[PodTemplateSpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9940,7 +10285,7 @@ class PodTemplateList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9964,7 +10309,7 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     name: str
     apiVersion: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10051,7 +10396,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     spec: Optional[HorizontalPodAutoscalerSpec] = None
     status: Optional[HorizontalPodAutoscalerStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10080,7 +10425,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10111,7 +10456,7 @@ class Binding(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10486,7 +10831,7 @@ class Node(HikaruDocumentBase):
     spec: Optional[NodeSpec] = None
     status: Optional[NodeStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10516,7 +10861,7 @@ class NodeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10717,15 +11062,15 @@ class Deployment(HikaruDocumentBase):
     spec: Optional[DeploymentSpec] = None
     status: Optional[DeploymentStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedDeployment(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a Deployment
 
@@ -10743,20 +11088,29 @@ class Deployment(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          201   Deployment    Created
+          202   Deployment    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_deployment")
+        the_method = getattr(inst, "create_namespaced_deployment_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedDeployment(
         self,
@@ -10764,8 +11118,8 @@ class Deployment(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified Deployment
 
@@ -10784,13 +11138,19 @@ class Deployment(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          201   Deployment    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_deployment")
+        the_method = getattr(inst, "replace_namespaced_deployment_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10798,7 +11158,9 @@ class Deployment(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedDeploymentStatus(
         self,
@@ -10806,8 +11168,8 @@ class Deployment(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified Deployment
 
@@ -10826,13 +11188,21 @@ class Deployment(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          201   Deployment    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_deployment_status")
+        the_method = getattr(
+            inst, "replace_namespaced_deployment_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10840,7 +11210,9 @@ class Deployment(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -10869,7 +11241,7 @@ class DeploymentList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11070,15 +11442,15 @@ class NetworkPolicy(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NetworkPolicySpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedNetworkPolicy(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a NetworkPolicy
 
@@ -11096,20 +11468,29 @@ class NetworkPolicy(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicy    OK
+          201   NetworkPolicy    Created
+          202   NetworkPolicy    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_network_policy")
+        the_method = getattr(inst, "create_namespaced_network_policy_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedNetworkPolicy(
         self,
@@ -11117,8 +11498,8 @@ class NetworkPolicy(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified NetworkPolicy
 
@@ -11137,13 +11518,19 @@ class NetworkPolicy(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicy    OK
+          201   NetworkPolicy    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_network_policy")
+        the_method = getattr(inst, "replace_namespaced_network_policy_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11151,7 +11538,9 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11183,7 +11572,7 @@ class NetworkPolicyList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11225,15 +11614,15 @@ class ControllerRevision(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     data: Optional[object] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedControllerRevision(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a ControllerRevision
 
@@ -11251,20 +11640,31 @@ class ControllerRevision(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevision    OK
+          201   ControllerRevision    Created
+          202   ControllerRevision    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_controller_revision")
+        the_method = getattr(
+            inst, "create_namespaced_controller_revision_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedControllerRevision(
         self,
@@ -11272,8 +11672,8 @@ class ControllerRevision(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified ControllerRevision
 
@@ -11292,13 +11692,21 @@ class ControllerRevision(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevision    OK
+          201   ControllerRevision    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AppsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_controller_revision")
+        the_method = getattr(
+            inst, "replace_namespaced_controller_revision_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11306,7 +11714,9 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11336,7 +11746,7 @@ class ControllerRevisionList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11433,7 +11843,7 @@ class ConfigMap(HikaruDocumentBase):
     binaryData: Optional[Dict[str, str]] = field(default_factory=dict)
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11463,7 +11873,7 @@ class ConfigMapList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11495,26 +11905,35 @@ class SubjectAccessReview(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
-    def createSubjectAccessReview(self, client=None):
+    def createSubjectAccessReview(self, client: ApiClient = None) -> Response:
         r"""
         create a SubjectAccessReview
 
         operationID: createSubjectAccessReview
         path: /apis/authorization.k8s.io/v1beta1/subjectaccessreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   SubjectAccessReview    OK
+          201   SubjectAccessReview    Created
+          202   SubjectAccessReview    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_subject_access_review")
+        the_method = getattr(inst, "create_subject_access_review_with_http_info")
         all_args = dict()
 
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11561,14 +11980,14 @@ class PriorityClass(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     preemptionPolicy: Optional[str] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createPriorityClass(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a PriorityClass
 
@@ -11585,27 +12004,36 @@ class PriorityClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PriorityClass    OK
+          201   PriorityClass    Created
+          202   PriorityClass    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_priority_class")
+        the_method = getattr(inst, "create_priority_class_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replacePriorityClass(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified PriorityClass
 
@@ -11623,20 +12051,28 @@ class PriorityClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PriorityClass    OK
+          201   PriorityClass    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_priority_class")
+        the_method = getattr(inst, "replace_priority_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11666,7 +12102,7 @@ class PriorityClassList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -11845,15 +12281,15 @@ class DaemonSet(HikaruDocumentBase):
     spec: Optional[DaemonSetSpec] = None
     status: Optional[DaemonSetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedDaemonSet(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a DaemonSet
 
@@ -11871,20 +12307,29 @@ class DaemonSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          201   DaemonSet    Created
+          202   DaemonSet    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_daemon_set")
+        the_method = getattr(inst, "create_namespaced_daemon_set_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedDaemonSet(
         self,
@@ -11892,8 +12337,8 @@ class DaemonSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified DaemonSet
 
@@ -11912,13 +12357,19 @@ class DaemonSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          201   DaemonSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_daemon_set")
+        the_method = getattr(inst, "replace_namespaced_daemon_set_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11926,7 +12377,9 @@ class DaemonSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedDaemonSetStatus(
         self,
@@ -11934,8 +12387,8 @@ class DaemonSet(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified DaemonSet
 
@@ -11954,13 +12407,21 @@ class DaemonSet(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          201   DaemonSet    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_daemon_set_status")
+        the_method = getattr(
+            inst, "replace_namespaced_daemon_set_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11968,7 +12429,9 @@ class DaemonSet(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11998,7 +12461,7 @@ class DaemonSetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -12119,14 +12582,14 @@ class VolumeAttachment(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     status: Optional[VolumeAttachmentStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createVolumeAttachment(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a VolumeAttachment
 
@@ -12143,27 +12606,36 @@ class VolumeAttachment(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   VolumeAttachment    OK
+          201   VolumeAttachment    Created
+          202   VolumeAttachment    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_volume_attachment")
+        the_method = getattr(inst, "create_volume_attachment_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceVolumeAttachment(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified VolumeAttachment
 
@@ -12181,20 +12653,28 @@ class VolumeAttachment(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   VolumeAttachment    OK
+          201   VolumeAttachment    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_volume_attachment")
+        the_method = getattr(inst, "replace_volume_attachment_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12224,7 +12704,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -12256,11 +12736,11 @@ class DeploymentRollback(HikaruDocumentBase):
     kind: Optional[str] = None
     updatedAnnotations: Optional[Dict[str, str]] = field(default_factory=dict)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedDeploymentRollback(
-        self, name: str, namespace: str, client=None
-    ):
+        self, name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
         r"""
         create rollback of a Deployment
 
@@ -12269,19 +12749,30 @@ class DeploymentRollback(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          201   Status    Created
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_deployment_rollback")
+        the_method = getattr(
+            inst, "create_namespaced_deployment_rollback_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12369,14 +12860,14 @@ class RuntimeClass(HikaruDocumentBase):
     overhead: Optional[Overhead] = None
     scheduling: Optional[Scheduling] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createRuntimeClass(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a RuntimeClass
 
@@ -12393,27 +12884,36 @@ class RuntimeClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RuntimeClass    OK
+          201   RuntimeClass    Created
+          202   RuntimeClass    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_runtime_class")
+        the_method = getattr(inst, "create_runtime_class_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceRuntimeClass(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified RuntimeClass
 
@@ -12431,20 +12931,28 @@ class RuntimeClass(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RuntimeClass    OK
+          201   RuntimeClass    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_runtime_class")
+        the_method = getattr(inst, "replace_runtime_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12474,7 +12982,7 @@ class RuntimeClassList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -12567,15 +13075,15 @@ class PodDisruptionBudget(HikaruDocumentBase):
     spec: Optional[PodDisruptionBudgetSpec] = None
     status: Optional[PodDisruptionBudgetStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedPodDisruptionBudget(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a PodDisruptionBudget
 
@@ -12593,20 +13101,31 @@ class PodDisruptionBudget(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          201   PodDisruptionBudget    Created
+          202   PodDisruptionBudget    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_pod_disruption_budget")
+        the_method = getattr(
+            inst, "create_namespaced_pod_disruption_budget_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedPodDisruptionBudget(
         self,
@@ -12614,8 +13133,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified PodDisruptionBudget
 
@@ -12634,13 +13153,21 @@ class PodDisruptionBudget(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          201   PodDisruptionBudget    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_pod_disruption_budget")
+        the_method = getattr(
+            inst, "replace_namespaced_pod_disruption_budget_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -12648,7 +13175,9 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedPodDisruptionBudgetStatus(
         self,
@@ -12656,8 +13185,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified PodDisruptionBudget
 
@@ -12676,13 +13205,21 @@ class PodDisruptionBudget(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          201   PodDisruptionBudget    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_pod_disruption_budget_status")
+        the_method = getattr(
+            inst, "replace_namespaced_pod_disruption_budget_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -12690,7 +13227,9 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12719,7 +13258,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -12787,7 +13326,7 @@ class DeleteOptions(HikaruDocumentBase):
     propagationPolicy: Optional[str] = None
     dryRun: Optional[List[str]] = field(default_factory=list)
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def deleteCollectionNamespacedEvent(
         self,
@@ -12802,8 +13341,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of Event
 
@@ -12896,13 +13435,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_event")
+        the_method = getattr(inst, "delete_collection_namespaced_event_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -12917,7 +13461,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedEvent(
         self,
@@ -12927,8 +13473,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete an Event
 
@@ -12963,13 +13509,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_event")
+        the_method = getattr(inst, "delete_namespaced_event_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -12979,7 +13531,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionMutatingWebhookConfiguration(
         self,
@@ -12993,8 +13547,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of MutatingWebhookConfiguration
 
@@ -13086,13 +13640,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_mutating_webhook_configuration")
+        the_method = getattr(
+            inst, "delete_collection_mutating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -13106,7 +13667,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteMutatingWebhookConfiguration(
         self,
@@ -13115,8 +13678,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a MutatingWebhookConfiguration
 
@@ -13150,13 +13713,21 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_mutating_webhook_configuration")
+        the_method = getattr(
+            inst, "delete_mutating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -13165,7 +13736,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionValidatingWebhookConfiguration(
         self,
@@ -13179,8 +13752,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of ValidatingWebhookConfiguration
 
@@ -13272,13 +13845,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_validating_webhook_configuration")
+        the_method = getattr(
+            inst, "delete_collection_validating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -13292,7 +13872,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteValidatingWebhookConfiguration(
         self,
@@ -13301,8 +13883,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a ValidatingWebhookConfiguration
 
@@ -13336,13 +13918,21 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_validating_webhook_configuration")
+        the_method = getattr(
+            inst, "delete_validating_webhook_configuration_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -13351,7 +13941,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionCustomResourceDefinition(
         self,
@@ -13365,8 +13957,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of CustomResourceDefinition
 
@@ -13458,13 +14050,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_custom_resource_definition")
+        the_method = getattr(
+            inst, "delete_collection_custom_resource_definition_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -13478,7 +14077,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteCustomResourceDefinition(
         self,
@@ -13487,8 +14088,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a CustomResourceDefinition
 
@@ -13522,13 +14123,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_custom_resource_definition")
+        the_method = getattr(inst, "delete_custom_resource_definition_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -13537,7 +14144,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionAPIService(
         self,
@@ -13551,8 +14160,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of APIService
 
@@ -13644,13 +14253,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_api_service")
+        the_method = getattr(inst, "delete_collection_api_service_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -13664,7 +14278,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteAPIService(
         self,
@@ -13673,8 +14289,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete an APIService
 
@@ -13708,13 +14324,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_api_service")
+        the_method = getattr(inst, "delete_api_service_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -13723,7 +14345,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedDaemonSet(
         self,
@@ -13738,8 +14362,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of DaemonSet
 
@@ -13832,13 +14456,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_daemon_set")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_daemon_set_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -13853,7 +14484,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedDaemonSet(
         self,
@@ -13863,8 +14496,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a DaemonSet
 
@@ -13899,13 +14532,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_daemon_set")
+        the_method = getattr(inst, "delete_namespaced_daemon_set_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -13915,7 +14554,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedDeployment(
         self,
@@ -13930,8 +14571,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of Deployment
 
@@ -14024,13 +14665,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_deployment")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_deployment_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -14045,7 +14693,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedDeployment(
         self,
@@ -14055,8 +14705,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a Deployment
 
@@ -14091,13 +14741,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_deployment")
+        the_method = getattr(inst, "delete_namespaced_deployment_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14107,7 +14763,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedReplicaSet(
         self,
@@ -14122,8 +14780,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of ReplicaSet
 
@@ -14216,13 +14874,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_replica_set")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_replica_set_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -14237,7 +14902,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedReplicaSet(
         self,
@@ -14247,8 +14914,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a ReplicaSet
 
@@ -14283,13 +14950,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_replica_set")
+        the_method = getattr(inst, "delete_namespaced_replica_set_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14299,7 +14972,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionCertificateSigningRequest(
         self,
@@ -14313,8 +14988,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of CertificateSigningRequest
 
@@ -14406,13 +15081,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_certificate_signing_request")
+        the_method = getattr(
+            inst, "delete_collection_certificate_signing_request_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -14426,7 +15108,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteCertificateSigningRequest(
         self,
@@ -14435,8 +15119,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a CertificateSigningRequest
 
@@ -14470,13 +15154,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_certificate_signing_request")
+        the_method = getattr(inst, "delete_certificate_signing_request_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -14485,7 +15175,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedLease(
         self,
@@ -14500,8 +15192,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of Lease
 
@@ -14594,13 +15286,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_lease")
+        the_method = getattr(inst, "delete_collection_namespaced_lease_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -14615,7 +15312,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedLease(
         self,
@@ -14625,8 +15324,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a Lease
 
@@ -14661,13 +15360,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_lease")
+        the_method = getattr(inst, "delete_namespaced_lease_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14677,7 +15382,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedIngress(
         self,
@@ -14692,8 +15399,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of Ingress
 
@@ -14786,13 +15493,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_ingress")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_ingress_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -14807,7 +15521,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedIngress(
         self,
@@ -14817,8 +15533,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete an Ingress
 
@@ -14853,13 +15569,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_ingress")
+        the_method = getattr(inst, "delete_namespaced_ingress_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14869,7 +15591,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionPodSecurityPolicy(
         self,
@@ -14883,8 +15607,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of PodSecurityPolicy
 
@@ -14976,13 +15700,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_pod_security_policy")
+        the_method = getattr(
+            inst, "delete_collection_pod_security_policy_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -14996,7 +15727,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deletePodSecurityPolicy(
         self,
@@ -15005,8 +15738,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a PodSecurityPolicy
 
@@ -15040,13 +15773,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_pod_security_policy")
+        the_method = getattr(inst, "delete_pod_security_policy_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -15055,7 +15794,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionRuntimeClass(
         self,
@@ -15069,8 +15810,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of RuntimeClass
 
@@ -15162,13 +15903,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_runtime_class")
+        the_method = getattr(inst, "delete_collection_runtime_class_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -15182,7 +15928,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteRuntimeClass(
         self,
@@ -15191,8 +15939,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a RuntimeClass
 
@@ -15226,13 +15974,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_runtime_class")
+        the_method = getattr(inst, "delete_runtime_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -15241,7 +15995,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedPodDisruptionBudget(
         self,
@@ -15256,8 +16012,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of PodDisruptionBudget
 
@@ -15350,13 +16106,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_pod_disruption_budget")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_pod_disruption_budget_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -15371,7 +16134,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedPodDisruptionBudget(
         self,
@@ -15381,8 +16146,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a PodDisruptionBudget
 
@@ -15417,13 +16182,21 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_pod_disruption_budget")
+        the_method = getattr(
+            inst, "delete_namespaced_pod_disruption_budget_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -15433,7 +16206,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionClusterRoleBinding(
         self,
@@ -15447,8 +16222,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of ClusterRoleBinding
 
@@ -15540,13 +16315,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_cluster_role_binding")
+        the_method = getattr(
+            inst, "delete_collection_cluster_role_binding_with_http_info"
+        )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -15560,7 +16342,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteClusterRoleBinding(
         self,
@@ -15569,8 +16353,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a ClusterRoleBinding
 
@@ -15604,13 +16388,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_cluster_role_binding")
+        the_method = getattr(inst, "delete_cluster_role_binding_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -15619,7 +16409,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionClusterRole(
         self,
@@ -15633,8 +16425,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of ClusterRole
 
@@ -15726,13 +16518,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_cluster_role")
+        the_method = getattr(inst, "delete_collection_cluster_role_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -15746,7 +16543,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteClusterRole(
         self,
@@ -15755,8 +16554,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a ClusterRole
 
@@ -15790,13 +16589,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_cluster_role")
+        the_method = getattr(inst, "delete_cluster_role_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -15805,7 +16610,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedRoleBinding(
         self,
@@ -15820,8 +16627,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of RoleBinding
 
@@ -15914,13 +16721,20 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_role_binding")
+        the_method = getattr(
+            inst, "delete_collection_namespaced_role_binding_with_http_info"
+        )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -15935,7 +16749,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedRoleBinding(
         self,
@@ -15945,8 +16761,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a RoleBinding
 
@@ -15981,13 +16797,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_role_binding")
+        the_method = getattr(inst, "delete_namespaced_role_binding_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -15997,7 +16819,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionNamespacedRole(
         self,
@@ -16012,8 +16836,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of Role
 
@@ -16106,13 +16930,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_role")
+        the_method = getattr(inst, "delete_collection_namespaced_role_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -16127,7 +16956,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteNamespacedRole(
         self,
@@ -16137,8 +16968,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a Role
 
@@ -16173,13 +17004,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_role")
+        the_method = getattr(inst, "delete_namespaced_role_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -16189,7 +17026,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionPriorityClass(
         self,
@@ -16203,8 +17042,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of PriorityClass
 
@@ -16296,13 +17135,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_priority_class")
+        the_method = getattr(inst, "delete_collection_priority_class_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -16316,7 +17160,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deletePriorityClass(
         self,
@@ -16325,8 +17171,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a PriorityClass
 
@@ -16360,13 +17206,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_priority_class")
+        the_method = getattr(inst, "delete_priority_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -16375,7 +17227,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionStorageClass(
         self,
@@ -16389,8 +17243,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of StorageClass
 
@@ -16482,13 +17336,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_storage_class")
+        the_method = getattr(inst, "delete_collection_storage_class_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -16502,7 +17361,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteStorageClass(
         self,
@@ -16511,8 +17372,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a StorageClass
 
@@ -16546,13 +17407,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_storage_class")
+        the_method = getattr(inst, "delete_storage_class_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -16561,7 +17428,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionVolumeAttachment(
         self,
@@ -16575,8 +17444,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of VolumeAttachment
 
@@ -16668,13 +17537,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_volume_attachment")
+        the_method = getattr(inst, "delete_collection_volume_attachment_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -16688,7 +17562,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteVolumeAttachment(
         self,
@@ -16697,8 +17573,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a VolumeAttachment
 
@@ -16732,13 +17608,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_volume_attachment")
+        the_method = getattr(inst, "delete_volume_attachment_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -16747,7 +17629,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionCSIDriver(
         self,
@@ -16761,8 +17645,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of CSIDriver
 
@@ -16854,13 +17738,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_driver")
+        the_method = getattr(inst, "delete_collection_csi_driver_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -16874,7 +17763,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteCSIDriver(
         self,
@@ -16883,8 +17774,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a CSIDriver
 
@@ -16918,13 +17809,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_csi_driver")
+        the_method = getattr(inst, "delete_csi_driver_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -16933,7 +17830,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
     def deleteCollectionCSINode(
         self,
@@ -16947,8 +17846,8 @@ class DeleteOptions(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete collection of CSINode
 
@@ -17040,13 +17939,18 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_node")
+        the_method = getattr(inst, "delete_collection_csi_node_with_http_info")
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -17060,7 +17964,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
     def deleteCSINode(
         self,
@@ -17069,8 +17975,8 @@ class DeleteOptions(HikaruDocumentBase):
         grace_period_seconds: Optional[int] = None,
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         delete a CSINode
 
@@ -17104,13 +18010,19 @@ class DeleteOptions(HikaruDocumentBase):
             garbage collector to delete the dependents in the background;
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_csi_node")
+        the_method = getattr(inst, "delete_csi_node_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -17119,7 +18031,9 @@ class DeleteOptions(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -17150,7 +18064,7 @@ class Eviction(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -17330,15 +18244,15 @@ class Ingress(HikaruDocumentBase):
     spec: Optional[IngressSpec] = None
     status: Optional[IngressStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedIngress(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create an Ingress
 
@@ -17356,20 +18270,29 @@ class Ingress(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          201   Ingress    Created
+          202   Ingress    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_ingress")
+        the_method = getattr(inst, "create_namespaced_ingress_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedIngress(
         self,
@@ -17377,8 +18300,8 @@ class Ingress(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified Ingress
 
@@ -17397,13 +18320,19 @@ class Ingress(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          201   Ingress    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_ingress")
+        the_method = getattr(inst, "replace_namespaced_ingress_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -17411,7 +18340,9 @@ class Ingress(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedIngressStatus(
         self,
@@ -17419,8 +18350,8 @@ class Ingress(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified Ingress
 
@@ -17439,13 +18370,19 @@ class Ingress(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          201   Ingress    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_ingress_status")
+        the_method = getattr(inst, "replace_namespaced_ingress_status_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -17453,7 +18390,9 @@ class Ingress(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -17483,7 +18422,7 @@ class IngressList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -17575,14 +18514,14 @@ class CSIDriver(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createCSIDriver(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CSIDriver
 
@@ -17599,27 +18538,36 @@ class CSIDriver(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSIDriver    OK
+          201   CSIDriver    Created
+          202   CSIDriver    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_csi_driver")
+        the_method = getattr(inst, "create_csi_driver_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceCSIDriver(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CSIDriver
 
@@ -17637,20 +18585,28 @@ class CSIDriver(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSIDriver    OK
+          201   CSIDriver    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_csi_driver")
+        the_method = getattr(inst, "replace_csi_driver_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -17680,7 +18636,7 @@ class CSIDriverList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -17788,14 +18744,14 @@ class CSINode(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createCSINode(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CSINode
 
@@ -17812,27 +18768,36 @@ class CSINode(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSINode    OK
+          201   CSINode    Created
+          202   CSINode    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_csi_node")
+        the_method = getattr(inst, "create_csi_node_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceCSINode(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CSINode
 
@@ -17850,20 +18815,28 @@ class CSINode(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSINode    OK
+          201   CSINode    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_csi_node")
+        the_method = getattr(inst, "replace_csi_node_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -17893,7 +18866,7 @@ class CSINodeList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -17999,15 +18972,15 @@ class CronJob(HikaruDocumentBase):
     spec: Optional[CronJobSpec] = None
     status: Optional[CronJobStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createNamespacedCronJob(
         self,
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CronJob
 
@@ -18025,20 +18998,29 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          202   CronJob    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_cron_job")
+        the_method = getattr(inst, "create_namespaced_cron_job_with_http_info")
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedCronJob(
         self,
@@ -18046,8 +19028,8 @@ class CronJob(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CronJob
 
@@ -18066,13 +19048,19 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_cron_job")
+        the_method = getattr(inst, "replace_namespaced_cron_job_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -18080,7 +19068,9 @@ class CronJob(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -18088,8 +19078,8 @@ class CronJob(HikaruDocumentBase):
         namespace: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified CronJob
 
@@ -18108,13 +19098,19 @@ class CronJob(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = BatchV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_cron_job_status")
+        the_method = getattr(inst, "replace_namespaced_cron_job_status_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -18122,7 +19118,9 @@ class CronJob(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -18152,7 +19150,7 @@ class CronJobList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -18490,14 +19488,14 @@ class PodSecurityPolicy(HikaruDocumentBase):
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PodSecurityPolicySpec] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createPodSecurityPolicy(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a PodSecurityPolicy
 
@@ -18514,27 +19512,36 @@ class PodSecurityPolicy(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodSecurityPolicy    OK
+          201   PodSecurityPolicy    Created
+          202   PodSecurityPolicy    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_pod_security_policy")
+        the_method = getattr(inst, "create_pod_security_policy_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replacePodSecurityPolicy(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified PodSecurityPolicy
 
@@ -18552,20 +19559,28 @@ class PodSecurityPolicy(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodSecurityPolicy    OK
+          201   PodSecurityPolicy    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_pod_security_policy")
+        the_method = getattr(inst, "replace_pod_security_policy_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -18596,7 +19611,7 @@ class PodSecurityPolicyList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -18694,14 +19709,14 @@ class CertificateSigningRequest(HikaruDocumentBase):
     spec: Optional[CertificateSigningRequestSpec] = None
     status: Optional[CertificateSigningRequestStatus] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
     def createCertificateSigningRequest(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         create a CertificateSigningRequest
 
@@ -18718,27 +19733,36 @@ class CertificateSigningRequest(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          201   CertificateSigningRequest    Created
+          202   CertificateSigningRequest    Accepted
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_certificate_signing_request")
+        the_method = getattr(inst, "create_certificate_signing_request_with_http_info")
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
 
     def replaceCertificateSigningRequest(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace the specified CertificateSigningRequest
 
@@ -18756,22 +19780,32 @@ class CertificateSigningRequest(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          201   CertificateSigningRequest    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_certificate_signing_request")
+        the_method = getattr(inst, "replace_certificate_signing_request_with_http_info")
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
-    def replaceCertificateSigningRequestApproval(self, name: str, client=None):
+    def replaceCertificateSigningRequestApproval(
+        self, name: str, client: ApiClient = None
+    ) -> Response:
         r"""
         replace approval of the specified CertificateSigningRequest
 
@@ -18779,26 +19813,36 @@ class CertificateSigningRequest(HikaruDocumentBase):
         path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/approval
 
         :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          201   CertificateSigningRequest    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_certificate_signing_request_approval")
+        the_method = getattr(
+            inst, "replace_certificate_signing_request_approval_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
     def replaceCertificateSigningRequestStatus(
         self,
         name: str,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
-        client=None,
-    ):
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         replace status of the specified CertificateSigningRequest
 
@@ -18816,20 +19860,30 @@ class CertificateSigningRequest(HikaruDocumentBase):
             be less than or 128 characters long, and only contain
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          201   CertificateSigningRequest    Created
+          401   None    Unauthorized
         """
         if client is not None:
             client_to_use = client
         else:
             client_to_use = self.client
         inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_certificate_signing_request_status")
+        the_method = getattr(
+            inst, "replace_certificate_signing_request_status_with_http_info"
+        )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
-        return the_method(**all_args)
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -18857,7 +19911,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
     kind: Optional[str] = None
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
-    client: InitVar[Any] = None
+    client: InitVar[Optional[ApiClient]] = None
 
 
 globs = dict(globals())

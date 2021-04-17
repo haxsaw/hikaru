@@ -39,6 +39,7 @@ class MockApiClient(object):
     def call_api(self, path, verb, path_params, query_params, header_params,
                  body=None, **kwargs):
         self.body = body
+        return 1
 
 
 all_params = []
