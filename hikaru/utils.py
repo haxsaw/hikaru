@@ -53,7 +53,7 @@ class Response(object):
             - return code
             - headers
         :param codes_with_objects: an iterable of ints that are codes for which
-            the self.obj field is a Hikaru object in dict form
+            the self.obj field is a K8s object
         """
         self.code: Optional[int] = None
         self.obj: Optional[Any] = None

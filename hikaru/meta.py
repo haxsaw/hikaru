@@ -672,6 +672,17 @@ class HikaruBase(object):
         :raises TypeError: in these if the YAML is missing a required property.
         """
 
+        # OK, there are some cases where embedded objects are actually dicts
+        # encoded as a string. This isn't clear where it happens, but what we'll
+        # do is the following: if the type of the 'yaml' parameter is an str, then
+        # we'll eval it to hopefully get a dict, and raise a useful message if
+        # we don't
+        if type(yaml) == str:
+            new = eval(yaml, globals(), locals())
+            if type(new) != dict:
+                raise RuntimeError(f"We can't process this input; type {type(yaml)}, "
+                                   f"value = {yaml}")
+            yaml = new
         for f in fields(self.__class__):
             k8s_name = f.name.strip("_")
             is_required = True
