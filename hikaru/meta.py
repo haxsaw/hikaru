@@ -28,7 +28,7 @@ it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
 from typing import Union, List, Dict, Any
-from dataclasses import fields, dataclass, is_dataclass, InitVar
+from dataclasses import fields, dataclass, is_dataclass, asdict
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 
@@ -96,7 +96,7 @@ class HikaruBase(object):
             self._process_other_catalog(other._field_catalog, self._field_catalog,
                                         idx, name)
 
-    def _capture_catalog(self):
+    def _capture_catalog(self, catalog_depth_first=False):
         for f in fields(self):
             initial_type = get_origin(f.type)
             if initial_type is Union:
@@ -116,6 +116,8 @@ class HikaruBase(object):
             elif is_dataclass(assignment_type) and issubclass(assignment_type,
                                                               HikaruBase):
                 if obj:
+                    if catalog_depth_first:
+                        obj._capture_catalog(catalog_depth_first=catalog_depth_first)
                     self._merge_catalog_of(obj, f.name)
             else:
                 origin = get_origin(assignment_type)
@@ -123,6 +125,9 @@ class HikaruBase(object):
                     item_type = get_args(assignment_type)[0]
                     if is_dataclass(item_type) and issubclass(item_type, HikaruBase):
                         for i, item in enumerate(obj):
+                            if catalog_depth_first:
+                                item._capture_catalog(catalog_depth_first=
+                                                      catalog_depth_first)
                             self._merge_catalog_of(item, f.name, i)
                     elif (type(item_type) == type and
                             issubclass(item_type, (int, str, bool, float, dict))):
@@ -157,8 +162,24 @@ class HikaruBase(object):
         model.
         """
         self._clear_catalog()
-        self._capture_catalog()
+        self._capture_catalog(catalog_depth_first=True)
         return self
+
+    def to_dict(self) -> dict:
+        """
+        Provides a simple transfer to a dictionary representation of self
+
+        This method does a simple transcription of self into a dict using
+        dataclasses.asdict(). The returned dict will include all attributes
+        of all objects present, regardless of value. A minimal dict can be had
+        with hikaru.generate.get_clean_dict().
+
+        :return: A dict representation of self. All attributes of all objects are
+            present in the returned dict, including those that are None. If you want
+            a minimal dict, use hikaru.generate.get_clean_dict().
+        """
+        from hikaru.generate import get_clean_dict
+        return get_clean_dict(self)
 
     def dup(self):
         """
@@ -257,6 +278,7 @@ class HikaruBase(object):
             result.extend(field_list)
 
         if following:
+            signposts = []  # it isn't possible to remain this
             if isinstance(following, str):
                 signposts = following.split('.')
             elif isinstance(following, (list, tuple)):
@@ -368,7 +390,10 @@ class HikaruBase(object):
         kw_args = {}
         sig = signature(cls.__init__)
         for p in sig.parameters.values():
-            if p.name == 'self' or p.name == 'client':
+            if p.name in ('self', 'client'):
+                continue
+            if issubclass(cls, HikaruDocumentBase) and p.name in ('apiVersion',
+                                                                  'kind'):
                 continue
             f = field_map[p.name]
             initial_type = f.type

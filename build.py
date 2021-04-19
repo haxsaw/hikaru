@@ -490,6 +490,14 @@ class ClassDescriptor(object):
 
     _doc_markers = ("apiVersion", "kind")
 
+    def adjust_special_props(self, fd):
+        assert isinstance(fd, PropertyDescriptor)
+        if fd.name == 'apiVersion':
+            first_bit = f'{self.group}/' if self.group != 'core' else ""
+            fd.default_value = f'"{first_bit}{self.version}"'
+        elif fd.name == 'kind':
+            fd.default_value = f'"{self.kind}"'
+
     def process_properties(self):
         self.required_props = []
         self.optional_props = []
@@ -501,6 +509,9 @@ class ClassDescriptor(object):
                     if not seen_markers:
                         self.is_document = True
                 fd = PropertyDescriptor(self, k, v)
+
+                if fd.name in self._doc_markers:
+                    self.adjust_special_props(fd)
                 if k in self.required:
                     self.required_props.append(fd)
                 else:
@@ -742,6 +753,7 @@ class PropertyDescriptor(object):
         else:
             python_name = name
         self.name = python_name
+        self.default_value = None
         self.containing_class = containing_class
         self.description = d.get('description', "")
         # all possible attributes that could be populated
@@ -856,7 +868,7 @@ class PropertyDescriptor(object):
                 parts.append(f" = field(default_factory={factory})")
             else:
                 # just default it to None
-                parts.append(" = None")
+                parts.append(f" = {self.default_value}")
         return "".join(parts)
 
 

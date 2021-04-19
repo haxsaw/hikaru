@@ -1,12 +1,11 @@
 import importlib
 from types import MethodType, FunctionType
-from typing import List
-from random import choice
 from inspect import signature
+from random import choice
+import pytest
 from hikaru.meta import HikaruDocumentBase
 from hikaru.model.rel_1_16.versions import versions
 from hikaru import set_default_release
-import pytest
 
 
 set_default_release('rel_1_16')
@@ -39,7 +38,11 @@ class MockApiClient(object):
     def call_api(self, path, verb, path_params, query_params, header_params,
                  body=None, **kwargs):
         self.body = body
-        return 1
+        coin = choice(('heads', 'tails'))
+        if coin == 'heads':
+            return None, 401, {}
+        else:
+            return 1
 
 
 all_params = []
@@ -64,10 +67,10 @@ for version in versions:
                     inst.client = mock_client
                     params = {'self': inst}
                     for p in sig.parameters.values():
-                        if p.name == 'client' or p.name == 'self':
+                        if p.name in {'client', 'self'}:
                             continue
                         if p.name == "namespace":
-                            params[p.name] = "the_namespace"
+                            params[p.name] = "default"
                         elif p.name == "name":
                             params[p.name] = "the_name"
                         else:

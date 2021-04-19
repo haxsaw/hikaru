@@ -41,6 +41,8 @@ path = pathlib.Path("test_yaml")
 for p in path.iterdir():
     if str(p).endswith("/list.yaml"):
         test_parms.append(pytest.param(p, marks=pytest.mark.xfail))
+    elif str(p).endswith('.json'):
+        continue
     else:
         test_parms.append(p,)
 

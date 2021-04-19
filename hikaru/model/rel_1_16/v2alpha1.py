@@ -74,7 +74,7 @@ class ManagedFieldsEntry(HikaruBase):
         type.
     """
 
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "None/v1"
     fieldsType: Optional[str] = None
     manager: Optional[str] = None
     operation: Optional[str] = None
@@ -349,8 +349,8 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: SelfSubjectRulesReviewSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authorization/v1"
+    kind: Optional[str] = "SelfSubjectRulesReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectRulesReviewStatus] = None
     # noinspection PyDataclass
@@ -390,7 +390,7 @@ class ObjectFieldSelector(HikaruBase):
     """
 
     fieldPath: str
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "None/v1"
 
 
 @dataclass
@@ -1721,7 +1721,7 @@ class AzureDiskVolumeSource(HikaruBase):
     diskURI: str
     cachingMode: Optional[str] = None
     fsType: Optional[str] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "None"
     readOnly: Optional[bool] = None
 
 
@@ -3168,8 +3168,8 @@ class Pod(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Pod"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PodSpec] = None
     status: Optional[PodStatus] = None
@@ -3243,8 +3243,8 @@ class PodList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Pod]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PodList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3281,8 +3281,8 @@ class Secret(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Secret"
     metadata: Optional[ObjectMeta] = None
     type: Optional[str] = None
     data: Optional[Dict[str, str]] = field(default_factory=dict)
@@ -3315,8 +3315,8 @@ class SecretList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Secret]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "SecretList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3456,8 +3456,8 @@ class ReplicationController(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ReplicationController"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicationControllerSpec] = None
     status: Optional[ReplicationControllerStatus] = None
@@ -3489,8 +3489,8 @@ class ReplicationControllerList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ReplicationController]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ReplicationControllerList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3571,8 +3571,8 @@ class ClusterRole(HikaruDocumentBase):
 
     _version = "v1"
     aggregationRule: Optional[AggregationRule] = None
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "ClusterRole"
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -3601,8 +3601,8 @@ class ClusterRoleList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ClusterRole]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "ClusterRoleList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3652,8 +3652,8 @@ class ComponentStatus(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ComponentStatus"
     metadata: Optional[ObjectMeta] = None
     conditions: Optional[List[ComponentCondition]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -3683,8 +3683,8 @@ class ComponentStatusList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ComponentStatus]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ComponentStatusList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3764,8 +3764,8 @@ class RoleBinding(HikaruDocumentBase):
 
     _version = "v1"
     roleRef: RoleRef
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleBinding"
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -3794,8 +3794,8 @@ class RoleBindingList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[RoleBinding]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleBindingList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -3936,8 +3936,8 @@ class APIService(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apiregistration/v1"
+    kind: Optional[str] = "APIService"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[APIServiceSpec] = None
     status: Optional[APIServiceStatus] = None
@@ -3967,8 +3967,8 @@ class APIServiceList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[APIService]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apiregistration/v1"
+    kind: Optional[str] = "APIServiceList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -4078,8 +4078,8 @@ class ResourceQuota(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ResourceQuota"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ResourceQuotaSpec] = None
     status: Optional[ResourceQuotaStatus] = None
@@ -4111,8 +4111,8 @@ class ResourceQuotaList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ResourceQuota]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ResourceQuotaList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -4256,8 +4256,8 @@ class PersistentVolumeClaim(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeClaim"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeClaimSpec] = None
     status: Optional[PersistentVolumeClaimStatus] = None
@@ -4289,8 +4289,8 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[PersistentVolumeClaim]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeClaimList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -4428,8 +4428,8 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: SubjectAccessReviewSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authorization/v1"
+    kind: Optional[str] = "LocalSubjectAccessReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
@@ -4834,9 +4834,9 @@ class ObjectReference(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "None/v1"
     fieldPath: Optional[str] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "None"
     name: Optional[str] = None
     namespace: Optional[str] = None
     resourceVersion: Optional[str] = None
@@ -5042,8 +5042,8 @@ class PersistentVolume(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolume"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[PersistentVolumeSpec] = None
     status: Optional[PersistentVolumeStatus] = None
@@ -5075,8 +5075,8 @@ class PersistentVolumeList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[PersistentVolume]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5131,8 +5131,8 @@ class Lease(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "coordination/v1"
+    kind: Optional[str] = "Lease"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LeaseSpec] = None
     # noinspection PyDataclass
@@ -5162,8 +5162,8 @@ class LeaseList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Lease]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "coordination/v1"
+    kind: Optional[str] = "LeaseList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5252,8 +5252,8 @@ class Namespace(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Namespace"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NamespaceSpec] = None
     status: Optional[NamespaceStatus] = None
@@ -5285,8 +5285,8 @@ class NamespaceList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Namespace]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "NamespaceList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5392,8 +5392,8 @@ class Endpoints(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Endpoints"
     metadata: Optional[ObjectMeta] = None
     subsets: Optional[List[EndpointSubset]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -5423,8 +5423,8 @@ class EndpointsList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Endpoints]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "EndpointsList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5485,7 +5485,7 @@ class StatusDetails(HikaruBase):
     """
 
     group: Optional[str] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "None"
     name: Optional[str] = None
     retryAfterSeconds: Optional[int] = None
     uid: Optional[str] = None
@@ -5523,10 +5523,10 @@ class Status(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
     code: Optional[int] = None
     details: Optional[StatusDetails] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "Status"
     message: Optional[str] = None
     metadata: Optional[ListMeta] = None
     reason: Optional[str] = None
@@ -5601,8 +5601,8 @@ class LimitRange(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "LimitRange"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[LimitRangeSpec] = None
     # noinspection PyDataclass
@@ -5633,8 +5633,8 @@ class LimitRangeList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[LimitRange]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "LimitRangeList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5751,8 +5751,8 @@ class ReplicaSet(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ReplicaSet"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ReplicaSetSpec] = None
     status: Optional[ReplicaSetStatus] = None
@@ -5784,8 +5784,8 @@ class ReplicaSetList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ReplicaSet]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ReplicaSetList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -5863,8 +5863,8 @@ class APIGroup(HikaruDocumentBase):
     _version = "v1"
     name: str
     versions: List[GroupVersionForDiscovery]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIGroup"
     preferredVersion: Optional[GroupVersionForDiscovery] = None
     serverAddressByClientCIDRs: Optional[List[ServerAddressByClientCIDR]] = field(
         default_factory=list
@@ -5894,8 +5894,8 @@ class APIGroupList(HikaruDocumentBase):
 
     _version = "v1"
     groups: List[APIGroup]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIGroupList"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -6435,8 +6435,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     _version = "v1"
     spec: CustomResourceDefinitionSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apiextensions/v1"
+    kind: Optional[str] = "CustomResourceDefinition"
     metadata: Optional[ObjectMeta] = None
     status: Optional[CustomResourceDefinitionStatus] = None
     # noinspection PyDataclass
@@ -6465,8 +6465,8 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[CustomResourceDefinition]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apiextensions/v1"
+    kind: Optional[str] = "CustomResourceDefinitionList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -6518,8 +6518,8 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: SelfSubjectAccessReviewSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authorization/v1"
+    kind: Optional[str] = "SelfSubjectAccessReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
@@ -6583,9 +6583,9 @@ class DeleteOptions(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
     gracePeriodSeconds: Optional[int] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "DeleteOptions"
     orphanDependents: Optional[bool] = None
     preconditions: Optional[Preconditions] = None
     propagationPolicy: Optional[str] = None
@@ -6862,8 +6862,8 @@ class Scale(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "autoscaling/v1"
+    kind: Optional[str] = "Scale"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ScaleSpec] = None
     status: Optional[ScaleStatus] = None
@@ -6904,8 +6904,8 @@ class BoundObjectReference(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "None/v1"
+    kind: Optional[str] = "None"
     name: Optional[str] = None
     uid: Optional[str] = None
     # noinspection PyDataclass
@@ -6980,8 +6980,8 @@ class TokenRequest(HikaruDocumentBase):
 
     _version = "v1"
     spec: TokenRequestSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authentication/v1"
+    kind: Optional[str] = "TokenRequest"
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenRequestStatus] = None
     # noinspection PyDataclass
@@ -7013,8 +7013,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     _version = "v1"
     roleRef: RoleRef
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "ClusterRoleBinding"
     metadata: Optional[ObjectMeta] = None
     subjects: Optional[List[Subject]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -7043,8 +7043,8 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ClusterRoleBinding]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "ClusterRoleBindingList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -7215,8 +7215,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "MutatingWebhookConfiguration"
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[MutatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -7246,8 +7246,8 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[MutatingWebhookConfiguration]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "MutatingWebhookConfigurationList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -7332,8 +7332,8 @@ class StorageClass(HikaruDocumentBase):
     _version = "v1"
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "storage/v1"
+    kind: Optional[str] = "StorageClass"
     metadata: Optional[ObjectMeta] = None
     reclaimPolicy: Optional[str] = None
     volumeBindingMode: Optional[str] = None
@@ -7369,8 +7369,8 @@ class StorageClassList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[StorageClass]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "storage/v1"
+    kind: Optional[str] = "StorageClassList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -7622,8 +7622,8 @@ class Service(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Service"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[ServiceSpec] = None
     status: Optional[ServiceStatus] = None
@@ -7654,8 +7654,8 @@ class ServiceList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Service]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ServiceList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -7683,8 +7683,8 @@ class Role(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "Role"
     metadata: Optional[ObjectMeta] = None
     rules: Optional[List[PolicyRule]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -7713,8 +7713,8 @@ class RoleList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Role]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -7833,8 +7833,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "ValidatingWebhookConfiguration"
     metadata: Optional[ObjectMeta] = None
     webhooks: Optional[List[ValidatingWebhook]] = field(default_factory=list)
     # noinspection PyDataclass
@@ -7864,8 +7864,8 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ValidatingWebhookConfiguration]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "ValidatingWebhookConfigurationList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8052,8 +8052,8 @@ class StatefulSet(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "StatefulSet"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[StatefulSetSpec] = None
     status: Optional[StatefulSetStatus] = None
@@ -8083,8 +8083,8 @@ class StatefulSetList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[StatefulSet]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "StatefulSetList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8125,9 +8125,9 @@ class ServiceAccount(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
     automountServiceAccountToken: Optional[bool] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "ServiceAccount"
     metadata: Optional[ObjectMeta] = None
     imagePullSecrets: Optional[List[LocalObjectReference]] = field(default_factory=list)
     secrets: Optional[List[ObjectReference]] = field(default_factory=list)
@@ -8159,8 +8159,8 @@ class ServiceAccountList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ServiceAccount]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ServiceAccountList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8245,11 +8245,11 @@ class Event(HikaruDocumentBase):
     involvedObject: ObjectReference
     metadata: ObjectMeta
     action: Optional[str] = None
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
     count: Optional[int] = None
     eventTime: Optional[str] = None
     firstTimestamp: Optional[str] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "Event"
     lastTimestamp: Optional[str] = None
     message: Optional[str] = None
     reason: Optional[str] = None
@@ -8286,8 +8286,8 @@ class EventList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Event]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "EventList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8324,8 +8324,8 @@ class APIVersions(HikaruDocumentBase):
     _version = "v1"
     serverAddressByClientCIDRs: List[ServerAddressByClientCIDR]
     versions: List[str]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIVersions"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -8426,8 +8426,8 @@ class TokenReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: TokenReviewSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authentication/v1"
+    kind: Optional[str] = "TokenReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[TokenReviewStatus] = None
     # noinspection PyDataclass
@@ -8569,8 +8569,8 @@ class Job(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "batch/v1"
+    kind: Optional[str] = "Job"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[JobSpec] = None
     status: Optional[JobStatus] = None
@@ -8601,8 +8601,8 @@ class JobList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Job]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "batch/v1"
+    kind: Optional[str] = "JobList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8679,8 +8679,8 @@ class APIResourceList(HikaruDocumentBase):
     _version = "v1"
     groupVersion: str
     resources: List[APIResource]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIResourceList"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -8708,8 +8708,8 @@ class PodTemplate(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PodTemplate"
     metadata: Optional[ObjectMeta] = None
     template: Optional[PodTemplateSpec] = None
     # noinspection PyDataclass
@@ -8739,8 +8739,8 @@ class PodTemplateList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[PodTemplate]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PodTemplateList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8765,7 +8765,7 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     _version = "v1"
     kind: str
     name: str
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "None/v1"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -8848,8 +8848,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "autoscaling/v1"
+    kind: Optional[str] = "HorizontalPodAutoscaler"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[HorizontalPodAutoscalerSpec] = None
     status: Optional[HorizontalPodAutoscalerStatus] = None
@@ -8879,8 +8879,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[HorizontalPodAutoscaler]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "autoscaling/v1"
+    kind: Optional[str] = "HorizontalPodAutoscalerList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -8910,8 +8910,8 @@ class Binding(HikaruDocumentBase):
 
     _version = "v1"
     target: ObjectReference
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Binding"
     metadata: Optional[ObjectMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9283,8 +9283,8 @@ class Node(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Node"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NodeSpec] = None
     status: Optional[NodeStatus] = None
@@ -9315,8 +9315,8 @@ class NodeList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Node]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "NodeList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9493,8 +9493,8 @@ class Deployment(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "Deployment"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DeploymentSpec] = None
     status: Optional[DeploymentStatus] = None
@@ -9524,8 +9524,8 @@ class DeploymentList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[Deployment]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "DeploymentList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9717,8 +9717,8 @@ class NetworkPolicy(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "networking/v1"
+    kind: Optional[str] = "NetworkPolicy"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[NetworkPolicySpec] = None
     # noinspection PyDataclass
@@ -9748,8 +9748,8 @@ class NetworkPolicyList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[NetworkPolicy]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "networking/v1"
+    kind: Optional[str] = "NetworkPolicyList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9787,8 +9787,8 @@ class ControllerRevision(HikaruDocumentBase):
 
     _version = "v1"
     revision: int
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ControllerRevision"
     metadata: Optional[ObjectMeta] = None
     data: Optional[object] = field(default_factory=dict)
     # noinspection PyDataclass
@@ -9818,8 +9818,8 @@ class ControllerRevisionList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ControllerRevision]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ControllerRevisionList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9855,8 +9855,8 @@ class ConfigMap(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ConfigMap"
     metadata: Optional[ObjectMeta] = None
     binaryData: Optional[Dict[str, str]] = field(default_factory=dict)
     data: Optional[Dict[str, str]] = field(default_factory=dict)
@@ -9887,8 +9887,8 @@ class ConfigMapList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[ConfigMap]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ConfigMapList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -9918,8 +9918,8 @@ class SubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: SubjectAccessReviewSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "authorization/v1"
+    kind: Optional[str] = "SubjectAccessReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
     # noinspection PyDataclass
@@ -9962,10 +9962,10 @@ class PriorityClass(HikaruDocumentBase):
 
     _version = "v1"
     value: int
-    apiVersion: Optional[str] = None
+    apiVersion: Optional[str] = "scheduling/v1"
     description: Optional[str] = None
     globalDefault: Optional[bool] = None
-    kind: Optional[str] = None
+    kind: Optional[str] = "PriorityClass"
     metadata: Optional[ObjectMeta] = None
     preemptionPolicy: Optional[str] = None
     # noinspection PyDataclass
@@ -9995,8 +9995,8 @@ class PriorityClassList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[PriorityClass]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "scheduling/v1"
+    kind: Optional[str] = "PriorityClassList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -10169,8 +10169,8 @@ class DaemonSet(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "DaemonSet"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[DaemonSetSpec] = None
     status: Optional[DaemonSetStatus] = None
@@ -10201,8 +10201,8 @@ class DaemonSetList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[DaemonSet]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "DaemonSetList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -10321,8 +10321,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
     _version = "v1"
     spec: VolumeAttachmentSpec
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "storage/v1"
+    kind: Optional[str] = "VolumeAttachment"
     metadata: Optional[ObjectMeta] = None
     status: Optional[VolumeAttachmentStatus] = None
     # noinspection PyDataclass
@@ -10352,8 +10352,8 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
     _version = "v1"
     items: List[VolumeAttachment]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "storage/v1"
+    kind: Optional[str] = "VolumeAttachmentList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
@@ -10456,8 +10456,8 @@ class CronJob(HikaruDocumentBase):
     """
 
     _version = "v2alpha1"
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "batch/v2alpha1"
+    kind: Optional[str] = "CronJob"
     metadata: Optional[ObjectMeta] = None
     spec: Optional[CronJobSpec] = None
     status: Optional[CronJobStatus] = None
@@ -10636,8 +10636,8 @@ class CronJobList(HikaruDocumentBase):
 
     _version = "v2alpha1"
     items: List[CronJob]
-    apiVersion: Optional[str] = None
-    kind: Optional[str] = None
+    apiVersion: Optional[str] = "batch/v2alpha1"
+    kind: Optional[str] = "CronJobList"
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None

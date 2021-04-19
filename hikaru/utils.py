@@ -46,6 +46,15 @@ class Response(object):
     - thread: instance of threading.Thread that is processing the call
     """
     def __init__(self, k8s_response, codes_with_objects):
+        """
+        Creates a new response:
+        :param k8s_response: a 3-tuple consisting of:
+            - return value dict
+            - return code
+            - headers
+        :param codes_with_objects: an iterable of ints that are codes for which
+            the self.obj field is a Hikaru object in dict form
+        """
         self.code: Optional[int] = None
         self.obj: Optional[Any] = None
         self.headers: Optional[dict] = None

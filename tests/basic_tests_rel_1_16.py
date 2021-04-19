@@ -42,7 +42,7 @@ def setup():
     p = setup_pod()
 
 
-def test01():
+def test001():
     """
     get the basic machinery creaking to life
     """
@@ -50,7 +50,7 @@ def test01():
     assert p.metadata.name == "hello-kiamol-3", p.metadata.name
 
 
-def test02():
+def test002():
     """
     ensure the labels are there
     """
@@ -59,7 +59,7 @@ def test02():
     assert p.metadata.labels["lab2"] == "wobble"
 
 
-def test03():
+def test003():
     """
     look for the ports in the container
     """
@@ -68,7 +68,7 @@ def test03():
     assert p.spec.containers[0].ports[1].containerPort == 3307
 
 
-def test04():
+def test004():
     """
     add another container
     """
@@ -76,7 +76,7 @@ def test04():
     assert p.spec.containers[1].name == "db"
 
 
-def test05():
+def test005():
     """
     check for env vars on second container
     """
@@ -84,7 +84,7 @@ def test05():
     assert len(p.spec.containers[1].env) == 2
 
 
-def test06():
+def test006():
     """
     check for a value of 'here' for first env
     """
@@ -93,7 +93,7 @@ def test06():
            f"it was {p.spec.containers[1].env[0].value}"
 
 
-def test07():
+def test007():
     """
     Check that there's an envFrom with a configMapRef in it
     """
@@ -102,7 +102,7 @@ def test07():
     assert p.spec.containers[1].envFrom[0].configMapRef.optional is True
 
 
-def test08():
+def test008():
     """
     Check that an envFrom has a prefix in it
     """
@@ -110,7 +110,7 @@ def test08():
     assert p.spec.containers[1].envFrom[0].prefix == "gabagabahey"
 
 
-def test09():
+def test009():
     """
     Check that an envFrom handles a secretRef
     """
@@ -119,7 +119,7 @@ def test09():
     assert p.spec.containers[1].envFrom[0].secretRef.optional is False
 
 
-def test10():
+def test010():
     """
     Check that volume mounts are processed properly
     """
@@ -132,7 +132,7 @@ def test10():
     assert p.spec.containers[1].volumeMounts[0].subPathExpr == ""
 
 
-def test11():
+def test011():
     """
     Check that volume devices is handled properly
     """
@@ -141,7 +141,7 @@ def test11():
     assert p.spec.containers[1].volumeDevices[0].name == "root-disk"
 
 
-def test12():
+def test012():
     """
     check that resources are respected
     """
@@ -152,7 +152,7 @@ def test12():
     assert p.spec.containers[1].resources.requests["mem-mb"] == 400
 
 
-def test13():
+def test013():
     """
     check that exec in lifecyle postStart works ok
     """
@@ -160,7 +160,7 @@ def test13():
     assert len(p.spec.containers[1].lifecycle.postStart.exec.command) == 3
 
 
-def test14():
+def test014():
     """
     check that httpGet in lifecyle postStart works
     """
@@ -175,7 +175,7 @@ def test14():
            "whatever"
 
 
-def test15():
+def test015():
     """
     check that tcpSocket in lifecycle postStart works
     """
@@ -184,7 +184,7 @@ def test15():
     assert p.spec.containers[1].lifecycle.postStart.tcpSocket.host == "devnull"
 
 
-def test16():
+def test016():
     """
     check exec lifecyle in pre_stop
     """
@@ -192,7 +192,7 @@ def test16():
     assert len(p.spec.containers[1].lifecycle.preStop.exec.command) == 3
 
 
-def test17():
+def test017():
     """
     check for the terminationPolicy items
     """
@@ -201,7 +201,7 @@ def test17():
     assert p.spec.containers[1].terminationMessagePolicy == "File"
 
 
-def test18():
+def test018():
     """
     check livenessProbe
     """
@@ -215,7 +215,7 @@ def test18():
     assert p.spec.containers[1].livenessProbe.successThreshold == 2
 
 
-def test19():
+def test019():
     """
     check readinessProbe
     """
@@ -229,7 +229,7 @@ def test19():
     assert p.spec.containers[1].readinessProbe.successThreshold == 1
 
 
-def test20():
+def test020():
     """
     check the flat items in securityContext of containers
     """
@@ -243,7 +243,7 @@ def test20():
     assert p.spec.containers[1].securityContext.allowPrivilegeEscalation is True
 
 
-def test21():
+def test021():
     """
     check the capabilities sub item of securityContext in containers
     """
@@ -253,7 +253,7 @@ def test21():
     assert p.spec.containers[1].securityContext.capabilities.add[1] == "read"
 
 
-def test22():
+def test022():
     """
     check the seccompProfile settings of securityContext
     """
@@ -264,7 +264,7 @@ def test22():
            "nada"
 
 
-def test23():
+def test023():
     """
     check the seLinuxOptions item of securityContext
     """
@@ -275,7 +275,7 @@ def test23():
     assert p.spec.containers[1].securityContext.seLinuxOptions.user == "quattro"
 
 
-def test24():
+def test024():
     """
     check the windowsOptions item of securityContext
     """
@@ -288,7 +288,7 @@ def test24():
            "icky", 'no icky'
 
 
-def test25():
+def test025():
     """
     check the imagePullSecrets in the pod spec
     """
@@ -297,7 +297,7 @@ def test25():
     assert p.spec.imagePullSecrets[1].name == "two"
 
 
-def test26():
+def test026():
     """
     check enableServiceLinks
     """
@@ -305,7 +305,7 @@ def test26():
     assert p.spec.enableServiceLinks is False
 
 
-def test27():
+def test027():
     """
     check nodeSelector
     """
@@ -314,7 +314,7 @@ def test27():
     assert p.spec.nodeSelector["key2"] == "wobble"
 
 
-def test28():
+def test028():
     """
     check nodeName
     """
@@ -322,7 +322,7 @@ def test28():
     assert p.spec.nodeName == "maxwell"
 
 
-def test29():
+def test029():
     """
     check schedulerName
     """
@@ -330,7 +330,7 @@ def test29():
     assert p.spec.schedulerName == "cecil"
 
 
-def test30():
+def test030():
     """
     check runtimeClassName
     """
@@ -338,7 +338,7 @@ def test30():
     assert p.spec.runtimeClassName == "classless"
 
 
-def test31():
+def test031():
     """
     Use find_by_name to find all containers
     """
@@ -347,7 +347,7 @@ def test31():
     assert len(results) == 2
 
 
-def test32():
+def test032():
     """
     Use find_by_name to find all exec objects in lifecycles
     """
@@ -356,16 +356,16 @@ def test32():
     assert len(results) == 2
 
 
-def test33():
+def test033():
     """
-    Same test as test32, but with a single string
+    Same test as test032, but with a single string
     """
     assert isinstance(p, Pod)
     results = p.find_by_name('exec', following='containers.lifecycle')
     assert len(results) == 2
 
 
-def test34():
+def test034():
     """
     Use find_by_name to find all exec objects in the lifecycle of the 2nd container
     """
@@ -374,16 +374,16 @@ def test34():
     assert len(results) == 2, f'len is {len(results)}'
 
 
-def test35():
+def test035():
     """
-    Same as test34, but using a single string for following
+    Same as test034, but using a single string for following
     """
     assert isinstance(p, Pod)
     results = p.find_by_name('exec', following='containers.1.lifecycle')
     assert len(results) == 2, f'len is {len(results)}'
 
 
-def test36():
+def test036():
     """
     Use find_by_name to find a field with non-consecutive following fields
     """
@@ -392,7 +392,7 @@ def test36():
     assert len(results) == 1
 
 
-def test37():
+def test037():
     """
     check that equals returns true for the same object
     """
@@ -401,7 +401,7 @@ def test37():
     assert p == q
 
 
-def test38():
+def test038():
     """
     check that equals returns False for a tweaked object
     """
@@ -411,7 +411,7 @@ def test38():
     assert p != q
 
 
-def test39():
+def test039():
     """
     check that dup produces equal objects
     """
@@ -420,7 +420,7 @@ def test39():
     assert p == q
 
 
-def test40():
+def test040():
     """
     check that a twiddled dup'd object isn't equal
     """
@@ -430,7 +430,7 @@ def test40():
     assert p != q
 
 
-def test41():
+def test041():
     """
     get_python_source with the autopep8 style
     """
@@ -440,7 +440,7 @@ def test41():
     assert p == x, "the two aren't the same"
 
 
-def test42():
+def test042():
     """
     check that a modified loaded version of p isn't equal
     """
@@ -452,7 +452,7 @@ def test42():
     assert x != p
 
 
-def test43():
+def test043():
     """
     check that you can render explicitly to autopep8
     """
@@ -462,7 +462,7 @@ def test43():
     assert p == x, "the two aren't the same"
 
 
-def test44():
+def test044():
     """
     check that you can render to black
     """
@@ -472,7 +472,7 @@ def test44():
     assert p == x, "the two aren't the same"
 
 
-def test45():
+def test045():
     """
     check that illegal styles are caught
     """
@@ -484,7 +484,7 @@ def test45():
         pass
 
 
-def test46():
+def test046():
     """
     check that None instead of dict generates a warning
     """
@@ -498,7 +498,7 @@ def test46():
     assert "empty dict" in warnings[0].warning
 
 
-def test47():
+def test047():
     """
     check that None instead of a list generates a warning
     """
@@ -512,7 +512,7 @@ def test47():
     assert "empty list" in warnings[0].warning
 
 
-def test48():
+def test048():
     """
     check that None instead of a required str generates a warning
     """
@@ -526,7 +526,7 @@ def test48():
     assert "should have been" in warnings[0].warning
 
 
-def test49():
+def test049():
     """
     check that the wrong basic type is gives a warning
     """
@@ -538,7 +538,7 @@ def test49():
     assert "expecting" in warnings[0].warning, f"warning: {warnings[0].warning}"
 
 
-def test50():
+def test050():
     """
     check the big test Pod for warnings (should be none)
     """
@@ -548,7 +548,7 @@ def test50():
     assert not warnings, f"warnings: {wstrings}"
 
 
-def test51():
+def test051():
     """
     check that the wrong contained type in a list generates a warning
     """
@@ -558,7 +558,7 @@ def test51():
     assert len(warnings[0].path) == 2, f"path is {warnings[0].path}"
 
 
-def test52():
+def test052():
     """
     Put a correct object inside an appropriate list; should be no warnings.
     """
@@ -569,7 +569,7 @@ def test52():
     assert len(warnings) == 0, f'got {len(warnings)} warnings'
 
 
-def test53():
+def test053():
     """
     Put a broken object into the list in another; get warnings
     """
@@ -582,7 +582,7 @@ def test53():
     assert 0 in warnings[0].path, f'path was {warnings[0].path}'
 
 
-def test54():
+def test054():
     """
     Put the wrong object inside another; get warnings
     """
@@ -594,7 +594,7 @@ def test54():
     assert 0 in warnings[0].path, f'path was {warnings[0].path}'
 
 
-def test55():
+def test055():
     """
     check that a single change is detected by diff
     """
@@ -607,7 +607,7 @@ def test55():
     assert "Length" in diffs[0].report
 
 
-def test56():
+def test056():
     """
     check a single deeply nested change is detected
     """
@@ -619,7 +619,7 @@ def test56():
     assert len(diffs[0].path) == 6, f'path is {diffs[0].path}'
 
 
-def test57():
+def test057():
     """
     check different types yield a diff
     """
@@ -629,7 +629,7 @@ def test57():
     assert "Incompatible" in diffs[0].report
 
 
-def test58():
+def test058():
     """
     check that a type mismatch diff is caught
     """
@@ -640,7 +640,7 @@ def test58():
     assert "Type mismatch" in diffs[0].report
 
 
-def test59():
+def test059():
     """
     check that a value mismatch diff is caught
     """
@@ -651,7 +651,7 @@ def test59():
     assert "Value mismatch" in diffs[0].report
 
 
-def test60():
+def test060():
     """
     check that dict key differences are caught by diff
     """
@@ -662,7 +662,7 @@ def test60():
     assert "Key mismatch" in diffs[0].report
 
 
-def test61():
+def test061():
     """
     check that dict key differences are caught by diff
     """
@@ -673,7 +673,7 @@ def test61():
     assert "Item mismatch" in diffs[0].report
 
 
-def test62():
+def test062():
     """
     check that lists with different element types generate a diff
     """
@@ -684,7 +684,7 @@ def test62():
     assert "Element mismatch" in diffs[0].report
 
 
-def test63():
+def test063():
     """
     check that lists with elements that don't match are caught
     """
@@ -695,7 +695,7 @@ def test63():
     assert "Value mismatch" in diffs[0].report, diffs[0].report
 
 
-def test64():
+def test064():
     """
     check we can reload a doc from a get_clean_dict() dump
     """
@@ -705,7 +705,7 @@ def test64():
     assert p == new_p
 
 
-def test65():
+def test065():
     """
     Check if from_dict works with a named class that was dumped
     """
@@ -715,7 +715,7 @@ def test65():
     assert ps == new_ps
 
 
-def test66():
+def test066():
     """
     Check if we can reload a doc from a get_json() dump
     """
@@ -725,7 +725,7 @@ def test66():
     assert p == new_p
 
 
-def test67():
+def test067():
     """
     Check if from_json works with a named class that was dumped
     """
@@ -735,7 +735,7 @@ def test67():
     assert ps == new_ps
 
 
-def test68():
+def test068():
     """
     Check catching a bad path attribute for a list
     """
@@ -748,7 +748,7 @@ def test68():
         pass
 
 
-def test69():
+def test069():
     """
     Check catching a bad index for a list
     """
@@ -761,7 +761,7 @@ def test69():
         pass
 
 
-def test70():
+def test070():
     """
     Check catching a bad attribute on a regular object
     """
@@ -774,7 +774,7 @@ def test70():
         pass
 
 
-def test71():
+def test071():
     """
     Check that repopulating the cataloge doesn't blow up
     """
@@ -782,7 +782,7 @@ def test71():
     p.repopulate_catalog()
 
 
-def test72():
+def test072():
     """
     Check that find_by_name()'s name parameter check works
     """
@@ -794,7 +794,7 @@ def test72():
         pass
 
 
-def test73():
+def test073():
     """
     Check that find_by_name()'s following parameter check works
     """
@@ -806,7 +806,7 @@ def test73():
         pass
 
 
-def test74():
+def test074():
     """
     Check that weird type where there should be an int index is caught
     """
@@ -818,7 +818,7 @@ def test74():
         pass
 
 
-def test75():
+def test075():
     """
     Check that a None in a list raises a gripe
     """
@@ -832,7 +832,7 @@ def test75():
         pass
 
 
-def test76():
+def test076():
     """
     Check a bad attr is found an griped about
     """
@@ -845,7 +845,7 @@ def test76():
         pass
 
 
-def test77():
+def test077():
     """
     Find an object properly
     """
@@ -855,7 +855,7 @@ def test77():
     assert isinstance(con, Container)
 
 
-def test78():
+def test078():
     """
     Make a diff detail on a basic string
     """
@@ -866,7 +866,7 @@ def test78():
     assert len(diffs) == 1
 
 
-def test79():
+def test079():
     """
     check that mismatched list items are caught in a diff
     """
@@ -879,7 +879,7 @@ def test79():
     assert len(diffs) == 1
 
 
-def test80():
+def test080():
     """
     check that mismatched dict keys are caught in a diff
     """
@@ -892,17 +892,17 @@ def test80():
     assert len(diffs) == 1
 
 
-def test81():
+def test081():
     """
     check that a required attr is caught in a typecheck
     """
     owner = OwnerReference(apiVersion="v1", kind=None,
-                           name="test81", uid="asdf")
+                           name="test081", uid="asdf")
     warnings = owner.get_type_warnings()
     assert len(warnings) == 1
 
 
-def test82():
+def test082():
     """
     check that __repr__ gets called
     """
@@ -911,7 +911,7 @@ def test82():
     assert s
 
 
-def test83():
+def test083():
     """
     check that the assign_to arg works in get_python_source()
     """
@@ -920,20 +920,20 @@ def test83():
     assert s.startswith('x =')
 
 
-def test84():
+def test084():
     """
     ensure positional params are correct
     """
-    own = OwnerReference('v1', 'OR', 'test84', 'asdf')
+    own = OwnerReference('v1', 'OR', 'test084', 'asdf')
     s = get_python_source(own, style='black')
     o: OwnerReference = eval(s, globals(), locals())
     assert o.apiVersion == 'v1'
     assert o.kind == 'OR'
-    assert o.name == 'test84'
+    assert o.name == 'test084'
     assert o.uid == 'asdf'
 
 
-def test85():
+def test085():
     """
     test the checks in get_clean_dict()
     """
@@ -944,7 +944,7 @@ def test85():
         pass
 
 
-def test86():
+def test086():
     """
     Test proper generation of YAML
     """
@@ -955,7 +955,7 @@ def test86():
     assert p == new_p
 
 
-def test87():
+def test087():
     """
     Test guard code in get_yaml()
     """
@@ -966,7 +966,7 @@ def test87():
         pass
 
 
-def test88():
+def test088():
     """
     Test guard code in get_json
     """
@@ -977,7 +977,7 @@ def test88():
         pass
 
 
-def test89():
+def test089():
     """
     Test guard code in from_dict
     """
@@ -993,7 +993,7 @@ def test89():
         pass
 
 
-def test90():
+def test090():
     """
     Check guard code in get_processors
     """
@@ -1004,7 +1004,7 @@ def test90():
         pass
 
 
-def test91():
+def test091():
     """
     Check using a path for get_processors()
     """
@@ -1012,7 +1012,7 @@ def test91():
     assert len(p) == 2
 
 
-def test92():
+def test092():
     """
     Check that a bad apiVersion/kind raises a RuntimeError
     """
@@ -1023,7 +1023,7 @@ def test92():
         pass
 
 
-def test93():
+def test093():
     """
     Check that required but empty lists raise a type warning
     """
@@ -1034,7 +1034,7 @@ def test93():
     assert len(warnings) == 1
 
 
-def test94():
+def test094():
     """
     Check we get a TypeError when parsing YAML with missing required prop
     """
@@ -1045,7 +1045,7 @@ def test94():
         pass
 
 
-def test95():
+def test095():
     """
     Check two different code gen styles yield equivalent objects
     """
@@ -1057,7 +1057,7 @@ def test95():
     assert obj1 == obj2
 
 
-def test96():
+def test096():
     """
     Test processing the group, version, name back into a swagger name
     """
@@ -1073,7 +1073,7 @@ def test96():
     assert n == cd.short_name, "Named doesn't match"
 
 
-def test97():
+def test097():
     """
     Check that we can detect a recursively defined swagger object
     """
@@ -1087,7 +1087,7 @@ def test97():
     assert cd.has_alternate_base() is True
 
 
-def test98():
+def test098():
     """
     Check that we get a new ClassDescriptor as an alternate base
     """
@@ -1102,7 +1102,7 @@ def test98():
     assert isinstance(cd.alternate_base, ClassDescriptor)
 
 
-def test99():
+def test099():
     """
     Check that an existing ClassDecriptor depends on its alternate base
     """
@@ -1274,6 +1274,17 @@ def test114():
     assert pep8 == 'this_is_camel_case'
 
 
+def test115():
+    """
+    Check that repopulating catalogs doesn't impact the find_by_name results
+    """
+    p = setup_pod()
+    res1 = p.find_by_name('exec', following='containers.1.lifecycle')
+    p.repopulate_catalog()
+    res2 = p.find_by_name('exec', following='containers.1.lifecycle')
+    assert res1 == res2
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
@@ -1281,5 +1292,7 @@ if __name__ == "__main__":
     for k, v in the_tests.items():
         try:
             v()
+        except SkipTest:
+            pass
         except Exception as e:
             print(f'{k} failed with {str(e)}, {e.__class__}')
