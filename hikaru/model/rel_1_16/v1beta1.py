@@ -3669,6 +3669,84 @@ class ClusterRole(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readClusterRole(name: str, client: ApiClient = None) -> Response:
+        r"""
+        read the specified ClusterRole
+
+        operationID: readClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
+
+        :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRole    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_cluster_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchClusterRole(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified ClusterRole
+
+        operationID: patchClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRole    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_cluster_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceClusterRole(
         self,
         name: str,
@@ -3744,6 +3822,117 @@ class ClusterRoleList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listClusterRole(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ClusterRole
+
+        operationID: listClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_cluster_role_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -3957,6 +4146,91 @@ class RoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedRoleBinding(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read the specified RoleBinding
+
+        operationID: readNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBinding    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedRoleBinding(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified RoleBinding
+
+        operationID: patchNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBinding    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedRoleBinding(
         self,
         name: str,
@@ -4035,6 +4309,144 @@ class RoleBindingList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedRoleBinding(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind RoleBinding
+
+        operationID: listNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBindingList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_role_binding_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listRoleBindingForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind RoleBinding
+
+        operationID: listRoleBindingForAllNamespaces
+        path: /apis/rbac.authorization.k8s.io/v1beta1/rolebindings
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleBindingList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_role_binding_for_all_namespaces_with_http_info"
+        )
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -4222,6 +4634,97 @@ class APIService(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readAPIService(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified APIService
+
+        operationID: readAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_api_service_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchAPIService(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified APIService
+
+        operationID: patchAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_api_service_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceAPIService(
         self,
         name: str,
@@ -4267,6 +4770,84 @@ class APIService(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readAPIServiceStatus(name: str, client: ApiClient = None) -> Response:
+        r"""
+        read status of the specified APIService
+
+        operationID: readAPIServiceStatus
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
+
+        :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_api_service_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchAPIServiceStatus(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified APIService
+
+        operationID: patchAPIServiceStatus
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIService    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_api_service_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceAPIServiceStatus(
@@ -4344,6 +4925,117 @@ class APIServiceList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listAPIService(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind APIService
+
+        operationID: listAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIServiceList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_api_service_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -5592,6 +6284,103 @@ class Lease(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedLease(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified Lease
+
+        operationID: readNamespacedLease
+        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Lease    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_lease_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedLease(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified Lease
+
+        operationID: patchNamespacedLease
+        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Lease    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_lease_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedLease(
         self,
         name: str,
@@ -5671,6 +6460,142 @@ class LeaseList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listLeaseForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind Lease
+
+        operationID: listLeaseForAllNamespaces
+        path: /apis/coordination.k8s.io/v1beta1/leases
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   LeaseList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_lease_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedLease(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Lease
+
+        operationID: listNamespacedLease
+        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   LeaseList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_lease_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -5997,6 +6922,74 @@ class StatusDetails(HikaruBase):
 
 
 @dataclass
+class Preconditions(HikaruBase):
+    r"""
+    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
+    out.
+
+    Full name: v1.Preconditions
+
+    Attributes:
+    resourceVersion: Specifies the target ResourceVersion
+    uid: Specifies the target UID.
+    """
+
+    resourceVersion: Optional[str] = None
+    uid: Optional[str] = None
+
+
+@dataclass
+class DeleteOptions(HikaruDocumentBase):
+    r"""
+    DeleteOptions may be provided when deleting an API object.
+
+    Full name: v1.DeleteOptions
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
+        must be non-negative integer. The value zero indicates delete immediately. If this
+        value is nil, the default grace period for the specified type will be used.
+        Defaults to a per object value if not specified. zero means delete immediately.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
+        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
+        "orphan" finalizer will be added to/removed from the object's finalizers list.
+        Either this field or PropagationPolicy may be set, but not both.
+    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
+        409 Conflict status will be returned.
+    propagationPolicy: Whether and how garbage collection will be performed. Either this
+        field or OrphanDependents may be set, but not both. The default policy is decided
+        by the existing finalizer set in the metadata.finalizers and the resource-specific
+        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
+        'Background' - allow the garbage collector to delete the dependents in the
+        background; 'Foreground' - a cascading policy that deletes all dependents in the
+        foreground.
+    dryRun: When present, indicates that modifications should not be persisted. An invalid
+        or unrecognized dryRun directive will result in an error response and no further
+        processing of the request. Valid values are: - All: all dry run stages will be
+        processed
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    gracePeriodSeconds: Optional[int] = None
+    kind: Optional[str] = "DeleteOptions"
+    orphanDependents: Optional[bool] = None
+    preconditions: Optional[Preconditions] = None
+    propagationPolicy: Optional[str] = None
+    dryRun: Optional[List[str]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class Status(HikaruDocumentBase):
     r"""
     Status is a return value for calls that don't return other objects.
@@ -6037,6 +7030,4667 @@ class Status(HikaruDocumentBase):
     status: Optional[str] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def deleteCollectionNamespacedEvent(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of Event
+
+        operationID: deleteCollectionNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_event_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedEvent(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete an Event
+
+        operationID: deleteNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_event_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionMutatingWebhookConfiguration(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of MutatingWebhookConfiguration
+
+        operationID: deleteCollectionMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_mutating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteMutatingWebhookConfiguration(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a MutatingWebhookConfiguration
+
+        operationID: deleteMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_mutating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionValidatingWebhookConfiguration(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of ValidatingWebhookConfiguration
+
+        operationID: deleteCollectionValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_validating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteValidatingWebhookConfiguration(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a ValidatingWebhookConfiguration
+
+        operationID: deleteValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_validating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionCustomResourceDefinition(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of CustomResourceDefinition
+
+        operationID: deleteCollectionCustomResourceDefinition
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_custom_resource_definition_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCustomResourceDefinition(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a CustomResourceDefinition
+
+        operationID: deleteCustomResourceDefinition
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_custom_resource_definition_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionAPIService(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of APIService
+
+        operationID: deleteCollectionAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_api_service_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteAPIService(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete an APIService
+
+        operationID: deleteAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_api_service_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedDaemonSet(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of DaemonSet
+
+        operationID: deleteCollectionNamespacedDaemonSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_daemon_set_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedDaemonSet(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a DaemonSet
+
+        operationID: deleteNamespacedDaemonSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_daemon_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedDeployment(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of Deployment
+
+        operationID: deleteCollectionNamespacedDeployment
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_deployment_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedDeployment(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a Deployment
+
+        operationID: deleteNamespacedDeployment
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_deployment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedReplicaSet(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of ReplicaSet
+
+        operationID: deleteCollectionNamespacedReplicaSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_replica_set_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedReplicaSet(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a ReplicaSet
+
+        operationID: deleteNamespacedReplicaSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_replica_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionCertificateSigningRequest(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of CertificateSigningRequest
+
+        operationID: deleteCollectionCertificateSigningRequest
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_certificate_signing_request_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCertificateSigningRequest(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a CertificateSigningRequest
+
+        operationID: deleteCertificateSigningRequest
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_certificate_signing_request_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedLease(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of Lease
+
+        operationID: deleteCollectionNamespacedLease
+        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_lease_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedLease(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a Lease
+
+        operationID: deleteNamespacedLease
+        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoordinationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_lease_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedIngress(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of Ingress
+
+        operationID: deleteCollectionNamespacedIngress
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_ingress_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedIngress(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete an Ingress
+
+        operationID: deleteNamespacedIngress
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_ingress_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionPodSecurityPolicy(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of PodSecurityPolicy
+
+        operationID: deleteCollectionPodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_pod_security_policy_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deletePodSecurityPolicy(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a PodSecurityPolicy
+
+        operationID: deletePodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_pod_security_policy_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionRuntimeClass(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of RuntimeClass
+
+        operationID: deleteCollectionRuntimeClass
+        path: /apis/node.k8s.io/v1beta1/runtimeclasses
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NodeV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_runtime_class_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteRuntimeClass(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a RuntimeClass
+
+        operationID: deleteRuntimeClass
+        path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NodeV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_runtime_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedPodDisruptionBudget(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of PodDisruptionBudget
+
+        operationID: deleteCollectionNamespacedPodDisruptionBudget
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_pod_disruption_budget_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedPodDisruptionBudget(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a PodDisruptionBudget
+
+        operationID: deleteNamespacedPodDisruptionBudget
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_namespaced_pod_disruption_budget_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionClusterRoleBinding(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of ClusterRoleBinding
+
+        operationID: deleteCollectionClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_cluster_role_binding_with_http_info"
+        )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteClusterRoleBinding(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a ClusterRoleBinding
+
+        operationID: deleteClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_cluster_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionClusterRole(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of ClusterRole
+
+        operationID: deleteCollectionClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_cluster_role_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteClusterRole(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a ClusterRole
+
+        operationID: deleteClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_cluster_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedRoleBinding(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of RoleBinding
+
+        operationID: deleteCollectionNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "delete_collection_namespaced_role_binding_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedRoleBinding(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a RoleBinding
+
+        operationID: deleteNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionNamespacedRole(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of Role
+
+        operationID: deleteCollectionNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles
+
+        :param namespace: part of the URL path
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_role_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteNamespacedRole(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a Role
+
+        operationID: deleteNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionPriorityClass(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of PriorityClass
+
+        operationID: deleteCollectionPriorityClass
+        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = SchedulingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_priority_class_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deletePriorityClass(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a PriorityClass
+
+        operationID: deletePriorityClass
+        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = SchedulingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_priority_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionStorageClass(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of StorageClass
+
+        operationID: deleteCollectionStorageClass
+        path: /apis/storage.k8s.io/v1beta1/storageclasses
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_storage_class_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteStorageClass(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a StorageClass
+
+        operationID: deleteStorageClass
+        path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_storage_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionVolumeAttachment(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of VolumeAttachment
+
+        operationID: deleteCollectionVolumeAttachment
+        path: /apis/storage.k8s.io/v1beta1/volumeattachments
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_volume_attachment_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteVolumeAttachment(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a VolumeAttachment
+
+        operationID: deleteVolumeAttachment
+        path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_volume_attachment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionCSIDriver(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of CSIDriver
+
+        operationID: deleteCollectionCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_csi_driver_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCSIDriver(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a CSIDriver
+
+        operationID: deleteCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_csi_driver_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCollectionCSINode(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete collection of CSINode
+
+        operationID: deleteCollectionCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_csi_node_with_http_info")
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteCSINode(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional[DeleteOptions] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        delete a CSINode
+
+        operationID: deleteCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_csi_node_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -6313,6 +11967,103 @@ class ReplicaSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedReplicaSet(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified ReplicaSet
+
+        operationID: readNamespacedReplicaSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_replica_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedReplicaSet(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified ReplicaSet
+
+        operationID: patchNamespacedReplicaSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_replica_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedReplicaSet(
         self,
         name: str,
@@ -6361,6 +12112,91 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedReplicaSetStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified ReplicaSet
+
+        operationID: readNamespacedReplicaSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_replica_set_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedReplicaSetStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified ReplicaSet
+
+        operationID: patchNamespacedReplicaSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_replica_set_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicaSetStatus(
@@ -6445,6 +12281,142 @@ class ReplicaSetList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedReplicaSet(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ReplicaSet
+
+        operationID: listNamespacedReplicaSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_replica_set_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listReplicaSetForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind ReplicaSet
+
+        operationID: listReplicaSetForAllNamespaces
+        path: /apis/extensions/v1beta1/replicasets
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ReplicaSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_replica_set_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7166,6 +13138,97 @@ class CustomResourceDefinition(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readCustomResourceDefinition(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified CustomResourceDefinition
+
+        operationID: readCustomResourceDefinition
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_custom_resource_definition_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCustomResourceDefinition(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified CustomResourceDefinition
+
+        operationID: patchCustomResourceDefinition
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_custom_resource_definition_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceCustomResourceDefinition(
         self,
         name: str,
@@ -7211,6 +13274,90 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readCustomResourceDefinitionStatus(
+        name: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified CustomResourceDefinition
+
+        operationID: readCustomResourceDefinitionStatus
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}/status
+
+        :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_custom_resource_definition_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCustomResourceDefinitionStatus(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified CustomResourceDefinition
+
+        operationID: patchCustomResourceDefinitionStatus
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}/status
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinition    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_custom_resource_definition_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceCustomResourceDefinitionStatus(
@@ -7290,6 +13437,117 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listCustomResourceDefinition(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind CustomResourceDefinition
+
+        operationID: listCustomResourceDefinition
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CustomResourceDefinitionList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_custom_resource_definition_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -7446,6 +13704,91 @@ class Scale(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
+    @staticmethod
+    def readNamespacedDeploymentScale(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read scale of the specified Deployment
+
+        operationID: readNamespacedDeploymentScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_deployment_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedDeploymentScale(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update scale of the specified Deployment
+
+        operationID: patchNamespacedDeploymentScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_deployment_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedDeploymentScale(
         self,
         name: str,
@@ -7494,6 +13837,91 @@ class Scale(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedStatefulSetScale(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read scale of the specified StatefulSet
+
+        operationID: readNamespacedStatefulSetScale
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_stateful_set_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedStatefulSetScale(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update scale of the specified StatefulSet
+
+        operationID: patchNamespacedStatefulSetScale
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_stateful_set_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetScale(
@@ -7548,6 +13976,91 @@ class Scale(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedReplicaSetScale(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read scale of the specified ReplicaSet
+
+        operationID: readNamespacedReplicaSetScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_replica_set_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedReplicaSetScale(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update scale of the specified ReplicaSet
+
+        operationID: patchNamespacedReplicaSetScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_replica_set_scale_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedReplicaSetScale(
         self,
         name: str,
@@ -7598,6 +14111,95 @@ class Scale(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedReplicationControllerDummyScale(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read scale of the specified ReplicationControllerDummy
+
+        operationID: readNamespacedReplicationControllerDummyScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicationcontrollers/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_namespaced_replication_controller_dummy_scale_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedReplicationControllerDummyScale(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update scale of the specified ReplicationControllerDummy
+
+        operationID: patchNamespacedReplicationControllerDummyScale
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicationcontrollers/{name}/scale
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Scale    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_replication_controller_dummy_scale_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedReplicationControllerDummyScale(
@@ -7847,6 +14449,84 @@ class ClusterRoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readClusterRoleBinding(name: str, client: ApiClient = None) -> Response:
+        r"""
+        read the specified ClusterRoleBinding
+
+        operationID: readClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
+
+        :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleBinding    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_cluster_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchClusterRoleBinding(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified ClusterRoleBinding
+
+        operationID: patchClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleBinding    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_cluster_role_binding_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceClusterRoleBinding(
         self,
         name: str,
@@ -7922,6 +14602,117 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listClusterRoleBinding(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ClusterRoleBinding
+
+        operationID: listClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ClusterRoleBindingList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_cluster_role_binding_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8144,6 +14935,99 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readMutatingWebhookConfiguration(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified MutatingWebhookConfiguration
+
+        operationID: readMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   MutatingWebhookConfiguration    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_mutating_webhook_configuration_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchMutatingWebhookConfiguration(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified MutatingWebhookConfiguration
+
+        operationID: patchMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   MutatingWebhookConfiguration    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_mutating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceMutatingWebhookConfiguration(
         self,
         name: str,
@@ -8222,6 +15106,117 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listMutatingWebhookConfiguration(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind MutatingWebhookConfiguration
+
+        operationID: listMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   MutatingWebhookConfigurationList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_mutating_webhook_configuration_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8361,6 +15356,97 @@ class StorageClass(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readStorageClass(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified StorageClass
+
+        operationID: readStorageClass
+        path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StorageClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_storage_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchStorageClass(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified StorageClass
+
+        operationID: patchStorageClass
+        path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StorageClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_storage_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceStorageClass(
         self,
         name: str,
@@ -8437,6 +15523,117 @@ class StorageClassList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listStorageClass(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind StorageClass
+
+        operationID: listStorageClass
+        path: /apis/storage.k8s.io/v1beta1/storageclasses
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StorageClassList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_storage_class_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -8801,6 +15998,91 @@ class Role(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedRole(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read the specified Role
+
+        operationID: readNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Role    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedRole(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified Role
+
+        operationID: patchNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Role    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_role_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedRole(
         self,
         name: str,
@@ -8879,6 +16161,142 @@ class RoleList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedRole(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Role
+
+        operationID: listNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_role_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listRoleForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind Role
+
+        operationID: listRoleForAllNamespaces
+        path: /apis/rbac.authorization.k8s.io/v1beta1/roles
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RoleList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_role_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9050,6 +16468,101 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readValidatingWebhookConfiguration(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified ValidatingWebhookConfiguration
+
+        operationID: readValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ValidatingWebhookConfiguration    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_validating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchValidatingWebhookConfiguration(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified ValidatingWebhookConfiguration
+
+        operationID: patchValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ValidatingWebhookConfiguration    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_validating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceValidatingWebhookConfiguration(
         self,
         name: str,
@@ -9128,6 +16641,119 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listValidatingWebhookConfiguration(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ValidatingWebhookConfiguration
+
+        operationID: listValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ValidatingWebhookConfigurationList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_validating_webhook_configuration_with_http_info"
+        )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9368,6 +16994,103 @@ class StatefulSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedStatefulSet(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified StatefulSet
+
+        operationID: readNamespacedStatefulSet
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_stateful_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedStatefulSet(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified StatefulSet
+
+        operationID: patchNamespacedStatefulSet
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_stateful_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedStatefulSet(
         self,
         name: str,
@@ -9416,6 +17139,93 @@ class StatefulSet(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedStatefulSetStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified StatefulSet
+
+        operationID: readNamespacedStatefulSetStatus
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_stateful_set_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedStatefulSetStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified StatefulSet
+
+        operationID: patchNamespacedStatefulSetStatus
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_stateful_set_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetStatus(
@@ -9498,6 +17308,144 @@ class StatefulSetList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedStatefulSet(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind StatefulSet
+
+        operationID: listNamespacedStatefulSet
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_stateful_set_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listStatefulSetForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind StatefulSet
+
+        operationID: listStatefulSetForAllNamespaces
+        path: /apis/apps/v1beta1/statefulsets
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   StatefulSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_stateful_set_for_all_namespaces_with_http_info"
+        )
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -9726,6 +17674,103 @@ class Event(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedEvent(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified Event
+
+        operationID: readNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Event    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_event_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedEvent(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified Event
+
+        operationID: patchNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Event    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_event_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedEvent(
         self,
         name: str,
@@ -9805,6 +17850,142 @@ class EventList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listEventForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind Event
+
+        operationID: listEventForAllNamespaces
+        path: /apis/events.k8s.io/v1beta1/events
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   EventList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_event_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedEvent(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Event
+
+        operationID: listNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   EventList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_event_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -10225,6 +18406,28 @@ class APIResourceList(HikaruDocumentBase):
     kind: Optional[str] = "APIResourceList"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def getAPIResources(client: ApiClient = None) -> Response:
+        r"""
+        get available resources
+
+        operationID: getAPIResources
+        path: /apis/storage.k8s.io/v1beta1/
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   APIResourceList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "get_api_resources_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11112,6 +19315,103 @@ class Deployment(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedDeployment(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified Deployment
+
+        operationID: readNamespacedDeployment
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_deployment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedDeployment(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified Deployment
+
+        operationID: patchNamespacedDeployment
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_deployment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedDeployment(
         self,
         name: str,
@@ -11160,6 +19460,91 @@ class Deployment(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedDeploymentStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified Deployment
+
+        operationID: readNamespacedDeploymentStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_deployment_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedDeploymentStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified Deployment
+
+        operationID: patchNamespacedDeploymentStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Deployment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_deployment_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedDeploymentStatus(
@@ -11242,6 +19627,142 @@ class DeploymentList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listDeploymentForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind Deployment
+
+        operationID: listDeploymentForAllNamespaces
+        path: /apis/extensions/v1beta1/deployments
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DeploymentList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_deployment_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedDeployment(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Deployment
+
+        operationID: listNamespacedDeployment
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DeploymentList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_deployment_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11492,6 +20013,103 @@ class NetworkPolicy(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedNetworkPolicy(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified NetworkPolicy
+
+        operationID: readNamespacedNetworkPolicy
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/networkpolicies/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicy    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_network_policy_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedNetworkPolicy(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified NetworkPolicy
+
+        operationID: patchNamespacedNetworkPolicy
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/networkpolicies/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicy    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_network_policy_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedNetworkPolicy(
         self,
         name: str,
@@ -11573,6 +20191,144 @@ class NetworkPolicyList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedNetworkPolicy(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind NetworkPolicy
+
+        operationID: listNamespacedNetworkPolicy
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/networkpolicies
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicyList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_network_policy_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNetworkPolicyForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind NetworkPolicy
+
+        operationID: listNetworkPolicyForAllNamespaces
+        path: /apis/extensions/v1beta1/networkpolicies
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   NetworkPolicyList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_network_policy_for_all_namespaces_with_http_info"
+        )
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -11666,6 +20422,105 @@ class ControllerRevision(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedControllerRevision(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified ControllerRevision
+
+        operationID: readNamespacedControllerRevision
+        path: /apis/apps/v1beta1/namespaces/{namespace}/controllerrevisions/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevision    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_controller_revision_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedControllerRevision(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified ControllerRevision
+
+        operationID: patchNamespacedControllerRevision
+        path: /apis/apps/v1beta1/namespaces/{namespace}/controllerrevisions/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevision    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_controller_revision_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedControllerRevision(
         self,
         name: str,
@@ -11747,6 +20602,144 @@ class ControllerRevisionList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listControllerRevisionForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind ControllerRevision
+
+        operationID: listControllerRevisionForAllNamespaces
+        path: /apis/apps/v1beta1/controllerrevisions
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevisionList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_controller_revision_for_all_namespaces_with_http_info"
+        )
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedControllerRevision(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ControllerRevision
+
+        operationID: listNamespacedControllerRevision
+        path: /apis/apps/v1beta1/namespaces/{namespace}/controllerrevisions
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   ControllerRevisionList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_controller_revision_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12027,6 +21020,97 @@ class PriorityClass(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readPriorityClass(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified PriorityClass
+
+        operationID: readPriorityClass
+        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PriorityClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = SchedulingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_priority_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchPriorityClass(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified PriorityClass
+
+        operationID: patchPriorityClass
+        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PriorityClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = SchedulingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_priority_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replacePriorityClass(
         self,
         name: str,
@@ -12103,6 +21187,117 @@ class PriorityClassList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listPriorityClass(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind PriorityClass
+
+        operationID: listPriorityClass
+        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PriorityClassList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = SchedulingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_priority_class_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12331,6 +21526,103 @@ class DaemonSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedDaemonSet(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified DaemonSet
+
+        operationID: readNamespacedDaemonSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_daemon_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedDaemonSet(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified DaemonSet
+
+        operationID: patchNamespacedDaemonSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_daemon_set_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedDaemonSet(
         self,
         name: str,
@@ -12379,6 +21671,91 @@ class DaemonSet(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedDaemonSetStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified DaemonSet
+
+        operationID: readNamespacedDaemonSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_daemon_set_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedDaemonSetStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified DaemonSet
+
+        operationID: patchNamespacedDaemonSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSet    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_daemon_set_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedDaemonSetStatus(
@@ -12462,6 +21839,142 @@ class DaemonSetList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listDaemonSetForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind DaemonSet
+
+        operationID: listDaemonSetForAllNamespaces
+        path: /apis/extensions/v1beta1/daemonsets
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_daemon_set_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedDaemonSet(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind DaemonSet
+
+        operationID: listNamespacedDaemonSet
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   DaemonSetList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_daemon_set_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12629,6 +22142,97 @@ class VolumeAttachment(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readVolumeAttachment(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified VolumeAttachment
+
+        operationID: readVolumeAttachment
+        path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   VolumeAttachment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_volume_attachment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchVolumeAttachment(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified VolumeAttachment
+
+        operationID: patchVolumeAttachment
+        path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   VolumeAttachment    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_volume_attachment_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceVolumeAttachment(
         self,
         name: str,
@@ -12705,6 +22309,117 @@ class VolumeAttachmentList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listVolumeAttachment(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind VolumeAttachment
+
+        operationID: listVolumeAttachment
+        path: /apis/storage.k8s.io/v1beta1/volumeattachments
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   VolumeAttachmentList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_volume_attachment_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -12907,6 +22622,97 @@ class RuntimeClass(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readRuntimeClass(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified RuntimeClass
+
+        operationID: readRuntimeClass
+        path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RuntimeClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NodeV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_runtime_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchRuntimeClass(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified RuntimeClass
+
+        operationID: patchRuntimeClass
+        path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RuntimeClass    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NodeV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_runtime_class_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceRuntimeClass(
         self,
         name: str,
@@ -12983,6 +22789,117 @@ class RuntimeClassList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listRuntimeClass(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind RuntimeClass
+
+        operationID: listRuntimeClass
+        path: /apis/node.k8s.io/v1beta1/runtimeclasses
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   RuntimeClassList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NodeV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_runtime_class_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -13127,6 +23044,107 @@ class PodDisruptionBudget(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedPodDisruptionBudget(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified PodDisruptionBudget
+
+        operationID: readNamespacedPodDisruptionBudget
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_namespaced_pod_disruption_budget_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedPodDisruptionBudget(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified PodDisruptionBudget
+
+        operationID: patchNamespacedPodDisruptionBudget
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_pod_disruption_budget_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedPodDisruptionBudget(
         self,
         name: str,
@@ -13177,6 +23195,95 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedPodDisruptionBudgetStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified PodDisruptionBudget
+
+        operationID: readNamespacedPodDisruptionBudgetStatus
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_namespaced_pod_disruption_budget_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedPodDisruptionBudgetStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified PodDisruptionBudget
+
+        operationID: patchNamespacedPodDisruptionBudgetStatus
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodDisruptionBudget    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_pod_disruption_budget_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedPodDisruptionBudgetStatus(
@@ -13260,2767 +23367,35 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
-
-@dataclass
-class Preconditions(HikaruBase):
-    r"""
-    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
-    out.
-
-    Full name: v1.Preconditions
-
-    Attributes:
-    resourceVersion: Specifies the target ResourceVersion
-    uid: Specifies the target UID.
-    """
-
-    resourceVersion: Optional[str] = None
-    uid: Optional[str] = None
-
-
-@dataclass
-class DeleteOptions(HikaruDocumentBase):
-    r"""
-    DeleteOptions may be provided when deleting an API object.
-
-    Full name: v1.DeleteOptions
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
-        must be non-negative integer. The value zero indicates delete immediately. If this
-        value is nil, the default grace period for the specified type will be used.
-        Defaults to a per object value if not specified. zero means delete immediately.
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
-        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
-        "orphan" finalizer will be added to/removed from the object's finalizers list.
-        Either this field or PropagationPolicy may be set, but not both.
-    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
-        409 Conflict status will be returned.
-    propagationPolicy: Whether and how garbage collection will be performed. Either this
-        field or OrphanDependents may be set, but not both. The default policy is decided
-        by the existing finalizer set in the metadata.finalizers and the resource-specific
-        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
-        'Background' - allow the garbage collector to delete the dependents in the
-        background; 'Foreground' - a cascading policy that deletes all dependents in the
-        foreground.
-    dryRun: When present, indicates that modifications should not be persisted. An invalid
-        or unrecognized dryRun directive will result in an error response and no further
-        processing of the request. Valid values are: - All: all dry run stages will be
-        processed
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    gracePeriodSeconds: Optional[int] = None
-    kind: Optional[str] = "DeleteOptions"
-    orphanDependents: Optional[bool] = None
-    preconditions: Optional[Preconditions] = None
-    propagationPolicy: Optional[str] = None
-    dryRun: Optional[List[str]] = field(default_factory=list)
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    def deleteCollectionNamespacedEvent(
-        self,
+    @staticmethod
+    def listNamespacedPodDisruptionBudget(
         namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
         continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
         field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
         label_selector: Optional[str] = None,
         limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
-        delete collection of Event
+        list or watch objects of kind PodDisruptionBudget
 
-        operationID: deleteCollectionNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_event_with_http_info")
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedEvent(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete an Event
-
-        operationID: deleteNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_event_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionMutatingWebhookConfiguration(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of MutatingWebhookConfiguration
-
-        operationID: deleteCollectionMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_mutating_webhook_configuration_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteMutatingWebhookConfiguration(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a MutatingWebhookConfiguration
-
-        operationID: deleteMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1beta1/mutatingwebhookconfigurations/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_mutating_webhook_configuration_with_http_info"
-        )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionValidatingWebhookConfiguration(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of ValidatingWebhookConfiguration
-
-        operationID: deleteCollectionValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_validating_webhook_configuration_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteValidatingWebhookConfiguration(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a ValidatingWebhookConfiguration
-
-        operationID: deleteValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1beta1/validatingwebhookconfigurations/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = AdmissionregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_validating_webhook_configuration_with_http_info"
-        )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionCustomResourceDefinition(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of CustomResourceDefinition
-
-        operationID: deleteCollectionCustomResourceDefinition
-        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_custom_resource_definition_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteCustomResourceDefinition(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a CustomResourceDefinition
-
-        operationID: deleteCustomResourceDefinition
-        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_custom_resource_definition_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionAPIService(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of APIService
-
-        operationID: deleteCollectionAPIService
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_api_service_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteAPIService(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete an APIService
-
-        operationID: deleteAPIService
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_api_service_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedDaemonSet(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of DaemonSet
-
-        operationID: deleteCollectionNamespacedDaemonSet
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_namespaced_daemon_set_with_http_info"
-        )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedDaemonSet(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a DaemonSet
-
-        operationID: deleteNamespacedDaemonSet
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_daemon_set_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedDeployment(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of Deployment
-
-        operationID: deleteCollectionNamespacedDeployment
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_namespaced_deployment_with_http_info"
-        )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedDeployment(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a Deployment
-
-        operationID: deleteNamespacedDeployment
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_deployment_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedReplicaSet(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of ReplicaSet
-
-        operationID: deleteCollectionNamespacedReplicaSet
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_namespaced_replica_set_with_http_info"
-        )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedReplicaSet(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a ReplicaSet
-
-        operationID: deleteNamespacedReplicaSet
-        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = ExtensionsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_replica_set_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionCertificateSigningRequest(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of CertificateSigningRequest
-
-        operationID: deleteCollectionCertificateSigningRequest
-        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_certificate_signing_request_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteCertificateSigningRequest(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a CertificateSigningRequest
-
-        operationID: deleteCertificateSigningRequest
-        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CertificatesV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_certificate_signing_request_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedLease(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of Lease
-
-        operationID: deleteCollectionNamespacedLease
-        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_lease_with_http_info")
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedLease(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a Lease
-
-        operationID: deleteNamespacedLease
-        path: /apis/coordination.k8s.io/v1beta1/namespaces/{namespace}/leases/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = CoordinationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_lease_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedIngress(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of Ingress
-
-        operationID: deleteCollectionNamespacedIngress
-        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_namespaced_ingress_with_http_info"
-        )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedIngress(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete an Ingress
-
-        operationID: deleteNamespacedIngress
-        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = NetworkingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_ingress_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionPodSecurityPolicy(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of PodSecurityPolicy
-
-        operationID: deleteCollectionPodSecurityPolicy
-        path: /apis/policy/v1beta1/podsecuritypolicies
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_pod_security_policy_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deletePodSecurityPolicy(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a PodSecurityPolicy
-
-        operationID: deletePodSecurityPolicy
-        path: /apis/policy/v1beta1/podsecuritypolicies/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_pod_security_policy_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionRuntimeClass(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of RuntimeClass
-
-        operationID: deleteCollectionRuntimeClass
-        path: /apis/node.k8s.io/v1beta1/runtimeclasses
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_runtime_class_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteRuntimeClass(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a RuntimeClass
-
-        operationID: deleteRuntimeClass
-        path: /apis/node.k8s.io/v1beta1/runtimeclasses/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = NodeV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_runtime_class_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedPodDisruptionBudget(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of PodDisruptionBudget
-
-        operationID: deleteCollectionNamespacedPodDisruptionBudget
+        operationID: listNamespacedPodDisruptionBudget
         path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets
 
         :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
         :param continue_: The continue option should be set when retrieving
             more results from the server. Since this value is server
             defined, clients may only use the continue value from a
@@ -16042,19 +23417,8 @@ class DeleteOptions(HikaruDocumentBase):
             "next key". This field is not supported when watch is true.
             Clients may start a watch from the last resourceVersion value
             returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
         :param field_selector: A selector to restrict the list of returned
             objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
         :param label_selector: A selector to restrict the list of returned
             objects by their labels. Defaults to everything.
         :param limit: limit is a maximum number of responses to return for a
@@ -16080,21 +23444,6 @@ class DeleteOptions(HikaruDocumentBase):
             see all possible objects. If objects are updated during a
             chunked list the version of the object that was present at the
             time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
         :param resource_version: When specified with a watch call, shows
             changes that occur after that particular version of a
             resource. Defaults to changes from the beginning of history.
@@ -16106,1933 +23455,56 @@ class DeleteOptions(HikaruDocumentBase):
         :param timeout_seconds: Timeout for the list/watch call. This limits
             the duration of the call, regardless of any activity or
             inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
+          200   PodDisruptionBudgetList    OK
           401   None    Unauthorized
         """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
+        client_to_use = client
         inst = PolicyV1beta1Api(api_client=client_to_use)
         the_method = getattr(
-            inst, "delete_collection_namespaced_pod_disruption_budget_with_http_info"
+            inst, "list_namespaced_pod_disruption_budget_with_http_info"
         )
         all_args = dict()
         all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
         all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
         all_args["label_selector"] = label_selector
         all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    def deleteNamespacedPodDisruptionBudget(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
+    @staticmethod
+    def listPodDisruptionBudgetForAllNamespaces(client: ApiClient = None) -> Response:
         r"""
-        delete a PodDisruptionBudget
+        list or watch objects of kind PodDisruptionBudget
 
-        operationID: deleteNamespacedPodDisruptionBudget
-        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
+        operationID: listPodDisruptionBudgetForAllNamespaces
+        path: /apis/policy/v1beta1/poddisruptionbudgets
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
+          200   PodDisruptionBudgetList    OK
           401   None    Unauthorized
         """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
+        client_to_use = client
         inst = PolicyV1beta1Api(api_client=client_to_use)
         the_method = getattr(
-            inst, "delete_namespaced_pod_disruption_budget_with_http_info"
+            inst, "list_pod_disruption_budget_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
 
-    def deleteCollectionClusterRoleBinding(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of ClusterRoleBinding
-
-        operationID: deleteCollectionClusterRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_cluster_role_binding_with_http_info"
-        )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteClusterRoleBinding(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a ClusterRoleBinding
-
-        operationID: deleteClusterRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_cluster_role_binding_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionClusterRole(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of ClusterRole
-
-        operationID: deleteCollectionClusterRole
-        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_cluster_role_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteClusterRole(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a ClusterRole
-
-        operationID: deleteClusterRole
-        path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_cluster_role_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedRoleBinding(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of RoleBinding
-
-        operationID: deleteCollectionNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "delete_collection_namespaced_role_binding_with_http_info"
-        )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedRoleBinding(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a RoleBinding
-
-        operationID: deleteNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/rolebindings/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_role_binding_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionNamespacedRole(
-        self,
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of Role
-
-        operationID: deleteCollectionNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles
-
-        :param namespace: part of the URL path
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_role_with_http_info")
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteNamespacedRole(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a Role
-
-        operationID: deleteNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1beta1/namespaces/{namespace}/roles/{name}
-
-        :param name: part of the URL path
-        :param namespace: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_role_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionPriorityClass(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of PriorityClass
-
-        operationID: deleteCollectionPriorityClass
-        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_priority_class_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deletePriorityClass(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a PriorityClass
-
-        operationID: deletePriorityClass
-        path: /apis/scheduling.k8s.io/v1beta1/priorityclasses/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = SchedulingV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_priority_class_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionStorageClass(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of StorageClass
-
-        operationID: deleteCollectionStorageClass
-        path: /apis/storage.k8s.io/v1beta1/storageclasses
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_storage_class_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteStorageClass(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a StorageClass
-
-        operationID: deleteStorageClass
-        path: /apis/storage.k8s.io/v1beta1/storageclasses/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_storage_class_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionVolumeAttachment(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of VolumeAttachment
-
-        operationID: deleteCollectionVolumeAttachment
-        path: /apis/storage.k8s.io/v1beta1/volumeattachments
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_volume_attachment_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteVolumeAttachment(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a VolumeAttachment
-
-        operationID: deleteVolumeAttachment
-        path: /apis/storage.k8s.io/v1beta1/volumeattachments/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_volume_attachment_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionCSIDriver(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of CSIDriver
-
-        operationID: deleteCollectionCSIDriver
-        path: /apis/storage.k8s.io/v1beta1/csidrivers
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_driver_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteCSIDriver(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a CSIDriver
-
-        operationID: deleteCSIDriver
-        path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_csi_driver_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def deleteCollectionCSINode(
-        self,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete collection of CSINode
-
-        operationID: deleteCollectionCSINode
-        path: /apis/storage.k8s.io/v1beta1/csinodes
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_node_with_http_info")
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def deleteCSINode(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> Response:
-        r"""
-        delete a CSINode
-
-        operationID: deleteCSINode
-        path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            client_to_use = self.client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_csi_node_with_http_info")
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
 
 
@@ -18294,6 +23766,103 @@ class Ingress(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedIngress(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified Ingress
+
+        operationID: readNamespacedIngress
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_ingress_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedIngress(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified Ingress
+
+        operationID: patchNamespacedIngress
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_ingress_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedIngress(
         self,
         name: str,
@@ -18342,6 +23911,91 @@ class Ingress(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedIngressStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified Ingress
+
+        operationID: readNamespacedIngressStatus
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_ingress_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedIngressStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified Ingress
+
+        operationID: patchNamespacedIngressStatus
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_ingress_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedIngressStatus(
@@ -18423,6 +24077,142 @@ class IngressList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listIngressForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind Ingress
+
+        operationID: listIngressForAllNamespaces
+        path: /apis/networking.k8s.io/v1beta1/ingresses
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   IngressList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_ingress_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedIngress(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Ingress
+
+        operationID: listNamespacedIngress
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   IngressList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_ingress_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -18561,6 +24351,97 @@ class CSIDriver(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readCSIDriver(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified CSIDriver
+
+        operationID: readCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSIDriver    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_csi_driver_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCSIDriver(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified CSIDriver
+
+        operationID: patchCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSIDriver    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_csi_driver_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceCSIDriver(
         self,
         name: str,
@@ -18637,6 +24518,117 @@ class CSIDriverList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listCSIDriver(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind CSIDriver
+
+        operationID: listCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSIDriverList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_csi_driver_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -18791,6 +24783,97 @@ class CSINode(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readCSINode(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified CSINode
+
+        operationID: readCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSINode    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_csi_node_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCSINode(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified CSINode
+
+        operationID: patchCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSINode    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_csi_node_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceCSINode(
         self,
         name: str,
@@ -18867,6 +24950,117 @@ class CSINodeList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listCSINode(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind CSINode
+
+        operationID: listCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CSINodeList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_csi_node_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -19022,6 +25216,103 @@ class CronJob(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedCronJob(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified CronJob
+
+        operationID: readNamespacedCronJob
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_cron_job_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedCronJob(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified CronJob
+
+        operationID: patchNamespacedCronJob
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_cron_job_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedCronJob(
         self,
         name: str,
@@ -19070,6 +25361,91 @@ class CronJob(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedCronJobStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified CronJob
+
+        operationID: readNamespacedCronJobStatus
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_cron_job_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedCronJobStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified CronJob
+
+        operationID: patchNamespacedCronJobStatus
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJob    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_cron_job_status_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedCronJobStatus(
@@ -19151,6 +25527,142 @@ class CronJobList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listCronJobForAllNamespaces(client: ApiClient = None) -> Response:
+        r"""
+        list or watch objects of kind CronJob
+
+        operationID: listCronJobForAllNamespaces
+        path: /apis/batch/v1beta1/cronjobs
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJobList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_cron_job_for_all_namespaces_with_http_info")
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedCronJob(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind CronJob
+
+        operationID: listNamespacedCronJob
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CronJobList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_cron_job_with_http_info")
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -19535,6 +26047,97 @@ class PodSecurityPolicy(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readPodSecurityPolicy(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified PodSecurityPolicy
+
+        operationID: readPodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodSecurityPolicy    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_pod_security_policy_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchPodSecurityPolicy(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified PodSecurityPolicy
+
+        operationID: patchPodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodSecurityPolicy    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_pod_security_policy_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replacePodSecurityPolicy(
         self,
         name: str,
@@ -19612,6 +26215,117 @@ class PodSecurityPolicyList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listPodSecurityPolicy(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind PodSecurityPolicy
+
+        operationID: listPodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   PodSecurityPolicyList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_pod_security_policy_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass
@@ -19756,6 +26470,97 @@ class CertificateSigningRequest(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readCertificateSigningRequest(
+        name: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified CertificateSigningRequest
+
+        operationID: readCertificateSigningRequest
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
+
+        :param name: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_certificate_signing_request_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCertificateSigningRequest(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified CertificateSigningRequest
+
+        operationID: patchCertificateSigningRequest
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_certificate_signing_request_with_http_info")
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceCertificateSigningRequest(
         self,
         name: str,
@@ -19836,6 +26641,90 @@ class CertificateSigningRequest(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readCertificateSigningRequestStatus(
+        name: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified CertificateSigningRequest
+
+        operationID: readCertificateSigningRequestStatus
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/status
+
+        :param name: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_certificate_signing_request_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchCertificateSigningRequestStatus(
+        name: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified CertificateSigningRequest
+
+        operationID: patchCertificateSigningRequestStatus
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/status
+
+        :param name: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequest    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_certificate_signing_request_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceCertificateSigningRequestStatus(
         self,
         name: str,
@@ -19912,6 +26801,117 @@ class CertificateSigningRequestList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listCertificateSigningRequest(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind CertificateSigningRequest
+
+        operationID: listCertificateSigningRequest
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   CertificateSigningRequestList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_certificate_signing_request_with_http_info")
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 globs = dict(globals())

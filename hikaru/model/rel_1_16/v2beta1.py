@@ -5493,6 +5493,74 @@ class StatusDetails(HikaruBase):
 
 
 @dataclass
+class Preconditions(HikaruBase):
+    r"""
+    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
+    out.
+
+    Full name: v1.Preconditions
+
+    Attributes:
+    resourceVersion: Specifies the target ResourceVersion
+    uid: Specifies the target UID.
+    """
+
+    resourceVersion: Optional[str] = None
+    uid: Optional[str] = None
+
+
+@dataclass
+class DeleteOptions(HikaruDocumentBase):
+    r"""
+    DeleteOptions may be provided when deleting an API object.
+
+    Full name: v1.DeleteOptions
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
+        must be non-negative integer. The value zero indicates delete immediately. If this
+        value is nil, the default grace period for the specified type will be used.
+        Defaults to a per object value if not specified. zero means delete immediately.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
+        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
+        "orphan" finalizer will be added to/removed from the object's finalizers list.
+        Either this field or PropagationPolicy may be set, but not both.
+    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
+        409 Conflict status will be returned.
+    propagationPolicy: Whether and how garbage collection will be performed. Either this
+        field or OrphanDependents may be set, but not both. The default policy is decided
+        by the existing finalizer set in the metadata.finalizers and the resource-specific
+        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
+        'Background' - allow the garbage collector to delete the dependents in the
+        background; 'Foreground' - a cascading policy that deletes all dependents in the
+        foreground.
+    dryRun: When present, indicates that modifications should not be persisted. An invalid
+        or unrecognized dryRun directive will result in an error response and no further
+        processing of the request. Valid values are: - All: all dry run stages will be
+        processed
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    gracePeriodSeconds: Optional[int] = None
+    kind: Optional[str] = "DeleteOptions"
+    orphanDependents: Optional[bool] = None
+    preconditions: Optional[Preconditions] = None
+    propagationPolicy: Optional[str] = None
+    dryRun: Optional[List[str]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class Status(HikaruDocumentBase):
     r"""
     Status is a return value for calls that don't return other objects.
@@ -6522,74 +6590,6 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
     kind: Optional[str] = "SelfSubjectAccessReview"
     metadata: Optional[ObjectMeta] = None
     status: Optional[SubjectAccessReviewStatus] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class Preconditions(HikaruBase):
-    r"""
-    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
-    out.
-
-    Full name: v1.Preconditions
-
-    Attributes:
-    resourceVersion: Specifies the target ResourceVersion
-    uid: Specifies the target UID.
-    """
-
-    resourceVersion: Optional[str] = None
-    uid: Optional[str] = None
-
-
-@dataclass
-class DeleteOptions(HikaruDocumentBase):
-    r"""
-    DeleteOptions may be provided when deleting an API object.
-
-    Full name: v1.DeleteOptions
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
-        must be non-negative integer. The value zero indicates delete immediately. If this
-        value is nil, the default grace period for the specified type will be used.
-        Defaults to a per object value if not specified. zero means delete immediately.
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
-        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
-        "orphan" finalizer will be added to/removed from the object's finalizers list.
-        Either this field or PropagationPolicy may be set, but not both.
-    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
-        409 Conflict status will be returned.
-    propagationPolicy: Whether and how garbage collection will be performed. Either this
-        field or OrphanDependents may be set, but not both. The default policy is decided
-        by the existing finalizer set in the metadata.finalizers and the resource-specific
-        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
-        'Background' - allow the garbage collector to delete the dependents in the
-        background; 'Foreground' - a cascading policy that deletes all dependents in the
-        foreground.
-    dryRun: When present, indicates that modifications should not be persisted. An invalid
-        or unrecognized dryRun directive will result in an error response and no further
-        processing of the request. Valid values are: - All: all dry run stages will be
-        processed
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    gracePeriodSeconds: Optional[int] = None
-    kind: Optional[str] = "DeleteOptions"
-    orphanDependents: Optional[bool] = None
-    preconditions: Optional[Preconditions] = None
-    propagationPolicy: Optional[str] = None
-    dryRun: Optional[List[str]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -9006,6 +9006,107 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def readNamespacedHorizontalPodAutoscaler(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        read the specified HorizontalPodAutoscaler
+
+        operationID: readNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned
+            for removal in 1.18.
+        :param export: Should this value be exported. Export strips fields
+            that a user can not specify. Deprecated. Planned for removal
+            in 1.18.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscaler    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_namespaced_horizontal_pod_autoscaler_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedHorizontalPodAutoscaler(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update the specified HorizontalPodAutoscaler
+
+        operationID: patchNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscaler    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_horizontal_pod_autoscaler_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def replaceNamespacedHorizontalPodAutoscaler(
         self,
         name: str,
@@ -9056,6 +9157,95 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedHorizontalPodAutoscalerStatus(
+        name: str, namespace: str, client: ApiClient = None
+    ) -> Response:
+        r"""
+        read status of the specified HorizontalPodAutoscaler
+
+        operationID: readNamespacedHorizontalPodAutoscalerStatus
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscaler    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "read_namespaced_horizontal_pod_autoscaler_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def patchNamespacedHorizontalPodAutoscalerStatus(
+        name: str,
+        namespace: str,
+        body: Any,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        partially update status of the specified HorizontalPodAutoscaler
+
+        operationID: patchNamespacedHorizontalPodAutoscalerStatus
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param body:
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but
+            optional for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user
+            will re-acquire conflicting fields owned by other people.
+            Force flag must be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscaler    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_namespaced_horizontal_pod_autoscaler_status_with_http_info"
+        )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["body"] = body
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(body) if body else None
+        all_args["body"] = body
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
@@ -9138,6 +9328,148 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
     metadata: Optional[ListMeta] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listHorizontalPodAutoscalerForAllNamespaces(
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind HorizontalPodAutoscaler
+
+        operationID: listHorizontalPodAutoscalerForAllNamespaces
+        path: /apis/autoscaling/v2beta1/horizontalpodautoscalers
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscalerList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_horizontal_pod_autoscaler_for_all_namespaces_with_http_info"
+        )
+        all_args = dict()
+
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listNamespacedHorizontalPodAutoscaler(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
+        r"""
+        list or watch objects of kind HorizontalPodAutoscaler
+
+        operationID: listNamespacedHorizontalPodAutoscaler
+        path: /apis/autoscaling/v2beta1/namespaces/{namespace}/horizontalpodautoscalers
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+
+        :return: hikaru.utils.Response instance with the following codes and obj value types:
+          200   HorizontalPodAutoscalerList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AutoscalingV2beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_namespaced_horizontal_pod_autoscaler_with_http_info"
+        )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
 
 
 @dataclass

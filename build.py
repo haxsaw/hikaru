@@ -276,6 +276,30 @@ codes_returning_objects = {codes_returning_objects}
 return Response(result, codes_returning_objects)
 """
 
+_static_method_body_template = \
+"""client_to_use = client
+inst = {k8s_class_name}(api_client=client_to_use)
+the_method = getattr(inst, '{k8s_method_name}_with_http_info')
+all_args = dict()
+{arg_assignment_lines}
+body = get_clean_dict(body) if body else None
+all_args['{body_key}'] = body
+result = the_method(**all_args)
+codes_returning_objects = {codes_returning_objects}
+return Response(result, codes_returning_objects)
+"""
+
+_static_method_nobody_template = \
+"""client_to_use = client
+inst = {k8s_class_name}(api_client=client_to_use)
+the_method = getattr(inst, '{k8s_method_name}_with_http_info')
+all_args = dict()
+{arg_assignment_lines}
+result = the_method(**all_args)
+codes_returning_objects = {codes_returning_objects}
+return Response(result, codes_returning_objects)
+"""
+
 
 class Operation(object):
     """
@@ -298,6 +322,7 @@ class Operation(object):
         self.kind = gvk_dict.get('kind')
         self.op_id = op_id
         self.description = description
+        self.is_staticmethod = False
         self.parameters: List[OpParameter] = list()
         self.self_param: Optional[OpParameter] = None
         self.returns: Dict[int, OpResponse] = {}
@@ -314,6 +339,12 @@ class Operation(object):
         url_params.sort()
         for pname in url_params:
             self.add_parameter(pname, "str", "part of the URL path", required=True)
+
+    def depends_on(self) -> list:
+        deps = [p.ptype for p in self.parameters if isinstance(p.ptype, ClassDescriptor)]
+        if self.self_param and isinstance(self.self_param.ptype, ClassDescriptor):
+            deps.append(self.self_param.ptype)
+        return deps
 
     def add_parameter(self, name: str, ptype: Any, description: str,
                       required: bool = False):
@@ -347,14 +378,35 @@ class Operation(object):
     def _get_method_body(self, k8s_class_name: str, k8s_method_name: str,
                          arg_assignment_lines: List[str],
                          codes_returning_objects: str,
-                         body_key: str = 'body') -> List[str]:
-        rez = _method_body_template.format(k8s_class_name=k8s_class_name,
-                                           k8s_method_name=k8s_method_name,
-                                           body_key=body_key,
-                                           arg_assignment_lines="\n".join(
-                                                arg_assignment_lines),
-                                           codes_returning_objects=
-                                           codes_returning_objects)
+                         body_key: str = 'body',
+                         use_body: bool = True) -> List[str]:
+        if self.is_staticmethod:
+            if use_body:
+                rez =_static_method_body_template.format(k8s_class_name=k8s_class_name,
+                                                         k8s_method_name=k8s_method_name,
+                                                         body_key=body_key,
+                                                         arg_assignment_lines="\n".join(
+                                                            arg_assignment_lines),
+                                                         codes_returning_objects=
+                                                         codes_returning_objects)
+            else:
+                rez = _static_method_nobody_template.format(k8s_class_name=
+                                                            k8s_class_name,
+                                                            k8s_method_name=
+                                                            k8s_method_name,
+                                                            arg_assignment_lines=
+                                                            "\n".join(
+                                                               arg_assignment_lines),
+                                                            codes_returning_objects=
+                                                            codes_returning_objects)
+        else:
+            rez = _method_body_template.format(k8s_class_name=k8s_class_name,
+                                               k8s_method_name=k8s_method_name,
+                                               body_key=body_key,
+                                               arg_assignment_lines="\n".join(
+                                                    arg_assignment_lines),
+                                               codes_returning_objects=
+                                               codes_returning_objects)
         return rez.split("\n")
 
     # this prefix is used to detect methods in rel_1_15 for DeleteOptions
@@ -371,10 +423,17 @@ class Operation(object):
         else:
             version = version.replace('v', 'V')
         stmt_name = self.op_id.replace(version, '')
-        parts = [f"def {stmt_name}("]
+        parts = []
+        params = []
+        parts.append(f"def {stmt_name}(")
         required = [p for p in self.parameters if p.required]
         optional = [p for p in self.parameters if not p.required]
-        params = ["self"]
+
+        if not self.is_staticmethod:
+            params.append('self')
+        else:
+            if self.self_param:
+                optional.append(self.self_param)
         params.extend([p.as_python()
                        for p in chain(required, optional)])
         # here, we add any standard parmeter(s) that all should have:
@@ -409,8 +468,11 @@ class Operation(object):
         # the method to be passed to the k8s method. These are to be assigned
         # to keys in the 'all_args' dict
         assignment_list = []
+        body_seen = False
         for p in chain(required, optional):
             assert isinstance(p, OpParameter)
+            if not body_seen and p.name in ('v1_delete_options', 'body'):
+                body_seen = True
             if p.name in python_reserved:
                 assignment_list.append(f"all_args['_{p.name}'] = {p.name}_")
             else:
@@ -427,9 +489,13 @@ class Operation(object):
                                            self.k8s_access_tuple[3],
                                            assignment_list,
                                            object_response_codes,
-                                           body_key=body_key)
+                                           body_key=body_key,
+                                           use_body=body_seen)
         body = [f"    {bl}" for bl in body_lines]
-        final = [defline, docstring] if docstring else [defline]
+        final = []
+        if self.is_staticmethod:
+            final.append("@staticmethod")
+        final.extend([defline, docstring] if docstring else [defline])
         final.extend(body)
         return final
 
@@ -640,7 +706,9 @@ class ClassDescriptor(object):
                 lines.append("    client: InitVar[Optional[ApiClient]] = None")
         lines.append("")
         # now the operations
-        for op in (o for o in self.operations.values() if o.version == for_version):
+        for op in (o for o in self.operations.values() if o.version == for_version and
+                                                          o.should_render and
+                                                          self.is_document):
             assert isinstance(op, Operation)
             method_lines = [f"    {line}" for line in op.as_python_method(self)
                             if op.should_render]
@@ -665,7 +733,11 @@ class ClassDescriptor(object):
                                           self.version == p.version))
         if self.alternate_base is not None:
             deps.append(self.alternate_base)
-        return deps
+
+        for op in self.operations.values():
+            assert isinstance(op, Operation)
+            deps.extend(op.depends_on())
+        return [d for d in deps if d != self or d.short_name == "JSONSchemaProps"]
 
 
 class ModuleDef(object):
@@ -708,7 +780,7 @@ class ModuleDef(object):
         for cd in self.all_classes.values():
             for op in cd.operations.values():
                 assert isinstance(op, Operation)
-                if not op.should_render:
+                if not op.should_render or not cd.is_document:
                     continue
                 k8s_imports.add(op.k8s_access_tuple[2])
         k8s_imports = list(k8s_imports)
@@ -723,6 +795,37 @@ class ModuleDef(object):
             traversal = list(self.all_classes.values())
         write_classes(traversal, self.version, stream=stream)
         output_footer(stream=stream)
+
+
+# def topological_sort(G) -> list:
+#     the_sort = []
+#     indegree_map = {v: d for v, d in G.in_degree() if d > 0}
+#     # These nodes have zero indegree and ready to be returned.
+#     zero_indegree = [v for v, d in G.in_degree() if d == 0]
+#
+#     while zero_indegree:
+#         node = zero_indegree.pop()
+#         for _, child in G.edges(node):
+#             try:
+#                 indegree_map[child] -= 1
+#             except KeyError as e:
+#                 raise RuntimeError("Graph changed during iteration") from e
+#             if indegree_map[child] == 0:
+#                 zero_indegree.append(child)
+#                 del indegree_map[child]
+#
+#         the_sort.append(node)
+#
+#     if indegree_map:
+#         for node in indegree_map:
+#             assert isinstance(node, ClassDescriptor)
+#             print(f"{node.version}.{node.short_name} depends on:")
+#             for _, child in G.edges(node):
+#                 print(f"\t{child.version}.{child.short_name}")
+#         _ = 1
+#     else:
+#         _ = 1
+#     return the_sort
 
 
 def get_module_def(version) -> ModuleDef:
@@ -997,6 +1100,8 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
     new_op = Operation(verb, path, op_id, description, gvk_dict)
     k8s_name = None  # used as a flag that an object is an input param
     cd: ClassDescriptor = None
+    cd_in_params: ClassDescriptor = None
+    cd_in_responses: ClassDescriptor = None
     for param in params:
         has_mismatch = False
         name = param["name"]
@@ -1013,8 +1118,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 if version and sver != version:
                     has_mismatch = True
                 mod_def = get_module_def(sver)
-                cd = mod_def.get_class_desc(ptype)  # you need this later...
-                ptype = mod_def.get_class_desc(ptype)
+                cd = ptype = mod_def.get_class_desc(ptype)  # you need cd later...
+                if cd is None:
+                    raise RuntimeError(f"Couldn't find a ClassDescriptor for "
+                                       f"parameter {k8s_name} in {op_id}")
+
+                cd_in_params = cd
             else:
                 ptype = schema.get("type")
                 if not ptype:
@@ -1041,6 +1150,10 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                     has_mismatch = True
                 mod_def = get_module_def(sver)
                 ptype = mod_def.get_class_desc(ptype)
+                if ptype is None:
+                    raise RuntimeError(f"Couldn't find a ClassDescriptor for "
+                                       f"response {code} in {op_id}")
+                cd_in_responses = ptype
             elif 'type' in response['schema']:
                 ptype = response['schema']['type']
                 ptype = types_map.get(ptype, ptype)
@@ -1053,14 +1166,37 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 
-    if k8s_name is not None:
-        if cd is None:
-            raise RuntimeError(f"Couldn't find a ClassDescriptor for type {k8s_name} "
-                               f"in {op_id}")
+    whose_method: Optional[ClassDescriptor] = None
+    if cd_in_params:
+        if cd_in_params.short_name == "DeleteOptions":
+            if cd_in_responses:
+                whose_method = cd_in_responses
+                new_op.is_staticmethod = True
+            else:
+                whose_method = cd_in_params
         else:
-            cd.add_operation(new_op)
+            whose_method = cd_in_params
+    elif cd_in_responses:
+        whose_method = cd_in_responses
+        new_op.is_staticmethod = True
     else:
+        # then this is a query method; leave whose_method alone
+        pass
+
+    if whose_method:
+        whose_method.add_operation(new_op)
+    else:
+        new_op.is_staticmethod = True
         vops.add_query_operation(domain, new_op)
+
+    # if k8s_name is not None:
+    #     if cd is None:
+    #         raise RuntimeError(f"Couldn't find a ClassDescriptor for type {k8s_name} "
+    #                            f"in {op_id}")
+    #     else:
+    #         cd.add_operation(new_op)
+    # else:
+    #     vops.add_query_operation(domain, new_op)
 
 
 _dont_remove_groups = {"storage", "policy"}
@@ -1186,7 +1322,7 @@ def load_stable(swagger_file_path: str) -> str:
         assert isinstance(mod, ModuleDef)
         for cd in mod.all_classes.values():
             assert isinstance(cd, ClassDescriptor)
-            if cd.is_document and cd.operations:
+            if cd.operations:
                 for op in cd.operations.values():
                     pkg, mod, cls, meth = determine_k8s_mod_class(cd, op)
                     if pkg is not None:
@@ -1195,6 +1331,8 @@ def load_stable(swagger_file_path: str) -> str:
                         # we can't find the underlying k8s client func;
                         # mark this as something we shouldn't render
                         op.should_render = False
+                        print(f">>>Can't find the method for {cd.short_name} {op.op_id} "
+                              f"{op.op_path}")
 
     info = d.get('info')
     rel_version = info.get("version")

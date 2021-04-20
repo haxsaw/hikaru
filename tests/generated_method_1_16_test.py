@@ -93,6 +93,19 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((attr, params))
+                elif issubclass(type(attr), FunctionType):
+                    # process static methods here
+                    sig = signature(attr)
+                    mock_client = MockApiClient()
+                    params = {"client": mock_client}
+                    for p in sig.parameters.values():
+                        if p.name == "namespace":
+                            params[p.name] = 'default'
+                        elif p.name == 'name':
+                            params[p.name] = 'the_name'
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, params))
 
 
 @pytest.mark.parametrize('func, kwargs', all_params)
