@@ -5712,7 +5712,8 @@ class Status(HikaruDocumentBase):
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           401   None    Unauthorized
         """
@@ -5734,7 +5735,8 @@ class Status(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -5787,7 +5789,8 @@ class Status(HikaruDocumentBase):
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -5805,7 +5808,8 @@ class Status(HikaruDocumentBase):
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -5921,7 +5925,8 @@ class Status(HikaruDocumentBase):
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           401   None    Unauthorized
         """
@@ -5943,7 +5948,8 @@ class Status(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -5996,7 +6002,8 @@ class Status(HikaruDocumentBase):
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -6012,7 +6019,8 @@ class Status(HikaruDocumentBase):
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -6270,7 +6278,8 @@ class ReplicaSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           201   ReplicaSet    Created
           202   ReplicaSet    Accepted
@@ -6316,7 +6325,8 @@ class ReplicaSet(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           401   None    Unauthorized
         """
@@ -6369,7 +6379,8 @@ class ReplicaSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           401   None    Unauthorized
         """
@@ -6383,7 +6394,8 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -6417,7 +6429,8 @@ class ReplicaSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           201   ReplicaSet    Created
           401   None    Unauthorized
@@ -6453,7 +6466,8 @@ class ReplicaSet(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           401   None    Unauthorized
         """
@@ -6504,7 +6518,8 @@ class ReplicaSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           401   None    Unauthorized
         """
@@ -6518,7 +6533,8 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -6552,7 +6568,8 @@ class ReplicaSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSet    OK
           201   ReplicaSet    Created
           401   None    Unauthorized
@@ -6700,7 +6717,8 @@ class ReplicaSetList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSetList    OK
           401   None    Unauthorized
         """
@@ -6730,7 +6748,8 @@ class ReplicaSetList(HikaruDocumentBase):
         path: /apis/apps/v1beta2/replicasets
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ReplicaSetList    OK
           401   None    Unauthorized
         """
@@ -7565,7 +7584,8 @@ class Scale(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7616,7 +7636,8 @@ class Scale(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7630,7 +7651,8 @@ class Scale(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -7664,7 +7686,8 @@ class Scale(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           201   Scale    Created
           401   None    Unauthorized
@@ -7700,7 +7723,8 @@ class Scale(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7751,7 +7775,8 @@ class Scale(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7765,7 +7790,8 @@ class Scale(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -7799,7 +7825,8 @@ class Scale(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           201   Scale    Created
           401   None    Unauthorized
@@ -7837,7 +7864,8 @@ class Scale(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7888,7 +7916,8 @@ class Scale(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           401   None    Unauthorized
         """
@@ -7902,7 +7931,8 @@ class Scale(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -7936,7 +7966,8 @@ class Scale(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Scale    OK
           201   Scale    Created
           401   None    Unauthorized
@@ -9177,7 +9208,8 @@ class StatefulSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           201   StatefulSet    Created
           202   StatefulSet    Accepted
@@ -9223,7 +9255,8 @@ class StatefulSet(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           401   None    Unauthorized
         """
@@ -9276,7 +9309,8 @@ class StatefulSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           401   None    Unauthorized
         """
@@ -9290,7 +9324,8 @@ class StatefulSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -9324,7 +9359,8 @@ class StatefulSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           201   StatefulSet    Created
           401   None    Unauthorized
@@ -9360,7 +9396,8 @@ class StatefulSet(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           401   None    Unauthorized
         """
@@ -9411,7 +9448,8 @@ class StatefulSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           401   None    Unauthorized
         """
@@ -9427,7 +9465,8 @@ class StatefulSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -9461,7 +9500,8 @@ class StatefulSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSet    OK
           201   StatefulSet    Created
           401   None    Unauthorized
@@ -9607,7 +9647,8 @@ class StatefulSetList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSetList    OK
           401   None    Unauthorized
         """
@@ -9637,7 +9678,8 @@ class StatefulSetList(HikaruDocumentBase):
         path: /apis/apps/v1beta2/statefulsets
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   StatefulSetList    OK
           401   None    Unauthorized
         """
@@ -11092,7 +11134,8 @@ class Deployment(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           201   Deployment    Created
           202   Deployment    Accepted
@@ -11138,7 +11181,8 @@ class Deployment(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           401   None    Unauthorized
         """
@@ -11191,7 +11235,8 @@ class Deployment(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           401   None    Unauthorized
         """
@@ -11205,7 +11250,8 @@ class Deployment(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -11239,7 +11285,8 @@ class Deployment(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           201   Deployment    Created
           401   None    Unauthorized
@@ -11275,7 +11322,8 @@ class Deployment(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           401   None    Unauthorized
         """
@@ -11326,7 +11374,8 @@ class Deployment(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           401   None    Unauthorized
         """
@@ -11340,7 +11389,8 @@ class Deployment(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -11374,7 +11424,8 @@ class Deployment(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Deployment    OK
           201   Deployment    Created
           401   None    Unauthorized
@@ -11436,7 +11487,8 @@ class DeploymentList(HikaruDocumentBase):
         path: /apis/apps/v1beta2/deployments
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DeploymentList    OK
           401   None    Unauthorized
         """
@@ -11542,7 +11594,8 @@ class DeploymentList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DeploymentList    OK
           401   None    Unauthorized
         """
@@ -11855,7 +11908,8 @@ class ControllerRevision(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevision    OK
           201   ControllerRevision    Created
           202   ControllerRevision    Accepted
@@ -11903,7 +11957,8 @@ class ControllerRevision(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevision    OK
           401   None    Unauthorized
         """
@@ -11956,7 +12011,8 @@ class ControllerRevision(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevision    OK
           401   None    Unauthorized
         """
@@ -11972,7 +12028,8 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12006,7 +12063,8 @@ class ControllerRevision(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevision    OK
           201   ControllerRevision    Created
           401   None    Unauthorized
@@ -12069,7 +12127,8 @@ class ControllerRevisionList(HikaruDocumentBase):
         path: /apis/apps/v1beta2/controllerrevisions
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevisionList    OK
           401   None    Unauthorized
         """
@@ -12177,7 +12236,8 @@ class ControllerRevisionList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   ControllerRevisionList    OK
           401   None    Unauthorized
         """
@@ -12579,7 +12639,8 @@ class DaemonSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           201   DaemonSet    Created
           202   DaemonSet    Accepted
@@ -12625,7 +12686,8 @@ class DaemonSet(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           401   None    Unauthorized
         """
@@ -12678,7 +12740,8 @@ class DaemonSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           401   None    Unauthorized
         """
@@ -12692,7 +12755,8 @@ class DaemonSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12726,7 +12790,8 @@ class DaemonSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           201   DaemonSet    Created
           401   None    Unauthorized
@@ -12762,7 +12827,8 @@ class DaemonSet(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           401   None    Unauthorized
         """
@@ -12813,7 +12879,8 @@ class DaemonSet(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           401   None    Unauthorized
         """
@@ -12827,7 +12894,8 @@ class DaemonSet(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12861,7 +12929,8 @@ class DaemonSet(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSet    OK
           201   DaemonSet    Created
           401   None    Unauthorized
@@ -12924,7 +12993,8 @@ class DaemonSetList(HikaruDocumentBase):
         path: /apis/apps/v1beta2/daemonsets
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSetList    OK
           401   None    Unauthorized
         """
@@ -13030,7 +13100,8 @@ class DaemonSetList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   DaemonSetList    OK
           401   None    Unauthorized
         """

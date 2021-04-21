@@ -282,7 +282,8 @@ inst = {k8s_class_name}(api_client=client_to_use)
 the_method = getattr(inst, '{k8s_method_name}_with_http_info')
 all_args = dict()
 {arg_assignment_lines}
-body = get_clean_dict(body) if body else None
+if body is not None:
+    body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
 all_args['{body_key}'] = body
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
@@ -454,7 +455,8 @@ class Operation(object):
         if self.returns:
             docstring_parts.append("")
             docstring_parts.append("    :return: hikaru.utils.Response instance with "
-                                   "the following codes and obj value types:")
+                                   "the following codes and ")
+            docstring_parts.append("        obj value types:")
             for ret in self.returns.values():
                 rettype = (ret.ref.short_name if isinstance(ret.ref, ClassDescriptor)
                            else ret.ref)

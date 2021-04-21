@@ -5712,7 +5712,8 @@ class Status(HikaruDocumentBase):
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           401   None    Unauthorized
         """
@@ -5735,7 +5736,8 @@ class Status(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -5788,7 +5790,8 @@ class Status(HikaruDocumentBase):
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -5806,7 +5809,8 @@ class Status(HikaruDocumentBase):
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
         all_args["body"] = body
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -9203,7 +9207,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           201   HorizontalPodAutoscaler    Created
           202   HorizontalPodAutoscaler    Accepted
@@ -9251,7 +9256,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             in 1.18.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9306,7 +9312,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9322,7 +9329,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -9356,7 +9364,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           201   HorizontalPodAutoscaler    Created
           401   None    Unauthorized
@@ -9394,7 +9403,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9447,7 +9457,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9463,7 +9474,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        body = get_clean_dict(body) if body else None
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -9497,7 +9509,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscaler    OK
           201   HorizontalPodAutoscaler    Created
           401   None    Unauthorized
@@ -9561,7 +9574,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         path: /apis/autoscaling/v2beta2/horizontalpodautoscalers
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscalerList    OK
           401   None    Unauthorized
         """
@@ -9669,7 +9683,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
-        :return: hikaru.utils.Response instance with the following codes and obj value types:
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
           200   HorizontalPodAutoscalerList    OK
           401   None    Unauthorized
         """

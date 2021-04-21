@@ -35,6 +35,17 @@ class MockApiClient(object):
         else:
             return ', '.join(accepts)
 
+    def select_header_content_type(self, content_types: list):
+        if not content_types:
+            return 'application/json'
+
+        content_types = [x.lower() for x in content_types]
+
+        if 'application/json' in content_types or '*/*' in content_types:
+            return 'application/json'
+        else:
+            return content_types[0]
+
     def call_api(self, path, verb, path_params, query_params, header_params,
                  body=None, **kwargs):
         self.body = body
@@ -93,19 +104,24 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((attr, params))
-                elif issubclass(type(attr), FunctionType):
+                elif isinstance(attr, staticmethod):
                     # process static methods here
-                    sig = signature(attr)
+                    smeth = getattr(cls, name)
+                    sig = signature(smeth)
                     mock_client = MockApiClient()
                     params = {"client": mock_client}
                     for p in sig.parameters.values():
-                        if p.name == "namespace":
+                        if p.name == "client":
+                            continue
+                        elif p.name == "namespace":
                             params[p.name] = 'default'
                         elif p.name == 'name':
                             params[p.name] = 'the_name'
+                        elif p.name == 'body':
+                            params[p.name] = {}
                         else:
                             params[p.name] = None
-                    all_params.append((attr, params))
+                    all_params.append((smeth, params))
 
 
 @pytest.mark.parametrize('func, kwargs', all_params)
