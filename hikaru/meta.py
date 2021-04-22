@@ -27,10 +27,11 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, ForwardRef
 from dataclasses import fields, dataclass, is_dataclass, asdict
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
+from hikaru.naming import get_type_if_forward_ref
 
 try:
     from typing import get_args, get_origin
@@ -103,6 +104,7 @@ class HikaruBase(object):
                 assignment_type = get_args(f.type)[0]
             else:
                 assignment_type = f.type
+            assignment_type = get_type_if_forward_ref(assignment_type, self.__class__)
             del initial_type
             # now we have the type without a Union
             obj = getattr(self, f.name, None)
@@ -122,7 +124,8 @@ class HikaruBase(object):
             else:
                 origin = get_origin(assignment_type)
                 if origin in (list, List):
-                    item_type = get_args(assignment_type)[0]
+                    item_type = get_type_if_forward_ref(get_args(assignment_type)[0],
+                                                        self.__class__)
                     if is_dataclass(item_type) and issubclass(item_type, HikaruBase):
                         for i, item in enumerate(obj):
                             if catalog_depth_first:
@@ -392,15 +395,16 @@ class HikaruBase(object):
         for p in sig.parameters.values():
             if p.name in ('self', 'client'):
                 continue
+            # skip these either of these next two since they are supplied by default
             if issubclass(cls, HikaruDocumentBase) and p.name in ('apiVersion',
                                                                   'kind'):
                 continue
             f = field_map[p.name]
-            initial_type = f.type
+            initial_type = get_type_if_forward_ref(f.type, cls)
             origin = get_origin(initial_type)
             if origin is Union:
                 type_args = get_args(f.type)
-                initial_type = type_args[0]
+                initial_type = get_type_if_forward_ref(type_args[0], cls)
             if ((type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                           bool,
                                                                           float))) or
@@ -583,10 +587,12 @@ class HikaruBase(object):
             origin = get_origin(initial_type)
             if origin is list:
                 attr_type = list
-                contained_type = get_args(initial_type)[0]
+                contained_type = get_type_if_forward_ref(get_args(initial_type)[0],
+                                                         self.__class__)
             elif origin is dict:
                 attr_type = dict
-            elif (type(initial_type) != type or
+            elif (type(initial_type) not in (type, str) and
+                  not isinstance(initial_type, ForwardRef) and
                   (not issubclass(initial_type, (str, int,  float,
                                                   bool, HikaruBase)) and
                   initial_type is not object)):
@@ -594,6 +600,8 @@ class HikaruBase(object):
                                           f" {initial_type}, attr={f.name}"
                                           f" in class {self.__class__.__name__}."
                                           f" Please file a bug report.")
+            initial_type = get_type_if_forward_ref(initial_type, self.__class__)
+            attr_type = get_type_if_forward_ref(attr_type, self.__class__)
             attrval = getattr(self, f.name)
             if attrval is None:
                 if issubclass(attr_type, (str, int, float,
@@ -623,7 +631,6 @@ class HikaruBase(object):
                                             f"Was expecting type {attr_type.__name__},"
                                             f" got {type(attrval).__name__}"))
             elif attr_type is list:
-                # check the contained types
                 if is_required and len(attrval) == 0:
                     warnings.append(TypeWarning(self.__class__, f.name,
                                                 [f.name],
@@ -644,6 +651,7 @@ class HikaruBase(object):
                                                      [f.name, i] + w.path,
                                                      w.warning)
                                          for w in inner_warnings])
+            # FIXME; should we be looking at contents of a dict??
             elif isinstance(attrval, HikaruBase):
                 inner_warnings = attrval.get_type_warnings()
                 warnings.extend([TypeWarning(w.cls, w.attrname,
@@ -677,6 +685,7 @@ class HikaruBase(object):
         # do is the following: if the type of the 'yaml' parameter is an str, then
         # we'll eval it to hopefully get a dict, and raise a useful message if
         # we don't
+        # FIXME; we need some way to make the eval selectable by the user!
         if type(yaml) == str:
             new = eval(yaml, globals(), locals())
             if type(new) != dict:
@@ -703,6 +712,7 @@ class HikaruBase(object):
                 raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}")
             if val is None:
                 continue
+            initial_type = get_type_if_forward_ref(initial_type, self.__class__)
             if (type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                         bool, float))
                     or initial_type == object):
@@ -715,7 +725,8 @@ class HikaruBase(object):
             else:
                 origin = get_origin(initial_type)
                 if origin in (list, List):
-                    target_type = get_args(initial_type)[0]
+                    target_type = get_type_if_forward_ref(get_args(initial_type)[0],
+                                                          self.__class__)
                     if type(target_type) == type and issubclass(target_type, (int, str,
                                                                               bool,
                                                                               float)):

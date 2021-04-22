@@ -1075,7 +1075,7 @@ def test096():
 
 def test097():
     """
-    Check that we can detect a recursively defined swagger object
+    Check that we can process a recursively defined swagger object
     """
     f = open("recursive.json", "r")
     jdict = json.load(f)
@@ -1084,13 +1084,14 @@ def test097():
         cd = ClassDescriptor(k, v)
         cd.process_properties()
         break
-    assert cd.has_alternate_base() is True
+    assert True
 
 
 def test098():
     """
     Check that we get a new ClassDescriptor as an alternate base
     """
+    raise SkipTest("no alternate base now, so rest of test is redundant")
     f = open("recursive.json", "r")
     jdict = json.load(f)
     cd = None
@@ -1106,6 +1107,7 @@ def test099():
     """
     Check that an existing ClassDecriptor depends on its alternate base
     """
+    raise SkipTest('alternate base no longer exists')
     f = open("recursive.json", "r")
     jdict = json.load(f)
     cd = None
@@ -1122,6 +1124,7 @@ def test100():
     """
     Check that we can generate sane Python source for the alternate base
     """
+    raise SkipTest('alternate base no longer exists')
     f = open("recursive.json", "r")
     jdict = json.load(f)
     cd = None
@@ -1139,6 +1142,7 @@ def test101():
     """
     Check that if there's an alternate base it is the base class for the parsed one
     """
+    raise SkipTest('alternate base no longer exists')
     f = open("recursive.json", "r")
     jdict = json.load(f)
     cd = None
@@ -1285,6 +1289,19 @@ def test115():
     assert res1 == res2
 
 
+def test116():
+    """
+    check that the wrong object where a list goes causes a warning
+    """
+    p: Pod = setup_pod()
+    prior_warnings = p.get_type_warnings()
+    assert not prior_warnings
+    om = ObjectMeta()
+    p.spec.containers = om
+    later_warnings = p.get_type_warnings()
+    assert len(later_warnings) == 1, f"got {len(later_warnings)} warnings"
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
@@ -1296,3 +1313,4 @@ if __name__ == "__main__":
             pass
         except Exception as e:
             print(f'{k} failed with {str(e)}, {e.__class__}')
+            raise

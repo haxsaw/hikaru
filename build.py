@@ -61,14 +61,13 @@ get args            __args__        typing.get_args()
 inspect.signature() can give the argument signature for a
 method; can find how many required positional args there are.
 """
-from itertools import chain
+from itertools import chain, permutations
 import importlib
 from pathlib import Path
 import sys
-from typing import List, Dict, Optional, Union, Tuple, Any
+from typing import List, Dict, Optional, Union, Tuple, Any, Set
 import json
 import re
-import networkx
 from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            make_swagger_name, dprefix, camel_to_pep8)
@@ -210,18 +209,6 @@ def output_footer(stream=sys.stdout):
     :param stream: file to write the footer to
     """
     print(_module_footer, file=stream)
-
-
-def build_digraph(all_classes: dict) -> networkx.DiGraph:
-    dg = networkx.DiGraph()
-    for cd in all_classes.values():
-        assert isinstance(cd, ClassDescriptor)
-        deps = cd.depends_on(include_external=True)
-        dg.add_node(cd)
-        for c in deps:
-            dg.add_edge(cd, c)
-
-    return dg
 
 
 def write_classes(class_list, for_version: str, stream=sys.stdout):
@@ -416,6 +403,7 @@ class Operation(object):
     del_collection_prefix = "delete_collection"
 
     def as_python_method(self, cd=None) -> List[str]:
+        written_methods.add((self.version, self.op_id))
         if cd is not None:
             assert isinstance(cd, ClassDescriptor)
         version = get_path_version(self.op_path)
@@ -528,7 +516,6 @@ class ClassDescriptor(object):
         self.type = None
         self.is_subclass_of = None
         self.is_document = False
-        self.alternate_base = None
         self.operations: Dict[str, Operation] = {}
 
         self.required_props = []
@@ -537,9 +524,6 @@ class ClassDescriptor(object):
 
     def add_operation(self, op: Operation):
         self.operations[op.op_id] = op
-
-    def has_alternate_base(self) -> bool:
-        return self.alternate_base is not None
 
     def update(self, d: dict):
         x_k8s = d.get("x-kubernetes-group-version-kind")
@@ -586,15 +570,6 @@ class ClassDescriptor(object):
                     self.optional_props.append(fd)
             self.required_props.sort(key=lambda x: x.name)
             self.optional_props.sort(key=lambda x: x.name)
-        make_alternate_base = False
-        deps = self.depends_on()
-        for dep in deps:
-            assert isinstance(dep, ClassDescriptor)
-            if self.ref_to_self(dep):
-                # this is then recursive
-                make_alternate_base = True
-        if make_alternate_base:
-            self.alternate_base = self.construct_alternate_base()
 
     def ref_to_self(self, other) -> bool:
         """
@@ -606,35 +581,6 @@ class ClassDescriptor(object):
         return (self.group == other.group and
                 self.version == other.version and
                 self.short_name == other.short_name)
-
-    def construct_alternate_base(self):
-        base_name = f"{self.short_name}HikaruBase"
-        swagger_name = make_swagger_name(self.group, self.version, base_name)
-        alt_base = ClassDescriptor(swagger_name, {})
-        alt_base.process_properties()  # ensure all state is where it belongs
-        for prop in list(self.required_props):
-            assert isinstance(prop, PropertyDescriptor)
-            dep = prop.depends_on()
-            if dep is None or not self.ref_to_self(dep):
-                # this isn't self-referential and can go into the new base
-                alt_base.required_props.append(prop)
-                self.required_props.remove(prop)
-                self.required.remove(prop.name)
-                alt_base.required.append(prop.name)
-            else:
-                prop.change_dep(alt_base)
-        for prop in list(self.optional_props):
-            assert isinstance(prop, PropertyDescriptor)
-            dep = prop.depends_on()
-            if dep is None or not self.ref_to_self(dep):
-                # this isn't self-referential and can go into the new base
-                alt_base.optional_props.append(prop)
-                self.optional_props.remove(prop)
-            else:
-                prop.change_dep(alt_base)
-        alt_base.type = "object"
-        alt_base.full_name = self.full_name
-        return alt_base
 
     @staticmethod
     def split_line(line, prefix: str = "   ", hanging_indent: str = "",
@@ -666,12 +612,9 @@ class ClassDescriptor(object):
         else:
             # then it is to be a dataclass
             lines.append("@dataclass")
-            if self.alternate_base:
-                base = self.alternate_base.short_name
-            else:
-                base = (HikaruDocumentBase.__name__
-                        if self.is_document else
-                        HikaruBase.__name__)
+            base = (HikaruDocumentBase.__name__
+                    if self.is_document else
+                    HikaruBase.__name__)
         lines.append(f"class {self.short_name}({base}):")
         # now the docstring
         ds_parts = ['    r"""']
@@ -733,8 +676,6 @@ class ClassDescriptor(object):
                     if p is not None and (True
                                           if include_external else
                                           self.version == p.version))
-        if self.alternate_base is not None:
-            deps.append(self.alternate_base)
 
         for op in self.operations.values():
             assert isinstance(op, Operation)
@@ -768,7 +709,10 @@ class ModuleDef(object):
         other_imports = []
         if None in externals:
             other_imports.append(f'from .{unversioned_module_name} import *')
-            externals.remove(None)
+            try:
+                externals.remove(None)
+            except ValueError:
+                pass
         externals.sort()
         all_classes = {}
         for ext in externals:
@@ -776,7 +720,6 @@ class ModuleDef(object):
             assert isinstance(emod, ModuleDef)
             all_classes.update(emod.all_classes)
         all_classes.update(self.all_classes)
-        g = build_digraph(all_classes)
         # compute & output all the imports needed from Kubernetes
         k8s_imports = {"ApiClient"}
         for cd in self.all_classes.values():
@@ -791,43 +734,8 @@ class ModuleDef(object):
         for k8s_class in k8s_imports:
             print(f"from kubernetes.client import {k8s_class}", file=stream)
         print("\n", file=stream)
-        # compute the order of Hikaru classes to generate
-        traversal = list(reversed(list(networkx.topological_sort(g))))
-        if not traversal:
-            traversal = list(self.all_classes.values())
-        write_classes(traversal, self.version, stream=stream)
+        write_classes(list(all_classes.values()), self.version, stream=stream)
         output_footer(stream=stream)
-
-
-# def topological_sort(G) -> list:
-#     the_sort = []
-#     indegree_map = {v: d for v, d in G.in_degree() if d > 0}
-#     # These nodes have zero indegree and ready to be returned.
-#     zero_indegree = [v for v, d in G.in_degree() if d == 0]
-#
-#     while zero_indegree:
-#         node = zero_indegree.pop()
-#         for _, child in G.edges(node):
-#             try:
-#                 indegree_map[child] -= 1
-#             except KeyError as e:
-#                 raise RuntimeError("Graph changed during iteration") from e
-#             if indegree_map[child] == 0:
-#                 zero_indegree.append(child)
-#                 del indegree_map[child]
-#
-#         the_sort.append(node)
-#
-#     if indegree_map:
-#         for node in indegree_map:
-#             assert isinstance(node, ClassDescriptor)
-#             print(f"{node.version}.{node.short_name} depends on:")
-#             for _, child in G.edges(node):
-#                 print(f"\t{child.version}.{child.short_name}")
-#         _ = 1
-#     else:
-#         _ = 1
-#     return the_sort
 
 
 def get_module_def(version) -> ModuleDef:
@@ -945,11 +853,11 @@ class PropertyDescriptor(object):
             if isinstance(self.prop_type, str):
                 parts.append(self.as_required(self.prop_type, as_required))
             elif isinstance(self.prop_type, ClassDescriptor):
-                parts.append(self.as_required(self.prop_type.short_name,
+                parts.append(self.as_required(f"'{self.prop_type.short_name}'",
                                               as_required))
         elif self.container_type is list:
             if isinstance(self.item_type, ClassDescriptor):
-                parts.append(self.as_required(f"List[{self.item_type.short_name}]",
+                parts.append(self.as_required(f"List['{self.item_type.short_name}']",
                                               as_required))
             else:
                 parts.append(self.as_required(f"List[{self.item_type}]",
@@ -997,7 +905,7 @@ class OpParameter(object):
         if type(self.ptype) == type:
             ptype = self.ptype.__name__
         elif isinstance(self.ptype, ClassDescriptor):
-            ptype = self.ptype.short_name
+            ptype = f"'{self.ptype.short_name}'"
         else:
             ptype = self.ptype
         ptype = (ptype
@@ -1093,6 +1001,32 @@ def get_path_domain(path: str):
     return domain
 
 
+def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
+    md = get_module_def(op.version)
+    meth_name = make_method_name(op)
+    parts = meth_name.split('_')
+    parts.reverse()
+    try:
+        parts.remove("namespaced")
+    except ValueError:
+        pass
+    new_parts = []
+    guess: Optional[ClassDescriptor] = None
+    for part in parts:
+        new_parts.insert(0, part.capitalize())
+        test_name = "".join(new_parts)
+        if test_name in md.all_classes:
+            guess = md.all_classes[test_name]
+    if not guess or len(guess.short_name) < len(''.join(new_parts)):
+        # then a better guess might exist via some permutation of the name parts
+        for perm in permutations(new_parts):
+            test_name = "".join(perm)
+            if test_name in md.all_classes:
+                guess = md.all_classes[test_name]
+                break
+    return guess
+
+
 def process_params_and_responses(path: str, verb: str, op_id: str,
                                  params: list, responses: dict, description: str,
                                  gvk_dict: dict):
@@ -1186,30 +1120,28 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         pass
 
     if whose_method:
-        whose_method.add_operation(new_op)
+        guess: ClassDescriptor = _best_guess(new_op)
+        if (guess and whose_method is cd_in_responses and
+                whose_method.short_name != guess.short_name):
+            print(f"adding {new_op.op_id} to {guess.short_name}, "
+                  f"not {whose_method.short_name}")
+            guess.add_operation(new_op)
+        else:
+            whose_method.add_operation(new_op)
     else:
         new_op.is_staticmethod = True
         vops.add_query_operation(domain, new_op)
-
-    # if k8s_name is not None:
-    #     if cd is None:
-    #         raise RuntimeError(f"Couldn't find a ClassDescriptor for type {k8s_name} "
-    #                            f"in {op_id}")
-    #     else:
-    #         cd.add_operation(new_op)
-    # else:
-    #     vops.add_query_operation(domain, new_op)
 
 
 _dont_remove_groups = {"storage", "policy"}
 
 
-def make_method_name(op: Operation, cd: ClassDescriptor) -> str:
+def make_method_name(op: Operation, cd: ClassDescriptor=None) -> str:
     under_name = camel_to_pep8(op.op_id)
     parts = under_name.split("_")
     group = op.group.replace(".k8s.io", "") if op.group else ""
     try:
-        parts.remove(cd.version)
+        parts.remove(cd.version if cd else op.version)
     except ValueError:
         pass
     try:
@@ -1218,10 +1150,7 @@ def make_method_name(op: Operation, cd: ClassDescriptor) -> str:
     except ValueError:
         pass
     result = "_".join(parts)
-    # icky patch for when we've split apart 'API', 'CSI', or 'V<number>'
-    return (result.replace("a_p_i", "api").replace("c_s_i", "csi").
-            replace('v_1', 'v1').replace('v_2', 'v2').replace('beta_1', 'beta1').
-            replace('beta_2', 'beta2').replace('alpha_1', 'alpha1'))
+    return result
 
 
 def _search_for_method(group: str, version: str, kind: str,
@@ -1299,8 +1228,6 @@ def load_stable(swagger_file_path: str) -> str:
         else:
             cd.update(v)
         cd.process_properties()
-        if cd.has_alternate_base():
-            mod_def.save_class_desc(cd.alternate_base)
 
     for k, v in d["paths"].items():
         last_verb = None
@@ -1371,14 +1298,32 @@ model_package = "hikaru/model"
 ops_by_version: Dict[str, APIVersionOperations] = {}
 
 
+# version, opid
+written_methods: Set[Tuple[str, str]] = set()
+
+
 def reset_all():
     objop_param_mismatches.clear()
     response_mismatches.clear()
     _all_module_defs.clear()
     ops_by_version.clear()
+    written_methods.clear()
 
 
 _release_in_process = None
+
+
+def check_for_stragglers():
+    total = 0
+    print("LOOKING FOR STRAGGLERS")
+    for k, vops in ops_by_version.items():
+        for domain, qops in vops.query_ops.items():
+            for op in qops.operations.values():
+                if (op.version, op.op_id) not in written_methods:
+                    print(f"version {k}, dom {domain}, verb {op.verb}, opid {op.op_id},"
+                          f" path {op.op_path}")
+                    total += 1
+    print(f"END LOOKING FOR STRAGGLERS; found {total}")
 
 
 def build_it(swagger_file: str, main_rel: str):
@@ -1400,6 +1345,7 @@ def build_it(swagger_file: str, main_rel: str):
     if main_rel == relname:
         # this is the main release; make the root package default to it
         make_root_init(model_package, main_rel)
+    check_for_stragglers()
     _release_in_process = None
 
 
