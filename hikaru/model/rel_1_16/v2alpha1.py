@@ -10204,6 +10204,8 @@ class CronJobList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJobList    OK
           401   None    Unauthorized
         """
@@ -10311,6 +10313,8 @@ class CronJobList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJobList    OK
           401   None    Unauthorized
         """
@@ -10478,6 +10482,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -10534,6 +10540,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJob    OK
           201   CronJob    Created
           202   CronJob    Accepted
@@ -10604,6 +10612,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -10652,6 +10662,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJob    OK
           401   None    Unauthorized
         """
@@ -10706,6 +10718,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJob    OK
           401   None    Unauthorized
         """
@@ -10756,6 +10770,8 @@ class CronJob(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   CronJob    OK
           201   CronJob    Created
           401   None    Unauthorized

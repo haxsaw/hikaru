@@ -8828,6 +8828,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -8885,6 +8887,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscaler    OK
           201   HorizontalPodAutoscaler    Created
           202   HorizontalPodAutoscaler    Accepted
@@ -8957,6 +8961,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -9007,6 +9013,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9063,6 +9071,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscaler    OK
           401   None    Unauthorized
         """
@@ -9115,6 +9125,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscaler    OK
           201   HorizontalPodAutoscaler    Created
           401   None    Unauthorized
@@ -9923,6 +9935,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscalerList    OK
           401   None    Unauthorized
         """
@@ -10032,6 +10046,8 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   HorizontalPodAutoscalerList    OK
           401   None    Unauthorized
         """

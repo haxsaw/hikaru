@@ -1823,6 +1823,8 @@ class ClusterRoleList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleList    OK
           401   None    Unauthorized
         """
@@ -1986,6 +1988,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -2037,6 +2041,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRole    OK
           201   ClusterRole    Created
           202   ClusterRole    Accepted
@@ -2104,6 +2110,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -2138,6 +2146,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRole    OK
           401   None    Unauthorized
         """
@@ -2187,6 +2197,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRole    OK
           401   None    Unauthorized
         """
@@ -2234,6 +2246,8 @@ class ClusterRole(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRole    OK
           201   ClusterRole    Created
           401   None    Unauthorized
@@ -2756,6 +2770,8 @@ class RoleBindingList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBindingList    OK
           401   None    Unauthorized
         """
@@ -2787,6 +2803,8 @@ class RoleBindingList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBindingList    OK
           401   None    Unauthorized
         """
@@ -2949,6 +2967,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -3005,6 +3025,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBinding    OK
           201   RoleBinding    Created
           202   RoleBinding    Accepted
@@ -3075,6 +3097,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -3113,6 +3137,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBinding    OK
           401   None    Unauthorized
         """
@@ -3165,6 +3191,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBinding    OK
           401   None    Unauthorized
         """
@@ -3215,6 +3243,8 @@ class RoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleBinding    OK
           201   RoleBinding    Created
           401   None    Unauthorized
@@ -5128,6 +5158,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -5181,6 +5213,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleBinding    OK
           201   ClusterRoleBinding    Created
           202   ClusterRoleBinding    Accepted
@@ -5248,6 +5282,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -5282,6 +5318,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleBinding    OK
           401   None    Unauthorized
         """
@@ -5331,6 +5369,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleBinding    OK
           401   None    Unauthorized
         """
@@ -5378,6 +5418,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleBinding    OK
           201   ClusterRoleBinding    Created
           401   None    Unauthorized
@@ -8555,6 +8597,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -8606,6 +8650,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   VolumeAttachment    OK
           201   VolumeAttachment    Created
           202   VolumeAttachment    Accepted
@@ -8673,6 +8719,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -8718,6 +8766,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   VolumeAttachment    OK
           401   None    Unauthorized
         """
@@ -8769,6 +8819,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   VolumeAttachment    OK
           401   None    Unauthorized
         """
@@ -8816,6 +8868,8 @@ class VolumeAttachment(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   VolumeAttachment    OK
           201   VolumeAttachment    Created
           401   None    Unauthorized
@@ -10077,6 +10131,8 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   ClusterRoleBindingList    OK
           401   None    Unauthorized
         """
@@ -10801,6 +10857,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -10855,6 +10913,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Role    OK
           201   Role    Created
           202   Role    Accepted
@@ -10925,6 +10985,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -10963,6 +11025,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Role    OK
           401   None    Unauthorized
         """
@@ -11015,6 +11079,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Role    OK
           401   None    Unauthorized
         """
@@ -11065,6 +11131,8 @@ class Role(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Role    OK
           201   Role    Created
           401   None    Unauthorized
@@ -11240,6 +11308,8 @@ class RoleList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleList    OK
           401   None    Unauthorized
         """
@@ -11271,6 +11341,8 @@ class RoleList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RoleList    OK
           401   None    Unauthorized
         """
@@ -11772,6 +11844,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -11823,6 +11897,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PriorityClass    OK
           201   PriorityClass    Created
           202   PriorityClass    Accepted
@@ -11890,6 +11966,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -11935,6 +12013,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PriorityClass    OK
           401   None    Unauthorized
         """
@@ -11986,6 +12066,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PriorityClass    OK
           401   None    Unauthorized
         """
@@ -12033,6 +12115,8 @@ class PriorityClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PriorityClass    OK
           201   PriorityClass    Created
           401   None    Unauthorized
@@ -12949,6 +13033,8 @@ class PriorityClassList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PriorityClassList    OK
           401   None    Unauthorized
         """
@@ -13202,6 +13288,8 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   VolumeAttachmentList    OK
           401   None    Unauthorized
         """
@@ -13360,6 +13448,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -13411,6 +13501,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   AuditSink    OK
           201   AuditSink    Created
           202   AuditSink    Accepted
@@ -13478,6 +13570,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -13523,6 +13617,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   AuditSink    OK
           401   None    Unauthorized
         """
@@ -13574,6 +13670,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   AuditSink    OK
           401   None    Unauthorized
         """
@@ -13621,6 +13719,8 @@ class AuditSink(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   AuditSink    OK
           201   AuditSink    Created
           401   None    Unauthorized
@@ -13860,6 +13960,8 @@ class PodPresetList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPresetList    OK
           401   None    Unauthorized
         """
@@ -13891,6 +13993,8 @@ class PodPresetList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPresetList    OK
           401   None    Unauthorized
         """
@@ -14044,6 +14148,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -14100,6 +14206,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPreset    OK
           201   PodPreset    Created
           202   PodPreset    Accepted
@@ -14170,6 +14278,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -14218,6 +14328,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPreset    OK
           401   None    Unauthorized
         """
@@ -14272,6 +14384,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPreset    OK
           401   None    Unauthorized
         """
@@ -14322,6 +14436,8 @@ class PodPreset(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   PodPreset    OK
           201   PodPreset    Created
           401   None    Unauthorized
@@ -14482,6 +14598,8 @@ class AuditSinkList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   AuditSinkList    OK
           401   None    Unauthorized
         """
@@ -14686,6 +14804,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -14742,6 +14862,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSlice    OK
           201   EndpointSlice    Created
           202   EndpointSlice    Accepted
@@ -14812,6 +14934,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -14860,6 +14984,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSlice    OK
           401   None    Unauthorized
         """
@@ -14914,6 +15040,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSlice    OK
           401   None    Unauthorized
         """
@@ -14964,6 +15092,8 @@ class EndpointSlice(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSlice    OK
           201   EndpointSlice    Created
           401   None    Unauthorized
@@ -15098,6 +15228,8 @@ class EndpointSliceList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSliceList    OK
           401   None    Unauthorized
         """
@@ -15207,6 +15339,8 @@ class EndpointSliceList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   EndpointSliceList    OK
           401   None    Unauthorized
         """
@@ -15350,6 +15484,8 @@ class RuntimeClassList(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RuntimeClassList    OK
           401   None    Unauthorized
         """
@@ -15515,6 +15651,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           401   None    Unauthorized
         """
@@ -15566,6 +15704,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RuntimeClass    OK
           201   RuntimeClass    Created
           202   RuntimeClass    Accepted
@@ -15633,6 +15773,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   Status    OK
           202   Status    Accepted
           401   None    Unauthorized
@@ -15678,6 +15820,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RuntimeClass    OK
           401   None    Unauthorized
         """
@@ -15729,6 +15873,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RuntimeClass    OK
           401   None    Unauthorized
         """
@@ -15776,6 +15922,8 @@ class RuntimeClass(HikaruDocumentBase):
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
+          Code  ObjType    Description
+          -----------------------------
           200   RuntimeClass    OK
           201   RuntimeClass    Created
           401   None    Unauthorized

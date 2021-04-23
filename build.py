@@ -445,6 +445,8 @@ class Operation(object):
             docstring_parts.append("    :return: hikaru.utils.Response instance with "
                                    "the following codes and ")
             docstring_parts.append("        obj value types:")
+            docstring_parts.append('      Code  ObjType    Description')
+            docstring_parts.append('      -----------------------------')
             for ret in self.returns.values():
                 rettype = (ret.ref.short_name if isinstance(ret.ref, ClassDescriptor)
                            else ret.ref)
