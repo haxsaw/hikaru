@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from typing import Tuple, Optional, Dict, Union, ForwardRef
-from inspect import getmodule
+from inspect import getmodule, signature
 from threading import current_thread, Thread
 
 
@@ -153,6 +153,17 @@ def camel_to_pep8(name: str) -> str:
             replace('f_q_d_n', 'fqdn'))
 
 
+fr = ForwardRef('dummy')
+sig = signature(fr._evaluate)
+if len(sig.parameters) == 3:
+    def make_args(g, l):
+        return g, l, frozenset()
+else:
+    def make_args(g, l):
+        return g, l
+del fr, sig
+
+
 def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
                             owning_class: type) -> type:
     """
@@ -163,6 +174,7 @@ def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
         proper module to look for the type.
     :return:
     """
+    global make_args
     final_type = candidate_type
     if type(candidate_type) is str or isinstance(candidate_type, ForwardRef):
         globs = vars(getmodule(owning_class))
@@ -170,7 +182,7 @@ def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
             final_type = globs.get(candidate_type, candidate_type)
         else:
             # must be a ForwardRef
-            final_type = candidate_type._evaluate(globs, locals())
+            final_type = candidate_type._evaluate(*make_args(globs, locals()))
     return final_type
 
 
