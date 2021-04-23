@@ -18,13 +18,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from importlib import import_module
+from unittest import SkipTest
+import pytest
 from hikaru import *
 from hikaru.model.rel_1_16 import *
 import json
 from build import *
 from hikaru.naming import make_swagger_name
 from hikaru.version_kind import get_version_kind_class
-from unittest import SkipTest
 
 p = None
 
@@ -1194,6 +1196,7 @@ def test105():
     """
     ensure that you can acquire a version of the v1alpha1 Pod class
     """
+    from hikaru.model.rel_1_16 import v1alpha1
     pod = get_version_kind_class('v1alpha1', 'Pod')
     assert pod is not None
 
@@ -1302,13 +1305,31 @@ def test116():
     assert len(later_warnings) == 1, f"got {len(later_warnings)} warnings"
 
 
+# this block of code computes the params for test117
+from hikaru.model.rel_1_16.versions import versions
+
+
+@pytest.mark.parametrize('rel_version', versions)
+def test117(rel_version: str):
+    """
+    ensure there are no issues in importing the documents module for each version
+    :param rel_version: string; name of the version module use when getting documents
+    """
+    mod = import_module(".documents", f"hikaru.model.rel_1_16.{rel_version}")
+    assert mod
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
                  if k.startswith('test') and callable(v)}
     for k, v in the_tests.items():
         try:
-            v()
+            if k == "test117":
+                for ver in versions:
+                    v(ver)
+            else:
+                v()
         except SkipTest:
             pass
         except Exception as e:

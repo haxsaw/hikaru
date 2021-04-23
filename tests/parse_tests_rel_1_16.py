@@ -48,7 +48,7 @@ for p in path.iterdir():
 
 
 def make_instance_from_source(version, source):
-    exec(f'from hikaru.model.{get_default_release()}.{version} import *')
+    exec(f'from hikaru.model.{get_default_release()}.{version}.{version} import *')
     x = eval(source, globals(), locals())
     return x
 

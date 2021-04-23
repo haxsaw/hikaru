@@ -35,12 +35,10 @@ def get_version_kind_class(version: str, kind: str,
     :param kind: string; value of the 'kind' parameter for a document; same as
         the name of the class that models the document
     :param release: optional string; if supplied, indicates which release to load classes
-        from. Must be one of the subpackage of hikaru.model, such as rel_1_16 or
-        rel_unversioned. If unspecified, the release specified from
+        from. Must be one of the subpackage of hikaru.model, such as rel_1_16.
+        If unspecified, the release specified from
         hikaru.naming.set_default_release() is used; if that hasn't been called,
         then the default from when hikaru was built will be used.
-        NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
-        Python client; use appropriately.
     :return: a class object that is a subclass of HikaruDocumentBase
 
     NOTE: this function does lazy loading of modules in order to avoid
@@ -58,7 +56,8 @@ def get_version_kind_class(version: str, kind: str,
         kind_dict = {}
         version_kind[version] = kind_dict
         try:
-            mod = importlib.import_module(f".{version}", f"hikaru.model.{use_release}")
+            mod = importlib.import_module(f".{version}",
+                                          f"hikaru.model.{use_release}.{version}")
         except ImportError:
             pass
         else:

@@ -59,7 +59,7 @@ class MockApiClient(object):
 all_params = []
 for version in versions:
     test_classes = []
-    mod = importlib.import_module(f".{version}", 'hikaru.model.rel_1_16')
+    mod = importlib.import_module(f".{version}", f'hikaru.model.rel_1_16.{version}')
     for c in vars(mod).values():
         if (type(c) is type and ((issubclass(c, HikaruDocumentBase) and
                 c is not HikaruDocumentBase) or
