@@ -40,9 +40,13 @@ def get_default_release() -> Optional[str]:
         If unknown, the current global default release is returned, whatever
         the value (possibly None).
     """
+    global _default_release
     ct: Thread = current_thread()
     def_rel = _default_release_by_thread.get(ct.name)
     if def_rel is None:
+        if _default_release is None:
+            from hikaru.model import default_release
+            _default_release = default_release
         def_rel = _default_release
     return def_rel
 
@@ -179,6 +183,7 @@ def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
     if type(candidate_type) is str or isinstance(candidate_type, ForwardRef):
         globs = vars(getmodule(owning_class))
         if type(candidate_type) is str:
+            assert isinstance(candidate_type, str)
             final_type = globs.get(candidate_type, candidate_type)
         else:
             # must be a ForwardRef

@@ -187,3 +187,24 @@ HikaruBase to create objects, and individual elements can be used with the
 ``from_yaml()`` method of HikaruBase subclasses to populate individual document
 hierarchies, but you are free to use these as you wish.
 
+get_default_release()
+*********************
+
+Returns a string that is the name of the default release that Hikaru will use when creating
+objects from YAML, JSON, or a dict. The release name returned will be the release set for
+the calling thread (if there is one), or else it will be the global default release for
+the entire process.
+
+set_default_release()
+*********************
+
+Sets the default string name of the release for Hikaru to use when creating objects from YAML, JSON or a dict.
+This value is set only for the calling thread, hence each thread can have its own default
+release. The supplied string must be the name of one of the release packages under ``hikaru.model``.
+
+set_global_default_release()
+****************************
+
+Sets the default string name of the release to use for the entire program; this supplies a fallback
+release name to use in case an individual thread doesn't set a release name for itself. The supplied
+string must be the name of a release package under ``hikaru.model``.

@@ -15,8 +15,10 @@ Version: 0.2a0
    introduction
    installation-quickstart
    key-functions
-   models
+   model-releases-and-versions
    hikaru-base
+   hikaru-document
+   using-with-kubernetes
    patterns-recipes
    issues
    reference
