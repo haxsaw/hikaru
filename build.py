@@ -604,7 +604,7 @@ class ClassDescriptor(object):
     def adjust_special_props(self, fd):
         assert isinstance(fd, PropertyDescriptor)
         if fd.name == 'apiVersion':
-            first_bit = f'{self.group}/' if self.group != 'core' else ""
+            first_bit = f'{self.group}/' if self.group not in ('core', None) else ""
             fd.default_value = f'"{first_bit}{self.version}"'
         elif fd.name == 'kind':
             fd.default_value = f'"{self.kind}"'

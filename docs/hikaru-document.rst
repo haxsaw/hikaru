@@ -43,6 +43,13 @@ and its arguments included in the docstring for the method, so you have the rele
 material to hand. Finally, all arguments to the method use type annotations so that IDEs are able to
 provide additional assistance in using the methods.
 
+.. note::
+
+    In terms of generated method names, it was decided that an approach that eased
+    transition best for someone familiar with the REST API would be chosen, and hence method names
+    are kept in their original camel case rather than  transformed to a PEP8-compliant
+    name with embedded underscores.
+
 Method responses and the Response object
 ----------------------------------------
 

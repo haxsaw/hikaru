@@ -1318,7 +1318,7 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     _version = "v1"
     kind: str
     name: str
-    apiVersion: Optional[str] = "None/v1"
+    apiVersion: Optional[str] = "v1"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -1679,7 +1679,7 @@ class ManagedFieldsEntry(HikaruBase):
         type.
     """
 
-    apiVersion: Optional[str] = "None/v1"
+    apiVersion: Optional[str] = "v1"
     fieldsType: Optional[str] = None
     manager: Optional[str] = None
     operation: Optional[str] = None
@@ -2524,7 +2524,7 @@ class BoundObjectReference(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "None/v1"
+    apiVersion: Optional[str] = "v1"
     kind: Optional[str] = "None"
     name: Optional[str] = None
     uid: Optional[str] = None
@@ -4174,7 +4174,7 @@ class ObjectFieldSelector(HikaruBase):
     """
 
     fieldPath: str
-    apiVersion: Optional[str] = "None/v1"
+    apiVersion: Optional[str] = "v1"
 
 
 @dataclass
@@ -4514,7 +4514,7 @@ class ObjectReference(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "None/v1"
+    apiVersion: Optional[str] = "v1"
     fieldPath: Optional[str] = None
     kind: Optional[str] = "None"
     name: Optional[str] = None
@@ -5466,7 +5466,7 @@ class Subject(HikaruDocumentBase):
     _version = "v1alpha1"
     kind: str
     name: str
-    apiVersion: Optional[str] = "None/v1alpha1"
+    apiVersion: Optional[str] = "v1alpha1"
     namespace: Optional[str] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None

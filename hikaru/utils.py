@@ -65,7 +65,7 @@ class Response(object):
             self.headers = k8s_response[2]
             if self.code in codes_with_objects:
                 # the object is some kind of K8s object
-                self.obj = from_dict(self.obj.to_dict())
+                self.obj = from_dict(self.obj.to_dict(), translate=True)
         else:
             # assume a thread
             self.thread = k8s_response

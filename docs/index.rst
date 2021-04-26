@@ -6,7 +6,7 @@
 Hikaru: Usage and Reference
 ==================================
 
-Version: 0.2a0
+Version: 0.4b
 
 .. toctree::
    :maxdepth: 2

@@ -194,7 +194,8 @@ def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
     return from_dict(d, cls=cls)
 
 
-def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
+def from_dict(adict: dict, cls: Optional[type] = None,
+              translate: bool = False) -> HikaruBase:
     """
     Create Hikaru objects from a ``get_clean_dict()`` dict
 
@@ -213,6 +214,9 @@ def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
     :param cls: optional; a HikaruBase subclass (*not* the string name
         of the class). This should match the kind of object that was dumped into
         the dict.
+    :param translate: optional bool, default False. If True, then all attributes
+        that are fetched from the dict are first run through camel_to_pep8 to
+        use the underscore-embedded versions of the attribute names.
     :return: an instance of a HikaruBase subclass with all attributes and contained
         objects recreated.
     :raises RuntimeError: if no cls was specified and Hikaru was unable to determine
@@ -229,14 +233,14 @@ def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
     parser.dump(adict, stream=sio)
 
     if cls is None:
-        docs = load_full_yaml(yaml=sio.getvalue())
+        docs = load_full_yaml(yaml=sio.getvalue(), translate=translate)
         doc = docs[0]
     else:
         assert issubclass(cls, HikaruBase)
         parser = YAML(typ="safe")
         sio.seek(0)
         yaml = parser.load(sio)
-        doc = cls.from_yaml(yaml)
+        doc = cls.from_yaml(yaml, translate=translate)
     return doc
 
 
@@ -280,7 +284,8 @@ def get_processors(path: str = None, stream: TextIO = None,
 
 def load_full_yaml(path: str = None, stream: TextIO = None,
                    yaml: str = None,
-                   release: Optional[str] = None) -> List[HikaruDocumentBase]:
+                   release: Optional[str] = None,
+                   translate: bool = False) -> List[HikaruDocumentBase]:
     """
     Parse/process the indicated Kubernetes yaml file and return a list of Hikaru objects
 
@@ -316,7 +321,10 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
     for i, doc in enumerate(docs):
-        _, api_version = process_api_version(doc.get('apiVersion', ""))
+        api_version = doc.get('apiVersion', '--NOPE--')
+        if api_version == '--NOPE--':
+            api_version = doc.get('api_version', '')
+        _, api_version = process_api_version(api_version)
         kind = doc.get('kind', "")
         klass = get_version_kind_class(api_version, kind, release)
         if klass is None:
@@ -325,7 +333,7 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
                                f" kind ({kind}) pair; can't determine the class"
                                f" to instantiate")
         assert issubclass(klass, HikaruDocumentBase)
-        inst = klass.from_yaml(doc)
+        inst = klass.from_yaml(doc, translate=translate)
         objs.append(inst)
 
     return objs

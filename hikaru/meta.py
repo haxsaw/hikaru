@@ -31,7 +31,7 @@ from typing import Union, List, Dict, Any, ForwardRef
 from dataclasses import fields, dataclass, is_dataclass, asdict
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
-from hikaru.naming import get_type_if_forward_ref
+from hikaru.naming import get_type_if_forward_ref, camel_to_pep8
 
 try:
     from typing import get_args, get_origin
@@ -356,7 +356,7 @@ class HikaruBase(object):
         return obj
 
     @classmethod
-    def from_yaml(cls, yaml):
+    def from_yaml(cls, yaml, translate: bool = False):
         """
         Create an instance of this HikaruBase subclass from the provided yaml.
 
@@ -375,10 +375,13 @@ class HikaruBase(object):
         was the standalone document itself.
 
         :param yaml: a ruamel.yaml YAML instance
+        :param translate: optional bool, default False. If True, then all attributes
+            that are fetched from the dict are first run through camel_to_pep8 to
+            use the underscore-embedded versions of the attribute names.
         :return: an instance of a subclass of HikaruBase
         """
         inst = cls.get_empty_instance()
-        inst.process(yaml)
+        inst.process(yaml, translate=translate)
         return inst
 
     @classmethod
@@ -660,7 +663,7 @@ class HikaruBase(object):
                                  for w in inner_warnings])
         return warnings
 
-    def process(self, yaml) -> None:
+    def process(self, yaml, translate: bool = False) -> None:
         """
         extract self's data items from the supplied yaml object.
 
@@ -671,6 +674,9 @@ class HikaruBase(object):
             as well as the population of the type/field catalogs. To ensure proper
             catalogues, invoke repopulate_catalog() after modifying data or doing
             multiple sequential parse() calls.
+        :param translate: optional bool, default False. If True, then all attributes
+            that are fetched from the dict are first run through camel_to_pep8 to
+            use the underscore-embedded versions of the attribute names.
 
         NOTE: it is possible to call parse again, but this will result in
             additional fields added to the existing fields, not a replacement
@@ -694,6 +700,7 @@ class HikaruBase(object):
             yaml = new
         for f in fields(self.__class__):
             k8s_name = f.name.strip("_")
+            k8s_name = camel_to_pep8(k8s_name) if translate else k8s_name
             is_required = True
             initial_type = f.type
             origin = get_origin(initial_type)
@@ -709,7 +716,8 @@ class HikaruBase(object):
             # let's see what we're really working with
             val = yaml.get(k8s_name, None)
             if val is None and is_required:
-                raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}")
+                raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}"
+                                f" (originally {f.name})")
             if val is None:
                 continue
             initial_type = get_type_if_forward_ref(initial_type, self.__class__)
@@ -720,7 +728,7 @@ class HikaruBase(object):
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
                 obj = initial_type.get_empty_instance()
-                obj.process(val)
+                obj.process(val, translate=translate)
                 setattr(self, f.name, obj)
             else:
                 origin = get_origin(initial_type)
@@ -737,7 +745,7 @@ class HikaruBase(object):
                         l = []
                         for o in val:
                             obj = target_type.get_empty_instance()
-                            obj.process(o)
+                            obj.process(o, translate=translate)
                             l.append(obj)
                         setattr(self, f.name, l)
                     else:
