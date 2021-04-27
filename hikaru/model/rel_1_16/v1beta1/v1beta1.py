@@ -664,6 +664,7 @@ class StatefulSet(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -680,6 +681,7 @@ class StatefulSet(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -697,6 +699,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -1690,6 +1693,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -1705,6 +1709,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -1723,6 +1728,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2303,6 +2309,7 @@ class StorageClass(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -2318,6 +2325,7 @@ class StorageClass(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -2334,6 +2342,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -3070,6 +3079,7 @@ class ClusterRoleList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -3149,6 +3159,7 @@ class ClusterRoleList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -3170,6 +3181,7 @@ class ClusterRoleList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -3464,7 +3476,9 @@ class ClusterRole(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def readClusterRole(name: str, client: ApiClient = None) -> Response:
+    def readClusterRole(
+        name: str, pretty: Optional[str] = None, client: ApiClient = None
+    ) -> Response:
         r"""
         read the specified ClusterRole
 
@@ -3472,6 +3486,7 @@ class ClusterRole(HikaruDocumentBase):
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterroles/{name}
 
         :param name: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -3486,6 +3501,7 @@ class ClusterRole(HikaruDocumentBase):
         the_method = getattr(inst, "read_cluster_role_with_http_info")
         all_args = dict()
         all_args["name"] = name
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -4016,6 +4032,7 @@ class RoleBindingList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -4096,6 +4113,7 @@ class RoleBindingList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -4118,17 +4136,102 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listRoleBindingForAllNamespaces(client: ApiClient = None) -> Response:
+    def listRoleBindingForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind RoleBinding
 
         operationID: listRoleBindingForAllNamespaces
         path: /apis/rbac.authorization.k8s.io/v1beta1/rolebindings
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -4144,7 +4247,15 @@ class RoleBindingList(HikaruDocumentBase):
             inst, "list_role_binding_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -4453,7 +4564,10 @@ class RoleBinding(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedRoleBinding(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read the specified RoleBinding
@@ -4463,6 +4577,7 @@ class RoleBinding(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -4478,6 +4593,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5272,6 +5388,7 @@ class APIServiceList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -5351,6 +5468,7 @@ class APIServiceList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -5372,6 +5490,7 @@ class APIServiceList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5461,6 +5580,7 @@ class APIService(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -5476,6 +5596,7 @@ class APIService(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -5492,6 +5613,7 @@ class APIService(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5605,7 +5727,9 @@ class APIService(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def readAPIServiceStatus(name: str, client: ApiClient = None) -> Response:
+    def readAPIServiceStatus(
+        name: str, pretty: Optional[str] = None, client: ApiClient = None
+    ) -> Response:
         r"""
         read status of the specified APIService
 
@@ -5613,6 +5737,7 @@ class APIService(HikaruDocumentBase):
         path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
 
         :param name: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -5627,6 +5752,7 @@ class APIService(HikaruDocumentBase):
         the_method = getattr(inst, "read_api_service_status_with_http_info")
         all_args = dict()
         all_args["name"] = name
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -7077,7 +7203,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def readClusterRoleBinding(name: str, client: ApiClient = None) -> Response:
+    def readClusterRoleBinding(
+        name: str, pretty: Optional[str] = None, client: ApiClient = None
+    ) -> Response:
         r"""
         read the specified ClusterRoleBinding
 
@@ -7085,6 +7213,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         path: /apis/rbac.authorization.k8s.io/v1beta1/clusterrolebindings/{name}
 
         :param name: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -7099,6 +7228,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         the_method = getattr(inst, "read_cluster_role_binding_with_http_info")
         all_args = dict()
         all_args["name"] = name
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -7466,12 +7596,96 @@ class LeaseList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listLeaseForAllNamespaces(client: ApiClient = None) -> Response:
+    def listLeaseForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind Lease
 
         operationID: listLeaseForAllNamespaces
         path: /apis/coordination.k8s.io/v1beta1/leases
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -7485,7 +7699,15 @@ class LeaseList(HikaruDocumentBase):
         inst = CoordinationV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_lease_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -7501,6 +7723,7 @@ class LeaseList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -7581,6 +7804,7 @@ class LeaseList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -7603,6 +7827,7 @@ class LeaseList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -7908,6 +8133,7 @@ class Lease(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -7924,6 +8150,7 @@ class Lease(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -7941,6 +8168,7 @@ class Lease(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10535,6 +10763,7 @@ class ReplicaSetList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -10615,6 +10844,7 @@ class ReplicaSetList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -10637,17 +10867,102 @@ class ReplicaSetList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listReplicaSetForAllNamespaces(client: ApiClient = None) -> Response:
+    def listReplicaSetForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind ReplicaSet
 
         operationID: listReplicaSetForAllNamespaces
         path: /apis/extensions/v1beta1/replicasets
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -10661,7 +10976,15 @@ class ReplicaSetList(HikaruDocumentBase):
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_replica_set_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10978,6 +11301,7 @@ class ReplicaSet(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -10994,6 +11318,7 @@ class ReplicaSet(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -11011,6 +11336,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12016,6 +12342,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -12031,6 +12358,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -12047,6 +12375,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12718,6 +13047,7 @@ class VolumeAttachment(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -12733,6 +13063,7 @@ class VolumeAttachment(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -12749,6 +13080,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12938,6 +13270,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -13017,6 +13350,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -13038,6 +13372,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13459,6 +13794,7 @@ class Deployment(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -13475,6 +13811,7 @@ class Deployment(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -13492,6 +13829,7 @@ class Deployment(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14125,6 +14463,7 @@ class DaemonSet(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -14141,6 +14480,7 @@ class DaemonSet(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -14158,6 +14498,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14647,6 +14988,7 @@ class Event(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -14663,6 +15005,7 @@ class Event(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -14680,6 +15023,7 @@ class Event(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15002,7 +15346,10 @@ class Scale(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedDeploymentScale(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read scale of the specified Deployment
@@ -15012,6 +15359,7 @@ class Scale(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -15027,6 +15375,7 @@ class Scale(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15147,7 +15496,10 @@ class Scale(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedStatefulSetScale(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read scale of the specified StatefulSet
@@ -15157,6 +15509,7 @@ class Scale(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -15172,6 +15525,7 @@ class Scale(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15294,7 +15648,10 @@ class Scale(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedReplicaSetScale(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read scale of the specified ReplicaSet
@@ -15304,6 +15661,7 @@ class Scale(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -15319,6 +15677,7 @@ class Scale(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15441,7 +15800,10 @@ class Scale(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedReplicationControllerDummyScale(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read scale of the specified ReplicationControllerDummy
@@ -15451,6 +15813,7 @@ class Scale(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -15468,6 +15831,7 @@ class Scale(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -16254,6 +16618,7 @@ class ControllerRevision(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -16270,6 +16635,7 @@ class ControllerRevision(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -16287,6 +16653,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -16470,6 +16837,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -16549,6 +16917,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -16570,6 +16939,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -17000,6 +17370,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -17079,6 +17450,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -17100,6 +17472,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -17402,6 +17775,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -17417,6 +17791,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -17433,6 +17808,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -17675,6 +18051,7 @@ class StorageClassList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -17754,6 +18131,7 @@ class StorageClassList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -17775,6 +18153,7 @@ class StorageClassList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18075,7 +18454,10 @@ class Role(HikaruDocumentBase):
 
     @staticmethod
     def readNamespacedRole(
-        name: str, namespace: str, client: ApiClient = None
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
     ) -> Response:
         r"""
         read the specified Role
@@ -18085,6 +18467,7 @@ class Role(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18100,6 +18483,7 @@ class Role(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18288,6 +18672,7 @@ class RoleList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -18368,6 +18753,7 @@ class RoleList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18390,17 +18776,102 @@ class RoleList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listRoleForAllNamespaces(client: ApiClient = None) -> Response:
+    def listRoleForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind Role
 
         operationID: listRoleForAllNamespaces
         path: /apis/rbac.authorization.k8s.io/v1beta1/roles
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18414,7 +18885,15 @@ class RoleList(HikaruDocumentBase):
         inst = RbacAuthorizationV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_role_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18459,6 +18938,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -18538,6 +19018,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18561,6 +19042,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18605,6 +19087,7 @@ class StatefulSetList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -18685,6 +19168,7 @@ class StatefulSetList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18707,17 +19191,102 @@ class StatefulSetList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listStatefulSetForAllNamespaces(client: ApiClient = None) -> Response:
+    def listStatefulSetForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind StatefulSet
 
         operationID: listStatefulSetForAllNamespaces
         path: /apis/apps/v1beta1/statefulsets
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18733,7 +19302,15 @@ class StatefulSetList(HikaruDocumentBase):
             inst, "list_stateful_set_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18885,12 +19462,96 @@ class EventList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listEventForAllNamespaces(client: ApiClient = None) -> Response:
+    def listEventForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind Event
 
         operationID: listEventForAllNamespaces
         path: /apis/events.k8s.io/v1beta1/events
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -18904,7 +19565,15 @@ class EventList(HikaruDocumentBase):
         inst = EventsV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_event_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -18920,6 +19589,7 @@ class EventList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -19000,6 +19670,7 @@ class EventList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -19022,6 +19693,7 @@ class EventList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -19491,6 +20163,7 @@ class PriorityClass(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -19506,6 +20179,7 @@ class PriorityClass(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -19522,6 +20196,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -19938,6 +20613,7 @@ class NetworkPolicy(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -19954,6 +20630,7 @@ class NetworkPolicy(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -19971,6 +20648,7 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -20474,12 +21152,96 @@ class DeploymentList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listDeploymentForAllNamespaces(client: ApiClient = None) -> Response:
+    def listDeploymentForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind Deployment
 
         operationID: listDeploymentForAllNamespaces
         path: /apis/extensions/v1beta1/deployments
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -20493,7 +21255,15 @@ class DeploymentList(HikaruDocumentBase):
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_deployment_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -20509,6 +21279,7 @@ class DeploymentList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -20589,6 +21360,7 @@ class DeploymentList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -20611,6 +21383,7 @@ class DeploymentList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -20812,6 +21585,7 @@ class NetworkPolicyList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -20892,6 +21666,7 @@ class NetworkPolicyList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -20914,17 +21689,102 @@ class NetworkPolicyList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listNetworkPolicyForAllNamespaces(client: ApiClient = None) -> Response:
+    def listNetworkPolicyForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind NetworkPolicy
 
         operationID: listNetworkPolicyForAllNamespaces
         path: /apis/extensions/v1beta1/networkpolicies
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -20940,7 +21800,15 @@ class NetworkPolicyList(HikaruDocumentBase):
             inst, "list_network_policy_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21005,12 +21873,96 @@ class ControllerRevisionList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listControllerRevisionForAllNamespaces(client: ApiClient = None) -> Response:
+    def listControllerRevisionForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind ControllerRevision
 
         operationID: listControllerRevisionForAllNamespaces
         path: /apis/apps/v1beta1/controllerrevisions
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21026,7 +21978,15 @@ class ControllerRevisionList(HikaruDocumentBase):
             inst, "list_controller_revision_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21042,6 +22002,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -21122,6 +22083,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21144,6 +22106,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21358,6 +22321,7 @@ class PriorityClassList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -21437,6 +22401,7 @@ class PriorityClassList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21458,6 +22423,7 @@ class PriorityClassList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21574,12 +22540,96 @@ class DaemonSetList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listDaemonSetForAllNamespaces(client: ApiClient = None) -> Response:
+    def listDaemonSetForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind DaemonSet
 
         operationID: listDaemonSetForAllNamespaces
         path: /apis/extensions/v1beta1/daemonsets
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21593,7 +22643,15 @@ class DaemonSetList(HikaruDocumentBase):
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_daemon_set_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21609,6 +22667,7 @@ class DaemonSetList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -21689,6 +22748,7 @@ class DaemonSetList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21711,6 +22771,7 @@ class DaemonSetList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -21755,6 +22816,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -21834,6 +22896,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -21855,6 +22918,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -22181,6 +23245,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -22197,6 +23262,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -22216,6 +23282,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -22615,6 +23682,7 @@ class RuntimeClassList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -22694,6 +23762,7 @@ class RuntimeClassList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -22715,6 +23784,7 @@ class RuntimeClassList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -23030,6 +24100,7 @@ class RuntimeClass(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -23045,6 +24116,7 @@ class RuntimeClass(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -23061,6 +24133,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -23506,6 +24579,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -23521,6 +24595,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -23537,6 +24612,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -24062,6 +25138,7 @@ class Ingress(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -24078,6 +25155,7 @@ class Ingress(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -24095,6 +25173,7 @@ class Ingress(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -24393,6 +25472,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -24473,6 +25553,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -24497,17 +25578,102 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
     @staticmethod
-    def listPodDisruptionBudgetForAllNamespaces(client: ApiClient = None) -> Response:
+    def listPodDisruptionBudgetForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind PodDisruptionBudget
 
         operationID: listPodDisruptionBudgetForAllNamespaces
         path: /apis/policy/v1beta1/poddisruptionbudgets
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -24523,7 +25689,15 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
             inst, "list_pod_disruption_budget_for_all_namespaces_with_http_info"
         )
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -24823,6 +25997,7 @@ class CSINode(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -24838,6 +26013,7 @@ class CSINode(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -24854,6 +26030,7 @@ class CSINode(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -25077,6 +26254,7 @@ class CSIDriver(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -25092,6 +26270,7 @@ class CSIDriver(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -25108,6 +26287,7 @@ class CSIDriver(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -25544,6 +26724,7 @@ class CronJob(HikaruDocumentBase):
         namespace: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -25560,6 +26741,7 @@ class CronJob(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -25577,6 +26759,7 @@ class CronJob(HikaruDocumentBase):
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26054,6 +27237,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         name: str,
         exact: Optional[bool] = None,
         export: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -26069,6 +27253,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         :param export: Should this value be exported. Export strips fields
             that a user can not specify. Deprecated. Planned for removal
             in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26085,6 +27270,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26312,12 +27498,96 @@ class IngressList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listIngressForAllNamespaces(client: ApiClient = None) -> Response:
+    def listIngressForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind Ingress
 
         operationID: listIngressForAllNamespaces
         path: /apis/networking.k8s.io/v1beta1/ingresses
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26331,7 +27601,15 @@ class IngressList(HikaruDocumentBase):
         inst = ExtensionsV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_ingress_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26347,6 +27625,7 @@ class IngressList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -26427,6 +27706,7 @@ class IngressList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26449,6 +27729,7 @@ class IngressList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26512,6 +27793,7 @@ class CSIDriverList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -26591,6 +27873,7 @@ class CSIDriverList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26612,6 +27895,7 @@ class CSIDriverList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26656,6 +27940,7 @@ class CSINodeList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -26735,6 +28020,7 @@ class CSINodeList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26756,6 +28042,7 @@ class CSINodeList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26791,12 +28078,96 @@ class CronJobList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listCronJobForAllNamespaces(client: ApiClient = None) -> Response:
+    def listCronJobForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> Response:
         r"""
         list or watch objects of kind CronJob
 
         operationID: listCronJobForAllNamespaces
         path: /apis/batch/v1beta1/cronjobs
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26810,7 +28181,15 @@ class CronJobList(HikaruDocumentBase):
         inst = BatchV1beta1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_cron_job_for_all_namespaces_with_http_info")
         all_args = dict()
-
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26826,6 +28205,7 @@ class CronJobList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -26906,6 +28286,7 @@ class CronJobList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -26928,6 +28309,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -26973,6 +28355,7 @@ class PodSecurityPolicyList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -27052,6 +28435,7 @@ class PodSecurityPolicyList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -27073,6 +28457,7 @@ class PodSecurityPolicyList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -27134,6 +28519,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         resource_version: Optional[str] = None,
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
         client: ApiClient = None,
     ) -> Response:
         r"""
@@ -27213,6 +28599,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         :param watch: Watch for changes to the described resources and return
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
 
         :return: hikaru.utils.Response instance with the following codes and
@@ -27234,6 +28621,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["pretty"] = pretty
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)

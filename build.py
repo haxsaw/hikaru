@@ -70,11 +70,14 @@ import json
 import re
 from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
-                           make_swagger_name, dprefix, camel_to_pep8)
+                           dprefix, camel_to_pep8)
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 
 
 NoneType = type(None)
+
+
+remaining_ops_module = "misc.py"
 
 
 def _clean_directory(dirpath: str, including_dirpath=False):
@@ -158,6 +161,7 @@ def prep_version_package(directory: str, version: str) -> Path:
 
     :param directory: string; name of a directory to create to hold the files for a
         single version in a release
+    :param version: string; name of the version package to prep within directory
     :return: the Path object created for the version package
     """
     path = _setup_dir(directory)
@@ -268,6 +272,47 @@ def write_documents_module(path: Path, version: str):
     f.close()
 
 
+def write_misc_module(path: Path, version: str):
+    if version is None:
+        return
+    misc_file = path.open('w+')
+    print(_module_docstring, file=misc_file)
+    print("from typing import *", file=misc_file)
+    print("from hikaru import HikaruOpsBase", file=misc_file)
+    print("from hikaru.utils import Response", file=misc_file)
+    print("from kubernetes.client import CoreV1Api, ApiClient", file=misc_file)
+
+    print("\n", file=misc_file)
+    vops = ops_by_version.get(version)
+    if vops is not None:
+        for domain, qops in vops.query_ops.items():
+            if qops.operations:
+                class_content = []
+                for op in qops.operations.values():
+                    op.is_staticmethod = True
+                    if op.op_id is None:
+                        print(f"still can't render {op.op_path}; no op_id")
+                        continue
+                    kube_client = _search_for_free_method(op.op_id)
+                    if kube_client is None:
+                        print(f"Can't find the K8S method for {op.op_id}")
+                        continue
+                    op.set_k8s_access(kube_client)
+                    lines = op.as_python_method()
+                    if lines:
+                        if not class_content:
+                            class_content.append(
+                                f"class {domain.capitalize()}Ops(HikaruOpsBase):")
+                            class_content.append("")
+                        class_content.extend([f"    {line}" for line in lines])
+                        class_content.append("")
+                code = "\n".join(class_content)
+                try:
+                    code = format_file_contents(code, fast=False, mode=FileMode())
+                except NothingChanged:
+                    pass
+                print(code, file=misc_file)
+
 def write_modules(pkgpath: str):
     pkg = Path(pkgpath)
     d = module_defs()
@@ -294,14 +339,16 @@ def write_modules(pkgpath: str):
             f.close()
             documents_path = version_path / "documents.py"
             write_documents_module(documents_path, md.version)
-            misc_path = version_path / "misc.py"
+            misc_path = version_path / remaining_ops_module
             misc_path.touch()
+            write_misc_module(misc_path, md.version)
 
     # finally, capture the names of all the version modules in version module
     versions = pkg / 'versions.py'
     f = versions.open('w')
     print(f"versions = {str(mod_names)}", file=f)
     f.close()
+
 
 # the following string is used to format an Operation's method body
 _method_body_template = \
@@ -396,7 +443,7 @@ class Operation(object):
         ptype = types_map.get(ptype, ptype)
         if self.self_param is None and isinstance(ptype, ClassDescriptor):
             self.self_param = OpParameter(name, ptype, description, required)
-        else:
+        elif not any([name == p.name for p in self.parameters]):
             self.parameters.append(OpParameter(name, ptype, description, required))
 
     def set_k8s_access(self, t):
@@ -427,13 +474,13 @@ class Operation(object):
                          use_body: bool = True) -> List[str]:
         if self.is_staticmethod:
             if use_body:
-                rez =_static_method_body_template.format(k8s_class_name=k8s_class_name,
-                                                         k8s_method_name=k8s_method_name,
-                                                         body_key=body_key,
-                                                         arg_assignment_lines="\n".join(
-                                                            arg_assignment_lines),
-                                                         codes_returning_objects=
-                                                         codes_returning_objects)
+                rez = _static_method_body_template.format(k8s_class_name=k8s_class_name,
+                                                          k8s_method_name=k8s_method_name,
+                                                          body_key=body_key,
+                                                          arg_assignment_lines="\n".join(
+                                                             arg_assignment_lines),
+                                                          codes_returning_objects=
+                                                          codes_returning_objects)
             else:
                 rez = _static_method_nobody_template.format(k8s_class_name=
                                                             k8s_class_name,
@@ -460,6 +507,8 @@ class Operation(object):
     del_collection_prefix = "delete_collection"
 
     def as_python_method(self, cd=None) -> List[str]:
+        if self.op_id is None:
+            return []
         written_methods.add((self.version, self.op_id))
         if cd is not None:
             assert isinstance(cd, ClassDescriptor)
@@ -629,17 +678,6 @@ class ClassDescriptor(object):
                     self.optional_props.append(fd)
             self.required_props.sort(key=lambda x: x.name)
             self.optional_props.sort(key=lambda x: x.name)
-
-    def ref_to_self(self, other) -> bool:
-        """
-        returns True if other names the same group/version/short_name
-        :param other: another ClassDescriptor
-        :return: True if they refer to the same group/version/short_name
-        """
-        assert isinstance(other, ClassDescriptor)
-        return (self.group == other.group and
-                self.version == other.version and
-                self.short_name == other.short_name)
 
     @staticmethod
     def split_line(line, prefix: str = "   ", hanging_indent: str = "",
@@ -1086,17 +1124,40 @@ def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
     return guess
 
 
+def stop_when_true(test_expr, result_expr, seq):
+    """
+    feed elements into expr until it returns True, returning that element (None otherwise)
+
+    :param test_expr: callable of 1 arg that returns True/False
+    :param result_expr: callable of 1 arg; takes found element from test_expr
+        and maps it to a final value to return
+    :param seq: iterable of elements that can be passed to expr; when expr returns
+        True then return that element, None otherwise
+    :return: an element from seq or None
+    """
+    result = None
+    for e in seq:
+        if test_expr(e):
+            result = result_expr(e)
+        break
+    return result
+
+
 def process_params_and_responses(path: str, verb: str, op_id: str,
                                  params: list, responses: dict, description: str,
-                                 gvk_dict: dict):
+                                 gvk_dict: dict,
+                                 reuse_op: Operation = None) -> Operation:
     version = get_path_version(path)
     vops = get_version_ops(version)
     domain = get_path_domain(path)
-    new_op = Operation(verb, path, op_id, description, gvk_dict)
+    if reuse_op is None:
+        new_op = Operation(verb, path, op_id, description, gvk_dict)
+    else:
+        new_op = reuse_op
     k8s_name = None  # used as a flag that an object is an input param
-    cd: ClassDescriptor = None
-    cd_in_params: ClassDescriptor = None
-    cd_in_responses: ClassDescriptor = None
+    cd: Optional[ClassDescriptor] = None
+    cd_in_params: Optional[ClassDescriptor] = None
+    cd_in_responses: Optional[ClassDescriptor] = None
     for param in params:
         has_mismatch = False
         name = param["name"]
@@ -1134,6 +1195,11 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
 
+    cd_in_params = stop_when_true(lambda x: x is not None and
+                                  isinstance(x.ptype, ClassDescriptor),
+                                  lambda x: x.ptype,
+                                  [new_op.self_param] + new_op.parameters)
+
     for code, response in responses.items():
         has_mismatch = False
         description = response.get('description', '')
@@ -1161,6 +1227,10 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 
+    cd_in_responses = stop_when_true(lambda x: isinstance(x.ref, ClassDescriptor),
+                                     lambda x: x.ref,
+                                     new_op.returns.values())
+
     whose_method: Optional[ClassDescriptor] = None
     if cd_in_params:
         if cd_in_params.short_name == "DeleteOptions":
@@ -1182,14 +1252,13 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         guess: ClassDescriptor = _best_guess(new_op)
         if (guess and whose_method is cd_in_responses and
                 whose_method.short_name != guess.short_name):
-            print(f"adding {new_op.op_id} to {guess.short_name}, "
-                  f"not {whose_method.short_name}")
             guess.add_operation(new_op)
         else:
             whose_method.add_operation(new_op)
     else:
         new_op.is_staticmethod = True
         vops.add_query_operation(domain, new_op)
+    return new_op
 
 
 _dont_remove_groups = {"storage", "policy"}
@@ -1244,10 +1313,29 @@ def _search_for_method(group: str, version: str, kind: str,
     return result
 
 
+def _search_for_free_method(swagger_name: str) -> Optional[Tuple[str, str, str, str]]:
+    result = None
+    package_name = 'kubernetes.client.api'
+    module_name = '.core_v1_api'
+    class_name = 'CoreV1Api'
+    try:
+        mod = importlib.import_module(module_name, package_name)
+    except ModuleNotFoundError:
+        pass
+    else:
+        cls = getattr(mod, class_name, None)
+        if cls is not None:
+            k8s_name = camel_to_pep8(swagger_name)
+            meth = getattr(cls, k8s_name, None)
+            if meth is not None:
+                result = package_name, module_name, class_name, k8s_name
+    return result
+
+
 def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     """
-    from a reference path determine the Kubernete Python client's module and class
+    from a reference path determine the Kubernetes Python client's module and class
     :param cd: a ClassDescriptor instance for which to find the API class
     :param op: Operation, optional. provides extra info to find the required
         method.
@@ -1291,18 +1379,20 @@ def load_stable(swagger_file_path: str) -> str:
     for k, v in d["paths"].items():
         last_verb = None
         last_opid = None
+        last_op = None
         for verb, details in v.items():
             if verb == "parameters" and type(details) == list:
                 process_params_and_responses(k, last_verb, last_opid, details,
-                                             {}, '', {})
+                                             {}, '', {}, reuse_op=last_op)
+                last_op = None
                 continue
             gvk = details.get("x-kubernetes-group-version-kind", {})
             description = details.get('description', '')
             op_id = details["operationId"]
-            process_params_and_responses(k, verb, op_id,
-                                         details.get("parameters", []),
-                                         details.get("responses", {}),
-                                         description, gvk)
+            last_op = process_params_and_responses(k, verb, op_id,
+                                                   details.get("parameters", []),
+                                                   details.get("responses", {}),
+                                                   description, gvk)
             last_verb = verb
             last_opid = op_id
 
@@ -1404,7 +1494,7 @@ def build_it(swagger_file: str, main_rel: str):
     if main_rel == relname:
         # this is the main release; make the root package default to it
         make_root_init(model_package, main_rel)
-    check_for_stragglers()
+    # check_for_stragglers()
     _release_in_process = None
 
 

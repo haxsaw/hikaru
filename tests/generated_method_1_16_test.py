@@ -3,7 +3,7 @@ from types import MethodType, FunctionType
 from inspect import signature
 from random import choice
 import pytest
-from hikaru.meta import HikaruDocumentBase
+from hikaru import HikaruDocumentBase, HikaruOpsBase
 from hikaru.model.rel_1_16.versions import versions
 from hikaru import set_default_release
 
@@ -119,6 +119,32 @@ for version in versions:
                             params[p.name] = 'the_name'
                         elif p.name == 'body':
                             params[p.name] = {}
+                        else:
+                            params[p.name] = None
+                    all_params.append((smeth, params))
+    # ok, that got the classes and instace methods; now find/test the Ops collections
+    mod = importlib.import_module(".misc", f"hikaru.model.rel_1_16.{version}")
+    test_classes = []
+    for c in vars(mod).values():
+        if (type(c) is type and issubclass(c, HikaruOpsBase) and c is not HikaruOpsBase):
+            test_classes.append(c)
+    for cls in test_classes:
+        for name, attr in vars(cls).items():
+            if not name.startswith("__"):
+                if isinstance(attr, staticmethod):
+                    smeth = getattr(cls, name)
+                    sig = signature(smeth)
+                    mock_client = MockApiClient()
+                    params = {}
+                    for p in sig.parameters.values():
+                        if p.name == 'client':
+                            params['client'] = mock_client
+                        elif p.name == 'namespace':
+                            params[p.name] = 'the_namespace'
+                        elif p.name == 'name':
+                            params[p.name] = 'the_name'
+                        elif p.name == 'path':
+                            params[p.name] = 'somePath'
                         else:
                             params[p.name] = None
                     all_params.append((smeth, params))
