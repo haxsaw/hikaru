@@ -29,9 +29,9 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
-from typing import List, Dict, Optional, Any
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, InitVar
-from kubernetes.client.api_client import ApiClient
+from kubernetes.client import CoreV1Api
 
 from kubernetes.client import ApiClient
 from kubernetes.client import BatchV2alpha1Api
@@ -10645,6 +10645,7 @@ class CronJob(HikaruDocumentBase):
         if client is not None:
             client_to_use = client
         else:
+            # noinspection PyDataclass
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_cron_job_with_http_info")
@@ -10877,6 +10878,7 @@ class CronJob(HikaruDocumentBase):
         if client is not None:
             client_to_use = client
         else:
+            # noinspection PyDataclass
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_cron_job_with_http_info")

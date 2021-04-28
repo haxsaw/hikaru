@@ -119,14 +119,16 @@ for version in versions:
                             params[p.name] = 'the_name'
                         elif p.name == 'body':
                             params[p.name] = {}
+                        elif p.name == 'path':
+                            params[p.name] = 'somePath'
                         else:
                             params[p.name] = None
                     all_params.append((smeth, params))
-    # ok, that got the classes and instace methods; now find/test the Ops collections
+    # ok, that got the classes and instance methods; now find/test the Ops collections
     mod = importlib.import_module(".misc", f"hikaru.model.rel_1_16.{version}")
     test_classes = []
     for c in vars(mod).values():
-        if (type(c) is type and issubclass(c, HikaruOpsBase) and c is not HikaruOpsBase):
+        if type(c) is type and issubclass(c, HikaruOpsBase) and c is not HikaruOpsBase:
             test_classes.append(c)
     for cls in test_classes:
         for name, attr in vars(cls).items():

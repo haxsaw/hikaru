@@ -16,7 +16,7 @@ def get_requirements():
 setup(
     name="hikaru",
     version=__version__,
-    packages=["hikaru", "hikaru.model"],
+    packages=["hikaru", "hikaru.model", "hikaru.model.*"],
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
     long_description=get_long_desc(),

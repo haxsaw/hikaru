@@ -221,9 +221,9 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
           file=stream)
     print("from hikaru.generate import get_clean_dict", file=stream)
     print("from hikaru.utils import Response", file=stream)
-    print("from typing import List, Dict, Optional, Any", file=stream)
+    print("from typing import Dict, List, Optional, Any", file=stream)
     print("from dataclasses import dataclass, field, InitVar", file=stream)
-    print("from kubernetes.client.api_client import ApiClient", file=stream)
+    print("from kubernetes.client import CoreV1Api", file=stream)
     if other_imports is not None:
         for line in other_imports:
             print(line, file=stream)
@@ -355,6 +355,7 @@ _method_body_template = \
 """if client is not None:
     client_to_use = client
 else:
+    # noinspection PyDataclass
     client_to_use = self.client
 inst = {k8s_class_name}(api_client=client_to_use)
 the_method = getattr(inst, '{k8s_method_name}_with_http_info')
@@ -1109,11 +1110,21 @@ def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
         pass
     new_parts = []
     guess: Optional[ClassDescriptor] = None
+    # first, look for just each part of the name as a class
+    # only take the first match
+    for part in parts:
+        test_name = part.capitalize()
+        if guess is None and test_name in md.all_classes:
+            guess = md.all_classes[test_name]
+    # next, look for a longer name by concat'ing from the end forward, taking
+    # any longer matches
     for part in parts:
         new_parts.insert(0, part.capitalize())
         test_name = "".join(new_parts)
         if test_name in md.all_classes:
-            guess = md.all_classes[test_name]
+            if not guess or len(guess.short_name) < len(test_name):
+                guess = md.all_classes[test_name]
+    # final check: if a longer name is possible, then look for a permuation
     if not guess or len(guess.short_name) < len(''.join(new_parts)):
         # then a better guess might exist via some permutation of the name parts
         for perm in permutations(new_parts):
@@ -1156,8 +1167,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         new_op = reuse_op
     k8s_name = None  # used as a flag that an object is an input param
     cd: Optional[ClassDescriptor] = None
-    cd_in_params: Optional[ClassDescriptor] = None
-    cd_in_responses: Optional[ClassDescriptor] = None
     for param in params:
         has_mismatch = False
         name = param["name"]
@@ -1179,7 +1188,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                     raise RuntimeError(f"Couldn't find a ClassDescriptor for "
                                        f"parameter {k8s_name} in {op_id}")
 
-                cd_in_params = cd
             else:
                 ptype = schema.get("type")
                 if not ptype:
@@ -1195,10 +1203,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
 
-    cd_in_params = stop_when_true(lambda x: x is not None and
-                                  isinstance(x.ptype, ClassDescriptor),
-                                  lambda x: x.ptype,
-                                  [new_op.self_param] + new_op.parameters)
+    cd_in_params: Optional[ClassDescriptor] = stop_when_true(lambda x: x is not None and
+                                                             isinstance(x.ptype,
+                                                                        ClassDescriptor),
+                                                             lambda x: x.ptype,
+                                                             [new_op.self_param] +
+                                                             new_op.parameters)
 
     for code, response in responses.items():
         has_mismatch = False
@@ -1214,7 +1224,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 if ptype is None:
                     raise RuntimeError(f"Couldn't find a ClassDescriptor for "
                                        f"response {code} in {op_id}")
-                cd_in_responses = ptype
             elif 'type' in response['schema']:
                 ptype = response['schema']['type']
                 ptype = types_map.get(ptype, ptype)
@@ -1227,9 +1236,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 
-    cd_in_responses = stop_when_true(lambda x: isinstance(x.ref, ClassDescriptor),
-                                     lambda x: x.ref,
-                                     new_op.returns.values())
+    cd_in_responses: Optional[ClassDescriptor] = \
+        stop_when_true(lambda x:
+                       isinstance(x.ref,
+                                  ClassDescriptor),
+                       lambda x: x.ref,
+                       new_op.returns.values())
 
     whose_method: Optional[ClassDescriptor] = None
     if cd_in_params:
@@ -1245,11 +1257,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         whose_method = cd_in_responses
         new_op.is_staticmethod = True
     else:
-        # then this is a query method; leave whose_method alone
+        # then no objects in the params or responses; consider further below
         pass
 
+    guess: Optional[ClassDescriptor] = None
     if whose_method:
-        guess: ClassDescriptor = _best_guess(new_op)
+        guess = _best_guess(new_op)
         if (guess and whose_method is cd_in_responses and
                 whose_method.short_name != guess.short_name):
             guess.add_operation(new_op)
@@ -1257,7 +1270,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
             whose_method.add_operation(new_op)
     else:
         new_op.is_staticmethod = True
-        vops.add_query_operation(domain, new_op)
+        if new_op.op_id:
+            guess = _best_guess(new_op)
+        if guess:
+            guess.add_operation(new_op)
+        else:
+            vops.add_query_operation(domain, new_op)
     return new_op
 
 

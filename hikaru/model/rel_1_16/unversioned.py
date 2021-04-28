@@ -29,9 +29,9 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
-from typing import List, Dict, Optional, Any
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, InitVar
-from kubernetes.client.api_client import ApiClient
+from kubernetes.client import CoreV1Api
 
 from kubernetes.client import ApiClient
 
