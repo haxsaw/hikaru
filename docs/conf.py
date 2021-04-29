@@ -13,6 +13,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+from hikaru import __version__
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +23,7 @@ copyright = '2021, Tom Carroll'
 author = 'Tom Carroll'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2a'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------

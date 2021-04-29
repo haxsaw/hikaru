@@ -28,7 +28,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 try:
     from .v2beta1 import *
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 from hikaru import HikaruDocumentBase
 

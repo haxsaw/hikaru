@@ -124,32 +124,35 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((smeth, params))
+    #
+    # misc.py has been removed for now; we'll keep this in case it comes back
+    #
     # ok, that got the classes and instance methods; now find/test the Ops collections
-    mod = importlib.import_module(".misc", f"hikaru.model.rel_1_16.{version}")
-    test_classes = []
-    for c in vars(mod).values():
-        if type(c) is type and issubclass(c, HikaruOpsBase) and c is not HikaruOpsBase:
-            test_classes.append(c)
-    for cls in test_classes:
-        for name, attr in vars(cls).items():
-            if not name.startswith("__"):
-                if isinstance(attr, staticmethod):
-                    smeth = getattr(cls, name)
-                    sig = signature(smeth)
-                    mock_client = MockApiClient()
-                    params = {}
-                    for p in sig.parameters.values():
-                        if p.name == 'client':
-                            params['client'] = mock_client
-                        elif p.name == 'namespace':
-                            params[p.name] = 'the_namespace'
-                        elif p.name == 'name':
-                            params[p.name] = 'the_name'
-                        elif p.name == 'path':
-                            params[p.name] = 'somePath'
-                        else:
-                            params[p.name] = None
-                    all_params.append((smeth, params))
+    # mod = importlib.import_module(".misc", f"hikaru.model.rel_1_16.{version}")
+    # test_classes = []
+    # for c in vars(mod).values():
+    #     if type(c) is type and issubclass(c, HikaruOpsBase) and c is not HikaruOpsBase:
+    #         test_classes.append(c)
+    # for cls in test_classes:
+    #     for name, attr in vars(cls).items():
+    #         if not name.startswith("__"):
+    #             if isinstance(attr, staticmethod):
+    #                 smeth = getattr(cls, name)
+    #                 sig = signature(smeth)
+    #                 mock_client = MockApiClient()
+    #                 params = {}
+    #                 for p in sig.parameters.values():
+    #                     if p.name == 'client':
+    #                         params['client'] = mock_client
+    #                     elif p.name == 'namespace':
+    #                         params[p.name] = 'the_namespace'
+    #                     elif p.name == 'name':
+    #                         params[p.name] = 'the_name'
+    #                     elif p.name == 'path':
+    #                         params[p.name] = 'somePath'
+    #                     else:
+    #                         params[p.name] = None
+    #                 all_params.append((smeth, params))
 
 
 @pytest.mark.parametrize('func, kwargs', all_params)

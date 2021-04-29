@@ -1742,6 +1742,7 @@ class ClusterRoleList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind ClusterRole
@@ -1822,6 +1823,9 @@ class ClusterRoleList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1833,6 +1837,11 @@ class ClusterRoleList(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -1843,6 +1852,7 @@ class ClusterRoleList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -1895,6 +1905,7 @@ class ClusterRole(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of ClusterRole
@@ -1988,6 +1999,9 @@ class ClusterRole(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1999,6 +2013,11 @@ class ClusterRole(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -2014,6 +2033,7 @@ class ClusterRole(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2023,6 +2043,7 @@ class ClusterRole(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a ClusterRole
@@ -2041,6 +2062,9 @@ class ClusterRole(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2058,11 +2082,17 @@ class ClusterRole(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -2076,6 +2106,7 @@ class ClusterRole(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a ClusterRole
@@ -2111,6 +2142,9 @@ class ClusterRole(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2123,6 +2157,11 @@ class ClusterRole(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -2133,13 +2172,17 @@ class ClusterRole(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
 
     @staticmethod
     def readClusterRole(
-        name: str, pretty: Optional[str] = None, client: ApiClient = None
+        name: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified ClusterRole
@@ -2150,6 +2193,9 @@ class ClusterRole(HikaruDocumentBase):
         :param name: part of the URL path
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2161,9 +2207,15 @@ class ClusterRole(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2176,6 +2228,7 @@ class ClusterRole(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified ClusterRole
@@ -2202,6 +2255,9 @@ class ClusterRole(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2213,6 +2269,11 @@ class ClusterRole(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -2222,6 +2283,7 @@ class ClusterRole(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2232,6 +2294,7 @@ class ClusterRole(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified ClusterRole
@@ -2251,6 +2314,9 @@ class ClusterRole(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2267,12 +2333,18 @@ class ClusterRole(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_cluster_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_cluster_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -2697,6 +2769,7 @@ class RoleBindingList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind RoleBinding
@@ -2778,6 +2851,9 @@ class RoleBindingList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2789,6 +2865,11 @@ class RoleBindingList(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
@@ -2800,6 +2881,7 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2855,6 +2937,7 @@ class RoleBinding(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of RoleBinding
@@ -2949,6 +3032,9 @@ class RoleBinding(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2962,6 +3048,11 @@ class RoleBinding(HikaruDocumentBase):
         the_method = getattr(
             inst, "delete_collection_namespaced_role_binding_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -2978,6 +3069,7 @@ class RoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -2988,6 +3080,7 @@ class RoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a RoleBinding
@@ -3007,6 +3100,9 @@ class RoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3024,12 +3120,18 @@ class RoleBinding(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -3044,6 +3146,7 @@ class RoleBinding(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a RoleBinding
@@ -3080,6 +3183,9 @@ class RoleBinding(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3092,6 +3198,11 @@ class RoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -3103,6 +3214,7 @@ class RoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -3113,6 +3225,7 @@ class RoleBinding(HikaruDocumentBase):
         namespace: str,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified RoleBinding
@@ -3124,6 +3237,9 @@ class RoleBinding(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3135,10 +3251,16 @@ class RoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -3152,6 +3274,7 @@ class RoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified RoleBinding
@@ -3179,6 +3302,9 @@ class RoleBinding(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3190,6 +3316,11 @@ class RoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -3200,6 +3331,7 @@ class RoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -3211,6 +3343,7 @@ class RoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified RoleBinding
@@ -3231,6 +3364,9 @@ class RoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3247,6 +3383,11 @@ class RoleBinding(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -3254,6 +3395,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -5054,6 +5196,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of ClusterRoleBinding
@@ -5147,6 +5290,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5160,6 +5306,11 @@ class ClusterRoleBinding(HikaruDocumentBase):
         the_method = getattr(
             inst, "delete_collection_cluster_role_binding_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -5175,6 +5326,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5184,6 +5336,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a ClusterRoleBinding
@@ -5202,6 +5355,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5219,11 +5375,17 @@ class ClusterRoleBinding(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -5237,6 +5399,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a ClusterRoleBinding
@@ -5272,6 +5435,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5284,6 +5450,11 @@ class ClusterRoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -5294,13 +5465,17 @@ class ClusterRoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
 
     @staticmethod
     def readClusterRoleBinding(
-        name: str, pretty: Optional[str] = None, client: ApiClient = None
+        name: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified ClusterRoleBinding
@@ -5311,6 +5486,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param name: part of the URL path
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5322,9 +5500,15 @@ class ClusterRoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5337,6 +5521,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified ClusterRoleBinding
@@ -5363,6 +5548,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5374,6 +5562,11 @@ class ClusterRoleBinding(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -5383,6 +5576,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -5393,6 +5587,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified ClusterRoleBinding
@@ -5412,6 +5607,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5428,12 +5626,18 @@ class ClusterRoleBinding(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -8499,6 +8703,7 @@ class VolumeAttachment(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of VolumeAttachment
@@ -8592,6 +8797,9 @@ class VolumeAttachment(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8603,6 +8811,11 @@ class VolumeAttachment(HikaruDocumentBase):
         client_to_use = client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -8618,6 +8831,7 @@ class VolumeAttachment(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -8627,6 +8841,7 @@ class VolumeAttachment(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a VolumeAttachment
@@ -8645,6 +8860,9 @@ class VolumeAttachment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8662,11 +8880,17 @@ class VolumeAttachment(HikaruDocumentBase):
             client_to_use = self.client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -8680,6 +8904,7 @@ class VolumeAttachment(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a VolumeAttachment
@@ -8715,6 +8940,9 @@ class VolumeAttachment(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8727,6 +8955,11 @@ class VolumeAttachment(HikaruDocumentBase):
         client_to_use = client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -8737,6 +8970,7 @@ class VolumeAttachment(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -8748,6 +8982,7 @@ class VolumeAttachment(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified VolumeAttachment
@@ -8764,6 +8999,9 @@ class VolumeAttachment(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8775,11 +9013,17 @@ class VolumeAttachment(HikaruDocumentBase):
         client_to_use = client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -8792,6 +9036,7 @@ class VolumeAttachment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified VolumeAttachment
@@ -8818,6 +9063,9 @@ class VolumeAttachment(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8829,6 +9077,11 @@ class VolumeAttachment(HikaruDocumentBase):
         client_to_use = client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -8838,6 +9091,7 @@ class VolumeAttachment(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -8848,6 +9102,7 @@ class VolumeAttachment(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified VolumeAttachment
@@ -8867,6 +9122,9 @@ class VolumeAttachment(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8883,12 +9141,18 @@ class VolumeAttachment(HikaruDocumentBase):
             client_to_use = self.client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -10053,6 +10317,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind ClusterRoleBinding
@@ -10133,6 +10398,9 @@ class ClusterRoleBindingList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10144,6 +10412,11 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_cluster_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_cluster_role_binding_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -10154,6 +10427,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10766,6 +11040,7 @@ class Role(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of Role
@@ -10860,6 +11135,9 @@ class Role(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10871,6 +11149,11 @@ class Role(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -10887,6 +11170,7 @@ class Role(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10897,6 +11181,7 @@ class Role(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a Role
@@ -10916,6 +11201,9 @@ class Role(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10933,12 +11221,18 @@ class Role(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -10953,6 +11247,7 @@ class Role(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a Role
@@ -10989,6 +11284,9 @@ class Role(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11001,6 +11299,11 @@ class Role(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11012,6 +11315,7 @@ class Role(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -11022,6 +11326,7 @@ class Role(HikaruDocumentBase):
         namespace: str,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified Role
@@ -11033,6 +11338,9 @@ class Role(HikaruDocumentBase):
         :param namespace: part of the URL path
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11044,10 +11352,16 @@ class Role(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -11061,6 +11375,7 @@ class Role(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified Role
@@ -11088,6 +11403,9 @@ class Role(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11099,6 +11417,11 @@ class Role(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11109,6 +11432,7 @@ class Role(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -11120,6 +11444,7 @@ class Role(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified Role
@@ -11140,6 +11465,9 @@ class Role(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11156,6 +11484,11 @@ class Role(HikaruDocumentBase):
             client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -11163,6 +11496,7 @@ class Role(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -11179,6 +11513,7 @@ class Role(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind RoleBinding
@@ -11259,6 +11594,9 @@ class Role(HikaruDocumentBase):
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11272,6 +11610,11 @@ class Role(HikaruDocumentBase):
         the_method = getattr(
             inst, "list_role_binding_for_all_namespaces_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_role_binding_for_all_namespaces_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -11282,6 +11625,7 @@ class Role(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -11298,6 +11642,7 @@ class Role(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind Role
@@ -11378,6 +11723,9 @@ class Role(HikaruDocumentBase):
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11389,6 +11737,11 @@ class Role(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_role_for_all_namespaces_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_role_for_all_namespaces_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -11399,6 +11752,7 @@ class Role(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -11475,6 +11829,7 @@ class RoleList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind Role
@@ -11556,6 +11911,9 @@ class RoleList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11567,6 +11925,11 @@ class RoleList(HikaruDocumentBase):
         client_to_use = client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
@@ -11578,6 +11941,7 @@ class RoleList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -11975,6 +12339,7 @@ class PriorityClass(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of PriorityClass
@@ -12068,6 +12433,9 @@ class PriorityClass(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12079,6 +12447,11 @@ class PriorityClass(HikaruDocumentBase):
         client_to_use = client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -12094,6 +12467,7 @@ class PriorityClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12103,6 +12477,7 @@ class PriorityClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a PriorityClass
@@ -12121,6 +12496,9 @@ class PriorityClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12138,11 +12516,17 @@ class PriorityClass(HikaruDocumentBase):
             client_to_use = self.client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -12156,6 +12540,7 @@ class PriorityClass(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a PriorityClass
@@ -12191,6 +12576,9 @@ class PriorityClass(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12203,6 +12591,11 @@ class PriorityClass(HikaruDocumentBase):
         client_to_use = client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -12213,6 +12606,7 @@ class PriorityClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -12224,6 +12618,7 @@ class PriorityClass(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified PriorityClass
@@ -12240,6 +12635,9 @@ class PriorityClass(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12251,11 +12649,17 @@ class PriorityClass(HikaruDocumentBase):
         client_to_use = client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12268,6 +12672,7 @@ class PriorityClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified PriorityClass
@@ -12294,6 +12699,9 @@ class PriorityClass(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12305,6 +12713,11 @@ class PriorityClass(HikaruDocumentBase):
         client_to_use = client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -12314,6 +12727,7 @@ class PriorityClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -12324,6 +12738,7 @@ class PriorityClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified PriorityClass
@@ -12343,6 +12758,9 @@ class PriorityClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12359,12 +12777,18 @@ class PriorityClass(HikaruDocumentBase):
             client_to_use = self.client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -13184,6 +13608,7 @@ class PriorityClassList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind PriorityClass
@@ -13264,6 +13689,9 @@ class PriorityClassList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13275,6 +13703,11 @@ class PriorityClassList(HikaruDocumentBase):
         client_to_use = client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_priority_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_priority_class_with_http_info "
+                "on SchedulingV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -13285,6 +13718,7 @@ class PriorityClassList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13442,6 +13876,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind VolumeAttachment
@@ -13522,6 +13957,9 @@ class VolumeAttachmentList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13533,6 +13971,11 @@ class VolumeAttachmentList(HikaruDocumentBase):
         client_to_use = client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_volume_attachment_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_volume_attachment_with_http_info "
+                "on StorageV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -13543,6 +13986,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13590,6 +14034,7 @@ class AuditSink(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of AuditSink
@@ -13683,6 +14128,9 @@ class AuditSink(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13694,6 +14142,11 @@ class AuditSink(HikaruDocumentBase):
         client_to_use = client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -13709,6 +14162,7 @@ class AuditSink(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13718,6 +14172,7 @@ class AuditSink(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create an AuditSink
@@ -13736,6 +14191,9 @@ class AuditSink(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13753,11 +14211,17 @@ class AuditSink(HikaruDocumentBase):
             client_to_use = self.client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -13771,6 +14235,7 @@ class AuditSink(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete an AuditSink
@@ -13806,6 +14271,9 @@ class AuditSink(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13818,6 +14286,11 @@ class AuditSink(HikaruDocumentBase):
         client_to_use = client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -13828,6 +14301,7 @@ class AuditSink(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -13839,6 +14313,7 @@ class AuditSink(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified AuditSink
@@ -13855,6 +14330,9 @@ class AuditSink(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13866,11 +14344,17 @@ class AuditSink(HikaruDocumentBase):
         client_to_use = client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13883,6 +14367,7 @@ class AuditSink(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified AuditSink
@@ -13909,6 +14394,9 @@ class AuditSink(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13920,6 +14408,11 @@ class AuditSink(HikaruDocumentBase):
         client_to_use = client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -13929,6 +14422,7 @@ class AuditSink(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -13939,6 +14433,7 @@ class AuditSink(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified AuditSink
@@ -13958,6 +14453,9 @@ class AuditSink(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13974,12 +14472,18 @@ class AuditSink(HikaruDocumentBase):
             client_to_use = self.client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -14121,6 +14625,7 @@ class PodPresetList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind PodPreset
@@ -14202,6 +14707,9 @@ class PodPresetList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14213,6 +14721,11 @@ class PodPresetList(HikaruDocumentBase):
         client_to_use = client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
@@ -14224,6 +14737,7 @@ class PodPresetList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14240,6 +14754,7 @@ class PodPresetList(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind PodPreset
@@ -14320,6 +14835,9 @@ class PodPresetList(HikaruDocumentBase):
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14331,6 +14849,11 @@ class PodPresetList(HikaruDocumentBase):
         client_to_use = client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_pod_preset_for_all_namespaces_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_pod_preset_for_all_namespaces_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -14341,6 +14864,7 @@ class PodPresetList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14389,6 +14913,7 @@ class PodPreset(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of PodPreset
@@ -14483,6 +15008,9 @@ class PodPreset(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14496,6 +15024,11 @@ class PodPreset(HikaruDocumentBase):
         the_method = getattr(
             inst, "delete_collection_namespaced_pod_preset_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -14512,6 +15045,7 @@ class PodPreset(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14522,6 +15056,7 @@ class PodPreset(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a PodPreset
@@ -14541,6 +15076,9 @@ class PodPreset(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14558,12 +15096,18 @@ class PodPreset(HikaruDocumentBase):
             client_to_use = self.client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -14578,6 +15122,7 @@ class PodPreset(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a PodPreset
@@ -14614,6 +15159,9 @@ class PodPreset(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14626,6 +15174,11 @@ class PodPreset(HikaruDocumentBase):
         client_to_use = client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14637,6 +15190,7 @@ class PodPreset(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -14649,6 +15203,7 @@ class PodPreset(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified PodPreset
@@ -14666,6 +15221,9 @@ class PodPreset(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14677,12 +15235,18 @@ class PodPreset(HikaruDocumentBase):
         client_to_use = client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14696,6 +15260,7 @@ class PodPreset(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified PodPreset
@@ -14723,6 +15288,9 @@ class PodPreset(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14734,6 +15302,11 @@ class PodPreset(HikaruDocumentBase):
         client_to_use = client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14744,6 +15317,7 @@ class PodPreset(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -14755,6 +15329,7 @@ class PodPreset(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified PodPreset
@@ -14775,6 +15350,9 @@ class PodPreset(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14791,6 +15369,11 @@ class PodPreset(HikaruDocumentBase):
             client_to_use = self.client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_pod_preset_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_pod_preset_with_http_info "
+                "on SettingsV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -14798,6 +15381,7 @@ class PodPreset(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -14860,6 +15444,7 @@ class AuditSinkList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind AuditSink
@@ -14940,6 +15525,9 @@ class AuditSinkList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14951,6 +15539,11 @@ class AuditSinkList(HikaruDocumentBase):
         client_to_use = client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_audit_sink_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_audit_sink_with_http_info "
+                "on AuditregistrationV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -14961,6 +15554,7 @@ class AuditSinkList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15053,6 +15647,7 @@ class EndpointSlice(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of EndpointSlice
@@ -15147,6 +15742,9 @@ class EndpointSlice(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15160,6 +15758,11 @@ class EndpointSlice(HikaruDocumentBase):
         the_method = getattr(
             inst, "delete_collection_namespaced_endpoint_slice_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -15176,6 +15779,7 @@ class EndpointSlice(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15186,6 +15790,7 @@ class EndpointSlice(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create an EndpointSlice
@@ -15205,6 +15810,9 @@ class EndpointSlice(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15222,12 +15830,18 @@ class EndpointSlice(HikaruDocumentBase):
             client_to_use = self.client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -15242,6 +15856,7 @@ class EndpointSlice(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete an EndpointSlice
@@ -15278,6 +15893,9 @@ class EndpointSlice(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15290,6 +15908,11 @@ class EndpointSlice(HikaruDocumentBase):
         client_to_use = client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -15301,6 +15924,7 @@ class EndpointSlice(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -15313,6 +15937,7 @@ class EndpointSlice(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified EndpointSlice
@@ -15330,6 +15955,9 @@ class EndpointSlice(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15341,12 +15969,18 @@ class EndpointSlice(HikaruDocumentBase):
         client_to_use = client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15360,6 +15994,7 @@ class EndpointSlice(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified EndpointSlice
@@ -15387,6 +16022,9 @@ class EndpointSlice(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15398,6 +16036,11 @@ class EndpointSlice(HikaruDocumentBase):
         client_to_use = client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -15408,6 +16051,7 @@ class EndpointSlice(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15419,6 +16063,7 @@ class EndpointSlice(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified EndpointSlice
@@ -15439,6 +16084,9 @@ class EndpointSlice(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15455,6 +16103,11 @@ class EndpointSlice(HikaruDocumentBase):
             client_to_use = self.client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -15462,6 +16115,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
@@ -15581,6 +16235,7 @@ class EndpointSliceList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind EndpointSlice
@@ -15662,6 +16317,9 @@ class EndpointSliceList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15673,6 +16331,11 @@ class EndpointSliceList(HikaruDocumentBase):
         client_to_use = client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_namespaced_endpoint_slice_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_endpoint_slice_with_http_info "
+                "on DiscoveryV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
@@ -15684,6 +16347,7 @@ class EndpointSliceList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15730,6 +16394,7 @@ class RuntimeClassList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind RuntimeClass
@@ -15810,6 +16475,9 @@ class RuntimeClassList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15821,6 +16489,11 @@ class RuntimeClassList(HikaruDocumentBase):
         client_to_use = client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -15831,6 +16504,7 @@ class RuntimeClassList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -15885,6 +16559,7 @@ class RuntimeClass(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of RuntimeClass
@@ -15978,6 +16653,9 @@ class RuntimeClass(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15989,6 +16667,11 @@ class RuntimeClass(HikaruDocumentBase):
         client_to_use = client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_collection_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["_continue"] = continue_
         all_args["dry_run"] = dry_run
@@ -16004,6 +16687,7 @@ class RuntimeClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -16013,6 +16697,7 @@ class RuntimeClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a RuntimeClass
@@ -16031,6 +16716,9 @@ class RuntimeClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16048,11 +16736,17 @@ class RuntimeClass(HikaruDocumentBase):
             client_to_use = self.client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -16066,6 +16760,7 @@ class RuntimeClass(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a RuntimeClass
@@ -16101,6 +16796,9 @@ class RuntimeClass(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16113,6 +16811,11 @@ class RuntimeClass(HikaruDocumentBase):
         client_to_use = client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
@@ -16123,6 +16826,7 @@ class RuntimeClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -16134,6 +16838,7 @@ class RuntimeClass(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified RuntimeClass
@@ -16150,6 +16855,9 @@ class RuntimeClass(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16161,11 +16869,17 @@ class RuntimeClass(HikaruDocumentBase):
         client_to_use = client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -16178,6 +16892,7 @@ class RuntimeClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified RuntimeClass
@@ -16204,6 +16919,9 @@ class RuntimeClass(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16215,6 +16933,11 @@ class RuntimeClass(HikaruDocumentBase):
         client_to_use = client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["body"] = body
@@ -16224,6 +16947,7 @@ class RuntimeClass(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -16234,6 +16958,7 @@ class RuntimeClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified RuntimeClass
@@ -16253,6 +16978,9 @@ class RuntimeClass(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16269,12 +16997,18 @@ class RuntimeClass(HikaruDocumentBase):
             client_to_use = self.client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_runtime_class_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_runtime_class_with_http_info "
+                "on NodeV1alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)

@@ -28,7 +28,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 
 try:
     from .v1beta2 import *
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 globs = dict(globals())

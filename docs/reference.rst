@@ -31,6 +31,16 @@ DiffDetail is a namedtuple that is returned as list elements from the
 .. autoclass:: hikaru.HikaruBase
    :members:
 
+.. _HikaruDocumentBase doc:
+
+.. autoclass:: hikaru.HikaruDocumentBase
+   :members:
+
+.. _Response doc:
+
+.. autoclass:: hikaru.Response
+   :members:
+
 .. _from_dict doc:
 
 .. autofunction:: hikaru.from_dict
@@ -67,3 +77,14 @@ DiffDetail is a namedtuple that is returned as list elements from the
 
 .. autofunction:: hikaru.process_api_version
 
+.. _get_default_release doc:
+
+.. autofunction:: hikaru.get_default_release
+
+.. _set_default_release doc:
+
+.. autofunction:: hikaru.set_default_release
+
+.. _set_global_default_release doc:
+
+.. autofunction:: hikaru.set_global_default_release

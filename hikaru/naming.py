@@ -54,7 +54,9 @@ def get_default_release() -> Optional[str]:
 def set_default_release(relname: str):
     """
     Sets the default release for the current thread.
-    :param relname: string; the name of the release to use for this same thread
+
+    :param relname: string; the name of the release to use for this same thread.
+         NOTE: there is no checking that this release package exists!
     """
     ct: Thread = current_thread()
     _default_release_by_thread[ct.name] = relname

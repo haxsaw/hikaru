@@ -10205,6 +10205,7 @@ class CronJobList(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         watch: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind CronJob
@@ -10285,6 +10286,9 @@ class CronJobList(HikaruDocumentBase):
             them as a stream of add, update, and remove notifications.
             Specify resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10296,6 +10300,11 @@ class CronJobList(HikaruDocumentBase):
         client_to_use = client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_cron_job_for_all_namespaces_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_cron_job_for_all_namespaces_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
         all_args["_continue"] = continue_
@@ -10306,6 +10315,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10323,6 +10333,7 @@ class CronJobList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         list or watch objects of kind CronJob
@@ -10404,6 +10415,9 @@ class CronJobList(HikaruDocumentBase):
             Specify resourceVersion.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10415,6 +10429,11 @@ class CronJobList(HikaruDocumentBase):
         client_to_use = client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "list_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
@@ -10426,6 +10445,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["timeout_seconds"] = timeout_seconds
         all_args["watch"] = watch
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10480,6 +10500,7 @@ class CronJob(HikaruDocumentBase):
         timeout_seconds: Optional[int] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete collection of CronJob
@@ -10574,6 +10595,9 @@ class CronJob(HikaruDocumentBase):
             the duration of the call, regardless of any activity or
             inactivity.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10587,6 +10611,11 @@ class CronJob(HikaruDocumentBase):
         the_method = getattr(
             inst, "delete_collection_namespaced_cron_job_with_http_info"
         )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["_continue"] = continue_
@@ -10603,6 +10632,7 @@ class CronJob(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10613,6 +10643,7 @@ class CronJob(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         create a CronJob
@@ -10632,6 +10663,9 @@ class CronJob(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10649,12 +10683,18 @@ class CronJob(HikaruDocumentBase):
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "create_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method create_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["namespace"] = namespace
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
@@ -10669,6 +10709,7 @@ class CronJob(HikaruDocumentBase):
         propagation_policy: Optional[str] = None,
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         delete a CronJob
@@ -10705,6 +10746,9 @@ class CronJob(HikaruDocumentBase):
             'Foreground' - a cascading policy that deletes all dependents
             in the foreground.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10717,6 +10761,11 @@ class CronJob(HikaruDocumentBase):
         client_to_use = client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "delete_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10728,6 +10777,7 @@ class CronJob(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
@@ -10740,6 +10790,7 @@ class CronJob(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         read the specified CronJob
@@ -10757,6 +10808,9 @@ class CronJob(HikaruDocumentBase):
             in 1.18.
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10768,12 +10822,18 @@ class CronJob(HikaruDocumentBase):
         client_to_use = client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "read_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method read_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
         all_args["exact"] = exact
         all_args["export"] = export
         all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10787,6 +10847,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         partially update the specified CronJob
@@ -10814,6 +10875,9 @@ class CronJob(HikaruDocumentBase):
             will re-acquire conflicting fields owned by other people.
             Force flag must be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10825,6 +10889,11 @@ class CronJob(HikaruDocumentBase):
         client_to_use = client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method patch_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10835,6 +10904,7 @@ class CronJob(HikaruDocumentBase):
         if body is not None:
             body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
@@ -10846,6 +10916,7 @@ class CronJob(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
+        async_req: bool = False,
     ) -> Response:
         r"""
         replace the specified CronJob
@@ -10866,6 +10937,9 @@ class CronJob(HikaruDocumentBase):
             printable characters, as defined by
             https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10882,6 +10956,11 @@ class CronJob(HikaruDocumentBase):
             client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "replace_namespaced_cron_job_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
@@ -10889,6 +10968,7 @@ class CronJob(HikaruDocumentBase):
         all_args["field_manager"] = field_manager
         body = get_clean_dict(self)
         all_args["body"] = body
+        all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)

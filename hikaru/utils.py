@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from typing import Any, Optional
-from threading import Thread
+from multiprocessing.pool import ApplyResult
 from hikaru.generate import from_dict
 
 
@@ -32,18 +32,27 @@ class Response(object):
     data object, and headers. For async calls, K8s returns the thread that is
     processing the call. Hikaru's Response objects cover both of these possibilities.
 
-    All attributes are public and can be interpreted as follows:
+    Public attributes can be interpreted as follows:
 
     If the call is blocking:
+
     - code: integer response code from K8s
     - obj: the data returned for the call. May be plain data, or may be an
       instance of a HikaruDocumentBase subclass, depending on the call.
     - headers: a dict-like object of the response headers
-    - thread: None
 
     If the call is non-blocking:
-    - code, obj, headers: all None
-    - thread: instance of threading.Thread that is processing the call
+
+    - code, obj, headers: all None UNTIL .get() is called on the Response
+        instance, at which point all three are populated as above as well
+        as .get() returning a 3-tuple of (object, code, headers)
+
+    Response objects also act as a proxy for the underlying multiprocessing
+    thread object (multiprocessing.pool.ApplyResult) and will forward on
+    the other public methods of that class.
+
+    If .get() or any of the other async supporting calls are made on a Response
+    object that was called blocking then they will all return None.
     """
     def __init__(self, k8s_response, codes_with_objects):
         """
@@ -58,14 +67,57 @@ class Response(object):
         self.code: Optional[int] = None
         self.obj: Optional[Any] = None
         self.headers: Optional[dict] = None
-        self.thread: Optional[Thread] = None
+        self._thread: Optional[ApplyResult] = None
+        self.codes_with_objects = set(codes_with_objects)
         if type(k8s_response) is tuple:
-            self.obj = k8s_response[0]
-            self.code = k8s_response[1]
-            self.headers = k8s_response[2]
-            if self.code in codes_with_objects:
-                # the object is some kind of K8s object
-                self.obj = from_dict(self.obj.to_dict(), translate=True)
+            self._process_result(k8s_response)
         else:
-            # assume a thread
-            self.thread = k8s_response
+            # assume an ApplyResult
+            self._thread = k8s_response
+
+    def _process_result(self, result: tuple):
+        self.obj = result[0]
+        self.code = result[1]
+        self.headers = result[2]
+        if self.code in self.codes_with_objects:
+            self.obj = from_dict(self.obj.to_dict(), translate=True)
+
+    def ready(self):
+        return self._thread.ready()
+
+    def successful(self):
+        return self._thread.successful()
+
+    def wait(self, timeout=None):
+        self._thread.wait(timeout=timeout)
+
+    def get(self, timeout=None) -> tuple:
+        """
+        Fetch the results of an async call into K8s.
+
+        This method waits for a response to a previously submitted request, either
+        for a specified amount of time or indefinitely, and either raises an exception
+        or returns the delivered response.
+
+        :param timeout: optional float; if supplied, only waits 'timeout' seconds
+            for a response until it raises a TimeoutError exception if the response
+            hasn't arrived. If not supplied, blocks indefinitely.
+
+        :return: a 3-tuple of (Hikaru object, result code (int), headers). These
+            values are also stored in the public attributes of the instance, so
+            you don't actually have to capture them upon return if you don't wish to.
+
+        :raises TimeoutError: if a response has not arrived before the specified timeout
+            has elapsed.
+        :raises RuntimeError: if the reply is the wrong type altogether (should be
+            reported).
+
+        May also pass through any other exception.
+        """
+        result = self._thread.get(timeout=timeout)
+        if type(result) is tuple:
+            self._process_result(result)
+        else:
+            raise RuntimeError(f"Received an unknown type of response from K8s: "
+                               f"type={type(result)}, value={result}")
+        return self.obj, self.code, self.headers
