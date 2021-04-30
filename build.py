@@ -1118,26 +1118,30 @@ def get_path_domain(path: str):
 
 
 def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
+    # look for a good class for this op based on the op name
     md = get_module_def(op.version)
     meth_name = make_method_name(op)
     parts = meth_name.split('_')
     parts.reverse()
     try:
-        parts.remove("namespaced")
+        parts.remove("namespaced")  # this never shows up in a class name
     except ValueError:
         pass
+    if 'api' in parts:
+        parts[parts.index('api')] = 'API'
     new_parts = []
     guess: Optional[ClassDescriptor] = None
     # first, look for just each part of the name as a class
     # only take the first match
     for part in parts:
-        test_name = part.capitalize()
+        test_name = part.capitalize() if part != 'API' else part
         if guess is None and test_name in md.all_classes:
             guess = md.all_classes[test_name]
     # next, look for a longer name by concat'ing from the end forward, taking
     # any longer matches
     for part in parts:
-        new_parts.insert(0, part.capitalize())
+        new_parts.insert(0,
+                         part.capitalize() if part != 'API' else part)
         test_name = "".join(new_parts)
         if test_name in md.all_classes:
             if not guess or len(guess.short_name) < len(test_name):

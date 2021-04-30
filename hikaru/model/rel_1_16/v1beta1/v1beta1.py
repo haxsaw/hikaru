@@ -5761,6 +5761,153 @@ class APIService(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
+    @staticmethod
+    def deleteCollectionAPIService(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete collection of APIService
+
+        operationID: deleteCollectionAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices
+
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_api_service_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_collection_api_service_with_http_info "
+                "on ApiregistrationV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
     def createAPIService(
         self,
         dry_run: Optional[str] = None,
@@ -5818,6 +5965,86 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def deleteAPIService(
+        name: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete an APIService
+
+        operationID: deleteAPIService
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param grace_period_seconds: The duration in seconds before the
+            object should be deleted. Value must be non-negative integer.
+            The value zero indicates delete immediately. If this value is
+            nil, the default grace period for the specified type will be
+            used. Defaults to a per object value if not specified. zero
+            means delete immediately.
+        :param orphan_dependents: Deprecated: please use the
+            PropagationPolicy, this field will be deprecated in 1.7.
+            Should the dependent objects be orphaned. If true/false, the
+            "orphan" finalizer will be added to/removed from the object's
+            finalizers list. Either this field or PropagationPolicy may be
+            set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set,
+            but not both. The default policy is decided by the existing
+            finalizer set in the metadata.finalizers and the
+            resource-specific default policy. Acceptable values are:
+            'Orphan' - orphan the dependents; 'Background' - allow the
+            garbage collector to delete the dependents in the background;
+            'Foreground' - a cascading policy that deletes all dependents
+            in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_api_service_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method delete_api_service_with_http_info "
+                "on ApiregistrationV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        if body is not None:
+            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
 
     @staticmethod
@@ -5989,178 +6216,6 @@ class APIService(HikaruDocumentBase):
         if the_method is None:  # pragma: no cover
             raise RuntimeError(
                 "Unable to locate method replace_api_service_with_http_info "
-                "on ApiregistrationV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["field_manager"] = field_manager
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def readAPIServiceStatus(
-        name: str,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        read status of the specified APIService
-
-        operationID: readAPIServiceStatus
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
-
-        :param name: part of the URL path
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   APIService    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "read_api_service_status_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method read_api_service_status_with_http_info "
-                "on ApiregistrationV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def patchAPIServiceStatus(
-        name: str,
-        body: Any,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        force: Optional[bool] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        partially update status of the specified APIService
-
-        operationID: patchAPIServiceStatus
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
-
-        :param name: part of the URL path
-        :param body:
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_manager: fieldManager is a name associated with the
-            actor or entity that is making these changes. The value must
-            be less than or 128 characters long, and only contain
-            printable characters, as defined by
-            https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but
-            optional for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user
-            will re-acquire conflicting fields owned by other people.
-            Force flag must be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   APIService    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "patch_api_service_status_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method patch_api_service_status_with_http_info "
-                "on ApiregistrationV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["body"] = body
-        all_args["dry_run"] = dry_run
-        all_args["field_manager"] = field_manager
-        all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def replaceAPIServiceStatus(
-        self,
-        name: str,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        replace status of the specified APIService
-
-        operationID: replaceAPIServiceStatus
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_manager: fieldManager is a name associated with the
-            actor or entity that is making these changes. The value must
-            be less than or 128 characters long, and only contain
-            printable characters, as defined by
-            https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   APIService    OK
-          201   APIService    Created
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            # noinspection PyDataclass
-            client_to_use = self.client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_api_service_status_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method replace_api_service_status_with_http_info "
                 "on ApiregistrationV1beta1Api; possible release mismatch?"
             )
         all_args = dict()
@@ -9789,9 +9844,9 @@ class NamespaceList(HikaruDocumentBase):
     Attributes:
     items: Items is the list of Namespace objects in the list. More info:
         https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
+    apiVersion: APIVersion RuntimeClassListdefines the versioned schema of this
+        representation of an object. Servers should convert recognized schemas to the
+        latest internal value, and may reject unrecognized values. More info:
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
     kind: Kind is a string value representing the REST resource this object represents.
         Servers may infer this from the endpoint the client submits requests to. Cannot be
@@ -10342,233 +10397,6 @@ class Status(HikaruDocumentBase):
     status: Optional[str] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def deleteCollectionAPIService(
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete collection of APIService
-
-        operationID: deleteCollectionAPIService
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices
-
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_api_service_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method delete_collection_api_service_with_http_info "
-                "on ApiregistrationV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def deleteAPIService(
-        name: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete an APIService
-
-        operationID: deleteAPIService
-        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}
-
-        :param name: part of the URL path
-        :param dry_run: When present, indicates that modifications should not
-            be persisted. An invalid or unrecognized dryRun directive will
-            result in an error response and no further processing of the
-            request. Valid values are: - All: all dry run stages will be
-            processed
-        :param grace_period_seconds: The duration in seconds before the
-            object should be deleted. Value must be non-negative integer.
-            The value zero indicates delete immediately. If this value is
-            nil, the default grace period for the specified type will be
-            used. Defaults to a per object value if not specified. zero
-            means delete immediately.
-        :param orphan_dependents: Deprecated: please use the
-            PropagationPolicy, this field will be deprecated in 1.7.
-            Should the dependent objects be orphaned. If true/false, the
-            "orphan" finalizer will be added to/removed from the object's
-            finalizers list. Either this field or PropagationPolicy may be
-            set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set,
-            but not both. The default policy is decided by the existing
-            finalizer set in the metadata.finalizers and the
-            resource-specific default policy. Acceptable values are:
-            'Orphan' - orphan the dependents; 'Background' - allow the
-            garbage collector to delete the dependents in the background;
-            'Foreground' - a cascading policy that deletes all dependents
-            in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_api_service_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method delete_api_service_with_http_info "
-                "on ApiregistrationV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
 
     @staticmethod
     def deleteCollectionCSIDriver(
