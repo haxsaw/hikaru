@@ -46,15 +46,24 @@ e2e_namespace = 'e2e-tests'
 setup_calls = 0
 
 
-@pytest.fixture(scope='module', autouse=True)
-def setup():
+def beginning():
     global setup_calls
     setup_calls += 1
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
     ns = Namespace(metadata=ObjectMeta(name=e2e_namespace))
     res = ns.createNamespace()
-    yield res.obj
+    return res
+
+
+def ending():
     Namespace.deleteNamespace(name=e2e_namespace)
+
+
+@pytest.fixture(scope='module', autouse=True)
+def setup():
+    res = beginning()
+    yield res.obj
+    ending()
 
 
 def test01():
@@ -186,7 +195,7 @@ def test08():
 
 
 if __name__ == "__main__":
-    setup()
+    beginning()
     the_tests = {k: v for k, v in globals().items()
                  if k.startswith('test') and callable(v)}
     for k, v in the_tests.items():
@@ -196,3 +205,4 @@ if __name__ == "__main__":
             pass
         except Exception as e:
             print(f'{k} failed with {str(e)}, {e.__class__}')
+    ending()

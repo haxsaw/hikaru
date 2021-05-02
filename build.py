@@ -313,6 +313,7 @@ def write_misc_module(path: Path, version: str):
                     pass
                 print(code, file=misc_file)
 
+
 def write_modules(pkgpath: str):
     pkg = Path(pkgpath)
     d = module_defs()
@@ -519,6 +520,37 @@ class Operation(object):
     # (UNSPECIFIED!) 'v1_delete_options' parameter. Horrifying...
     del_collection_prefix = "delete_collection"
 
+    def make_docstring(self) -> List[str]:
+        docstring_parts = ['    r"""', f'    {self.description}']
+        docstring_parts.append("")
+        docstring_parts.append(f'    operationID: {self.op_id}')
+        docstring_parts.append(f'    path: {self.op_path}')
+        if self.parameters:
+            docstring_parts.append("")
+            for p in self.parameters:
+                docstring_parts.append(f'   {p.docstring()}')
+        docstring_parts.append("    :param client: optional; instance of "
+                               "kubernetes.client.api_client.ApiClient")
+        docstring_parts.append("    :param async_req: bool; if True, call is "
+                               "async and the caller must invoke ")
+        docstring_parts.append("        .get() on the returned Response object. Default "
+                               "is False,  which ")
+        docstring_parts.append("        makes the call blocking.")
+        if self.returns:
+            docstring_parts.append("")
+            docstring_parts.append("    :return: hikaru.utils.Response instance with "
+                                   "the following codes and ")
+            docstring_parts.append("        obj value types:")
+            docstring_parts.append('      Code  ObjType    Description')
+            docstring_parts.append('      -----------------------------')
+            for ret in self.returns.values():
+                rettype = (ret.ref.short_name if isinstance(ret.ref, ClassDescriptor)
+                           else ret.ref)
+                docstring_parts.append(f"      {ret.code}   {rettype}  "
+                                       f"  {ret.description}")
+        docstring_parts.append('   """')
+        return docstring_parts
+
     def as_python_method(self, cd=None) -> List[str]:
         if self.op_id is None:
             return []
@@ -550,34 +582,8 @@ class Operation(object):
         # end standards
         parts.append(", ".join(params))
         parts.append(") -> Response:")
-        docstring_parts = ['    r"""', f'    {self.description}']
-        docstring_parts.append("")
-        docstring_parts.append(f'    operationID: {self.op_id}')
-        docstring_parts.append(f'    path: {self.op_path}')
-        if self.parameters:
-            docstring_parts.append("")
-            for p in self.parameters:
-                docstring_parts.append(f'   {p.docstring()}')
-        docstring_parts.append("    :param client: optional; instance of "
-                               "kubernetes.client.api_client.ApiClient")
-        docstring_parts.append("    :param async_req: bool; if True, call is "
-                               "async and the caller must invoke ")
-        docstring_parts.append("        .get() on the returned Response object. Default "
-                               "is False,  which ")
-        docstring_parts.append("        makes the call blocking.")
-        if self.returns:
-            docstring_parts.append("")
-            docstring_parts.append("    :return: hikaru.utils.Response instance with "
-                                   "the following codes and ")
-            docstring_parts.append("        obj value types:")
-            docstring_parts.append('      Code  ObjType    Description')
-            docstring_parts.append('      -----------------------------')
-            for ret in self.returns.values():
-                rettype = (ret.ref.short_name if isinstance(ret.ref, ClassDescriptor)
-                           else ret.ref)
-                docstring_parts.append(f"      {ret.code}   {rettype}  "
-                                       f"  {ret.description}")
-        docstring_parts.append('   """')
+
+        docstring_parts = self.make_docstring()
         docstring = '\n'.join(docstring_parts)
         defline = "".join(parts)
         # do the work to create the method body; we need a list of assignment
@@ -617,6 +623,37 @@ class Operation(object):
         return final
 
 
+class ListCreateOperation(Operation):
+    def __init__(self, contained_class: 'ClassDescriptor'):
+        super(ListCreateOperation, self).__init__(self, "put", "-created, no path-"
+                                                  'deferred', 'deferred',
+                                                  {'version': contained_class.version,
+                                                   'group': contained_class.group,
+                                                   'kind': f'{contained_class.kind}List'})
+        self.is_staticmethod = False
+        self.contained_class = contained_class
+        for k in self.contained_class.operations:
+            if k.startswith('create'):
+                self._op_id = f'{k}List'
+                break
+        else:
+            self._op_id = f'{self.contained_class.short_name}List'
+
+    @property
+    def op_id(self):
+        for k in self.contained_class.operations:
+            if k.startswith('create'):
+                self._op_id = f'{k}List'
+                break
+        else:
+            self._op_id = f'{self.contained_class.short_name}List'
+        return self._op_id
+
+    @op_id.setter
+    def op_id(self, name):
+        self._op_id = name
+
+
 class ObjectOperations(object):
     """
     This object captures all of the operations that a doc is input for
@@ -648,6 +685,29 @@ class ClassDescriptor(object):
         self.required_props = []
         self.optional_props = []
         self.update(d)
+        # OK, now a hack for Kubernetes:
+        # Although K8s defines top-level objects that are collections
+        # of other objects, and there are API calls that fetch these collection
+        # objects, there are not API calls in the swagger that accept these
+        # objects as input for the purposes of creation. The K8s client, nonetheless,
+        # provides support for creation of these things directly from YAML (only)
+        # by iterating over them in the local client and just doing repeated calls
+        # to the singleton creation method. Since there's no spec'd version of this,
+        # we have to detect such when we have one of these an generate a special
+        # Operation ourselves that does the same iteration and calls the underlying
+        # operation on another class. I'll refrain from saying what I think about
+        # having to do this...
+        if self.short_name.endswith('List'):
+            # OK, invent an operation for these that can create a list
+            contained_class_name = self.short_name.strip('List')
+            mod = get_module_def(self.version)
+            cd = mod.get_class_desc_from_full_name(contained_class_name)
+            if cd is None:
+                raise NotImplementedError(f"Need to make a list create for "
+                                          f"{self.short_name} but can't find "
+                                          f"the contained class {contained_class_name}")
+            create_op = ListCreateOperation(cd)
+            # self.add_operation(create_op)
 
     def add_operation(self, op: Operation):
         self.operations[op.op_id] = op
@@ -660,6 +720,7 @@ class ClassDescriptor(object):
             if self.group == "":
                 self.group = "core"
             self.kind = x_k8s["kind"]
+            self.version = x_k8s['version']
         self.description = d.get("description")
         self.all_properties = d.get("properties", {})
         self.required = d.get("required", [])
@@ -804,8 +865,37 @@ class ModuleDef(object):
         self.version = version
         self.all_classes: Dict[str, ClassDescriptor] = {}
 
-    def get_class_desc(self, sname: str) -> Optional[ClassDescriptor]:
+    def get_class_desc(self, sname: str) -> Optional[
+            ClassDescriptor]:
+        """
+        Use a short name to find the ClassDescriptor
+
+        :param sname: the shortname of a K8s class after processing away the swagger
+            stuff
+        :return: either a ClassDescriptor or None if it can't be found.
+        """
         return self.all_classes.get(sname)
+
+    def get_class_desc_from_full_name(self, fullname: str,
+                                      create_if_missing: bool = True) -> Optional[
+            ClassDescriptor]:
+        """
+        Find a class descriptor from the full swagger name of a class, create if missing
+
+        :param fullname: full swagger name from which you can get a group and version.
+            will work if you supply just a short name though.
+        :param create_if_missing: if True, then an empty ClassDescriptor is made
+            to serve as a placeholder for when a real one is needed later, and then all
+            can share a single definition
+        :return: if create_if_missing is True, then always a ClassDescriptor, but if
+            False, either a ClassDescriptor or None if the name can't be found.
+        """
+        _, _, shortname = process_swagger_name(fullname)
+        cd = self.get_class_desc(shortname)
+        if cd is None and create_if_missing:
+            cd = ClassDescriptor(fullname, {})
+            self.save_class_desc(cd)
+        return cd
 
     def save_class_desc(self, class_def: ClassDescriptor):
         assert isinstance(class_def, ClassDescriptor)
@@ -824,7 +914,7 @@ class ModuleDef(object):
         externals = self.external_versions_used()
         other_imports = []
         if None in externals:
-            other_imports.append(f'from .{unversioned_module_name} import *')
+            other_imports.append(f'from ..{unversioned_module_name} import *')
             try:
                 externals.remove(None)
             except ValueError:

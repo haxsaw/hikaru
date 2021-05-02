@@ -811,6 +811,42 @@ class VolumeProjection(HikaruBase):
 
 
 @dataclass
+class Pod(HikaruDocumentBase):
+    r"""
+    Pod is a collection of containers that can run on a host. This resource is created by
+    clients and scheduled onto hosts.
+
+    Full name: Pod
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Specification of the desired behavior of the pod. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    status: Most recently observed status of the pod. This data may not be up to date.
+        Populated by the system. Read-only. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Pod"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["PodSpec"] = None
+    status: Optional["PodStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class PodList(HikaruDocumentBase):
     r"""
     PodList is a list of Pods.
@@ -837,42 +873,6 @@ class PodList(HikaruDocumentBase):
     apiVersion: Optional[str] = "v1"
     kind: Optional[str] = "PodList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class Pod(HikaruDocumentBase):
-    r"""
-    Pod is a collection of containers that can run on a host. This resource is created by
-    clients and scheduled onto hosts.
-
-    Full name: v1.Pod
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Specification of the desired behavior of the pod. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    status: Most recently observed status of the pod. This data may not be up to date.
-        Populated by the system. Read-only. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "Pod"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["PodSpec"] = None
-    status: Optional["PodStatus"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -1193,6 +1193,16 @@ class LoadBalancerIngress(HikaruBase):
 
 
 @dataclass
+class Secre(HikaruBase):
+    r"""
+
+    Full name: Secre
+
+    Attributes:
+    """
+
+
+@dataclass
 class SecretList(HikaruDocumentBase):
     r"""
     SecretList is a list of Secret.
@@ -1391,42 +1401,11 @@ class ServicePort(HikaruBase):
 
 
 @dataclass
-class ReplicationControllerList(HikaruDocumentBase):
-    r"""
-    ReplicationControllerList is a collection of replication controllers.
-
-    Full name: v1.ReplicationControllerList
-
-    Attributes:
-    items: List of replication controllers. More info:
-        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ReplicationController"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ReplicationControllerList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class ReplicationController(HikaruDocumentBase):
     r"""
     ReplicationController represents the configuration of a replication controller.
 
-    Full name: v1.ReplicationController
+    Full name: ReplicationController
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -1456,6 +1435,37 @@ class ReplicationController(HikaruDocumentBase):
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["ReplicationControllerSpec"] = None
     status: Optional["ReplicationControllerStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ReplicationControllerList(HikaruDocumentBase):
+    r"""
+    ReplicationControllerList is a collection of replication controllers.
+
+    Full name: v1.ReplicationControllerList
+
+    Attributes:
+    items: List of replication controllers. More info:
+        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ReplicationController"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ReplicationControllerList"
+    metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -1701,6 +1711,40 @@ class LoadBalancerStatus(HikaruBase):
 
 
 @dataclass
+class ClusterRole(HikaruDocumentBase):
+    r"""
+    ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
+    as a unit by a RoleBinding or ClusterRoleBinding.
+
+    Full name: ClusterRole
+
+    Attributes:
+    aggregationRule: AggregationRule is an optional field that describes how to build the
+        Rules for this ClusterRole. If AggregationRule is set, then the Rules are
+        controller managed and direct changes to Rules will be stomped by the controller.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata.
+    rules: Rules holds all the PolicyRules for this ClusterRole
+    """
+
+    _version = "v1"
+    aggregationRule: Optional["AggregationRule"] = None
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "ClusterRole"
+    metadata: Optional["ObjectMeta"] = None
+    rules: Optional[List["PolicyRule"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class ClusterRoleList(HikaruDocumentBase):
     r"""
     ClusterRoleList is a collection of ClusterRoles
@@ -1725,40 +1769,6 @@ class ClusterRoleList(HikaruDocumentBase):
     apiVersion: Optional[str] = "rbac.authorization/v1"
     kind: Optional[str] = "ClusterRoleList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ClusterRole(HikaruDocumentBase):
-    r"""
-    ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
-    as a unit by a RoleBinding or ClusterRoleBinding.
-
-    Full name: v1.ClusterRole
-
-    Attributes:
-    aggregationRule: AggregationRule is an optional field that describes how to build the
-        Rules for this ClusterRole. If AggregationRule is set, then the Rules are
-        controller managed and direct changes to Rules will be stomped by the controller.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata.
-    rules: Rules holds all the PolicyRules for this ClusterRole
-    """
-
-    _version = "v1"
-    aggregationRule: Optional["AggregationRule"] = None
-    apiVersion: Optional[str] = "rbac.authorization/v1"
-    kind: Optional[str] = "ClusterRole"
-    metadata: Optional["ObjectMeta"] = None
-    rules: Optional[List["PolicyRule"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -1832,6 +1842,16 @@ class PolicyRule(HikaruBase):
     nonResourceURLs: Optional[List[str]] = field(default_factory=list)
     resourceNames: Optional[List[str]] = field(default_factory=list)
     resources: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class ComponentStatu(HikaruBase):
+    r"""
+
+    Full name: ComponentStatu
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -2141,6 +2161,42 @@ class TCPSocketAction(HikaruBase):
 
 
 @dataclass
+class RoleBinding(HikaruDocumentBase):
+    r"""
+    RoleBinding references a role, but does not contain it. It can reference a Role in the
+    same namespace or a ClusterRole in the global namespace. It adds who information via
+    Subjects and namespace information by which namespace it exists in. RoleBindings in a
+    given namespace only have effect in that namespace.
+
+    Full name: RoleBinding
+
+    Attributes:
+    roleRef: RoleRef can reference a Role in the current namespace or a ClusterRole in the
+        global namespace. If the RoleRef cannot be resolved, the Authorizer must return an
+        error.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata.
+    subjects: Subjects holds references to the objects the role applies to.
+    """
+
+    _version = "v1"
+    roleRef: "RoleRef"
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleBinding"
+    metadata: Optional["ObjectMeta"] = None
+    subjects: Optional[List["Subject"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class RoleBindingList(HikaruDocumentBase):
     r"""
     RoleBindingList is a collection of RoleBindings
@@ -2165,42 +2221,6 @@ class RoleBindingList(HikaruDocumentBase):
     apiVersion: Optional[str] = "rbac.authorization/v1"
     kind: Optional[str] = "RoleBindingList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class RoleBinding(HikaruDocumentBase):
-    r"""
-    RoleBinding references a role, but does not contain it. It can reference a Role in the
-    same namespace or a ClusterRole in the global namespace. It adds who information via
-    Subjects and namespace information by which namespace it exists in. RoleBindings in a
-    given namespace only have effect in that namespace.
-
-    Full name: v1.RoleBinding
-
-    Attributes:
-    roleRef: RoleRef can reference a Role in the current namespace or a ClusterRole in the
-        global namespace. If the RoleRef cannot be resolved, the Authorizer must return an
-        error.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata.
-    subjects: Subjects holds references to the objects the role applies to.
-    """
-
-    _version = "v1"
-    roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1"
-    kind: Optional[str] = "RoleBinding"
-    metadata: Optional["ObjectMeta"] = None
-    subjects: Optional[List["Subject"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -2842,6 +2862,38 @@ class ContainerState(HikaruBase):
 
 
 @dataclass
+class APIService(HikaruDocumentBase):
+    r"""
+    APIService represents a server for a particular GroupVersion. Name must be
+    "version.group".
+
+    Full name: APIService
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    spec: Spec contains information for locating and communicating with a server
+    status: Status contains derived information about an API server
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "apiregistration/v1"
+    kind: Optional[str] = "APIService"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["APIServiceSpec"] = None
+    status: Optional["APIServiceStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class APIServiceList(HikaruDocumentBase):
     r"""
     APIServiceList is a list of APIService objects.
@@ -2866,38 +2918,6 @@ class APIServiceList(HikaruDocumentBase):
     apiVersion: Optional[str] = "apiregistration/v1"
     kind: Optional[str] = "APIServiceList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class APIService(HikaruDocumentBase):
-    r"""
-    APIService represents a server for a particular GroupVersion. Name must be
-    "version.group".
-
-    Full name: v1.APIService
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata:
-    spec: Spec contains information for locating and communicating with a server
-    status: Status contains derived information about an API server
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "apiregistration/v1"
-    kind: Optional[str] = "APIService"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["APIServiceSpec"] = None
-    status: Optional["APIServiceStatus"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -4101,6 +4121,44 @@ class SubjectAccessReviewStatus(HikaruBase):
 
 
 @dataclass
+class PersistentVolume(HikaruDocumentBase):
+    r"""
+    PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
+    analogous to a node. More info:
+    https://kubernetes.io/docs/concepts/storage/persistent-volumes
+
+    Full name: PersistentVolume
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Spec defines a specification of a persistent volume owned by the cluster.
+        Provisioned by an administrator. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
+    status: Status represents the current information/status for the persistent volume.
+        Populated by the system. Read-only. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolume"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["PersistentVolumeSpec"] = None
+    status: Optional["PersistentVolumeStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class PersistentVolumeList(HikaruDocumentBase):
     r"""
     PersistentVolumeList is a list of PersistentVolume items.
@@ -4132,41 +4190,13 @@ class PersistentVolumeList(HikaruDocumentBase):
 
 
 @dataclass
-class PersistentVolume(HikaruDocumentBase):
+class ease(HikaruBase):
     r"""
-    PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
-    analogous to a node. More info:
-    https://kubernetes.io/docs/concepts/storage/persistent-volumes
 
-    Full name: v1.PersistentVolume
+    Full name: ease
 
     Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Spec defines a specification of a persistent volume owned by the cluster.
-        Provisioned by an administrator. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
-    status: Status represents the current information/status for the persistent volume.
-        Populated by the system. Read-only. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistent-volumes
     """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PersistentVolume"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["PersistentVolumeSpec"] = None
-    status: Optional["PersistentVolumeStatus"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5258,6 +5288,40 @@ class VolumeMount(HikaruBase):
 
 
 @dataclass
+class Namespace(HikaruDocumentBase):
+    r"""
+    Namespace provides a scope for Names. Use of multiple namespaces is optional.
+
+    Full name: Namespace
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Spec defines the behavior of the Namespace. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    status: Status describes the current status of a Namespace. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "Namespace"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["NamespaceSpec"] = None
+    status: Optional["NamespaceStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class NamespaceList(HikaruDocumentBase):
     r"""
     NamespaceList is a list of Namespaces.
@@ -5289,40 +5353,6 @@ class NamespaceList(HikaruDocumentBase):
 
 
 @dataclass
-class Namespace(HikaruDocumentBase):
-    r"""
-    Namespace provides a scope for Names. Use of multiple namespaces is optional.
-
-    Full name: v1.Namespace
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Spec defines the behavior of the Namespace. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    status: Status describes the current status of a Namespace. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "Namespace"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["NamespaceSpec"] = None
-    status: Optional["NamespaceStatus"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class LeaseSpec(HikaruBase):
     r"""
     LeaseSpec is a specification of a Lease.
@@ -5346,6 +5376,16 @@ class LeaseSpec(HikaruBase):
     leaseDurationSeconds: Optional[int] = None
     leaseTransitions: Optional[int] = None
     renewTime: Optional[str] = None
+
+
+@dataclass
+class Endpoin(HikaruBase):
+    r"""
+
+    Full name: Endpoin
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -5944,6 +5984,16 @@ class PodDNSConfig(HikaruBase):
 
 
 @dataclass
+class mitRange(HikaruBase):
+    r"""
+
+    Full name: mitRange
+
+    Attributes:
+    """
+
+
+@dataclass
 class LimitRangeList(HikaruDocumentBase):
     r"""
     LimitRangeList is a list of LimitRange items.
@@ -6037,6 +6087,16 @@ class PodAffinity(HikaruBase):
     requiredDuringSchedulingIgnoredDuringExecution: Optional[
         List["PodAffinityTerm"]
     ] = field(default_factory=list)
+
+
+@dataclass
+class ReplicaSe(HikaruBase):
+    r"""
+
+    Full name: ReplicaSe
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -6235,39 +6295,12 @@ class NetworkPolicyIngressRule(HikaruBase):
 
 
 @dataclass
-class APIGroupList(HikaruDocumentBase):
-    r"""
-    APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
-
-    Full name: v1.APIGroupList
-
-    Attributes:
-    groups: groups is a list of APIGroup.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    groups: List["APIGroup"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "APIGroupList"
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class APIGroup(HikaruDocumentBase):
     r"""
     APIGroup contains the name, the supported versions, and the preferred version of a
     group.
 
-    Full name: v1.APIGroup
+    Full name: APIGroup
 
     Attributes:
     name: name is the name of the group.
@@ -6301,6 +6334,33 @@ class APIGroup(HikaruDocumentBase):
     serverAddressByClientCIDRs: Optional[List["ServerAddressByClientCIDR"]] = field(
         default_factory=list
     )
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class APIGroupList(HikaruDocumentBase):
+    r"""
+    APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
+
+    Full name: v1.APIGroupList
+
+    Attributes:
+    groups: groups is a list of APIGroup.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    groups: List["APIGroup"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIGroupList"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -8569,6 +8629,37 @@ class PodStatus(HikaruBase):
 
 
 @dataclass
+class MutatingWebhookConfiguration(HikaruDocumentBase):
+    r"""
+    MutatingWebhookConfiguration describes the configuration of and admission webhook that
+    accept or reject and may change the object.
+
+    Full name: MutatingWebhookConfiguration
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object metadata; More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+    webhooks: Webhooks is a list of webhooks and the affected resources and operations.
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "MutatingWebhookConfiguration"
+    metadata: Optional["ObjectMeta"] = None
+    webhooks: Optional[List["MutatingWebhook"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class MutatingWebhookConfigurationList(HikaruDocumentBase):
     r"""
     MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
@@ -8594,37 +8685,6 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     apiVersion: Optional[str] = "admissionregistration/v1"
     kind: Optional[str] = "MutatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class MutatingWebhookConfiguration(HikaruDocumentBase):
-    r"""
-    MutatingWebhookConfiguration describes the configuration of and admission webhook that
-    accept or reject and may change the object.
-
-    Full name: v1.MutatingWebhookConfiguration
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object metadata; More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
-    webhooks: Webhooks is a list of webhooks and the affected resources and operations.
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "admissionregistration/v1"
-    kind: Optional[str] = "MutatingWebhookConfiguration"
-    metadata: Optional["ObjectMeta"] = None
-    webhooks: Optional[List["MutatingWebhook"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -8689,7 +8749,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     automatically manages the replica count of any resource implementing the scale
     subresource based on the metrics specified.
 
-    Full name: v2beta1.HorizontalPodAutoscaler
+    Full name: HorizontalPodAutoscaler
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -9217,6 +9277,16 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
 
 @dataclass
+class StorageCla(HikaruBase):
+    r"""
+
+    Full name: StorageCla
+
+    Attributes:
+    """
+
+
+@dataclass
 class StorageClassList(HikaruDocumentBase):
     r"""
     StorageClassList is a collection of storage classes.
@@ -9366,6 +9436,16 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
 
 @dataclass
+class StatefulSe(HikaruBase):
+    r"""
+
+    Full name: StatefulSe
+
+    Attributes:
+    """
+
+
+@dataclass
 class StatefulSetList(HikaruDocumentBase):
     r"""
     StatefulSetList is a collection of StatefulSets.
@@ -9408,6 +9488,16 @@ class NamespaceSpec(HikaruBase):
     """
 
     finalizers: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class ServiceAccoun(HikaruBase):
+    r"""
+
+    Full name: ServiceAccoun
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -9508,6 +9598,16 @@ class VolumeAttachmentSource(HikaruBase):
 
     inlineVolumeSpec: Optional["PersistentVolumeSpec"] = None
     persistentVolumeName: Optional[str] = None
+
+
+@dataclass
+class Even(HikaruBase):
+    r"""
+
+    Full name: Even
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -9820,42 +9920,11 @@ class PodReadinessGate(HikaruBase):
 
 
 @dataclass
-class APIResourceList(HikaruDocumentBase):
-    r"""
-    APIResourceList is a list of APIResource, it is used to expose the name of the
-    resources supported in a specific group and version, and if the resource is
-    namespaced.
-
-    Full name: v1.APIResourceList
-
-    Attributes:
-    groupVersion: groupVersion is the group and version this APIResourceList is for.
-    resources: resources contains the name of the resources and if they are namespaced.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    groupVersion: str
-    resources: List["APIResource"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "APIResourceList"
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class APIResource(HikaruBase):
     r"""
     APIResource specifies the name of a resource and whether it is namespaced.
 
-    Full name: v1.APIResource
+    Full name: APIResource
 
     Attributes:
     kind: kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
@@ -9894,6 +9963,37 @@ class APIResource(HikaruBase):
     version: Optional[str] = None
     categories: Optional[List[str]] = field(default_factory=list)
     shortNames: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class APIResourceList(HikaruDocumentBase):
+    r"""
+    APIResourceList is a list of APIResource, it is used to expose the name of the
+    resources supported in a specific group and version, and if the resource is
+    namespaced.
+
+    Full name: v1.APIResourceList
+
+    Attributes:
+    groupVersion: groupVersion is the group and version this APIResourceList is for.
+    resources: resources contains the name of the resources and if they are namespaced.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    groupVersion: str
+    resources: List["APIResource"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIResourceList"
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10335,6 +10435,16 @@ class RollingUpdateDaemonSet(HikaruBase):
 
 
 @dataclass
+class Deploymen(HikaruBase):
+    r"""
+
+    Full name: Deploymen
+
+    Attributes:
+    """
+
+
+@dataclass
 class DeploymentList(HikaruDocumentBase):
     r"""
     DeploymentList is a list of Deployments.
@@ -10748,6 +10858,16 @@ class EndpointAddress(HikaruBase):
 
 
 @dataclass
+class PriorityCla(HikaruBase):
+    r"""
+
+    Full name: PriorityCla
+
+    Attributes:
+    """
+
+
+@dataclass
 class PriorityClassList(HikaruDocumentBase):
     r"""
     PriorityClassList is a collection of priority classes.
@@ -10859,6 +10979,16 @@ class EndpointSubset(HikaruBase):
 
 
 @dataclass
+class DaemonSe(HikaruBase):
+    r"""
+
+    Full name: DaemonSe
+
+    Attributes:
+    """
+
+
+@dataclass
 class DaemonSetList(HikaruDocumentBase):
     r"""
     DaemonSetList is a collection of daemon sets.
@@ -10886,6 +11016,16 @@ class DaemonSetList(HikaruDocumentBase):
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class VolumeAttachmen(HikaruBase):
+    r"""
+
+    Full name: VolumeAttachmen
+
+    Attributes:
+    """
 
 
 @dataclass

@@ -117,8 +117,8 @@ def process_swagger_name(sname: str) -> Tuple[str, str, str]:
     full_name = full_swagger_name(sname)
     name_parts = full_name.split(".")
     name = name_parts[-1]
-    version = name_parts[-2]
-    if version.startswith("v1") or version.startswith("v2"):
+    version = name_parts[-2] if len(name_parts) >= 2 else None
+    if version and (version.startswith("v1") or version.startswith("v2")):
         swagger_group = ".".join(name_parts[:-2])
     else:
         version = None

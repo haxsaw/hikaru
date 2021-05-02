@@ -32,6 +32,7 @@ from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, InitVar
 from kubernetes.client import CoreV1Api
+from ..unversioned import *
 
 from kubernetes.client import AdmissionregistrationV1Api
 from kubernetes.client import ApiClient
@@ -1725,295 +1726,6 @@ class DeploymentStrategy(HikaruBase):
 
 
 @dataclass
-class NetworkPolicyList(HikaruDocumentBase):
-    r"""
-    NetworkPolicyList is a list of NetworkPolicy objects.
-
-    Full name: v1.NetworkPolicyList
-
-    Attributes:
-    items: Items is a list of schema objects.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1"
-    items: List["NetworkPolicy"]
-    apiVersion: Optional[str] = "networking/v1"
-    kind: Optional[str] = "NetworkPolicyList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listNamespacedNetworkPolicy(
-        namespace: str,
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind NetworkPolicy
-
-        operationID: listNamespacedNetworkPolicy
-        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies
-
-        :param namespace: part of the URL path
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   NetworkPolicyList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = NetworkingV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespaced_network_policy_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_namespaced_network_policy_with_http_info "
-                "on NetworkingV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def listNetworkPolicyForAllNamespaces(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        pretty: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind NetworkPolicy
-
-        operationID: listNetworkPolicyForAllNamespaces
-        path: /apis/networking.k8s.io/v1/networkpolicies
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   NetworkPolicyList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = NetworkingV1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "list_network_policy_for_all_namespaces_with_http_info"
-        )
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_network_policy_for_all_namespaces_with_http_info "
-                "on NetworkingV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["pretty"] = pretty
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class NetworkPolicy(HikaruDocumentBase):
     r"""
     NetworkPolicy describes what network traffic is allowed for a set of Pods
@@ -2532,72 +2244,14 @@ class NetworkPolicy(HikaruDocumentBase):
 
 
 @dataclass
-class APIServiceCondition(HikaruBase):
+class NetworkPolicyList(HikaruDocumentBase):
     r"""
-    APIServiceCondition describes the state of an APIService at a particular point
+    NetworkPolicyList is a list of NetworkPolicy objects.
 
-    Full name: v1.APIServiceCondition
+    Full name: v1.NetworkPolicyList
 
     Attributes:
-    status: Status is the status of the condition. Can be True, False, Unknown.
-    type: Type is the type of the condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    message: Human-readable message indicating details about last transition.
-    reason: Unique, one-word, CamelCase reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class WebhookClientConfig(HikaruBase):
-    r"""
-    WebhookClientConfig contains the information to make a TLS connection with the
-    webhook.
-
-    Full name: admissionregistration.v1.WebhookClientConfig
-
-    Attributes:
-    caBundle: caBundle is a PEM encoded CA bundle which will be used to validate the
-        webhook's server certificate. If unspecified, system trust roots on the apiserver
-        are used.
-    service: service is a reference to the service for this webhook. Either service or url
-        must be specified. If the webhook is running within the cluster, then you should
-        use `service`.
-    url: url gives the location of the webhook, in standard URL form
-        (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
-        The `host` should not refer to a service running in the cluster; use the `service`
-        field instead. The host might be resolved via external DNS in some apiservers
-        (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering
-        violation). `host` may also be an IP address. Please note that using `localhost`
-        or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook
-        on all hosts which run an apiserver which might need to make calls to this
-        webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in
-        a new cluster. The scheme must be "https"; the URL must begin with "https://". A
-        path is optional, and if present may be any string permissible in a URL. You may
-        use the path to pass an arbitrary string to the webhook, for example, a cluster
-        identifier. Attempting to use a user or basic auth e.g. "user:password@" is not
-        allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
-    """
-
-    caBundle: Optional[str] = None
-    service: Optional["ServiceReference"] = None
-    url: Optional[str] = None
-
-
-@dataclass
-class RoleBindingList(HikaruDocumentBase):
-    r"""
-    RoleBindingList is a collection of RoleBindings
-
-    Full name: v1.RoleBindingList
-
-    Attributes:
-    items: Items is a list of RoleBindings
+    items: Items is a list of schema objects.
     apiVersion: APIVersion defines the versioned schema of this representation of an
         object. Servers should convert recognized schemas to the latest internal value,
         and may reject unrecognized values. More info:
@@ -2606,19 +2260,20 @@ class RoleBindingList(HikaruDocumentBase):
         Servers may infer this from the endpoint the client submits requests to. Cannot be
         updated. In CamelCase. More info:
         https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata.
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
     """
 
     _version = "v1"
-    items: List["RoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
-    kind: Optional[str] = "RoleBindingList"
+    items: List["NetworkPolicy"]
+    apiVersion: Optional[str] = "networking/v1"
+    kind: Optional[str] = "NetworkPolicyList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def listNamespacedRoleBinding(
+    def listNamespacedNetworkPolicy(
         namespace: str,
         allow_watch_bookmarks: Optional[bool] = None,
         continue_: Optional[str] = None,
@@ -2633,10 +2288,10 @@ class RoleBindingList(HikaruDocumentBase):
         async_req: bool = False,
     ) -> Response:
         r"""
-        list or watch objects of kind RoleBinding
+        list or watch objects of kind NetworkPolicy
 
-        operationID: listNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings
+        operationID: listNamespacedNetworkPolicy
+        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies
 
         :param namespace: part of the URL path
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch
@@ -2720,16 +2375,16 @@ class RoleBindingList(HikaruDocumentBase):
             obj value types:
           Code  ObjType    Description
           -----------------------------
-          200   RoleBindingList    OK
+          200   NetworkPolicyList    OK
           401   None    Unauthorized
         """
         client_to_use = client
-        inst = RbacAuthorizationV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespaced_role_binding_with_http_info")
+        inst = NetworkingV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_network_policy_with_http_info")
         if the_method is None:  # pragma: no cover
             raise RuntimeError(
-                "Unable to locate method list_namespaced_role_binding_with_http_info "
-                "on RbacAuthorizationV1Api; possible release mismatch?"
+                "Unable to locate method list_namespaced_network_policy_with_http_info "
+                "on NetworkingV1Api; possible release mismatch?"
             )
         all_args = dict()
         all_args["namespace"] = namespace
@@ -2747,6 +2402,193 @@ class RoleBindingList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    @staticmethod
+    def listNetworkPolicyForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind NetworkPolicy
+
+        operationID: listNetworkPolicyForAllNamespaces
+        path: /apis/networking.k8s.io/v1/networkpolicies
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   NetworkPolicyList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_network_policy_for_all_namespaces_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_network_policy_for_all_namespaces_with_http_info "
+                "on NetworkingV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
+class APIServiceCondition(HikaruBase):
+    r"""
+    APIServiceCondition describes the state of an APIService at a particular point
+
+    Full name: v1.APIServiceCondition
+
+    Attributes:
+    status: Status is the status of the condition. Can be True, False, Unknown.
+    type: Type is the type of the condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    message: Human-readable message indicating details about last transition.
+    reason: Unique, one-word, CamelCase reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class WebhookClientConfig(HikaruBase):
+    r"""
+    WebhookClientConfig contains the information to make a TLS connection with the
+    webhook.
+
+    Full name: admissionregistration.v1.WebhookClientConfig
+
+    Attributes:
+    caBundle: caBundle is a PEM encoded CA bundle which will be used to validate the
+        webhook's server certificate. If unspecified, system trust roots on the apiserver
+        are used.
+    service: service is a reference to the service for this webhook. Either service or url
+        must be specified. If the webhook is running within the cluster, then you should
+        use `service`.
+    url: url gives the location of the webhook, in standard URL form
+        (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
+        The `host` should not refer to a service running in the cluster; use the `service`
+        field instead. The host might be resolved via external DNS in some apiservers
+        (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering
+        violation). `host` may also be an IP address. Please note that using `localhost`
+        or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook
+        on all hosts which run an apiserver which might need to make calls to this
+        webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in
+        a new cluster. The scheme must be "https"; the URL must begin with "https://". A
+        path is optional, and if present may be any string permissible in a URL. You may
+        use the path to pass an arbitrary string to the webhook, for example, a cluster
+        identifier. Attempting to use a user or basic auth e.g. "user:password@" is not
+        allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
+    """
+
+    caBundle: Optional[str] = None
+    service: Optional["ServiceReference"] = None
+    url: Optional[str] = None
+
 
 @dataclass
 class RoleBinding(HikaruDocumentBase):
@@ -2756,7 +2598,7 @@ class RoleBinding(HikaruDocumentBase):
     Subjects and namespace information by which namespace it exists in. RoleBindings in a
     given namespace only have effect in that namespace.
 
-    Full name: v1.RoleBinding
+    Full name: RoleBinding
 
     Attributes:
     roleRef: RoleRef can reference a Role in the current namespace or a ClusterRole in the
@@ -3263,6 +3105,165 @@ class RoleBinding(HikaruDocumentBase):
 
 
 @dataclass
+class RoleBindingList(HikaruDocumentBase):
+    r"""
+    RoleBindingList is a collection of RoleBindings
+
+    Full name: v1.RoleBindingList
+
+    Attributes:
+    items: Items is a list of RoleBindings
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata.
+    """
+
+    _version = "v1"
+    items: List["RoleBinding"]
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleBindingList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedRoleBinding(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind RoleBinding
+
+        operationID: listNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   RoleBindingList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_role_binding_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_role_binding_with_http_info "
+                "on RbacAuthorizationV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
 class AllowedCSIDriver(HikaruBase):
     r"""
     AllowedCSIDriver represents a single inline CSI Driver that is allowed to be used.
@@ -3308,7 +3309,7 @@ class ClusterRole(HikaruDocumentBase):
     ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced
     as a unit by a RoleBinding or ClusterRoleBinding.
 
-    Full name: v1.ClusterRole
+    Full name: ClusterRole
 
     Attributes:
     aggregationRule: AggregationRule is an optional field that describes how to build the
@@ -3972,165 +3973,6 @@ class RuleWithOperations(HikaruBase):
 
 
 @dataclass
-class RoleList(HikaruDocumentBase):
-    r"""
-    RoleList is a collection of Roles
-
-    Full name: v1.RoleList
-
-    Attributes:
-    items: Items is a list of Roles
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata.
-    """
-
-    _version = "v1"
-    items: List["Role"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
-    kind: Optional[str] = "RoleList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listNamespacedRole(
-        namespace: str,
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind Role
-
-        operationID: listNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles
-
-        :param namespace: part of the URL path
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   RoleList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = RbacAuthorizationV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespaced_role_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_namespaced_role_with_http_info "
-                "on RbacAuthorizationV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class Role(HikaruDocumentBase):
     r"""
     Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit
@@ -4764,6 +4606,165 @@ class Role(HikaruDocumentBase):
 
 
 @dataclass
+class RoleList(HikaruDocumentBase):
+    r"""
+    RoleList is a collection of Roles
+
+    Full name: v1.RoleList
+
+    Attributes:
+    items: Items is a list of Roles
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata.
+    """
+
+    _version = "v1"
+    items: List["Role"]
+    apiVersion: Optional[str] = "rbac.authorization/v1"
+    kind: Optional[str] = "RoleList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedRole(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Role
+
+        operationID: listNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   RoleList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = RbacAuthorizationV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_role_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_role_with_http_info "
+                "on RbacAuthorizationV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
 class RollingUpdateDeployment(HikaruBase):
     r"""
     Spec to control the desired behavior of rolling update.
@@ -5112,6 +5113,16 @@ class CustomResourceDefinitionVersion(HikaruBase):
     additionalPrinterColumns: Optional[List["CustomResourceColumnDefinition"]] = field(
         default_factory=list
     )
+
+
+@dataclass
+class Deploymen(HikaruBase):
+    r"""
+
+    Full name: Deploymen
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -5920,165 +5931,6 @@ class Deployment(HikaruDocumentBase):
 
 
 @dataclass
-class ValidatingWebhookConfigurationList(HikaruDocumentBase):
-    r"""
-    ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
-
-    Full name: v1.ValidatingWebhookConfigurationList
-
-    Attributes:
-    items: List of ValidatingWebhookConfiguration.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ValidatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
-    kind: Optional[str] = "ValidatingWebhookConfigurationList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listValidatingWebhookConfiguration(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind ValidatingWebhookConfiguration
-
-        operationID: listValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ValidatingWebhookConfigurationList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = AdmissionregistrationV1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "list_validating_webhook_configuration_with_http_info"
-        )
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_validating_webhook_configuration_with_http_info "
-                "on AdmissionregistrationV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class ValidatingWebhookConfiguration(HikaruDocumentBase):
     r"""
     ValidatingWebhookConfiguration describes the configuration of and admission webhook
@@ -6590,12 +6442,171 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
 
 
 @dataclass
+class ValidatingWebhookConfigurationList(HikaruDocumentBase):
+    r"""
+    ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
+
+    Full name: v1.ValidatingWebhookConfigurationList
+
+    Attributes:
+    items: List of ValidatingWebhookConfiguration.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ValidatingWebhookConfiguration"]
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "ValidatingWebhookConfigurationList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listValidatingWebhookConfiguration(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ValidatingWebhookConfiguration
+
+        operationID: listValidatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ValidatingWebhookConfigurationList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_validating_webhook_configuration_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_validating_webhook_configuration_with_http_info "
+                "on AdmissionregistrationV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
 class APIService(HikaruDocumentBase):
     r"""
     APIService represents a server for a particular GroupVersion. Name must be
     "version.group".
 
-    Full name: v1.APIService
+    Full name: APIService
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -7232,6 +7243,16 @@ class StatefulSetUpdateStrategy(HikaruBase):
 
     rollingUpdate: Optional["RollingUpdateStatefulSetStrategy"] = None
     type: Optional[str] = None
+
+
+@dataclass
+class RuntimeCla(HikaruBase):
+    r"""
+
+    Full name: RuntimeCla
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -8100,6 +8121,16 @@ class CustomResourceDefinitionStatus(HikaruBase):
     conditions: Optional[List["CustomResourceDefinitionCondition"]] = field(
         default_factory=list
     )
+
+
+@dataclass
+class ease(HikaruBase):
+    r"""
+
+    Full name: ease
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -9158,6 +9189,16 @@ class AllowedFlexVolume(HikaruBase):
     """
 
     driver: str
+
+
+@dataclass
+class PodDisruptionBudge(HikaruBase):
+    r"""
+
+    Full name: PodDisruptionBudge
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -10443,6 +10484,16 @@ class DaemonSetStatus(HikaruBase):
 
 
 @dataclass
+class StorageCla(HikaruBase):
+    r"""
+
+    Full name: StorageCla
+
+    Attributes:
+    """
+
+
+@dataclass
 class StorageClassList(HikaruDocumentBase):
     r"""
     StorageClassList is a collection of storage classes.
@@ -11227,6 +11278,16 @@ class CSIDriverSpec(HikaruBase):
     attachRequired: Optional[bool] = None
     podInfoOnMount: Optional[bool] = None
     volumeLifecycleModes: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class ReplicaSe(HikaruBase):
+    r"""
+
+    Full name: ReplicaSe
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -13802,6 +13863,16 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
 
 @dataclass
+class PriorityCla(HikaruBase):
+    r"""
+
+    Full name: PriorityCla
+
+    Attributes:
+    """
+
+
+@dataclass
 class PriorityClassList(HikaruDocumentBase):
     r"""
     PriorityClassList is a collection of priority classes.
@@ -14498,6 +14569,16 @@ class TokenReviewStatus(HikaruBase):
 
 
 @dataclass
+class StatefulSe(HikaruBase):
+    r"""
+
+    Full name: StatefulSe
+
+    Attributes:
+    """
+
+
+@dataclass
 class StatefulSetList(HikaruDocumentBase):
     r"""
     StatefulSetList is a collection of StatefulSets.
@@ -14786,6 +14867,16 @@ class StatefulSetList(HikaruDocumentBase):
 
 
 @dataclass
+class VolumeAttachmen(HikaruBase):
+    r"""
+
+    Full name: VolumeAttachmen
+
+    Attributes:
+    """
+
+
+@dataclass
 class VolumeAttachmentList(HikaruDocumentBase):
     r"""
     VolumeAttachmentList is a collection of VolumeAttachment objects.
@@ -14940,6 +15031,16 @@ class VolumeAttachmentList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+
+@dataclass
+class Even(HikaruBase):
+    r"""
+
+    Full name: Even
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -15873,6 +15974,16 @@ class EventSeries(HikaruBase):
     count: Optional[int] = None
     lastObservedTime: Optional[str] = None
     state: Optional[str] = None
+
+
+@dataclass
+class Ingre(HikaruBase):
+    r"""
+
+    Full name: Ingre
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -16854,6 +16965,16 @@ class JobTemplateSpec(HikaruBase):
 
 
 @dataclass
+class CertificateSigningReque(HikaruBase):
+    r"""
+
+    Full name: CertificateSigningReque
+
+    Attributes:
+    """
+
+
+@dataclass
 class CertificateSigningRequestList(HikaruDocumentBase):
     r"""
 
@@ -16879,6 +17000,16 @@ class CertificateSigningRequestList(HikaruDocumentBase):
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class DaemonSe(HikaruBase):
+    r"""
+
+    Full name: DaemonSe
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -17787,169 +17918,12 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
 
 
 @dataclass
-class MutatingWebhookConfigurationList(HikaruDocumentBase):
-    r"""
-    MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
-
-    Full name: v1.MutatingWebhookConfigurationList
-
-    Attributes:
-    items: List of MutatingWebhookConfiguration.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["MutatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
-    kind: Optional[str] = "MutatingWebhookConfigurationList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listMutatingWebhookConfiguration(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind MutatingWebhookConfiguration
-
-        operationID: listMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   MutatingWebhookConfigurationList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = AdmissionregistrationV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_mutating_webhook_configuration_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_mutating_webhook_configuration_with_http_info "
-                "on AdmissionregistrationV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class MutatingWebhookConfiguration(HikaruDocumentBase):
     r"""
     MutatingWebhookConfiguration describes the configuration of and admission webhook that
     accept or reject and may change the object.
 
-    Full name: v1.MutatingWebhookConfiguration
+    Full name: MutatingWebhookConfiguration
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -18449,6 +18423,163 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
+class MutatingWebhookConfigurationList(HikaruDocumentBase):
+    r"""
+    MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
+
+    Full name: v1.MutatingWebhookConfigurationList
+
+    Attributes:
+    items: List of MutatingWebhookConfiguration.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["MutatingWebhookConfiguration"]
+    apiVersion: Optional[str] = "admissionregistration/v1"
+    kind: Optional[str] = "MutatingWebhookConfigurationList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listMutatingWebhookConfiguration(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind MutatingWebhookConfiguration
+
+        operationID: listMutatingWebhookConfiguration
+        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   MutatingWebhookConfigurationList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = AdmissionregistrationV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_mutating_webhook_configuration_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_mutating_webhook_configuration_with_http_info "
+                "on AdmissionregistrationV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
 
@@ -19127,173 +19258,12 @@ class VolumeProjection(HikaruBase):
 
 
 @dataclass
-class PodList(HikaruDocumentBase):
-    r"""
-    PodList is a list of Pods.
-
-    Full name: v1.PodList
-
-    Attributes:
-    items: List of pods. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Pod"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PodList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listNamespacedPod(
-        namespace: str,
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind Pod
-
-        operationID: listNamespacedPod
-        path: /api/v1/namespaces/{namespace}/pods
-
-        :param namespace: part of the URL path
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PodList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespaced_pod_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_namespaced_pod_with_http_info "
-                "on CoreV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class Pod(HikaruDocumentBase):
     r"""
     Pod is a collection of containers that can run on a host. This resource is created by
     clients and scheduled onto hosts.
 
-    Full name: v1.Pod
+    Full name: Pod
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -21255,6 +21225,167 @@ class Pod(HikaruDocumentBase):
 
 
 @dataclass
+class PodList(HikaruDocumentBase):
+    r"""
+    PodList is a list of Pods.
+
+    Full name: v1.PodList
+
+    Attributes:
+    items: List of pods. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Pod"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PodList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedPod(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Pod
+
+        operationID: listNamespacedPod
+        path: /api/v1/namespaces/{namespace}/pods
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PodList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_pod_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_pod_with_http_info "
+                "on CoreV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
 class ListMeta(HikaruBase):
     r"""
     ListMeta describes metadata that synthetic resources must have, including lists and
@@ -21366,6 +21497,16 @@ class LoadBalancerIngress(HikaruBase):
 
     hostname: Optional[str] = None
     ip: Optional[str] = None
+
+
+@dataclass
+class Secre(HikaruBase):
+    r"""
+
+    Full name: Secre
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -22273,303 +22414,11 @@ class ServicePort(HikaruBase):
 
 
 @dataclass
-class ReplicationControllerList(HikaruDocumentBase):
-    r"""
-    ReplicationControllerList is a collection of replication controllers.
-
-    Full name: v1.ReplicationControllerList
-
-    Attributes:
-    items: List of replication controllers. More info:
-        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ReplicationController"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ReplicationControllerList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listNamespacedReplicationController(
-        namespace: str,
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind ReplicationController
-
-        operationID: listNamespacedReplicationController
-        path: /api/v1/namespaces/{namespace}/replicationcontrollers
-
-        :param namespace: part of the URL path
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicationControllerList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "list_namespaced_replication_controller_with_http_info"
-        )
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_namespaced_replication_controller_with_http_info "
-                "on CoreV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def listReplicationControllerForAllNamespaces(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        pretty: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind ReplicationController
-
-        operationID: listReplicationControllerForAllNamespaces
-        path: /api/v1/replicationcontrollers
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicationControllerList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(
-            inst, "list_replication_controller_for_all_namespaces_with_http_info"
-        )
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_replication_controller_for_all_namespaces_with_http_info "
-                "on CoreV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["pretty"] = pretty
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class ReplicationController(HikaruDocumentBase):
     r"""
     ReplicationController represents the configuration of a replication controller.
 
-    Full name: v1.ReplicationController
+    Full name: ReplicationController
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -23102,6 +22951,298 @@ class ReplicationController(HikaruDocumentBase):
 
 
 @dataclass
+class ReplicationControllerList(HikaruDocumentBase):
+    r"""
+    ReplicationControllerList is a collection of replication controllers.
+
+    Full name: v1.ReplicationControllerList
+
+    Attributes:
+    items: List of replication controllers. More info:
+        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ReplicationController"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ReplicationControllerList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespacedReplicationController(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ReplicationController
+
+        operationID: listNamespacedReplicationController
+        path: /api/v1/namespaces/{namespace}/replicationcontrollers
+
+        :param namespace: part of the URL path
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ReplicationControllerList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_namespaced_replication_controller_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespaced_replication_controller_with_http_info "
+                "on CoreV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+    @staticmethod
+    def listReplicationControllerForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind ReplicationController
+
+        operationID: listReplicationControllerForAllNamespaces
+        path: /api/v1/replicationcontrollers
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ReplicationControllerList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "list_replication_controller_for_all_namespaces_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_replication_controller_for_all_namespaces_with_http_info "
+                "on CoreV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
 class SELinuxOptions(HikaruBase):
     r"""
     SELinuxOptions are the labels to be applied to the container
@@ -23204,6 +23345,16 @@ class SecretKeySelector(HikaruBase):
     key: str
     name: Optional[str] = None
     optional: Optional[bool] = None
+
+
+@dataclass
+class ComponentStatu(HikaruBase):
+    r"""
+
+    Full name: ComponentStatu
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -27083,171 +27234,13 @@ class VsphereVirtualDiskVolumeSource(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeList(HikaruDocumentBase):
-    r"""
-    PersistentVolumeList is a list of PersistentVolume items.
-
-    Full name: v1.PersistentVolumeList
-
-    Attributes:
-    items: List of persistent volumes. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["PersistentVolume"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PersistentVolumeList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listPersistentVolume(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind PersistentVolume
-
-        operationID: listPersistentVolume
-        path: /api/v1/persistentvolumes
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PersistentVolumeList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_persistent_volume_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_persistent_volume_with_http_info "
-                "on CoreV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class PersistentVolume(HikaruDocumentBase):
     r"""
     PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
     analogous to a node. More info:
     https://kubernetes.io/docs/concepts/storage/persistent-volumes
 
-    Full name: v1.PersistentVolume
+    Full name: PersistentVolume
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -27743,6 +27736,164 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
+class PersistentVolumeList(HikaruDocumentBase):
+    r"""
+    PersistentVolumeList is a list of PersistentVolume items.
+
+    Full name: v1.PersistentVolumeList
+
+    Attributes:
+    items: List of persistent volumes. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["PersistentVolume"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listPersistentVolume(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind PersistentVolume
+
+        operationID: listPersistentVolume
+        path: /api/v1/persistentvolumes
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PersistentVolumeList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_persistent_volume_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_persistent_volume_with_http_info "
+                "on CoreV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
 
@@ -28641,169 +28792,11 @@ class VolumeMount(HikaruBase):
 
 
 @dataclass
-class NamespaceList(HikaruDocumentBase):
-    r"""
-    NamespaceList is a list of Namespaces.
-
-    Full name: v1.NamespaceList
-
-    Attributes:
-    items: Items is the list of Namespace objects in the list. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-    apiVersion: APIVersion RuntimeClassListdefines the versioned schema of this
-        representation of an object. Servers should convert recognized schemas to the
-        latest internal value, and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Namespace"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "NamespaceList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listNamespace(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind Namespace
-
-        operationID: listNamespace
-        path: /api/v1/namespaces
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
-            events with type "BOOKMARK". Servers that do not implement
-            bookmarks may ignore this flag and bookmarks are sent at the
-            server's discretion. Clients should not assume bookmarks are
-            returned at any specific interval, nor may they assume the
-            server will send any BOOKMARK event during a session. If this
-            is not a watch, this field is ignored. If the feature gate
-            WatchBookmarks is not enabled in apiserver, this field is
-            ignored. This field is beta.
-        :param continue_: The continue option should be set when retrieving
-            more results from the server. Since this value is server
-            defined, clients may only use the continue value from a
-            previous query result with identical query parameters (except
-            for the value of continue) and the server may reject a
-            continue value it does not recognize. If the specified
-            continue value is no longer valid whether due to expiration
-            (generally five to fifteen minutes) or a configuration change
-            on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the
-            client needs a consistent list, it must restart their list
-            without the continue field. Otherwise, the client may send
-            another list request with the token received with the 410
-            error, the server will respond with a list starting from the
-            next key, but from the latest snapshot, which is inconsistent
-            from the previous list results - objects that are created,
-            modified, or deleted after the first list request will be
-            included in the response, as long as their keys are after the
-            "next key". This field is not supported when watch is true.
-            Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned
-            objects by their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned
-            objects by their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a
-            list call. If more items exist, the server will set the
-            `continue` field on the list metadata to a value that can be
-            used with the same initial query to retrieve the next set of
-            results. Setting a limit may return fewer than the requested
-            amount of items (up to zero items) in the event all requested
-            objects are filtered out and clients should only use the
-            presence of the continue field to determine whether more
-            results are available. Servers may choose not to support the
-            limit argument and will return all of the available results.
-            If limit is specified and the continue field is empty, clients
-            may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to
-            issuing a single list call without a limit - that is, no
-            objects created, modified, or deleted after the first request
-            is issued will be included in any subsequent continued
-            requests. This is sometimes referred to as a consistent
-            snapshot, and ensures that a client that is using limit to
-            receive smaller chunks of a very large result can ensure they
-            see all possible objects. If objects are updated during a
-            chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: When specified with a watch call, shows
-            changes that occur after that particular version of a
-            resource. Defaults to changes from the beginning of history.
-            When specified for list: - if unset, then the result is
-            returned from remote storage based on quorum-read flag; - if
-            it's 0, then we simply return what we currently have in cache,
-            no guarantee; - if set to non zero, then the result is at
-            least as fresh as given rv.
-        :param timeout_seconds: Timeout for the list/watch call. This limits
-            the duration of the call, regardless of any activity or
-            inactivity.
-        :param watch: Watch for changes to the described resources and return
-            them as a stream of add, update, and remove notifications.
-            Specify resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   NamespaceList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = CoreV1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespace_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method list_namespace_with_http_info "
-                "on CoreV1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
 class Namespace(HikaruDocumentBase):
     r"""
     Namespace provides a scope for Names. Use of multiple namespaces is optional.
 
-    Full name: v1.Namespace
+    Full name: Namespace
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -29195,6 +29188,174 @@ class Namespace(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
+
+
+@dataclass
+class NamespaceList(HikaruDocumentBase):
+    r"""
+    NamespaceList is a list of Namespaces.
+
+    Full name: v1.NamespaceList
+
+    Attributes:
+    items: Items is the list of Namespace objects in the list. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+    apiVersion: APIVersion RuntimeClassListdefines the versioned schema of this
+        representation of an object. Servers should convert recognized schemas to the
+        latest internal value, and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Namespace"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "NamespaceList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listNamespace(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        list or watch objects of kind Namespace
+
+        operationID: listNamespace
+        path: /api/v1/namespaces
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch
+            events with type "BOOKMARK". Servers that do not implement
+            bookmarks may ignore this flag and bookmarks are sent at the
+            server's discretion. Clients should not assume bookmarks are
+            returned at any specific interval, nor may they assume the
+            server will send any BOOKMARK event during a session. If this
+            is not a watch, this field is ignored. If the feature gate
+            WatchBookmarks is not enabled in apiserver, this field is
+            ignored. This field is beta.
+        :param continue_: The continue option should be set when retrieving
+            more results from the server. Since this value is server
+            defined, clients may only use the continue value from a
+            previous query result with identical query parameters (except
+            for the value of continue) and the server may reject a
+            continue value it does not recognize. If the specified
+            continue value is no longer valid whether due to expiration
+            (generally five to fifteen minutes) or a configuration change
+            on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the
+            client needs a consistent list, it must restart their list
+            without the continue field. Otherwise, the client may send
+            another list request with the token received with the 410
+            error, the server will respond with a list starting from the
+            next key, but from the latest snapshot, which is inconsistent
+            from the previous list results - objects that are created,
+            modified, or deleted after the first list request will be
+            included in the response, as long as their keys are after the
+            "next key". This field is not supported when watch is true.
+            Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned
+            objects by their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned
+            objects by their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a
+            list call. If more items exist, the server will set the
+            `continue` field on the list metadata to a value that can be
+            used with the same initial query to retrieve the next set of
+            results. Setting a limit may return fewer than the requested
+            amount of items (up to zero items) in the event all requested
+            objects are filtered out and clients should only use the
+            presence of the continue field to determine whether more
+            results are available. Servers may choose not to support the
+            limit argument and will return all of the available results.
+            If limit is specified and the continue field is empty, clients
+            may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to
+            issuing a single list call without a limit - that is, no
+            objects created, modified, or deleted after the first request
+            is issued will be included in any subsequent continued
+            requests. This is sometimes referred to as a consistent
+            snapshot, and ensures that a client that is using limit to
+            receive smaller chunks of a very large result can ensure they
+            see all possible objects. If objects are updated during a
+            chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: When specified with a watch call, shows
+            changes that occur after that particular version of a
+            resource. Defaults to changes from the beginning of history.
+            When specified for list: - if unset, then the result is
+            returned from remote storage based on quorum-read flag; - if
+            it's 0, then we simply return what we currently have in cache,
+            no guarantee; - if set to non zero, then the result is at
+            least as fresh as given rv.
+        :param timeout_seconds: Timeout for the list/watch call. This limits
+            the duration of the call, regardless of any activity or
+            inactivity.
+        :param watch: Watch for changes to the described resources and return
+            them as a stream of add, update, and remove notifications.
+            Specify resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   NamespaceList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = CoreV1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespace_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method list_namespace_with_http_info "
+                "on CoreV1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response(result, codes_returning_objects)
+
+
+@dataclass
+class Endpoin(HikaruBase):
+    r"""
+
+    Full name: Endpoin
+
+    Attributes:
+    """
 
 
 @dataclass
@@ -30481,6 +30642,16 @@ class PodDNSConfig(HikaruBase):
 
 
 @dataclass
+class mitRange(HikaruBase):
+    r"""
+
+    Full name: mitRange
+
+    Attributes:
+    """
+
+
+@dataclass
 class LimitRangeList(HikaruDocumentBase):
     r"""
     LimitRangeList is a list of LimitRange items.
@@ -31350,39 +31521,12 @@ class WindowsSecurityContextOptions(HikaruBase):
 
 
 @dataclass
-class APIGroupList(HikaruDocumentBase):
-    r"""
-    APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
-
-    Full name: v1.APIGroupList
-
-    Attributes:
-    groups: groups is a list of APIGroup.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    groups: List["APIGroup"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "APIGroupList"
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class APIGroup(HikaruDocumentBase):
     r"""
     APIGroup contains the name, the supported versions, and the preferred version of a
     group.
 
-    Full name: v1.APIGroup
+    Full name: APIGroup
 
     Attributes:
     name: name is the name of the group.
@@ -31416,6 +31560,33 @@ class APIGroup(HikaruDocumentBase):
     serverAddressByClientCIDRs: Optional[List["ServerAddressByClientCIDR"]] = field(
         default_factory=list
     )
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class APIGroupList(HikaruDocumentBase):
+    r"""
+    APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
+
+    Full name: v1.APIGroupList
+
+    Attributes:
+    groups: groups is a list of APIGroup.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    groups: List["APIGroup"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIGroupList"
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -35177,6 +35348,16 @@ class NamespaceSpec(HikaruBase):
 
 
 @dataclass
+class ServiceAccoun(HikaruBase):
+    r"""
+
+    Full name: ServiceAccoun
+
+    Attributes:
+    """
+
+
+@dataclass
 class ServiceAccountList(HikaruDocumentBase):
     r"""
     ServiceAccountList is a list of ServiceAccount objects
@@ -37662,42 +37843,11 @@ class PodReadinessGate(HikaruBase):
 
 
 @dataclass
-class APIResourceList(HikaruDocumentBase):
-    r"""
-    APIResourceList is a list of APIResource, it is used to expose the name of the
-    resources supported in a specific group and version, and if the resource is
-    namespaced.
-
-    Full name: v1.APIResourceList
-
-    Attributes:
-    groupVersion: groupVersion is the group and version this APIResourceList is for.
-    resources: resources contains the name of the resources and if they are namespaced.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    groupVersion: str
-    resources: List["APIResource"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "APIResourceList"
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class APIResource(HikaruBase):
     r"""
     APIResource specifies the name of a resource and whether it is namespaced.
 
-    Full name: v1.APIResource
+    Full name: APIResource
 
     Attributes:
     kind: kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
@@ -37736,6 +37886,37 @@ class APIResource(HikaruBase):
     version: Optional[str] = None
     categories: Optional[List[str]] = field(default_factory=list)
     shortNames: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class APIResourceList(HikaruDocumentBase):
+    r"""
+    APIResourceList is a list of APIResource, it is used to expose the name of the
+    resources supported in a specific group and version, and if the resource is
+    namespaced.
+
+    Full name: v1.APIResourceList
+
+    Attributes:
+    groupVersion: groupVersion is the group and version this APIResourceList is for.
+    resources: resources contains the name of the resources and if they are namespaced.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    groupVersion: str
+    resources: List["APIResource"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "APIResourceList"
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
