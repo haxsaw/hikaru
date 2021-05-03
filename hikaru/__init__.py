@@ -25,6 +25,8 @@ from hikaru.generate import (get_python_source, get_clean_dict, get_yaml, get_js
                              from_dict, from_json)
 from hikaru.naming import (set_global_default_release, set_default_release,
                            get_default_release, camel_to_pep8)
+from hikaru.version_kind import (register_version_kind_class,
+                                 get_version_kind_class)
 from hikaru.utils import Response
 
 
@@ -38,6 +40,7 @@ __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_sou
            "get_clean_dict", "load_full_yaml", "get_processors", "TypeWarning",
            "DiffDetail", "process_api_version", "from_dict", "from_json",
            "set_default_release", "set_global_default_release", "get_default_release",
-           "camel_to_pep8", "HikaruDocumentBase", "Response", "HikaruOpsBase"]
+           "camel_to_pep8", "HikaruDocumentBase", "Response", "HikaruOpsBase",
+           'register_version_kind_class', 'get_version_kind_class']
 __all__.extend(model_classes)
 del model_classes

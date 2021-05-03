@@ -88,3 +88,11 @@ DiffDetail is a namedtuple that is returned as list elements from the
 .. _set_global_default_release doc:
 
 .. autofunction:: hikaru.set_global_default_release
+
+.. _get_version_kind_class doc:
+
+.. autofunction:: hikaru.get_version_kind_class
+
+.. _register_version_kind_class doc:
+
+.. autofunction:: hikaru.register_version_kind_class

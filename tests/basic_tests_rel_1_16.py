@@ -19,6 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from importlib import import_module
+from dataclasses import dataclass, InitVar
+from typing import Optional, Any
 from unittest import SkipTest
 import pytest
 from hikaru import *
@@ -1246,12 +1248,12 @@ def test111():
     check that you can set the proper default release
     """
     raise SkipTest("This release has been removed for the time being")
-    from hikaru.model.rel_1_15 import Pod
-    defrel = get_default_release()
-    set_default_release('rel_1_15')
-    pod = setup_pod()
-    set_default_release(defrel)
-    assert pod.__class__ is Pod
+    # from hikaru.model.rel_1_15 import Pod
+    # defrel = get_default_release()
+    # set_default_release('rel_1_15')
+    # pod = setup_pod()
+    # set_default_release(defrel)
+    # assert pod.__class__ is Pod
 
 
 def test112():
@@ -1317,6 +1319,80 @@ def test117(rel_version: str):
     """
     mod = import_module(".documents", f"hikaru.model.rel_1_16.{rel_version}")
     assert mod
+
+
+class Pod118(Pod):
+    def bibble(self):
+        return 'babble'
+
+
+def test118():
+    """
+    ensure that you can direct Hikaru to use a different class for a known kind/version
+    """
+    register_version_kind_class(Pod118, Pod.apiVersion, Pod.kind)
+    p: Pod = setup_pod()
+    try:
+        assert isinstance(p, Pod118), f"Got type {p.__class__.__name__}"
+        assert p.bibble() == 'babble'
+    finally:
+        register_version_kind_class(Pod, Pod.apiVersion, Pod.kind)
+
+
+class Pod119(Pod):
+    def __post_init__(self, client: Any = None):
+        super(Pod119, self).__post_init__(client=client)
+        self.frank = 'hi'
+        self.zappa = 'there'
+
+    def greet(self):
+        return f"{self.frank} {self.zappa}"
+
+
+def test119():
+    """
+    check we can add data elements to a derived class and not mess anything up
+    """
+    register_version_kind_class(Pod119, Pod.apiVersion, Pod.kind)
+    p: Pod = setup_pod()
+    try:
+        assert isinstance(p, Pod119)
+        yaml = get_yaml(p)
+        assert 'frank' not in yaml
+        assert p.greet() == "hi there"
+        new_p: Pod119 = load_full_yaml(yaml=yaml)[0]
+        assert new_p.zappa == p.zappa
+        d = get_clean_dict(p)
+        assert 'frank' not in d
+    finally:
+        register_version_kind_class(Pod, Pod.apiVersion, Pod.kind)
+
+
+@dataclass
+class Pod120(Pod):
+    moonshadow: InitVar[Optional[str]] = 'followed'
+
+    def __post_init__(self, client: Any = None,
+                      moonshadow: InitVar[Optional[str]] = None):
+        super(Pod120, self).__post_init__(client=client)
+        self.moonshadow = moonshadow
+
+
+def test120():
+    """
+    check that a derived dataclass with an InitVar doesn't show up in dict/yaml
+    """
+    register_version_kind_class(Pod120, Pod.apiVersion, Pod.kind)
+    p: Pod120 = setup_pod()
+    try:
+        assert isinstance(p, Pod120)
+        yaml = get_yaml(p)
+        assert 'moonshadow' not in yaml
+        assert p.moonshadow == 'followed'
+        new_p: Pod120 = Pod120(moonshadow='hunted')
+        assert new_p.moonshadow == 'hunted'
+    finally:
+        register_version_kind_class(Pod, Pod.apiVersion, Pod.kind)
 
 
 if __name__ == "__main__":

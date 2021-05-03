@@ -189,7 +189,13 @@ def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
             final_type = globs.get(candidate_type, candidate_type)
         else:
             # must be a ForwardRef
-            final_type = candidate_type._evaluate(*make_args(globs, locals()))
+            try:
+                final_type = candidate_type._evaluate(*make_args(globs, locals()))
+            except NameError as e:
+                raise NameError(f"{str(e)}; did you forget to 'import * from "
+                                f"a model module when trying to create a "
+                                f"subclass of a Hikaru class?")
+
     return final_type
 
 

@@ -27,8 +27,8 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
-from typing import Union, List, Dict, Any, ForwardRef
-from dataclasses import fields, dataclass, is_dataclass, asdict
+from typing import Union, List, Dict, Any, ForwardRef, get_type_hints
+from dataclasses import fields, dataclass, is_dataclass, asdict, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 from hikaru.naming import get_type_if_forward_ref, camel_to_pep8
@@ -395,8 +395,10 @@ class HikaruBase(object):
         field_map = {f.name: f for f in fields(cls)}
         kw_args = {}
         sig = signature(cls.__init__)
+        init_var_hints = {k for k, v in get_type_hints(cls).items()
+                          if isinstance(v, InitVar)}
         for p in sig.parameters.values():
-            if p.name in ('self', 'client'):
+            if p.name in ('self', 'client') or p.name in init_var_hints:
                 continue
             # skip these either of these next two since they are supplied by default
             if issubclass(cls, HikaruDocumentBase) and p.name in ('apiVersion',
@@ -423,7 +425,8 @@ class HikaruBase(object):
                 elif origin in (dict, Dict):
                     kw_args[p.name] = {}
                 else:
-                    raise NotImplementedError(f"Internal error! Unknown type {initial_type}"
+                    raise NotImplementedError(f"Internal error! Unknown type"
+                                              f" {initial_type}"
                                               f" for parameter {p.name} in"
                                               f" {cls.__name__}. Please file a"
                                               f" bug report.")

@@ -25,7 +25,6 @@ This module is automatically generated using the Hikaru build program that turns
 a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
-
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
