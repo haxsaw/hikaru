@@ -19,6 +19,7 @@ Release: |release|
    hikaru-base
    hikaru-document
    using-with-kubernetes
+   advanced
    patterns-recipes
    issues
    reference

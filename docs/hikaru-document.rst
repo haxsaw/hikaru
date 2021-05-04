@@ -2,7 +2,9 @@
 The HikaruDocumentBase class
 *****************************
 
-HikaruDocumentBase is a subclass of ``HikaruBase`` that is used as the base class for any K8s
+:ref:`HikaruDocumentBase<HikaruDocumentBase doc>` is a subclass of
+:ref:`HikaruBase<HikaruBase doc>` that is used as the
+base class for any K8s
 object that appears as a top-level object in the K8s API. By *top-level* we mean any object which is 
 provided as an argument to a Kubernetes API call, or any object that is returned by a Kubernetes API call.
 These objects are special in that they all contain both the ``apiVersion`` and ``kind`` attributes, and
@@ -26,7 +28,8 @@ Methods are associated with a class based on one of three criteria:
 
 - The class is an input parameter to the underlying API call; these become instance methods.
 - The class is a result value from the underlying API call; these become ``staticmethods``.
-- The method name seems to indicate that it would be better suited to be associated with different class than the one used in either the input parameters or the responses; these also become ``staticmethods``.
+- The method name seems to indicate that it would be better suited to be associated with different
+- class than the one used in either the input parameters or the responses; these also become ``staticmethods``.
 
 So for example, the ``createNamespacedPod()`` method requires a Pod as an input parameter, so this is
 treated as an instance method on the Pod class. The Pod object itself provides the values for the input
@@ -53,11 +56,13 @@ provide additional assistance in using the methods.
 Method responses and the Response object
 ----------------------------------------
 
-Every method returns a Hikaru ``Response`` object, which wraps up the response code, any text message,
-and any returned objects. The underlying Kubernetes Python client can also return a 'thread' object 
-in case the method is invoked to be performed asynchronously, which Hikaru will support in a later
-release.
+Every method returns a Hikaru :ref:`Response<Response doc>` object, which wraps up the response code, any text message,
+and any returned objects. If the call was made non-blocking, then the Reponse object serves as a proxy
+for the underlying thread-like object which is responsible for completing the call. By calling ``get()``
+on the Response object, the caller will block until the call completes, at which time
+a three-tuple will be returned that contains the returned object, code, and headers
+from the response.
 
 An example of how to use these objects and their methods when interacting with Kubernetes is shown
-in the section Using Hikaur with Kubernetes.
+in the section :ref:`Using Hikaru with Kubernetes<Using Hikaru with Kubernetes>`.
 

@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import importlib
+from dataclasses import fields
 from typing import Dict, Optional
 from hikaru.meta import HikaruDocumentBase
 from hikaru.naming import get_default_release
@@ -202,13 +203,18 @@ def register_version_kind_class(cls: type, version: str, kind: str,
         cls is to be registered. Otherwise, it will be registered in the release
         that is default for the calling thread.
     :raises TypeError: if the provided class is not a subclass of
-        HikaruDocumentBase
+        HikaruDocumentBase, or if the class doesn't have apiVersion or kind
+        attributes
     :return: If replacing an existing class, the previously registered class
         is returned. If a new class, then None is returned.
     """
     if not issubclass(cls, HikaruDocumentBase):
         raise TypeError("The class to register must be a HikaruDocumentBase "
                         "subclass")
+    fset = {f.name for f in fields(cls)}
+    if 'apiVersion' not in fset or 'kind' not in fset:
+        raise TypeError("The class must have both apiVersion and kind "
+                        "attributes")
     old_cls = get_version_kind_class(version, kind, release=release)
     kind_dict = _get_vk_dict(version, kind, release=release)
     kind_dict[kind] = cls

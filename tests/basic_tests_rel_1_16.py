@@ -1426,6 +1426,17 @@ def test121():
     assert o.inner.intField == 43
     assert o.inner.optIntField == 121
     assert o.inner.optStrField is None
+    yaml = get_yaml(o)
+    new_o = load_full_yaml(yaml=yaml)[0]
+    assert isinstance(new_o, Outer121)
+    assert new_o.kind == 'outer121'
+    assert new_o.metadata.name == 'custom-tester'
+    assert new_o.metadata.namespace == 'default'
+    assert isinstance(new_o.inner, Inner121)
+    assert new_o.inner.strField == 'gotta have it'
+    assert new_o.inner.intField == 43
+    assert new_o.inner.optIntField == 121
+    assert new_o.inner.optStrField is None
 
 
 if __name__ == "__main__":

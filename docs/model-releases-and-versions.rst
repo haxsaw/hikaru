@@ -13,7 +13,8 @@ release of the Python client then you may need to specify what release and/or ve
 Releases
 ========
 
-At the time of this writing, Kubernetes is at release 1.16, and 1.17 is in alpha. The Python Kubernetes client works on slightly different release numbers:
+At the time of this writing, Kubernetes is at release 1.16, and 1.17 is in alpha. The Python
+Kubernetes client works on slightly different release numbers:
 
 +-------+-------------+
 |K8s Rel|Py Client Rel|
@@ -25,13 +26,15 @@ At the time of this writing, Kubernetes is at release 1.16, and 1.17 is in alpha
 |1.17   |???          |
 +-------+-------------+
 
-In Hikaru, the differences in releases are reflected in the subpackages of the ``model`` package. Each K8s release has its own subpackage under ``model`` with names such as ``rel_1_16``. Beneath
+In Hikaru, the differences in releases are reflected in the subpackages of the ``model`` package.
+Each K8s release has its own subpackage under ``model`` with names such as ``rel_1_16``. Beneath
 this there is a standardized structure reflecting the supported verions of the K8s API for
 that particular release (more on this later). Each release of Hikaru has a default release
 that it works with out of the box (currently 1.16), so if you don't need anything different
 than the default release then you don't need to do anything more.
 
-Every default release has a default version, currently ``v1``; the objects from the v1 version are automatically imported into the default release, and the default release's model
+Every default release has a default version, currently ``v1``; the objects from the v1 version
+are automatically imported into the default release, and the default release's model
 objects are automatically imported into the `hikaru.model` module. That means that if you wish
 to use v1 objects for the default (rel_1_16) release, the following statements result in the
 importing of the exact same set of Hikaru objects:
@@ -57,15 +60,23 @@ Switching Releases in Code
 --------------------------
 
 Using imports to specify which release to use works when you're creating objects directly, but
-what about when Hikaru is creating the objects for you, for example as as a result of calling ``load_full_yaml()``? 
+what about when Hikaru is creating the objects for you, for example as as a result of calling
+``load_full_yaml()``? 
 
 Hikaru maintains two notions of a **default** release; one globally for a program, and one on
 a per-thread basis. If a per-thread release isn't set then the global default release is used.
 Hikaru supplies some functions to view and alter these values:
 
-- The ``get_default_release()`` method returns a string that is the name of the release set for the current thread, and if there isn't one then it returns the name of the global release for the program.
-- The ``set_default_release()`` function sets the string name of the default release to use for the current thread; hence different threads can default to different releases of Hikaru objects and hence the underlying K8s API. 
-- The ``set_global_default_release()`` function sets the the string name of the global default release to use in the entire program; so if a thread doesn't have its own default then it will fall back to the value supplied with this call.
+- The :ref:`get_default_release()<get_default_release doc>` method returns a string that
+  is the name of the release set
+  for the current thread, and if there isn't one then it returns the name of the
+  global release for the program.
+- The :ref:`set_default_release()<set_default_release doc>` function sets the string name
+  of the default release to use for the current thread; hence different threads can
+  default to different releases of Hikaru objects and hence the underlying K8s API. 
+- The :ref:`set_global_default_release()<set_global_default_release doc>` function sets the the string name of the
+  global default release to use in the entire program; so if a thread doesn't have its
+  own default then it will fall back to the value supplied with this call.
 
 =========
 Versions
@@ -92,13 +103,11 @@ Each version is a subpackage with a standard structure:
 - version module with the same name as the package.
 - an ``__init__.py`` file that imports all classes from the version module so that they are available at the package level.
 - a ``documents`` module that provides a filtered view on the contents of the verion module, only containing top-level classes that are subclasses of ``HikaruDocumentBase``.
-- a miscellaneous module for future use
 
 So for example, the ``rel_1_16.v1`` package contains these modules:
 
 - ``__init__.py``
 - ``documents.py``
-- ``misc.py``
 - ``v1.py``
 
 Since ``__init__.py`` imports the classes from ``v1.py``, the following two are 
@@ -110,7 +119,7 @@ equivalent:
     from hikaru.model.rel_1_16.v1.v1 import *
 
 The ``documents`` module exposes only a subset of the classes from ``v1.py``; these are all
-subclasses of ``HikaruDocumentBase``, and are the kinds of classes that are generated when
+subclasses of :ref:`HikaruDocumentBase<HikaruDocumentBase doc>`, and are the kinds of classes that are generated when
 Hikaru builds K8s objects for you when it has to determine the class, for example with the
 ``load_full_yaml()`` or ``from_dict()`` functions. If you never need to manually create any
 arbitrary object from a given version, using just the symbols in ``documents`` can keep your

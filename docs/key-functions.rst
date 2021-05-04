@@ -190,21 +190,49 @@ hierarchies, but you are free to use these as you wish.
 get_default_release()
 *********************
 
+:ref:`Documentaion<get_default_release doc>`
+
 Returns a string that is the name of the default release that Hikaru will use when creating
 objects from YAML, JSON, or a dict. The release name returned will be the release set for
 the calling thread (if there is one), or else it will be the global default release for
-the entire process.
+the entire process. A more thorough discussion of using this function can be found
+:ref:`here<Kubernetes API Releases and Versions>`.
 
 set_default_release()
 *********************
 
+:ref:`Documentaion<set_default_release doc>`
+
 Sets the default string name of the release for Hikaru to use when creating objects from YAML, JSON or a dict.
 This value is set only for the calling thread, hence each thread can have its own default
 release. The supplied string must be the name of one of the release packages under ``hikaru.model``.
+A more thorough discussion of using this function can be found
+:ref:`here<Kubernetes API Releases and Versions>`.
 
 set_global_default_release()
 ****************************
 
+:ref:`Documentaion<set_global_default_release doc>`
+
 Sets the default string name of the release to use for the entire program; this supplies a fallback
 release name to use in case an individual thread doesn't set a release name for itself. The supplied
 string must be the name of a release package under ``hikaru.model``.
+A more thorough discussion of using this function can be found
+:ref:`here<Kubernetes API Releases and Versions>`.
+
+get_version_kind_class()
+************************
+
+:ref:`Documentation<get_version_kind_class doc>`
+
+Returns the class object that will be used by Hikaru when it encounters the specified version and
+kind values.
+
+register_version_kind_class()
+*****************************
+
+:ref:`Documentation<register_version_kind_class doc>`
+
+Registered the class to create when Hikaru encounters the specified version and kind values.
+Use of this function is part of advanced Hikaru usage, which is documented
+:ref:`here<Advanced Hikaru: Defining Your Own Classes>`.

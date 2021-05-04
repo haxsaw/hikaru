@@ -84,5 +84,5 @@ the :ref:`get_python_source()` function:
     print(get_python_source(p, assign_to='x'))
 
 This will output a PEP8-compliant set of Python. Generation may take a short while
-depending on how many deeply nested Python objects involved are.
+depending on how many deeply nested the Python objects involved are.
 

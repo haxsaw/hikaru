@@ -8,8 +8,8 @@ interaction method, it can be possible to not use a single Kubernetes Python cal
 entirely in Hikaru objects. Hikaru also provides a way for the user to explicitly set the
 ``kubernetes.client.ApiClient`` instance to use when interacting with Kubernetes.
 
-To illustrate this, we'll start with a fully explicit verion and commented interaction and
-then show how you can pare it down based on defaults and environment. In this example,
+To illustrate this, we'll start with a fully explicit verion with commented interaction and
+then show how you can pare it down based on defaults. In this example,
 we'll create and delete a Pod using the K3s lightweight Kubernetes package.
 
 .. code:: python
@@ -51,7 +51,8 @@ we'll create and delete a Pod using the K3s lightweight Kubernetes package.
     if __name__ == "__main__":
         do_it()
 
-Notice that for instances of ``HikaruDocumentBase`` subclasses we can ``set_client()``
+Notice that for instances of :ref:`HikaruDocumentBase<HikaruDocumentBase doc>`
+subclasses we can ``set_client()``
 on the instance or pass the client in as a keyword parameter. For static methods on
 a subclass itself you must pass the client in (if you don't use a default client).
 
