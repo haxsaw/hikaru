@@ -872,10 +872,3 @@ class HikaruDocumentBase(HikaruBase):
         :param client: instance of kubernetes.client.api_client.ApiClient
         """
         self.client = client
-
-
-class HikaruOpsBase(object):
-    """
-    A marker base class for generated classes that collect operations with no home
-    """
-    pass

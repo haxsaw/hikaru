@@ -1328,7 +1328,7 @@ class Pod118(Pod):
 
 def test118():
     """
-    ensure that you can direct Hikaru to use a different class for a known kind/version
+    test you can direct Hikaru to use a different v/k class with new methods
     """
     register_version_kind_class(Pod118, Pod.apiVersion, Pod.kind)
     p: Pod = setup_pod()
@@ -1351,7 +1351,7 @@ class Pod119(Pod):
 
 def test119():
     """
-    check we can add data elements to a derived class and not mess anything up
+    add instance attrs (not from init args) to a subclass with no impact
     """
     register_version_kind_class(Pod119, Pod.apiVersion, Pod.kind)
     p: Pod = setup_pod()
@@ -1380,7 +1380,7 @@ class Pod120(Pod):
 
 def test120():
     """
-    check that a derived dataclass with an InitVar doesn't show up in dict/yaml
+    add instance attrs (from init args) to a subclass with no impact
     """
     register_version_kind_class(Pod120, Pod.apiVersion, Pod.kind)
     p: Pod120 = setup_pod()
@@ -1393,6 +1393,39 @@ def test120():
         assert new_p.moonshadow == 'hunted'
     finally:
         register_version_kind_class(Pod, Pod.apiVersion, Pod.kind)
+
+
+@dataclass
+class Inner121(HikaruBase):
+    strField: str
+    intField: int
+    optStrField: Optional[str] = None
+    optIntField: Optional[int] = None
+
+
+@dataclass
+class Outer121(HikaruDocumentBase):
+    apiVersion: str = 'hikaru.v1'
+    kind: str = 'outer121'
+    metadata: Optional[ObjectMeta] = None
+    inner: Optional[Inner121] = None
+
+
+def test121():
+    """
+    test creating your own custom class which Hikaru can handle
+    """
+    register_version_kind_class(Outer121, Outer121.apiVersion, Outer121.kind)
+    o: Outer121 = load_full_yaml(path="custom_op.yaml")[0]
+    assert isinstance(o, Outer121)
+    assert o.kind == 'outer121'
+    assert o.metadata.name == 'custom-tester'
+    assert o.metadata.namespace == 'default'
+    assert isinstance(o.inner, Inner121)
+    assert o.inner.strField == 'gotta have it'
+    assert o.inner.intField == 43
+    assert o.inner.optIntField == 121
+    assert o.inner.optStrField is None
 
 
 if __name__ == "__main__":

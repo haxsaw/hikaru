@@ -58,21 +58,28 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
     **Requirements of the 'cls' parameter**
 
-    When defining a new class for Hikaru to instantiate, the module that contains
-    the subclass **must** include a suitable wild-card import for all the symbols
-    in the model module that you want to base your subclass on. So for example,
-    if you are creating a subclass of Pod, you will run into errors if the module
-    that contains your Pod subclass only has:
+    Besides being a subclass of HikaurDocumentBase, when defining a new
+    class for Hikaru to instantiate, there are a few variations
+    on what you define that are available to you, however there are two constraints
+    that must always be followed:
 
-    ``from hikaru.model.rel_1_16.v1 import Pod``
+    1. The module that contains the subclass **must** include a suitable
+       wild-card import for all the symbols in the model module that you want
+       to base your subclass on. So for example, if you are creating a subclass
+       of Pod, you will run into errors if the module that contains your Pod
+       subclass only has:
 
-    You must instead import all symbols from that release/version:
+       ``from hikaru.model.rel_1_16.v1 import Pod``
 
-    ``from hikaru.model.rel_1_16.v1 import *``
+       You must instead import all symbols from that release/version:
 
-    Or, if using the default release and version packages:
+       ``from hikaru.model.rel_1_16.v1 import *``
 
-    ``from hikaru.model import *``
+       Or, if using the default release and version packages:
+
+       ``from hikaru.model import *``
+
+    2. The classes must be defined at the top-level within the module.
 
     Further conditions may apply depending on the nature of the subclass you are
     creating:
@@ -194,9 +201,14 @@ def register_version_kind_class(cls: type, version: str, kind: str,
     :param release: optional string; if supplied, the name of the release where
         cls is to be registered. Otherwise, it will be registered in the release
         that is default for the calling thread.
+    :raises TypeError: if the provided class is not a subclass of
+        HikaruDocumentBase
     :return: If replacing an existing class, the previously registered class
         is returned. If a new class, then None is returned.
     """
+    if not issubclass(cls, HikaruDocumentBase):
+        raise TypeError("The class to register must be a HikaruDocumentBase "
+                        "subclass")
     old_cls = get_version_kind_class(version, kind, release=release)
     kind_dict = _get_vk_dict(version, kind, release=release)
     kind_dict[kind] = cls

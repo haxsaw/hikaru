@@ -1,0 +1,10 @@
+---
+apiVersion: hikaru.v1
+kind: outer121
+metadata:
+  name: custom-tester
+  namespace: default
+inner:
+  strField: gotta have it
+  intField: 43
+  optIntField: 121

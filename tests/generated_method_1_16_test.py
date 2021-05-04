@@ -3,7 +3,7 @@ from types import MethodType, FunctionType
 from inspect import signature
 from random import choice
 import pytest
-from hikaru import HikaruDocumentBase, HikaruOpsBase
+from hikaru import HikaruDocumentBase
 from hikaru.model.rel_1_16.versions import versions
 from hikaru import set_default_release
 
