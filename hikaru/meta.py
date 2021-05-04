@@ -396,7 +396,7 @@ class HikaruBase(object):
         kw_args = {}
         sig = signature(cls.__init__)
         init_var_hints = {k for k, v in get_type_hints(cls).items()
-                          if isinstance(v, InitVar)}
+                          if isinstance(v, InitVar) or v is InitVar}
         for p in sig.parameters.values():
             if p.name in ('self', 'client') or p.name in init_var_hints:
                 continue
