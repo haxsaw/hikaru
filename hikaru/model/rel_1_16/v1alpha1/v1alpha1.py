@@ -1310,7 +1310,7 @@ class HorizontalPodAutoscalerSpec(HikaruBase):
 
 
 @dataclass
-class CrossVersionObjectReference(HikaruDocumentBase):
+class CrossVersionObjectReference(HikaruBase):
     r"""
     CrossVersionObjectReference contains enough information to let you identify the
     referred resource.
@@ -1325,12 +1325,9 @@ class CrossVersionObjectReference(HikaruDocumentBase):
     apiVersion: API version of the referent
     """
 
-    _version = "v1"
     kind: str
     name: str
     apiVersion: Optional[str] = "v1"
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -2611,7 +2608,7 @@ class TokenRequestSpec(HikaruBase):
 
 
 @dataclass
-class BoundObjectReference(HikaruDocumentBase):
+class BoundObjectReference(HikaruBase):
     r"""
     BoundObjectReference is a reference to an object that a token is bound to.
 
@@ -2624,13 +2621,10 @@ class BoundObjectReference(HikaruDocumentBase):
     uid: UID of the referent.
     """
 
-    _version = "v1"
     apiVersion: Optional[str] = "v1"
     kind: Optional[str] = "None"
     name: Optional[str] = None
     uid: Optional[str] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -4637,7 +4631,7 @@ class CephFSPersistentVolumeSource(HikaruBase):
 
 
 @dataclass
-class ObjectReference(HikaruDocumentBase):
+class ObjectReference(HikaruBase):
     r"""
     ObjectReference contains enough information to let you inspect or modify the referred
     object.
@@ -4667,7 +4661,6 @@ class ObjectReference(HikaruDocumentBase):
         https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids
     """
 
-    _version = "v1"
     apiVersion: Optional[str] = "v1"
     fieldPath: Optional[str] = None
     kind: Optional[str] = "None"
@@ -4675,8 +4668,6 @@ class ObjectReference(HikaruDocumentBase):
     namespace: Optional[str] = None
     resourceVersion: Optional[str] = None
     uid: Optional[str] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -5664,7 +5655,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
 
 @dataclass
-class Subject(HikaruDocumentBase):
+class Subject(HikaruBase):
     r"""
     Subject contains a reference to the object or user identities a role binding applies
     to. This can either hold a direct API object reference, or a value for non-objects
@@ -5685,13 +5676,10 @@ class Subject(HikaruDocumentBase):
         report an error.
     """
 
-    _version = "v1alpha1"
     kind: str
     name: str
     apiVersion: Optional[str] = "v1alpha1"
     namespace: Optional[str] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -9947,7 +9935,7 @@ class ScaleSpec(HikaruBase):
 
 
 @dataclass
-class WatchEvent(HikaruBase):
+class WatchEvent(HikaruDocumentBase):
     r"""
     Event represents a single event to a watched resource.
 
@@ -9960,8 +9948,11 @@ class WatchEvent(HikaruBase):
     type:
     """
 
+    _version = "v1"
     object: object
     type: str
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10241,7 +10232,7 @@ class TokenReviewStatus(HikaruBase):
 
 
 @dataclass
-class OwnerReference(HikaruDocumentBase):
+class OwnerReference(HikaruBase):
     r"""
     OwnerReference contains enough information to let you identify an owning object. An
     owning object must be in the same namespace as the dependent, or be cluster-scoped, so
@@ -10264,15 +10255,12 @@ class OwnerReference(HikaruDocumentBase):
     controller: If true, this reference points to the managing controller.
     """
 
-    _version = "v1"
     apiVersion: str
     kind: str
     name: str
     uid: str
     blockOwnerDeletion: Optional[bool] = None
     controller: Optional[bool] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass

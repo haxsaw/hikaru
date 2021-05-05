@@ -26,6 +26,7 @@ It is based on having access to a Linux install of k3s.
 """
 from os import getcwd
 from pathlib import Path
+import time
 from unittest import SkipTest
 import pytest
 from hikaru import *
@@ -64,6 +65,11 @@ def setup():
     res = beginning()
     yield res.obj
     ending()
+
+
+####################
+# from test_utils.py
+####################
 
 
 def test01():
@@ -185,13 +191,48 @@ def test07():
     assert res.obj
 
 
+#####################
+# from test_client.py
+#####################
+
+
+base_pod = Pod(metadata=ObjectMeta(),
+               spec=PodSpec(
+                   containers=[Container(image='busybox',
+                                         name='sleep',
+                                         args=["/bin/sh",
+                                               "-c"])]
+               ))
+
+
 def test08():
     """
-    Create a list of namespaces, read them, delete them
+    Create/read/destroy pod
 
-    Original test: test_create_namespace_list_from_yaml
+    Original test: test_pod_apis
     """
-    assert True, "Support yet to be implemented to namespace list create"
+    test_pod = base_pod.dup()
+    test_pod.metadata.name = 'integration-test08'
+    test_pod.spec.containers[0].args.append("while true;do date;sleep 5; done")
+    res = test_pod.createNamespacedPod(namespace='default')
+    assert res.obj
+    assert test_pod.metadata.name == res.obj.metadata.name
+    assert res.obj.status.phase
+    while True:
+        read_res = Pod.readNamespacedPod(test_pod.metadata.name, 'default')
+        assert read_res.obj
+        assert read_res.obj.metadata.name == test_pod.metadata.name
+        assert read_res.obj.status.phase
+        if read_res.obj.status.phase != 'Pending':
+            break
+        time.sleep(0.5)
+    # skipping the stream() bit for now; have to look into it further
+    np_res = Pod.listPodForAllNamespaces()
+    assert np_res.obj
+    assert isinstance(np_res.obj, PodList)
+    assert len(np_res.obj.items) > 0
+    del_res = Pod.deleteNamespacedPod(test_pod.metadata.name,'default')
+    assert del_res.obj
 
 
 if __name__ == "__main__":
@@ -205,4 +246,6 @@ if __name__ == "__main__":
             pass
         except Exception as e:
             print(f'{k} failed with {str(e)}, {e.__class__}')
+            ending()
+            raise
     ending()

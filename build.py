@@ -721,6 +721,7 @@ class ClassDescriptor(object):
                 self.group = "core"
             self.kind = x_k8s["kind"]
             self.version = x_k8s['version']
+            self.is_document = True
         self.description = d.get("description")
         self.all_properties = d.get("properties", {})
         self.required = d.get("required", [])
@@ -741,13 +742,8 @@ class ClassDescriptor(object):
     def process_properties(self):
         self.required_props = []
         self.optional_props = []
-        seen_markers = set(self._doc_markers)
         if self.is_subclass_of is None:  # then there are properties
             for k, v in self.all_properties.items():
-                if k in seen_markers:
-                    seen_markers.remove(k)
-                    if not seen_markers:
-                        self.is_document = True
                 fd = PropertyDescriptor(self, k, v)
 
                 if fd.name in self._doc_markers:

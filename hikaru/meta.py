@@ -408,13 +408,18 @@ class HikaruBase(object):
         init_var_hints = {k for k, v in get_type_hints(cls).items()
                           if isinstance(v, InitVar) or v is InitVar}
         hints = cls._get_hints()
+        if cls.__name__ == "CrossVersionObjectReference":
+            _ = 1
         for p in sig.parameters.values():
             if p.name in ('self', 'client') or p.name in init_var_hints:
                 continue
-            # skip these either of these next two since they are supplied by default
-            if issubclass(cls, HikaruDocumentBase) and p.name in ('apiVersion',
-                                                                  'kind'):
-                continue
+            # skip these either of these next two since they are supplied by default,
+            # but only if they have default values
+            if p.name in ('apiVersion', 'kind'):
+                if issubclass(cls, HikaruDocumentBase):
+                    continue
+                # if hasattr(cls, p.name) and getattr(cls, p.name) is not None:
+                #     continue
             f = hints[p.name]
             initial_type = f
             origin = get_origin(initial_type)
