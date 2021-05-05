@@ -27,11 +27,13 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
+from ast import literal_eval
+from inspect import getmodule
 from typing import Union, List, Dict, Any, ForwardRef, get_type_hints
 from dataclasses import fields, dataclass, is_dataclass, asdict, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
-from hikaru.naming import get_type_if_forward_ref, camel_to_pep8
+from hikaru.naming import camel_to_pep8
 
 try:
     from typing import get_args, get_origin
@@ -97,14 +99,26 @@ class HikaruBase(object):
             self._process_other_catalog(other._field_catalog, self._field_catalog,
                                         idx, name)
 
+    @classmethod
+    def _get_hints(cls) -> dict:
+        mro = cls.mro()
+        mro.reverse()
+        hints = {}
+        globs = vars(getmodule(cls))
+        for c in mro:
+            if is_dataclass(c):
+                hints.update(get_type_hints(c, globs))
+        return hints
+
     def _capture_catalog(self, catalog_depth_first=False):
+        hints = self._get_hints()
         for f in fields(self):
-            initial_type = get_origin(f.type)
+            ftype = hints[f.name]
+            initial_type = get_origin(ftype)
             if initial_type is Union:
-                assignment_type = get_args(f.type)[0]
+                assignment_type = get_args(ftype)[0]
             else:
-                assignment_type = f.type
-            assignment_type = get_type_if_forward_ref(assignment_type, self.__class__)
+                assignment_type = ftype
             del initial_type
             # now we have the type without a Union
             obj = getattr(self, f.name, None)
@@ -124,8 +138,7 @@ class HikaruBase(object):
             else:
                 origin = get_origin(assignment_type)
                 if origin in (list, List):
-                    item_type = get_type_if_forward_ref(get_args(assignment_type)[0],
-                                                        self.__class__)
+                    item_type = get_args(assignment_type)[0]
                     if is_dataclass(item_type) and issubclass(item_type, HikaruBase):
                         for i, item in enumerate(obj):
                             if catalog_depth_first:
@@ -173,13 +186,10 @@ class HikaruBase(object):
         Provides a simple transfer to a dictionary representation of self
 
         This method does a simple transcription of self into a dict using
-        dataclasses.asdict(). The returned dict will include all attributes
-        of all objects present, regardless of value. A minimal dict can be had
-        with hikaru.generate.get_clean_dict().
+        hikaru.get_clean_dict().
 
-        :return: A dict representation of self. All attributes of all objects are
-            present in the returned dict, including those that are None. If you want
-            a minimal dict, use hikaru.generate.get_clean_dict().
+        :return: A dict representation of self. Only keys with values are in
+            the resulting dict
         """
         from hikaru.generate import get_clean_dict
         return get_clean_dict(self)
@@ -187,6 +197,7 @@ class HikaruBase(object):
     def dup(self):
         """
         Create a deep copy of self
+
         :return: identical instance of self plus any contained instances
         """
         klass = self.__class__
@@ -392,11 +403,11 @@ class HikaruBase(object):
         :return: and instance of 'cls' with all scalar attrs set to None and
             all collection attrs set to an appropriate empty collection
         """
-        field_map = {f.name: f for f in fields(cls)}
         kw_args = {}
         sig = signature(cls.__init__)
         init_var_hints = {k for k, v in get_type_hints(cls).items()
                           if isinstance(v, InitVar) or v is InitVar}
+        hints = cls._get_hints()
         for p in sig.parameters.values():
             if p.name in ('self', 'client') or p.name in init_var_hints:
                 continue
@@ -404,12 +415,12 @@ class HikaruBase(object):
             if issubclass(cls, HikaruDocumentBase) and p.name in ('apiVersion',
                                                                   'kind'):
                 continue
-            f = field_map[p.name]
-            initial_type = get_type_if_forward_ref(f.type, cls)
+            f = hints[p.name]
+            initial_type = f
             origin = get_origin(initial_type)
             if origin is Union:
-                type_args = get_args(f.type)
-                initial_type = get_type_if_forward_ref(type_args[0], cls)
+                type_args = get_args(f)
+                initial_type = type_args[0]
             if ((type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                           bool,
                                                                           float))) or
@@ -429,7 +440,7 @@ class HikaruBase(object):
                                               f" {initial_type}"
                                               f" for parameter {p.name} in"
                                               f" {cls.__name__}. Please file a"
-                                              f" bug report.")
+                                              f" bug report.")  # pragma: no cover
         new_inst = cls(**kw_args)
         return new_inst
 
@@ -528,11 +539,13 @@ class HikaruBase(object):
                             raise NotImplementedError(f"Internal error! Don't know how to "
                                                       f"compare element {self_element}"
                                                       f" with {other_element}."
-                                                      f" Please file a bug report.")
+                                                      f" Please file a "
+                                                      f"bug report.")  # pragma: no cover
             else:
                 raise NotImplementedError(f"Internal error! Don't know how to compare"
                                           f" attribute {self_attr} with {other_attr}."
-                                          f" Please file a bug report")
+                                          f" Please file a bug "
+                                          f"report")  # pragma: no cover
         return diffs
 
     def get_type_warnings(self) -> List[TypeWarning]:
@@ -569,18 +582,21 @@ class HikaruBase(object):
             contained objects are correct.
         """
         warnings: List[TypeWarning] = list()
+        hints = self._get_hints()
         for f in fields(self):
             is_required = True
-            initial_type = f.type
+            ftype = hints[f.name]
+            initial_type = ftype
             origin = get_origin(initial_type)
             if origin is Union:  # this is optional; grab what's inside
-                type_args = get_args(f.type)
+                type_args = get_args(ftype)
                 if NoneType in type_args:
                     is_required = False
                     initial_type = type_args[0]
                 else:
                     raise NotImplementedError("Internal error! We aren't expecting this "
-                                              "case. Please file a bug report.")
+                                              "case. Please file a "
+                                              "bug report.")  # pragma: no cover
             # current value of initial_type:
             # ok, now we have either a scaler (int, bool, str, etc),
             # a subclass of HikaruBase,
@@ -593,8 +609,7 @@ class HikaruBase(object):
             origin = get_origin(initial_type)
             if origin is list:
                 attr_type = list
-                contained_type = get_type_if_forward_ref(get_args(initial_type)[0],
-                                                         self.__class__)
+                contained_type = get_args(initial_type)[0]
             elif origin is dict:
                 attr_type = dict
             elif (type(initial_type) not in (type, str) and
@@ -605,9 +620,8 @@ class HikaruBase(object):
                 raise NotImplementedError(f"Internal error! Some other kind of type:"
                                           f" {initial_type}, attr={f.name}"
                                           f" in class {self.__class__.__name__}."
-                                          f" Please file a bug report.")
-            initial_type = get_type_if_forward_ref(initial_type, self.__class__)
-            attr_type = get_type_if_forward_ref(attr_type, self.__class__)
+                                          f" Please file a "
+                                          f"bug report.")  # pragma: no cover
             attrval = getattr(self, f.name)
             if attrval is None:
                 if issubclass(attr_type, (str, int, float,
@@ -694,27 +708,29 @@ class HikaruBase(object):
         # do is the following: if the type of the 'yaml' parameter is an str, then
         # we'll eval it to hopefully get a dict, and raise a useful message if
         # we don't
-        # FIXME; we need some way to make the eval selectable by the user!
         if type(yaml) == str:
-            new = eval(yaml, globals(), locals())
+            new = literal_eval(yaml)
             if type(new) != dict:
                 raise RuntimeError(f"We can't process this input; type {type(yaml)}, "
-                                   f"value = {yaml}")
+                                   f"value = {yaml}")  # pragma: no cover
             yaml = new
+        hints = self._get_hints()
         for f in fields(self.__class__):
             k8s_name = f.name.strip("_")
             k8s_name = camel_to_pep8(k8s_name) if translate else k8s_name
             is_required = True
-            initial_type = f.type
+            ftype = hints[f.name]
+            initial_type = ftype
             origin = get_origin(initial_type)
             if origin is Union:  # this is optional; grab what's inside
-                type_args = get_args(f.type)
+                type_args = get_args(ftype)
                 if NoneType in type_args:
                     is_required = False
                     initial_type = type_args[0]
                 else:
                     raise NotImplementedError("Internal error! We shouldn't see this "
-                                              "case! Please file a bug report.")
+                                              "case! Please file a "
+                                              "bug report.")  # pragma: no cover
             # ok, we've peeled away a Union left by Optional
             # let's see what we're really working with
             val = yaml.get(k8s_name, None)
@@ -723,9 +739,8 @@ class HikaruBase(object):
                                 f" (originally {f.name})")
             if val is None:
                 continue
-            initial_type = get_type_if_forward_ref(initial_type, self.__class__)
             if (type(initial_type) == type and issubclass(initial_type, (int, str,
-                                                                        bool, float))
+                                                                         bool, float))
                     or initial_type == object):
                 # take as is
                 setattr(self, f.name, val)
@@ -736,8 +751,7 @@ class HikaruBase(object):
             else:
                 origin = get_origin(initial_type)
                 if origin in (list, List):
-                    target_type = get_type_if_forward_ref(get_args(initial_type)[0],
-                                                          self.__class__)
+                    target_type = get_args(initial_type)[0]
                     if type(target_type) == type and issubclass(target_type, (int, str,
                                                                               bool,
                                                                               float)):
@@ -756,14 +770,14 @@ class HikaruBase(object):
                                                   f" {self.__class__.__name__}.{f.name};"
                                                   f" can only do list of scalars and"
                                                   f" k8s objs. Please file a"
-                                                  f" bug report.")
+                                                  f" bug report.")  # pragma: no cover
                 elif origin in (dict, Dict):
                     d = {k: v for k, v in val.items()}
                     setattr(self, f.name, d)
                 else:
                     raise NotImplementedError(f"Internal error! Unknown type inside of"
                                               f" list: {initial_type}. Please file a bug"
-                                              f" report.")
+                                              f" report.")  # pragma: no cover
         self._capture_catalog()
 
     def as_python_source(self, assign_to: str = None) -> str:
@@ -789,7 +803,7 @@ class HikaruBase(object):
         if len(all_fields) != len([k for k in sig.parameters if k != 'client']):
             raise NotImplementedError(f"Internal error! Uneven number of params for"
                                       f" {self.__class__.__name__}. Please file"
-                                      f" a bug report.")
+                                      f" a bug report.")  # pragma: no cover
         # open the call to the 'constructor'
         code.append(f'{self.__class__.__name__}(')
         # now process all attributes of the class

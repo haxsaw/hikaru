@@ -58,7 +58,7 @@ that is a subclass of ``Pod``, you can use ``Pod's`` class attributes to supply 
 Now, when Hikaru sees this particular comibination of ``apiVersion`` and ``kind``, it will create
 an instance of the ``MyPod`` class instead of the ``Pod`` class as before.
 
-Use Case: Adding Methods Only to Hikaru Classes
+Use Case: Adding Only Methods to Hikaru Classes
 ################################################
 
 If your use case involves only the addition of methods to existing Hikaru classes and not any
@@ -180,7 +180,7 @@ can create a new dataclass that makes provision for passing in this data like so
 
     register_version_kind_class(PodPlus, Pod.apiVersion, Pod.kind)
 
-Note that every field supplied either has a default or is optional; this is because the parent
+Note that every field supplied either has a default or is optional with a default; this is because the parent
 class already has a defaulted field, and dataclasses can not have fields that don't have defaults
 follow fields that do those that do.
 

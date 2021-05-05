@@ -18,8 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Tuple, Optional, Dict, Union, ForwardRef
-from inspect import getmodule, signature
+from typing import Tuple, Optional, Dict
 from threading import current_thread, Thread
 
 
@@ -157,46 +156,6 @@ def camel_to_pep8(name: str) -> str:
             replace('v_1', 'v1').replace('v_2', 'v2').replace('beta_1', 'beta1').
             replace('beta_2', 'beta2').replace('alpha_1', 'alpha1').
             replace('f_q_d_n', 'fqdn').replace('_i_d', '_id'))
-
-
-fr = ForwardRef('dummy')
-sig = signature(fr._evaluate)
-if len(sig.parameters) == 3:
-    def make_args(g, l):
-        return g, l, frozenset()
-else:
-    def make_args(g, l):
-        return g, l
-del fr, sig
-
-
-def get_type_if_forward_ref(candidate_type: Union[str, ForwardRef, type],
-                            owning_class: type) -> type:
-    """
-    Returns the underlying type of the candidate is a kind of forward ref
-    :param candidate_type: could already be a type, but if a string or a ForwardRef,
-        will be resolved into the associated type class
-    :param owning_class: class where the candidate came from; used to help find the
-        proper module to look for the type.
-    :return:
-    """
-    global make_args
-    final_type = candidate_type
-    if type(candidate_type) is str or isinstance(candidate_type, ForwardRef):
-        globs = vars(getmodule(owning_class))
-        if type(candidate_type) is str:
-            assert isinstance(candidate_type, str)
-            final_type = globs.get(candidate_type, candidate_type)
-        else:
-            # must be a ForwardRef
-            try:
-                final_type = candidate_type._evaluate(*make_args(globs, locals()))
-            except NameError as e:
-                raise NameError(f"{str(e)}; did you forget to 'import * from "
-                                f"a model module when trying to create a "
-                                f"subclass of a Hikaru class?")
-
-    return final_type
 
 
 # mapping the group in apiVersion to the swagger group string
