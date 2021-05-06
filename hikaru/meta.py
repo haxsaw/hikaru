@@ -418,8 +418,6 @@ class HikaruBase(object):
             if p.name in ('apiVersion', 'kind'):
                 if issubclass(cls, HikaruDocumentBase):
                     continue
-                # if hasattr(cls, p.name) and getattr(cls, p.name) is not None:
-                #     continue
             f = hints[p.name]
             initial_type = f
             origin = get_origin(initial_type)

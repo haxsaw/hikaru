@@ -8242,10 +8242,10 @@ class DaemonEndpoint(HikaruBase):
     Full name: v1.DaemonEndpoint
 
     Attributes:
-    Port: Port number of the given endpoint.
+    port: Port number of the given endpoint.
     """
 
-    Port: int
+    port: int
 
 
 @dataclass

@@ -235,6 +235,154 @@ def test08():
     assert del_res.obj
 
 
+base_service = Service(metadata=ObjectMeta(labels={'name': ''},
+                                           name='',
+                                           resourceVersion='v1'),
+                       spec=ServiceSpec(ports=[ServicePort(port=80,
+                                                           name='port',
+                                                           protocol='TCP',
+                                                           targetPort=80)],
+                                        selector={'name': ''}))
+
+
+def make_svc(new_name: str) -> Service:
+    svc: Service = base_service.dup()
+    svc.metadata.labels['name'] = new_name
+    svc.metadata.name = new_name
+    svc.spec.selector['name'] = new_name
+    return svc
+
+
+def test09():
+    """
+    Test service apis; from test_service_apis
+    """
+    svcname = 'svc-test09'
+    svc: Service = make_svc(svcname)
+    cres = svc.createNamespacedService(namespace='default')
+    assert cres.obj
+    assert cres.obj.metadata.name == svcname
+    rres = Service.readNamespacedService(name=svcname, namespace='default')
+    assert rres.obj
+    assert rres.obj.metadata.name == svcname
+    assert rres.obj.status
+    svc.spec.ports[0].name = 'new'
+    svc.spec.ports[0].port = 8080
+    svc.spec.ports[0].targetPort = 8080
+    # must update our resourceVersion so we show we're changing the right one
+    svc.metadata.resourceVersion = rres.obj.metadata.resourceVersion
+
+    pres = Service.patchNamespacedService(name=svc.metadata.name,
+                                          namespace='default',
+                                          body=svc.to_dict())
+    assert 2 == len(pres.obj.spec.ports)
+    dres = Service.deleteNamespacedService(svc.metadata.name,
+                                           'default')
+    assert dres.obj
+
+
+base_rc = ReplicationController(
+    metadata=ObjectMeta(labels={'name': ''},
+                        name=''),
+    spec=ReplicationControllerSpec(
+        replicas=2,
+        selector={'name': ''},
+        template=PodTemplateSpec(metadata=ObjectMeta(labels={'name': ''}),
+                                 spec=PodSpec(
+                                     containers=[Container(image='nginx',
+                                                           name='nginx',
+                                                           ports=[ContainerPort(
+                                                               containerPort=80,
+                                                               protocol='TCP'
+                                                           )]
+                                                           )
+                                                 ]
+                                 ))
+    )
+)
+
+
+def make_rc(name: str) -> ReplicationController:
+    rc: ReplicationController = base_rc.dup()
+    rc.metadata.labels['name'] = name
+    rc.metadata.name = name
+    rc.spec.selector['name'] = name
+    rc.spec.template.metadata.labels['name'] = name
+    return rc
+
+
+def test10():
+    """
+    Echo the K8s replication controller test. from test_replication_controller_apis
+    """
+    name = 'rc-test10'
+    rc = make_rc(name)
+    cres = rc.createNamespacedReplicationController('default')
+    assert cres.obj
+    assert name == cres.obj.metadata.name
+    rres = ReplicationController.readNamespacedReplicationController(name,
+                                                                     namespace='default')
+    assert rres.obj
+    assert rres.obj.metadata.name == name
+    assert 2 == rres.obj.spec.replicas
+
+    dres = ReplicationController.deleteNamespacedReplicationController(name,
+                                                                       namespace='default')
+
+
+base_cm = ConfigMap(
+    metadata=ObjectMeta(name=''),
+    data={'config.json': "{\"command\":\"/usr/bin/mysqld_safe\"}",
+          "frontend.cnf": "[mysqld]\nbind-address = 10.0.0.3\nport = 3306\n"}
+)
+
+
+def make_cm(name: str) -> ConfigMap:
+    cm = base_cm.dup()
+    cm.metadata.name = name
+    return cm
+
+
+def test11():
+    """
+    test ConfigMap methods. from test_configmap_apis
+    """
+    name = 'cm-test11'
+    cm: ConfigMap = make_cm(name)
+    cres = cm.createNamespacedConfigMap(namespace='default')
+    assert cres.obj
+    assert name == cres.obj.metadata.name
+
+    rres = ConfigMap.readNamespacedConfigMap(name, namespace='default')
+    assert rres.obj
+    assert name == rres.obj.metadata.name
+
+    cm.data['config.json'] = '{}'
+    assert isinstance(rres.obj, ConfigMap)
+    cm.metadata.resourceVersion = rres.obj.metadata.resourceVersion
+
+    pres = ConfigMap.patchNamespacedConfigMap(name=cm.metadata.name,
+                                              namespace='default',
+                                              body=cm.to_dict())
+    assert pres.obj
+    dres = cm.deleteNamespacedConfigMap(name, 'default')
+    assert dres.obj
+
+
+def test12():
+    """
+    test node methods. from test_node_apis
+    """
+    rres = NodeList.listNode()
+    assert rres.obj
+    for item in rres.obj.items:
+        nres = Node.readNode(item.metadata.name)
+        node: Node = nres.obj
+        assert node
+        assert len(node.metadata.labels) > 0
+        assert isinstance(node.metadata.labels, dict)
+
+
 if __name__ == "__main__":
     beginning()
     the_tests = {k: v for k, v in globals().items()
