@@ -27,6 +27,7 @@ It is based on having access to a Linux install of k3s.
 from os import getcwd
 from pathlib import Path
 import time
+from typing import cast
 from unittest import SkipTest
 import pytest
 from hikaru import *
@@ -58,6 +59,12 @@ def beginning():
 
 def ending():
     Namespace.deleteNamespace(name=e2e_namespace)
+    res: Response = Pod.listPodForAllNamespaces()
+    plist: PodList = cast(PodList, res.obj)
+    for pod in plist.items:
+        if (pod.metadata.namespace == 'default' and
+                pod.metadata.name.startswith('rc-test')):
+            Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
 
 
 @pytest.fixture(scope='module', autouse=True)
@@ -77,7 +84,7 @@ def test01():
     Create a deployment, read it, and delete it
     """
     path = base_path / 'apps-deployment.yaml'
-    d: Deployment = load_full_yaml(path=path)[0]
+    d: Deployment = cast(Deployment, load_full_yaml(path=str(path))[0])
     res = d.createNamespacedDeployment(e2e_namespace)
     assert res.obj and isinstance(res.obj, Deployment)
     res = Deployment.readNamespacedDeployment(d.metadata.name, e2e_namespace)
@@ -92,7 +99,7 @@ def test02():
     Create, read, and delete a Pod
     """
     path = base_path / "core-pod.yaml"
-    p: Pod = load_full_yaml(path=path)[0]
+    p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
     res = p.createNamespacedPod(e2e_namespace)
     assert res.obj and isinstance(res.obj, Pod)
     res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
@@ -106,7 +113,7 @@ def test03():
     Create, read, and delete a Service
     """
     path = base_path / "core-service.yaml"
-    s: Service = load_full_yaml(path=path)[0]
+    s: Service = cast(Service, load_full_yaml(path=str(path))[0])
     res = s.createNamespacedService(e2e_namespace)
     assert res.obj and isinstance(res.obj, Service), f"actually got a {type(res.obj)}"
     res = Service.readNamespacedService(s.metadata.name, e2e_namespace)
@@ -120,7 +127,7 @@ def test04():
     Create, read, and delete a Namespace
     """
     path = base_path / "core-namespace.yaml"
-    ns: Namespace = load_full_yaml(path=path)[0]
+    ns: Namespace = cast(Namespace, load_full_yaml(path=str(path))[0])
     res = ns.createNamespace()
     assert res.obj and isinstance(res.obj, Namespace)
     res = Namespace.readNamespace(ns.metadata.name)
@@ -134,7 +141,7 @@ def test05():
     Create, read, and delete an RBAC role
     """
     path = base_path / "rbac-role.yaml"
-    r: Role = load_full_yaml(path=path)[0]
+    r: Role = cast(Role, load_full_yaml(path=str(path))[0])
     # this has its own namespace specified in the request so we need
     # to make sure they agree
     res = r.createNamespacedRole(r.metadata.namespace)
@@ -152,13 +159,13 @@ def test06():
     path_ns = base_path / "dep-namespace.yaml"
     path_dep = base_path / "dep-deployment.yaml"
     # namespace: create and read
-    ns: Namespace = load_full_yaml(path=path_ns)[0]
+    ns: Namespace = cast(Namespace, load_full_yaml(path=str(path_ns))[0])
     res = ns.createNamespace()
     assert res.obj and isinstance(res.obj, Namespace)
     res = Namespace.readNamespace(ns.metadata.name)
     assert res.obj and isinstance(res.obj, Namespace)
     # deployment: create and read
-    dep: Deployment = load_full_yaml(path=path_dep)[0]
+    dep: Deployment = cast(Deployment, load_full_yaml(path=str(path_dep))[0])
     res = dep.createNamespacedDeployment(ns.metadata.name)
     assert res.obj and isinstance(res.obj, Deployment)
     res = Deployment.readNamespacedDeployment(dep.metadata.name,
@@ -176,12 +183,12 @@ def test07():
     Create API service, read, fail creating dup, delete
     """
     path = base_path / "api-service.yaml"
-    api: APIService = load_full_yaml(path=path)[0]
+    api: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
     res = api.createAPIService()
     assert res.obj and res.code < 400
     res = APIService.readAPIService(api.metadata.name)
     assert res.obj
-    api2: APIService = load_full_yaml(path=path)[0]
+    api2: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
     try:
         _ = api2.createAPIService()
         assert False, "second registration should have raised an exception"
@@ -231,7 +238,7 @@ def test08():
     assert np_res.obj
     assert isinstance(np_res.obj, PodList)
     assert len(np_res.obj.items) > 0
-    del_res = Pod.deleteNamespacedPod(test_pod.metadata.name,'default')
+    del_res = Pod.deleteNamespacedPod(test_pod.metadata.name, 'default')
     assert del_res.obj
 
 
@@ -272,9 +279,8 @@ def test09():
     # must update our resourceVersion so we show we're changing the right one
     svc.metadata.resourceVersion = rres.obj.metadata.resourceVersion
 
-    pres = Service.patchNamespacedService(name=svc.metadata.name,
-                                          namespace='default',
-                                          body=svc.to_dict())
+    pres = svc.patchNamespacedService(name=svc.metadata.name,
+                                      namespace='default')
     assert 2 == len(pres.obj.spec.ports)
     dres = Service.deleteNamespacedService(svc.metadata.name,
                                            'default')
@@ -326,8 +332,8 @@ def test10():
     assert rres.obj.metadata.name == name
     assert 2 == rres.obj.spec.replicas
 
-    dres = ReplicationController.deleteNamespacedReplicationController(name,
-                                                                       namespace='default')
+    _ = ReplicationController.deleteNamespacedReplicationController(name,
+                                                                    namespace='default')
 
 
 base_cm = ConfigMap(
@@ -361,9 +367,8 @@ def test11():
     assert isinstance(rres.obj, ConfigMap)
     cm.metadata.resourceVersion = rres.obj.metadata.resourceVersion
 
-    pres = ConfigMap.patchNamespacedConfigMap(name=cm.metadata.name,
-                                              namespace='default',
-                                              body=cm.to_dict())
+    pres = cm.patchNamespacedConfigMap(name=cm.metadata.name,
+                                       namespace='default')
     assert pres.obj
     dres = cm.deleteNamespacedConfigMap(name, 'default')
     assert dres.obj

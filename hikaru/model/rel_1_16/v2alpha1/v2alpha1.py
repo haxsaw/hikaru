@@ -10682,11 +10682,10 @@ class CronJob(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchNamespacedCronJob(
+        self,
         name: str,
         namespace: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -10701,7 +10700,6 @@ class CronJob(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -10730,7 +10728,11 @@ class CronJob(HikaruDocumentBase):
           200   CronJob    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = BatchV2alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_cron_job_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -10741,12 +10743,10 @@ class CronJob(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)

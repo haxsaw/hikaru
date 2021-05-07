@@ -2071,10 +2071,9 @@ class ClusterRole(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchClusterRole(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -2088,7 +2087,6 @@ class ClusterRole(HikaruDocumentBase):
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -2117,7 +2115,11 @@ class ClusterRole(HikaruDocumentBase):
           200   ClusterRole    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_cluster_role_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -2127,12 +2129,10 @@ class ClusterRole(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -3120,11 +3120,10 @@ class RoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchNamespacedRoleBinding(
+        self,
         name: str,
         namespace: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -3139,7 +3138,6 @@ class RoleBinding(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -3168,7 +3166,11 @@ class RoleBinding(HikaruDocumentBase):
           200   RoleBinding    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_role_binding_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -3179,12 +3181,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -5524,10 +5524,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchClusterRoleBinding(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -5541,7 +5540,6 @@ class ClusterRoleBinding(HikaruDocumentBase):
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -5570,7 +5568,11 @@ class ClusterRoleBinding(HikaruDocumentBase):
           200   ClusterRoleBinding    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_cluster_role_binding_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -5580,12 +5582,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -9076,10 +9076,9 @@ class VolumeAttachment(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchVolumeAttachment(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -9093,7 +9092,6 @@ class VolumeAttachment(HikaruDocumentBase):
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -9122,7 +9120,11 @@ class VolumeAttachment(HikaruDocumentBase):
           200   VolumeAttachment    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = StorageV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_volume_attachment_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -9132,12 +9134,10 @@ class VolumeAttachment(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -11424,11 +11424,10 @@ class Role(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchNamespacedRole(
+        self,
         name: str,
         namespace: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -11443,7 +11442,6 @@ class Role(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -11472,7 +11470,11 @@ class Role(HikaruDocumentBase):
           200   Role    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = RbacAuthorizationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_role_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -11483,12 +11485,10 @@ class Role(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -12752,10 +12752,9 @@ class PriorityClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchPriorityClass(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -12769,7 +12768,6 @@ class PriorityClass(HikaruDocumentBase):
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -12798,7 +12796,11 @@ class PriorityClass(HikaruDocumentBase):
           200   PriorityClass    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = SchedulingV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_priority_class_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -12808,12 +12810,10 @@ class PriorityClass(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -14487,10 +14487,9 @@ class AuditSink(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchAuditSink(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -14504,7 +14503,6 @@ class AuditSink(HikaruDocumentBase):
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -14533,7 +14531,11 @@ class AuditSink(HikaruDocumentBase):
           200   AuditSink    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = AuditregistrationV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_audit_sink_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -14543,12 +14545,10 @@ class AuditSink(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -15389,11 +15389,10 @@ class PodPreset(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchNamespacedPodPreset(
+        self,
         name: str,
         namespace: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -15408,7 +15407,6 @@ class PodPreset(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -15437,7 +15435,11 @@ class PodPreset(HikaruDocumentBase):
           200   PodPreset    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = SettingsV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_pod_preset_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -15448,12 +15450,10 @@ class PodPreset(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -16123,11 +16123,10 @@ class EndpointSlice(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchNamespacedEndpointSlice(
+        self,
         name: str,
         namespace: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -16142,7 +16141,6 @@ class EndpointSlice(HikaruDocumentBase):
 
         :param name: part of the URL path
         :param namespace: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -16171,7 +16169,11 @@ class EndpointSlice(HikaruDocumentBase):
           200   EndpointSlice    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = DiscoveryV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_namespaced_endpoint_slice_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -16182,12 +16184,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args = dict()
         all_args["name"] = name
         all_args["namespace"] = namespace
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
@@ -17032,10 +17032,9 @@ class RuntimeClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    @staticmethod
     def patchRuntimeClass(
+        self,
         name: str,
-        body: Any,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
@@ -17049,7 +17048,6 @@ class RuntimeClass(HikaruDocumentBase):
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
 
         :param name: part of the URL path
-        :param body:
         :param dry_run: When present, indicates that modifications should not
             be persisted. An invalid or unrecognized dryRun directive will
             result in an error response and no further processing of the
@@ -17078,7 +17076,11 @@ class RuntimeClass(HikaruDocumentBase):
           200   RuntimeClass    OK
           401   None    Unauthorized
         """
-        client_to_use = client
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
         inst = NodeV1alpha1Api(api_client=client_to_use)
         the_method = getattr(inst, "patch_runtime_class_with_http_info")
         if the_method is None:  # pragma: no cover
@@ -17088,12 +17090,10 @@ class RuntimeClass(HikaruDocumentBase):
             )
         all_args = dict()
         all_args["name"] = name
-        all_args["body"] = body
         all_args["dry_run"] = dry_run
         all_args["field_manager"] = field_manager
         all_args["force"] = force
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
+        body = get_clean_dict(self)
         all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)

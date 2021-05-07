@@ -429,7 +429,17 @@ class Operation(object):
         self.op_id = op_id
         self.description = description
         self.is_staticmethod = False
+        # support for 1.16; some 'body' inputs don't have a type beside
+        # 'object' which we treat as Any,
+        # but in every case it appears they should be 'self' and treated
+        # as the type of the receiving object. this captures those as
+        # they come in, and if we need to update the type to a ClassDescriptor
+        # then we can find the correct OpParameter quickly
+        self.bodyany: Optional[OpParameter] = None
         self.parameters: List[OpParameter] = list()
+        # self_param is a special parameter, usually named 'body',
+        # that is passed as an argument to another method and which
+        # refers to 'self' of the owning object
         self.self_param: Optional[OpParameter] = None
         self.returns: Dict[int, OpResponse] = {}
         self.k8s_access_tuple = None
@@ -453,12 +463,17 @@ class Operation(object):
         return deps
 
     def add_parameter(self, name: str, ptype: Any, description: str,
-                      required: bool = False):
+                      required: bool = False) -> 'OpParameter':
         ptype = types_map.get(ptype, ptype)
-        if self.self_param is None and isinstance(ptype, ClassDescriptor):
-            self.self_param = OpParameter(name, ptype, description, required)
+        new_param = OpParameter(name, ptype, description, required)
+        if self.self_param is None and (isinstance(ptype, ClassDescriptor) or
+                                        ptype == 'Any'):
+            self.self_param = new_param
         elif not any([name == p.name for p in self.parameters]):
-            self.parameters.append(OpParameter(name, ptype, description, required))
+            self.parameters.append(new_param)
+        if new_param.is_bodyany:
+            self.bodyany = new_param
+        return new_param
 
     def set_k8s_access(self, t):
         """
@@ -552,9 +567,9 @@ class Operation(object):
         return docstring_parts
 
     def as_python_method(self, cd=None) -> List[str]:
+        written_methods.add((self.version, self.op_id))
         if self.op_id is None:
             return []
-        written_methods.add((self.version, self.op_id))
         if cd is not None:
             assert isinstance(cd, ClassDescriptor)
         version = get_path_version(self.op_path)
@@ -622,36 +637,36 @@ class Operation(object):
         final.extend(body)
         return final
 
-
-class ListCreateOperation(Operation):
-    def __init__(self, contained_class: 'ClassDescriptor'):
-        super(ListCreateOperation, self).__init__(self, "put", "-created, no path-"
-                                                  'deferred', 'deferred',
-                                                  {'version': contained_class.version,
-                                                   'group': contained_class.group,
-                                                   'kind': f'{contained_class.kind}List'})
-        self.is_staticmethod = False
-        self.contained_class = contained_class
-        for k in self.contained_class.operations:
-            if k.startswith('create'):
-                self._op_id = f'{k}List'
-                break
-        else:
-            self._op_id = f'{self.contained_class.short_name}List'
-
-    @property
-    def op_id(self):
-        for k in self.contained_class.operations:
-            if k.startswith('create'):
-                self._op_id = f'{k}List'
-                break
-        else:
-            self._op_id = f'{self.contained_class.short_name}List'
-        return self._op_id
-
-    @op_id.setter
-    def op_id(self, name):
-        self._op_id = name
+# maybe later...
+# class ListCreateOperation(Operation):
+#     def __init__(self, contained_class: 'ClassDescriptor'):
+#         super(ListCreateOperation, self).__init__(self, "put", "-created, no path-"
+#                                                   'deferred', 'deferred',
+#                                                   {'version': contained_class.version,
+#                                                    'group': contained_class.group,
+#                                                    'kind': f'{contained_class.kind}List'})
+#         self.is_staticmethod = False
+#         self.contained_class = contained_class
+#         for k in self.contained_class.operations:
+#             if k.startswith('create'):
+#                 self._op_id = f'{k}List'
+#                 break
+#         else:
+#             self._op_id = f'{self.contained_class.short_name}List'
+#
+#     @property
+#     def op_id(self):
+#         for k in self.contained_class.operations:
+#             if k.startswith('create'):
+#                 self._op_id = f'{k}List'
+#                 break
+#         else:
+#             self._op_id = f'{self.contained_class.short_name}List'
+#         return self._op_id
+#
+#     @op_id.setter
+#     def op_id(self, name):
+#         self._op_id = name
 
 
 class ObjectOperations(object):
@@ -1097,6 +1112,7 @@ class OpParameter(object):
         self.ptype = ptype
         self.description = description
         self.required = required
+        self.is_bodyany: bool = True if name == 'body' and ptype == 'Any' else False
 
     def docstring(self):
         name = camel_to_pep8(self.name)
@@ -1262,7 +1278,7 @@ def stop_when_true(test_expr, result_expr, seq):
     for e in seq:
         if test_expr(e):
             result = result_expr(e)
-        break
+            break
     return result
 
 
@@ -1277,8 +1293,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         new_op = Operation(verb, path, op_id, description, gvk_dict)
     else:
         new_op = reuse_op
-    k8s_name = None  # used as a flag that an object is an input param
-    cd: Optional[ClassDescriptor] = None
     for param in params:
         has_mismatch = False
         name = param["name"]
@@ -1295,8 +1309,8 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 if version and sver != version:
                     has_mismatch = True
                 mod_def = get_module_def(sver)
-                cd = ptype = mod_def.get_class_desc(ptype)  # you need cd later...
-                if cd is None:
+                ptype = mod_def.get_class_desc(ptype)  # you need cd later...
+                if ptype is None:
                     raise RuntimeError(f"Couldn't find a ClassDescriptor for "
                                        f"parameter {k8s_name} in {op_id}")
 
@@ -1315,12 +1329,15 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
 
-    cd_in_params: Optional[ClassDescriptor] = stop_when_true(lambda x: x is not None and
-                                                             isinstance(x.ptype,
-                                                                        ClassDescriptor),
-                                                             lambda x: x.ptype,
-                                                             [new_op.self_param] +
-                                                             new_op.parameters)
+    if op_id in ('createNamespacedPod', 'patchVolumeAttachment'):
+        _ = 1
+
+    cd_in_params: Optional[ClassDescriptor] = \
+        stop_when_true(lambda x: x is not None and
+                       (isinstance(x.ptype, ClassDescriptor) or
+                        x.is_bodyany),
+                       lambda x: x.ptype,
+                       [new_op.self_param] + new_op.parameters)
 
     for code, response in responses.items():
         has_mismatch = False
@@ -1349,22 +1366,23 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
             response_mismatches[f"{code}:{new_op.op_id}"] = new_op
 
     cd_in_responses: Optional[ClassDescriptor] = \
-        stop_when_true(lambda x:
-                       isinstance(x.ref,
-                                  ClassDescriptor),
-                       lambda x: x.ref,
-                       new_op.returns.values())
+                                stop_when_true(lambda x:
+                                               isinstance(x.ref,
+                                                          ClassDescriptor),
+                                               lambda x: x.ref,
+                                               new_op.returns.values())
 
     whose_method: Optional[ClassDescriptor] = None
     if cd_in_params:
-        if cd_in_params.short_name == "DeleteOptions":
-            if cd_in_responses:
-                whose_method = cd_in_responses
-                new_op.is_staticmethod = True
+        if cd_in_params != 'Any':
+            if cd_in_params.short_name == "DeleteOptions":
+                if cd_in_responses:
+                    whose_method = cd_in_responses
+                    new_op.is_staticmethod = True
+                else:
+                    whose_method = cd_in_params
             else:
                 whose_method = cd_in_params
-        else:
-            whose_method = cd_in_params
     elif cd_in_responses:
         whose_method = cd_in_responses
         new_op.is_staticmethod = True
@@ -1381,7 +1399,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         else:
             whose_method.add_operation(new_op)
     else:
-        new_op.is_staticmethod = True
+        new_op.is_staticmethod = True if new_op.bodyany is None else False
         if new_op.op_id:
             guess = _best_guess(new_op)
         if guess:
