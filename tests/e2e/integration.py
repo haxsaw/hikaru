@@ -199,6 +199,17 @@ def test07():
     assert res.obj
 
 
+@pytest.mark.xfail
+def test07a():
+    """
+    Currently fails on returned underlying system data
+    """
+    lres = APIServiceList.listAPIService()
+    assert lres.obj
+    assert isinstance(lres.obj, APIServiceList)
+    assert 0 > len(lres.obj.items)
+
+
 #####################
 # from test_client.py
 #####################
@@ -515,6 +526,338 @@ def test15():
     assert name == rres.obj.metadata.name
     dres = DaemonSet.deleteNamespacedDaemonSet(name, 'default')
     assert dres.obj
+
+
+# others
+
+def test16():
+    """
+    test fetching a list of clusterRoleBindings
+    """
+    rres = ClusterRoleBindingList.listClusterRoleBinding()
+    assert rres.obj
+    assert isinstance(rres.obj, ClusterRoleBindingList)
+
+
+def test17():
+    """
+    test fetching a list of ClusterRoles
+    """
+    rres = ClusterRoleList.listClusterRole()
+    assert rres.obj
+    assert isinstance(rres.obj, ClusterRoleList)
+
+
+def test18():
+    """
+    test fetching a list of ConfigMaps
+    """
+    rres = ConfigMapList.listConfigMapForAllNamespaces()
+    assert rres.obj
+    assert isinstance(rres.obj, ConfigMapList)
+    nsres = ConfigMapList.listNamespacedConfigMap(namespace='kube-system')
+    assert nsres.obj
+    assert isinstance(nsres.obj, ConfigMapList)
+
+
+def test19():
+    """
+    test fetching a list of ControllerRevisions
+    """
+    rres = ControllerRevisionList.listNamespacedControllerRevision('default')
+    assert rres.obj
+    assert isinstance(rres.obj, ControllerRevisionList)
+    rres = ControllerRevisionList.listControllerRevisionForAllNamespaces()
+    assert rres.obj
+    assert isinstance(rres.obj, ControllerRevisionList)
+
+
+def test20():
+    """
+    test listing custom resources
+    """
+    res = CustomResourceDefinitionList.listCustomResourceDefinition()
+    assert res.obj
+    assert isinstance(res.obj, CustomResourceDefinitionList)
+
+
+def test21():
+    """
+    test listing daemon sets
+    """
+    res = DaemonSetList.listNamespacedDaemonSet('default')
+    assert res.obj
+    assert isinstance(res.obj, DaemonSetList)
+    res = DaemonSetList.listDaemonSetForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, DaemonSetList)
+
+
+def test22():
+    """
+    test listing deployments
+    """
+    res = DeploymentList.listNamespacedDeployment('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, DeploymentList)
+
+
+def test23():
+    """
+    test listing endpoints
+    """
+    res = Endpoints.listEndpointsForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, EndpointsList)
+
+
+def test24():
+    """
+    test fetching endpoints list
+    """
+    res = EndpointsList.listNamespacedEndpoints('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, EndpointsList)
+    assert len(res.obj.items) > 0
+
+
+def test25():
+    """
+    test listing events via event
+    """
+    res = Event.listEventForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, EventList)
+
+
+def test26():
+    """
+    test listing events via event list
+    """
+    res = EventList.listNamespacedEvent('default')
+    assert res.obj
+    assert isinstance(res.obj, EventList)
+
+
+def test27():
+    """
+    test getting a horizontal pod autoscaler list
+    """
+    res = HorizontalPodAutoscalerList.listNamespacedHorizontalPodAutoscaler('default')
+    assert res.obj
+    assert isinstance(res.obj, HorizontalPodAutoscalerList)
+
+
+def test28():
+    """
+    test getting the joblist
+    """
+    res = JobList.listNamespacedJob('default')
+    assert res.obj
+    assert isinstance(res.obj, JobList)
+
+
+def test29():
+    """
+    test getting the list of Leases via Lease
+    """
+    res = Lease.listLeaseForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, LeaseList)
+
+
+def test30():
+    """
+    test getting the lease list via LeaseList
+    """
+    res = LeaseList.listNamespacedLease('default')
+    assert res.obj
+    assert isinstance(res.obj, LeaseList)
+
+
+def test31():
+    """
+    test getting a limit range list via LimiteRangeList
+    """
+    res = LimitRangeList.listNamespacedLimitRange('default')
+    assert res.obj
+    assert isinstance(res.obj, LimitRangeList)
+    res = LimitRangeList.listLimitRangeForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, LimitRangeList)
+
+
+def test32():
+    """
+    test getting a list of mutating webhook configs
+    """
+    res = MutatingWebhookConfigurationList.listMutatingWebhookConfiguration()
+    assert res.obj
+    assert isinstance(res.obj, MutatingWebhookConfigurationList)
+
+
+def test33():
+    """
+    test listing namespaces
+    """
+    res = NamespaceList.listNamespace()
+    assert res.obj
+    assert isinstance(res.obj, NamespaceList)
+    assert len(res.obj.items) > 0
+
+
+def test34():
+    """
+    test listing network policies various ways
+    """
+    res = NetworkPolicyList.listNamespacedNetworkPolicy('default')
+    assert res.obj
+    assert isinstance(res.obj, NetworkPolicyList)
+    res = NetworkPolicyList.listNetworkPolicyForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, NetworkPolicyList)
+
+
+def test35():
+    """
+    test listing persistent vol
+    """
+    res = PersistentVolumeList.listPersistentVolume()
+    assert res.obj
+    assert isinstance(res.obj, PersistentVolumeList)
+
+
+def test36():
+    """
+    test listing persistent vol claims
+    """
+    res = PersistentVolumeClaimList.listNamespacedPersistentVolumeClaim('default')
+    assert res.obj
+    assert isinstance(res.obj, PersistentVolumeClaimList)
+
+
+def test37():
+    """
+    test fetching pod list via PodList
+    """
+    res = PodList.listNamespacedPod('default')
+    assert res.obj
+    assert isinstance(res.obj, PodList)
+
+
+def test38():
+    """
+    test fetching pod template list
+    """
+    res = PodTemplateList.listNamespacedPodTemplate('default')
+    assert res.obj
+    assert isinstance(res.obj, PodTemplateList)
+
+
+def test39():
+    """
+    test fetching a priority class list
+    """
+    res = PriorityClassList.listPriorityClass()
+    assert res.obj
+    assert isinstance(res.obj, PriorityClassList)
+
+
+def test40():
+    """
+    list replica sets
+    """
+    res = ReplicaSetList.listNamespacedReplicaSet('default')
+    assert res.obj
+    assert isinstance(res.obj, ReplicaSetList)
+    res = ReplicaSetList.listReplicaSetForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, ReplicaSetList)
+
+
+def test41():
+    """
+    list replication controllers
+    """
+    res = ReplicationControllerList.listNamespacedReplicationController('default')
+    assert res.obj
+    assert isinstance(res.obj, ReplicationControllerList)
+    res = ReplicationControllerList.listReplicationControllerForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, ReplicationControllerList)
+
+
+def test42():
+    """
+    list resource quotas
+    """
+    res = ResourceQuotaList.listNamespacedResourceQuota('default')
+    assert res.obj
+    assert isinstance(res.obj, ResourceQuotaList)
+    res = ResourceQuotaList.listResourceQuotaForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, ResourceQuotaList)
+
+
+def test43():
+    """
+    list role bindings
+    """
+    res = RoleBindingList.listNamespacedRoleBinding('default')
+    assert res.obj
+    assert isinstance(res.obj, RoleBindingList)
+
+
+def test44():
+    """
+    list Roles
+    """
+    res = RoleList.listNamespacedRole('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, RoleList)
+    assert len(res.obj.items) > 0
+
+
+def test45():
+    """
+    list secrets
+    """
+    res = SecretList.listNamespacedSecret('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, SecretList)
+    assert len(res.obj.items) > 0
+
+
+def test46():
+    """
+    list service accounts
+    """
+    res = ServiceAccountList.listNamespacedServiceAccount('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, ServiceAccountList)
+    assert len(res.obj.items) > 0
+
+
+def test47():
+    """
+    list services
+    """
+    res = ServiceList.listNamespacedService('kube-system')
+    assert res.obj
+    assert isinstance(res.obj, ServiceList)
+    assert len(res.obj.items) > 0
+
+
+def test48():
+    """
+    list stateful sets
+    """
+    res = StatefulSetList.listNamespacedStatefulSet('default')
+    assert res.obj
+    assert isinstance(res.obj, StatefulSetList)
+    res = StatefulSetList.listStatefulSetForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, StatefulSetList)
 
 
 if __name__ == "__main__":
