@@ -720,7 +720,7 @@ class ClassDescriptor(object):
         # having to do this...
         if self.short_name.endswith('List'):
             # OK, invent an operation for these that can create a list
-            contained_class_name = self.short_name.strip('List')
+            contained_class_name = self.short_name.replace('List', '')
             mod = get_module_def(self.version)
             cd = mod.get_class_desc_from_full_name(contained_class_name)
             if cd is None:
@@ -1338,9 +1338,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         new_op.add_parameter(name, ptype, description, required)
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
-
-    if op_id in ('createNamespacedPod', 'patchVolumeAttachment'):
-        _ = 1
 
     cd_in_params: Optional[ClassDescriptor] = \
         stop_when_true(lambda x: x is not None and

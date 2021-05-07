@@ -1193,43 +1193,12 @@ class LoadBalancerIngress(HikaruBase):
 
 
 @dataclass
-class SecretList(HikaruDocumentBase):
-    r"""
-    SecretList is a list of Secret.
-
-    Full name: v1.SecretList
-
-    Attributes:
-    items: Items is a list of secret objects. More info:
-        https://kubernetes.io/docs/concepts/configuration/secret
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Secret"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "SecretList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class Secret(HikaruDocumentBase):
     r"""
     Secret holds secret data of a certain type. The total bytes of the values in the Data
     field must be less than MaxSecretSize bytes.
 
-    Full name: v1.Secret
+    Full name: Secret
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -1260,6 +1229,37 @@ class Secret(HikaruDocumentBase):
     type: Optional[str] = None
     data: Optional[Dict[str, str]] = field(default_factory=dict)
     stringData: Optional[Dict[str, str]] = field(default_factory=dict)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class SecretList(HikaruDocumentBase):
+    r"""
+    SecretList is a list of Secret.
+
+    Full name: v1.SecretList
+
+    Attributes:
+    items: Items is a list of secret objects. More info:
+        https://kubernetes.io/docs/concepts/configuration/secret
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Secret"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "SecretList"
+    metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -1832,6 +1832,36 @@ class PolicyRule(HikaruBase):
 
 
 @dataclass
+class ComponentStatus(HikaruDocumentBase):
+    r"""
+    ComponentStatus (and ComponentStatusList) holds the cluster validation info.
+
+    Full name: ComponentStatus
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    conditions: List of component conditions observed
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ComponentStatus"
+    metadata: Optional["ObjectMeta"] = None
+    conditions: Optional[List["ComponentCondition"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class ComponentStatusList(HikaruDocumentBase):
     r"""
     Status of all the conditions for the component as a list of ComponentStatus objects.
@@ -1857,36 +1887,6 @@ class ComponentStatusList(HikaruDocumentBase):
     apiVersion: Optional[str] = "v1"
     kind: Optional[str] = "ComponentStatusList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ComponentStatus(HikaruDocumentBase):
-    r"""
-    ComponentStatus (and ComponentStatusList) holds the cluster validation info.
-
-    Full name: v1.ComponentStatus
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    conditions: List of component conditions observed
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ComponentStatus"
-    metadata: Optional["ObjectMeta"] = None
-    conditions: Optional[List["ComponentCondition"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -4161,6 +4161,37 @@ class PersistentVolumeList(HikaruDocumentBase):
 
 
 @dataclass
+class Lease(HikaruDocumentBase):
+    r"""
+    Lease defines a lease concept.
+
+    Full name: Lease
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Specification of the Lease. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "coordination/v1"
+    kind: Optional[str] = "Lease"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["LeaseSpec"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class LeaseList(HikaruDocumentBase):
     r"""
     LeaseList is a list of Lease objects.
@@ -4186,37 +4217,6 @@ class LeaseList(HikaruDocumentBase):
     apiVersion: Optional[str] = "coordination/v1"
     kind: Optional[str] = "LeaseList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class Lease(HikaruDocumentBase):
-    r"""
-    Lease defines a lease concept.
-
-    Full name: v1.Lease
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Specification of the Lease. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "coordination/v1"
-    kind: Optional[str] = "Lease"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["LeaseSpec"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -5340,36 +5340,6 @@ class LeaseSpec(HikaruBase):
 
 
 @dataclass
-class EndpointsList(HikaruDocumentBase):
-    r"""
-    EndpointsList is a list of endpoints.
-
-    Full name: v1.EndpointsList
-
-    Attributes:
-    items: List of endpoints.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Endpoints"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "EndpointsList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class Endpoints(HikaruDocumentBase):
     r"""
     Endpoints is a collection of endpoints that implement the actual service. Example:
@@ -5378,7 +5348,7 @@ class Endpoints(HikaruDocumentBase):
     [{"ip": "10.10.3.3"}], Ports: [{"name": "a", "port": 93}, {"name": "b", "port": 76}]
     }, ]
 
-    Full name: v1.Endpoints
+    Full name: Endpoints
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -5405,6 +5375,36 @@ class Endpoints(HikaruDocumentBase):
     kind: Optional[str] = "Endpoints"
     metadata: Optional["ObjectMeta"] = None
     subsets: Optional[List["EndpointSubset"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class EndpointsList(HikaruDocumentBase):
+    r"""
+    EndpointsList is a list of endpoints.
+
+    Full name: v1.EndpointsList
+
+    Attributes:
+    items: List of endpoints.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Endpoints"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "EndpointsList"
+    metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -5935,6 +5935,37 @@ class PodDNSConfig(HikaruBase):
 
 
 @dataclass
+class LimitRange(HikaruDocumentBase):
+    r"""
+    LimitRange sets resource usage limits for each kind of resource in a Namespace.
+
+    Full name: LimitRange
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Spec defines the limits enforced. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "LimitRange"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["LimitRangeSpec"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class LimitRangeList(HikaruDocumentBase):
     r"""
     LimitRangeList is a list of LimitRange items.
@@ -5961,37 +5992,6 @@ class LimitRangeList(HikaruDocumentBase):
     apiVersion: Optional[str] = "v1"
     kind: Optional[str] = "LimitRangeList"
     metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class LimitRange(HikaruDocumentBase):
-    r"""
-    LimitRange sets resource usage limits for each kind of resource in a Namespace.
-
-    Full name: v1.LimitRange
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Spec defines the limits enforced. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "LimitRange"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["LimitRangeSpec"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -6031,43 +6031,12 @@ class PodAffinity(HikaruBase):
 
 
 @dataclass
-class ReplicaSetList(HikaruDocumentBase):
-    r"""
-    ReplicaSetList is a collection of ReplicaSets.
-
-    Full name: v1.ReplicaSetList
-
-    Attributes:
-    items: List of ReplicaSets. More info:
-        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ReplicaSet"]
-    apiVersion: Optional[str] = "apps/v1"
-    kind: Optional[str] = "ReplicaSetList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class ReplicaSet(HikaruDocumentBase):
     r"""
     ReplicaSet ensures that a specified number of pod replicas are running at any given
     time.
 
-    Full name: v1.ReplicaSet
+    Full name: ReplicaSet
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -6096,6 +6065,37 @@ class ReplicaSet(HikaruDocumentBase):
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["ReplicaSetSpec"] = None
     status: Optional["ReplicaSetStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ReplicaSetList(HikaruDocumentBase):
+    r"""
+    ReplicaSetList is a collection of ReplicaSets.
+
+    Full name: v1.ReplicaSetList
+
+    Attributes:
+    items: List of ReplicaSets. More info:
+        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ReplicaSet"]
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ReplicaSetList"
+    metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -9402,44 +9402,13 @@ class NamespaceSpec(HikaruBase):
 
 
 @dataclass
-class ServiceAccountList(HikaruDocumentBase):
-    r"""
-    ServiceAccountList is a list of ServiceAccount objects
-
-    Full name: v1.ServiceAccountList
-
-    Attributes:
-    items: List of ServiceAccounts. More info:
-        https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ServiceAccount"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ServiceAccountList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class ServiceAccount(HikaruDocumentBase):
     r"""
     ServiceAccount binds together: * a name, understood by users, and perhaps by
     peripheral systems, for an identity * a principal that can be authenticated and
     authorized * a set of secrets
 
-    Full name: v1.ServiceAccount
+    Full name: ServiceAccount
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -9475,6 +9444,37 @@ class ServiceAccount(HikaruDocumentBase):
         default_factory=list
     )
     secrets: Optional[List["ObjectReference"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ServiceAccountList(HikaruDocumentBase):
+    r"""
+    ServiceAccountList is a list of ServiceAccount objects
+
+    Full name: v1.ServiceAccountList
+
+    Attributes:
+    items: List of ServiceAccounts. More info:
+        https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ServiceAccount"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ServiceAccountList"
+    metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
