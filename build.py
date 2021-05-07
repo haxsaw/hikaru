@@ -68,6 +68,7 @@ import sys
 from typing import List, Dict, Optional, Union, Tuple, Any, Set
 import json
 import re
+import warnings
 from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
@@ -245,8 +246,13 @@ def output_footer(stream=sys.stdout):
 
 
 def write_classes(class_list, for_version: str, stream=sys.stdout):
-    for dc in class_list:
-        print(dc.as_python_class(for_version), file=stream)
+    for cd in class_list:
+        assert isinstance(cd, ClassDescriptor)
+        if not cd.has_properties():
+            print(f'Skipping code generation for attribute-less class {cd.short_name}, '
+                  f'v {cd.version} for version {for_version}')
+            continue
+        print(cd.as_python_class(for_version), file=stream)
         print(file=stream)
 
 
@@ -727,6 +733,9 @@ class ClassDescriptor(object):
     def add_operation(self, op: Operation):
         self.operations[op.op_id] = op
 
+    def has_properties(self) -> bool:
+        return len(self.all_properties) > 0
+
     def update(self, d: dict):
         x_k8s = d.get("x-kubernetes-group-version-kind")
         if x_k8s is not None:
@@ -780,7 +789,8 @@ class ClassDescriptor(object):
                 w = w.strip()
                 if not w:
                     continue
-                if sum(len(s) for s in current_line) + len(current_line) + len(w) > linelen:
+                if (sum(len(s) for s in current_line) + len(current_line) + len(w) >
+                        linelen):
                     parts.append(" ".join(current_line))
                     current_line = [prefix]
                     if hanging_indent:
@@ -839,8 +849,8 @@ class ClassDescriptor(object):
         lines.append("")
         # now the operations
         for op in (o for o in self.operations.values() if o.version == for_version and
-                                                          o.should_render and
-                                                          self.is_document):
+                   o.should_render and
+                   self.is_document):
             assert isinstance(op, Operation)
             method_lines = [f"    {line}" for line in op.as_python_method(self)
                             if op.should_render]

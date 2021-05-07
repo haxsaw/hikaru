@@ -2692,16 +2692,6 @@ class LoadBalancerIngress(HikaruBase):
 
 
 @dataclass
-class Secre(HikaruBase):
-    r"""
-
-    Full name: Secre
-
-    Attributes:
-    """
-
-
-@dataclass
 class SecretList(HikaruDocumentBase):
     r"""
     SecretList is a list of Secret.
@@ -3963,16 +3953,6 @@ class PolicyRule(HikaruBase):
     nonResourceURLs: Optional[List[str]] = field(default_factory=list)
     resourceNames: Optional[List[str]] = field(default_factory=list)
     resources: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class ComponentStatu(HikaruBase):
-    r"""
-
-    Full name: ComponentStatu
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -8016,16 +7996,6 @@ class PersistentVolumeList(HikaruDocumentBase):
 
 
 @dataclass
-class ease(HikaruBase):
-    r"""
-
-    Full name: ease
-
-    Attributes:
-    """
-
-
-@dataclass
 class LeaseList(HikaruDocumentBase):
     r"""
     LeaseList is a list of Lease objects.
@@ -9947,16 +9917,6 @@ class LeaseSpec(HikaruBase):
 
 
 @dataclass
-class Endpoin(HikaruBase):
-    r"""
-
-    Full name: Endpoin
-
-    Attributes:
-    """
-
-
-@dataclass
 class EndpointsList(HikaruDocumentBase):
     r"""
     EndpointsList is a list of endpoints.
@@ -11011,16 +10971,6 @@ class PodDNSConfig(HikaruBase):
 
 
 @dataclass
-class mitRange(HikaruBase):
-    r"""
-
-    Full name: mitRange
-
-    Attributes:
-    """
-
-
-@dataclass
 class LimitRangeList(HikaruDocumentBase):
     r"""
     LimitRangeList is a list of LimitRange items.
@@ -11114,16 +11064,6 @@ class PodAffinity(HikaruBase):
     requiredDuringSchedulingIgnoredDuringExecution: Optional[
         List["PodAffinityTerm"]
     ] = field(default_factory=list)
-
-
-@dataclass
-class ReplicaSe(HikaruBase):
-    r"""
-
-    Full name: ReplicaSe
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -19353,16 +19293,6 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
 
 @dataclass
-class StorageCla(HikaruBase):
-    r"""
-
-    Full name: StorageCla
-
-    Attributes:
-    """
-
-
-@dataclass
 class StorageClassList(HikaruDocumentBase):
     r"""
     StorageClassList is a collection of storage classes.
@@ -20630,16 +20560,6 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
 
 @dataclass
-class StatefulSe(HikaruBase):
-    r"""
-
-    Full name: StatefulSe
-
-    Attributes:
-    """
-
-
-@dataclass
 class StatefulSetList(HikaruDocumentBase):
     r"""
     StatefulSetList is a collection of StatefulSets.
@@ -20944,16 +20864,6 @@ class NamespaceSpec(HikaruBase):
 
 
 @dataclass
-class ServiceAccoun(HikaruBase):
-    r"""
-
-    Full name: ServiceAccoun
-
-    Attributes:
-    """
-
-
-@dataclass
 class ServiceAccountList(HikaruDocumentBase):
     r"""
     ServiceAccountList is a list of ServiceAccount objects
@@ -21051,16 +20961,6 @@ class VolumeAttachmentSource(HikaruBase):
 
     inlineVolumeSpec: Optional["PersistentVolumeSpec"] = None
     persistentVolumeName: Optional[str] = None
-
-
-@dataclass
-class Even(HikaruBase):
-    r"""
-
-    Full name: Even
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -22793,16 +22693,6 @@ class RollingUpdateDaemonSet(HikaruBase):
 
 
 @dataclass
-class Deploymen(HikaruBase):
-    r"""
-
-    Full name: Deploymen
-
-    Attributes:
-    """
-
-
-@dataclass
 class DeploymentList(HikaruDocumentBase):
     r"""
     DeploymentList is a list of Deployments.
@@ -23907,16 +23797,6 @@ class EndpointAddress(HikaruBase):
 
 
 @dataclass
-class PriorityCla(HikaruBase):
-    r"""
-
-    Full name: PriorityCla
-
-    Attributes:
-    """
-
-
-@dataclass
 class PriorityClassList(HikaruDocumentBase):
     r"""
     PriorityClassList is a collection of priority classes.
@@ -24152,16 +24032,6 @@ class EndpointSubset(HikaruBase):
     addresses: Optional[List["EndpointAddress"]] = field(default_factory=list)
     notReadyAddresses: Optional[List["EndpointAddress"]] = field(default_factory=list)
     ports: Optional[List["EndpointPort"]] = field(default_factory=list)
-
-
-@dataclass
-class DaemonSe(HikaruBase):
-    r"""
-
-    Full name: DaemonSe
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -24449,16 +24319,6 @@ class DaemonSetList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
-
-
-@dataclass
-class VolumeAttachmen(HikaruBase):
-    r"""
-
-    Full name: VolumeAttachmen
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -25411,16 +25271,6 @@ class AllowedHostPath(HikaruBase):
 
     pathPrefix: Optional[str] = None
     readOnly: Optional[bool] = None
-
-
-@dataclass
-class RuntimeCla(HikaruBase):
-    r"""
-
-    Full name: RuntimeCla
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -27534,16 +27384,6 @@ class AllowedFlexVolume(HikaruBase):
     """
 
     driver: str
-
-
-@dataclass
-class PodDisruptionBudge(HikaruBase):
-    r"""
-
-    Full name: PodDisruptionBudge
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -29684,16 +29524,6 @@ class CertificateSigningRequestStatus(HikaruBase):
 
 
 @dataclass
-class Ingre(HikaruBase):
-    r"""
-
-    Full name: Ingre
-
-    Attributes:
-    """
-
-
-@dataclass
 class IngressList(HikaruDocumentBase):
     r"""
     IngressList is a collection of Ingress.
@@ -30648,16 +30478,6 @@ class JobTemplateSpec(HikaruBase):
 
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["JobSpec"] = None
-
-
-@dataclass
-class CertificateSigningReque(HikaruBase):
-    r"""
-
-    Full name: CertificateSigningReque
-
-    Attributes:
-    """
 
 
 @dataclass

@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-This module seeks to implement equivalent tests as in the official Kubernetes
-client's e2e_test/test_utils.py module.
+This module seeks to implement equivalent tests from various modules in the
+official Kubernetes client's e2e_test sub-package.
 
 It is based on having access to a Linux install of k3s.
 """
@@ -63,7 +63,8 @@ def ending():
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if (pod.metadata.namespace == 'default' and
-                pod.metadata.name.startswith('rc-test')):
+            (pod.metadata.name.startswith('rc-test') or
+             pod.metadata.name.startswith('job-test'))):
             Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
 
 
@@ -386,6 +387,134 @@ def test12():
         assert node
         assert len(node.metadata.labels) > 0
         assert isinstance(node.metadata.labels, dict)
+
+
+####################
+# from test_batch.py
+####################
+
+
+job_base = Job(metadata=ObjectMeta(name=''),
+               spec=JobSpec(template=
+                            PodTemplateSpec(metadata=ObjectMeta(name=''),
+                                            spec=PodSpec(
+                                                containers=[Container(
+                                                    image='busybox',
+                                                    name='',
+                                                    command=['sh', '-c', 'sleep 5']
+                                                )],
+                                                restartPolicy='Never'
+                                            ))
+                            ))
+
+
+def make_job(name: str) -> Job:
+    job = job_base.dup()
+    job.metadata.name = name
+    job.spec.template.metadata.name = name
+    job.spec.template.spec.containers[0].name = name
+    return job
+
+
+def test13():
+    """
+    test batch methods; from test_job_apis
+    """
+    name = 'job-test13'
+    job: Job = make_job(name)
+    cres = job.createNamespacedJob('default')
+    assert cres.obj
+    assert name == cres.obj.metadata.name
+    rres = Job.readNamespacedJob(name, 'default')
+    assert rres.obj
+    assert name == rres.obj.metadata.name
+    _ = Job.deleteNamespacedJob(name, 'default')
+
+
+####################
+# from test_apps.py
+####################
+
+
+def make_deployment(name: str) -> Deployment:
+    base_deployment = Deployment(
+        metadata=ObjectMeta(name=name),
+        spec=DeploymentSpec(
+            replicas=3,
+            selector=LabelSelector(matchLabels={'app': 'nginx'}),
+            template=PodTemplateSpec(
+                metadata=ObjectMeta(labels={'app': 'nginx'}),
+                spec=PodSpec(
+                    containers=[Container(
+                        name='nginx',
+                        image='nginx:1.15.4',
+                        ports=[ContainerPort(containerPort=80)]
+                    )]
+                )
+            )
+        )
+    )
+    return base_deployment
+
+
+def test14():
+    """
+    test deployment methods; from test_create_deployment
+    """
+    name = 'deployment-test14'
+    dep = make_deployment(name)
+    cres: Response = dep.createNamespacedDeployment('default')
+    assert cres.obj
+    assert name == cres.obj.metadata.name
+    rres: Response = Deployment.readNamespacedDeployment(name, 'default')
+    assert rres.obj
+    assert name == rres.obj.metadata.name
+    dres = Deployment.deleteNamespacedDeployment(name, 'default')
+    assert dres.obj
+
+
+def make_daemonset(name: str) -> DaemonSet:
+    ds = DaemonSet(
+        metadata=ObjectMeta(
+            name=name,
+            labels={'app': 'nginx'}
+        ),
+        spec=DaemonSetSpec(
+            selector=LabelSelector(
+                matchLabels={'app': 'nginx'}
+            ),
+            template=PodTemplateSpec(
+                metadata=ObjectMeta(
+                    name=name,
+                    labels={'app': 'nginx'}
+                ),
+                spec=PodSpec(
+                    containers=[Container(
+                        name='nginx-app',
+                        image='nginx:1.15.4'
+                    )]
+                )
+            ),
+            updateStrategy=DaemonSetUpdateStrategy(type='RollingUpdate')
+        )
+    )
+    return ds
+
+
+def test15():
+    """
+    test daemon set methods; from test_create_daemonset
+    """
+    name = 'ds-test15'
+    ds = make_daemonset(name)
+    cres = ds.createNamespacedDaemonSet(namespace='default')
+    assert cres.obj
+    assert cres.obj.metadata.name == name
+    rres = DaemonSet.readNamespacedDaemonSet(name, 'default')
+    assert rres.obj
+    assert name == rres.obj.metadata.name
+    dres = DaemonSet.deleteNamespacedDaemonSet(name, 'default')
+    assert dres.obj
 
 
 if __name__ == "__main__":

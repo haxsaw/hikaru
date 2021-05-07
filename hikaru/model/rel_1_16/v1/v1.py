@@ -5116,16 +5116,6 @@ class CustomResourceDefinitionVersion(HikaruBase):
 
 
 @dataclass
-class Deploymen(HikaruBase):
-    r"""
-
-    Full name: Deploymen
-
-    Attributes:
-    """
-
-
-@dataclass
 class DeploymentList(HikaruDocumentBase):
     r"""
     DeploymentList is a list of Deployments.
@@ -7246,16 +7236,6 @@ class StatefulSetUpdateStrategy(HikaruBase):
 
 
 @dataclass
-class RuntimeCla(HikaruBase):
-    r"""
-
-    Full name: RuntimeCla
-
-    Attributes:
-    """
-
-
-@dataclass
 class RuntimeClassList(HikaruDocumentBase):
     r"""
     RuntimeClassList is a list of RuntimeClass objects.
@@ -8121,16 +8101,6 @@ class CustomResourceDefinitionStatus(HikaruBase):
     conditions: Optional[List["CustomResourceDefinitionCondition"]] = field(
         default_factory=list
     )
-
-
-@dataclass
-class ease(HikaruBase):
-    r"""
-
-    Full name: ease
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -9189,16 +9159,6 @@ class AllowedFlexVolume(HikaruBase):
     """
 
     driver: str
-
-
-@dataclass
-class PodDisruptionBudge(HikaruBase):
-    r"""
-
-    Full name: PodDisruptionBudge
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -10484,16 +10444,6 @@ class DaemonSetStatus(HikaruBase):
 
 
 @dataclass
-class StorageCla(HikaruBase):
-    r"""
-
-    Full name: StorageCla
-
-    Attributes:
-    """
-
-
-@dataclass
 class StorageClassList(HikaruDocumentBase):
     r"""
     StorageClassList is a collection of storage classes.
@@ -11278,16 +11228,6 @@ class CSIDriverSpec(HikaruBase):
     attachRequired: Optional[bool] = None
     podInfoOnMount: Optional[bool] = None
     volumeLifecycleModes: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class ReplicaSe(HikaruBase):
-    r"""
-
-    Full name: ReplicaSe
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -13863,16 +13803,6 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
 
 @dataclass
-class PriorityCla(HikaruBase):
-    r"""
-
-    Full name: PriorityCla
-
-    Attributes:
-    """
-
-
-@dataclass
 class PriorityClassList(HikaruDocumentBase):
     r"""
     PriorityClassList is a collection of priority classes.
@@ -14569,16 +14499,6 @@ class TokenReviewStatus(HikaruBase):
 
 
 @dataclass
-class StatefulSe(HikaruBase):
-    r"""
-
-    Full name: StatefulSe
-
-    Attributes:
-    """
-
-
-@dataclass
 class StatefulSetList(HikaruDocumentBase):
     r"""
     StatefulSetList is a collection of StatefulSets.
@@ -14867,16 +14787,6 @@ class StatefulSetList(HikaruDocumentBase):
 
 
 @dataclass
-class VolumeAttachmen(HikaruBase):
-    r"""
-
-    Full name: VolumeAttachmen
-
-    Attributes:
-    """
-
-
-@dataclass
 class VolumeAttachmentList(HikaruDocumentBase):
     r"""
     VolumeAttachmentList is a collection of VolumeAttachment objects.
@@ -15031,16 +14941,6 @@ class VolumeAttachmentList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
-
-
-@dataclass
-class Even(HikaruBase):
-    r"""
-
-    Full name: Even
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -15974,16 +15874,6 @@ class EventSeries(HikaruBase):
     count: Optional[int] = None
     lastObservedTime: Optional[str] = None
     state: Optional[str] = None
-
-
-@dataclass
-class Ingre(HikaruBase):
-    r"""
-
-    Full name: Ingre
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -16965,16 +16855,6 @@ class JobTemplateSpec(HikaruBase):
 
 
 @dataclass
-class CertificateSigningReque(HikaruBase):
-    r"""
-
-    Full name: CertificateSigningReque
-
-    Attributes:
-    """
-
-
-@dataclass
 class CertificateSigningRequestList(HikaruDocumentBase):
     r"""
 
@@ -17000,16 +16880,6 @@ class CertificateSigningRequestList(HikaruDocumentBase):
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class DaemonSe(HikaruBase):
-    r"""
-
-    Full name: DaemonSe
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -21500,16 +21370,6 @@ class LoadBalancerIngress(HikaruBase):
 
 
 @dataclass
-class Secre(HikaruBase):
-    r"""
-
-    Full name: Secre
-
-    Attributes:
-    """
-
-
-@dataclass
 class SecretList(HikaruDocumentBase):
     r"""
     SecretList is a list of Secret.
@@ -23342,16 +23202,6 @@ class SecretKeySelector(HikaruBase):
     key: str
     name: Optional[str] = None
     optional: Optional[bool] = None
-
-
-@dataclass
-class ComponentStatu(HikaruBase):
-    r"""
-
-    Full name: ComponentStatu
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -29340,16 +29190,6 @@ class NamespaceList(HikaruDocumentBase):
 
 
 @dataclass
-class Endpoin(HikaruBase):
-    r"""
-
-    Full name: Endpoin
-
-    Attributes:
-    """
-
-
-@dataclass
 class EndpointsList(HikaruDocumentBase):
     r"""
     EndpointsList is a list of endpoints.
@@ -30630,16 +30470,6 @@ class PodDNSConfig(HikaruBase):
     nameservers: Optional[List[str]] = field(default_factory=list)
     options: Optional[List["PodDNSConfigOption"]] = field(default_factory=list)
     searches: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class mitRange(HikaruBase):
-    r"""
-
-    Full name: mitRange
-
-    Attributes:
-    """
 
 
 @dataclass
@@ -35336,16 +35166,6 @@ class NamespaceSpec(HikaruBase):
     """
 
     finalizers: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class ServiceAccoun(HikaruBase):
-    r"""
-
-    Full name: ServiceAccoun
-
-    Attributes:
-    """
 
 
 @dataclass
