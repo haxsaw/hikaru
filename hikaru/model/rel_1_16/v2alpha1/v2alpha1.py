@@ -69,7 +69,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SelfSubjectRulesReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SelfSubjectRulesReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectRulesReviewStatus"] = None
@@ -942,7 +942,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "ValidatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["ValidatingWebhook"]] = field(default_factory=list)
@@ -1140,7 +1140,7 @@ class StorageClass(HikaruDocumentBase):
     _version = "v1"
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "StorageClass"
     metadata: Optional["ObjectMeta"] = None
     reclaimPolicy: Optional[str] = None
@@ -1719,7 +1719,7 @@ class ClusterRole(HikaruDocumentBase):
 
     _version = "v1"
     aggregationRule: Optional["AggregationRule"] = None
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "ClusterRole"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -1749,7 +1749,7 @@ class ClusterRoleList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["ClusterRole"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "ClusterRoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -2158,7 +2158,7 @@ class RoleBinding(HikaruDocumentBase):
 
     _version = "v1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "RoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -2188,7 +2188,7 @@ class RoleBindingList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["RoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "RoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -2854,7 +2854,7 @@ class APIService(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "apiregistration/v1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1"
     kind: Optional[str] = "APIService"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["APIServiceSpec"] = None
@@ -2885,7 +2885,7 @@ class APIServiceList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["APIService"]
-    apiVersion: Optional[str] = "apiregistration/v1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1"
     kind: Optional[str] = "APIServiceList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -3961,7 +3961,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     _version = "v1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "ClusterRoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -4024,7 +4024,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "LocalSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -4179,7 +4179,7 @@ class Lease(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "coordination/v1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1"
     kind: Optional[str] = "Lease"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["LeaseSpec"] = None
@@ -4210,7 +4210,7 @@ class LeaseList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["Lease"]
-    apiVersion: Optional[str] = "coordination/v1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1"
     kind: Optional[str] = "LeaseList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -6708,7 +6708,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     _version = "v1"
     spec: "CustomResourceDefinitionSpec"
-    apiVersion: Optional[str] = "apiextensions/v1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1"
     kind: Optional[str] = "CustomResourceDefinition"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["CustomResourceDefinitionStatus"] = None
@@ -7006,7 +7006,7 @@ class VolumeAttachment(HikaruDocumentBase):
 
     _version = "v1"
     spec: "VolumeAttachmentSpec"
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "VolumeAttachment"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["VolumeAttachmentStatus"] = None
@@ -7074,7 +7074,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["CustomResourceDefinition"]
-    apiVersion: Optional[str] = "apiextensions/v1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1"
     kind: Optional[str] = "CustomResourceDefinitionList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -7288,7 +7288,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SelfSubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SelfSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -7854,7 +7854,7 @@ class TokenRequest(HikaruDocumentBase):
 
     _version = "v1"
     spec: "TokenRequestSpec"
-    apiVersion: Optional[str] = "authentication/v1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1"
     kind: Optional[str] = "TokenRequest"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenRequestStatus"] = None
@@ -8155,7 +8155,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["ClusterRoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "ClusterRoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -8571,7 +8571,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "MutatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["MutatingWebhook"]] = field(default_factory=list)
@@ -8602,7 +8602,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["MutatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "MutatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -8718,7 +8718,7 @@ class StorageClassList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["StorageClass"]
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "StorageClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -8747,7 +8747,7 @@ class Role(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "Role"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -8807,7 +8807,7 @@ class RoleList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["Role"]
-    apiVersion: Optional[str] = "rbac.authorization/v1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1"
     kind: Optional[str] = "RoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -8837,7 +8837,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["ValidatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "ValidatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -9118,7 +9118,7 @@ class TokenReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "TokenReviewSpec"
-    apiVersion: Optional[str] = "authentication/v1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1"
     kind: Optional[str] = "TokenReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenReviewStatus"] = None
@@ -9182,7 +9182,7 @@ class PriorityClass(HikaruDocumentBase):
 
     _version = "v1"
     value: int
-    apiVersion: Optional[str] = "scheduling/v1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1"
     description: Optional[str] = None
     globalDefault: Optional[bool] = None
     kind: Optional[str] = "PriorityClass"
@@ -9214,7 +9214,7 @@ class NetworkPolicy(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "networking/v1"
+    apiVersion: Optional[str] = "networking.k8s.io/v1"
     kind: Optional[str] = "NetworkPolicy"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["NetworkPolicySpec"] = None
@@ -9758,7 +9758,7 @@ class NetworkPolicyList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["NetworkPolicy"]
-    apiVersion: Optional[str] = "networking/v1"
+    apiVersion: Optional[str] = "networking.k8s.io/v1"
     kind: Optional[str] = "NetworkPolicyList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -9933,7 +9933,7 @@ class SubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -9988,7 +9988,7 @@ class PriorityClassList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["PriorityClass"]
-    apiVersion: Optional[str] = "scheduling/v1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1"
     kind: Optional[str] = "PriorityClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -10129,7 +10129,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["VolumeAttachment"]
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "VolumeAttachmentList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -10663,6 +10663,70 @@ class CronJob(HikaruDocumentBase):
         if the_method is None:  # pragma: no cover
             raise RuntimeError(
                 "Unable to locate method replace_namespaced_cron_job_with_http_info "
+                "on BatchV2alpha1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    def replaceNamespacedCronJobStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified CronJob
+
+        operationID: replaceNamespacedCronJobStatus
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = BatchV2alpha1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_cron_job_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_cron_job_status_with_http_info "
                 "on BatchV2alpha1Api; possible release mismatch?"
             )
         all_args = dict()

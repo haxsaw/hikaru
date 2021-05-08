@@ -24,6 +24,7 @@ official Kubernetes client's e2e_test sub-package.
 
 It is based on having access to a Linux install of k3s.
 """
+import base64
 from os import getcwd
 from pathlib import Path
 import time
@@ -537,6 +538,7 @@ def test16():
     rres = ClusterRoleBindingList.listClusterRoleBinding()
     assert rres.obj
     assert isinstance(rres.obj, ClusterRoleBindingList)
+    assert len(rres.obj.items) > 0
 
 
 def test17():
@@ -546,6 +548,7 @@ def test17():
     rres = ClusterRoleList.listClusterRole()
     assert rres.obj
     assert isinstance(rres.obj, ClusterRoleList)
+    assert len(rres.obj.items) > 0
 
 
 def test18():
@@ -555,9 +558,11 @@ def test18():
     rres = ConfigMapList.listConfigMapForAllNamespaces()
     assert rres.obj
     assert isinstance(rres.obj, ConfigMapList)
+    assert len(rres.obj.items) > 0
     nsres = ConfigMapList.listNamespacedConfigMap(namespace='kube-system')
     assert nsres.obj
     assert isinstance(nsres.obj, ConfigMapList)
+    assert len(rres.obj.items) > 0
 
 
 def test19():
@@ -579,6 +584,7 @@ def test20():
     res = CustomResourceDefinitionList.listCustomResourceDefinition()
     assert res.obj
     assert isinstance(res.obj, CustomResourceDefinitionList)
+    assert len(res.obj.items) > 0
 
 
 def test21():
@@ -600,6 +606,7 @@ def test22():
     res = DeploymentList.listNamespacedDeployment('kube-system')
     assert res.obj
     assert isinstance(res.obj, DeploymentList)
+    assert len(res.obj.items) > 0
 
 
 def test23():
@@ -609,6 +616,7 @@ def test23():
     res = Endpoints.listEndpointsForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, EndpointsList)
+    assert len(res.obj.items) > 0
 
 
 def test24():
@@ -628,6 +636,7 @@ def test25():
     res = Event.listEventForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, EventList)
+    assert len(res.obj.items) > 0
 
 
 def test26():
@@ -637,6 +646,7 @@ def test26():
     res = EventList.listNamespacedEvent('default')
     assert res.obj
     assert isinstance(res.obj, EventList)
+    assert len(res.obj.items) > 0
 
 
 def test27():
@@ -664,15 +674,17 @@ def test29():
     res = Lease.listLeaseForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, LeaseList)
+    assert len(res.obj.items) > 0
 
 
 def test30():
     """
     test getting the lease list via LeaseList
     """
-    res = LeaseList.listNamespacedLease('default')
+    res = LeaseList.listNamespacedLease('kube-node-lease')
     assert res.obj
     assert isinstance(res.obj, LeaseList)
+    assert len(res.obj.items) > 0
 
 
 def test31():
@@ -740,9 +752,10 @@ def test37():
     """
     test fetching pod list via PodList
     """
-    res = PodList.listNamespacedPod('default')
+    res = PodList.listNamespacedPod('kube-system')
     assert res.obj
     assert isinstance(res.obj, PodList)
+    assert len(res.obj.items) > 0
 
 
 def test38():
@@ -761,18 +774,21 @@ def test39():
     res = PriorityClassList.listPriorityClass()
     assert res.obj
     assert isinstance(res.obj, PriorityClassList)
+    assert len(res.obj.items) > 0
 
 
 def test40():
     """
     list replica sets
     """
-    res = ReplicaSetList.listNamespacedReplicaSet('default')
+    res = ReplicaSetList.listNamespacedReplicaSet('kube-system')
     assert res.obj
     assert isinstance(res.obj, ReplicaSetList)
+    assert len(res.obj.items) > 0
     res = ReplicaSetList.listReplicaSetForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, ReplicaSetList)
+    assert len(res.obj.items) > 0
 
 
 def test41():
@@ -803,9 +819,10 @@ def test43():
     """
     list role bindings
     """
-    res = RoleBindingList.listNamespacedRoleBinding('default')
+    res = RoleBindingList.listNamespacedRoleBinding('kube-system')
     assert res.obj
     assert isinstance(res.obj, RoleBindingList)
+    assert len(res.obj.items) > 0
 
 
 def test44():
@@ -858,6 +875,228 @@ def test48():
     res = StatefulSetList.listStatefulSetForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, StatefulSetList)
+
+
+def test49():
+    """
+    List storage classes
+    """
+    res = StorageClassList.listStorageClass()
+    assert res.obj
+    assert isinstance(res.obj, StorageClassList)
+    assert len(res.obj.items) > 0
+
+
+def test50():
+    """
+    list validating webhook configurations
+    """
+    res = ValidatingWebhookConfigurationList.listValidatingWebhookConfiguration()
+    assert res.obj
+    assert isinstance(res.obj, ValidatingWebhookConfigurationList)
+
+
+def test51():
+    """
+    list volume attachments
+    """
+    res = VolumeAttachmentList.listVolumeAttachment()
+    assert res.obj
+    assert isinstance(res.obj, VolumeAttachmentList)
+
+
+def test52():
+    """
+    test crud ops on secrets
+    """
+    res = SecretList.listNamespacedSecret('default')
+    before_len = len(res.obj.items)
+    secret = Secret(metadata=ObjectMeta(name='seekrit'),
+                    data={'pw1': base64.b64encode(b'bibble').decode(),
+                          'pw2': base64.b64encode(b'bobble').decode()})
+    res = secret.createNamespacedSecret('default')
+    assert res.obj
+    res = SecretList.listNamespacedSecret('default')
+    assert before_len < len(res.obj.items)
+    rres = Secret.readNamespacedSecret(name=secret.metadata.name,
+                                       namespace='default')
+    assert rres.obj
+    assert secret.metadata.name == rres.obj.metadata.name
+    dres = Secret.deleteNamespacedSecret(secret.metadata.name,
+                                         'default')
+    assert dres.obj
+
+
+def test53():
+    """
+    test crud ops on pod templates
+    """
+    res = PodTemplateList.listNamespacedPodTemplate('default')
+    before_len = len(res.obj.items)
+    pt = PodTemplate(
+        metadata=ObjectMeta(name='test-53'),
+        template=PodTemplateSpec(
+            metadata=ObjectMeta(labels={'name': ''}),
+            spec=PodSpec(
+                 containers=[Container(image='nginx',
+                                       name='nginx',
+                                       ports=[ContainerPort(
+                                           containerPort=80,
+                                           protocol='TCP'
+                                       )]
+                                       )
+                             ]
+             ))
+    )
+    res = pt.createNamespacedPodTemplate('default')
+    assert res.obj
+    res = PodTemplateList.listNamespacedPodTemplate('default')
+    assert before_len < len(res.obj.items)
+    rres = PodTemplate.readNamespacedPodTemplate(pt.metadata.name, 'default')
+    assert rres.obj
+    assert rres.obj.metadata.name == pt.metadata.name
+    dres = PodTemplate.deleteNamespacedPodTemplate(pt.metadata.name, 'default')
+    assert dres.obj
+
+
+def test54():
+    """
+    test persistent volume claims
+    """
+    pvc = PersistentVolumeClaim(
+        metadata=ObjectMeta(
+            name='postgres-pvc-kiamol'
+        ),
+        spec=PersistentVolumeClaimSpec(
+            accessModes=['ReadWriteOnce'],
+            storageClassName='kiamol',
+            resources=ResourceRequirements(
+                requests={'storage': '100Mi'}
+            )
+        )
+    )
+    res = pvc.createNamespacedPersistentVolumeClaim('default')
+    assert res.obj
+    assert isinstance(res.obj, PersistentVolumeClaim)
+    assert res.obj.metadata.name == pvc.metadata.name
+    rres = PersistentVolumeClaim.readNamespacedPersistentVolumeClaim(
+        pvc.metadata.name, 'default')
+    assert rres.obj
+    assert isinstance(rres.obj, PersistentVolumeClaim)
+    assert rres.obj.metadata.name == pvc.metadata.name
+    dres = PersistentVolumeClaim.deleteNamespacedPersistentVolumeClaim(pvc.metadata.name,
+                                                                       'default')
+
+
+def test55():
+    """
+    test listing component status
+    """
+    res = ComponentStatusList.listComponentStatus()
+    assert res.obj
+    assert isinstance(res.obj, ComponentStatusList)
+    assert len(res.obj.items) > 0
+
+
+def test56():
+    """
+    test persistent volume crud ops
+    """
+    pv = PersistentVolume(
+        metadata=ObjectMeta(
+            name='pv01'
+        ),
+        spec=PersistentVolumeSpec(
+            capacity={'storage': '50Mi'},
+            accessModes=['ReadWriteOnce'],
+            nfs=NFSVolumeSource(
+                server='nsf.my.network',
+                path='/kubernetes-volumes'
+            )
+        )
+    )
+    res = pv.createPersistentVolume()
+    assert res.obj
+    rres = PersistentVolume.readPersistentVolume(pv.metadata.name)
+    assert rres.obj
+    assert isinstance(rres.obj, PersistentVolume)
+    assert rres.obj.metadata.name == pv.metadata.name
+    dres = PersistentVolume.deletePersistentVolume(pv.metadata.name)
+    assert dres.obj
+
+
+def test57():
+    """
+    test service account crud operations
+    """
+    sa = ServiceAccount(
+        metadata=ObjectMeta(
+            name='user-cert-generator',
+            labels={'kiamol': 'ch17'}
+        )
+    )
+    res = sa.createNamespacedServiceAccount('default')
+    assert res.obj
+    assert isinstance(res.obj, ServiceAccount)
+    assert res.obj.metadata.name == sa.metadata.name
+    rres = ServiceAccount.readNamespacedServiceAccount(sa.metadata.name,
+                                                       'default')
+    assert rres.obj
+    assert isinstance(rres.obj, ServiceAccount)
+    assert rres.obj.metadata.name == sa.metadata.name
+    dsa = sa.dup()
+    dsa.metadata.labels['extra-label'] = 'value'
+    pres = dsa.patchNamespacedServiceAccount(sa.metadata.name,
+                                             'default')
+    assert pres.obj
+    assert isinstance(pres.obj, ServiceAccount)
+    assert pres.obj.metadata.name == sa.metadata.name
+    dres = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
+                                                         'default')
+    assert dres.obj
+
+
+def test58():
+    """
+    test crud ops on cluster roles
+    """
+    cr = ClusterRole(
+        # apiVersion='rbac.authorization.k8s.io/v1',
+        metadata=ObjectMeta(
+            name='create-approve-csr',
+            labels={'kiamol': 'ch17'}
+        ),
+        rules=[
+            PolicyRule(apiGroups=["certificates.k8s.io"],
+                       resources=["certificatesigningrequests"],
+                       verbs=["create", "get", "list", "watch"],
+                       ),
+            PolicyRule(apiGroups=["certificates.k8s.io"],
+                       resources=["certificatesigningrequests/approval"],
+                       verbs=["update"]),
+            PolicyRule(apiGroups=["certificates.k8s.io"],
+                       resources=["signers"],
+                       resourceNames=["kubernetes.io/kube-apiserver-client",
+                                      "kubernetes.io/legacy-unknown"],
+                       verbs=['approve'])
+        ]
+    )
+    res = cr.createClusterRole()
+    assert res.obj
+    assert isinstance(res.obj, ClusterRole)
+    assert cr.metadata.name == res.obj.metadata.name
+    rres = ClusterRole.readClusterRole(cr.metadata.name)
+    assert rres.obj
+    assert isinstance(rres.obj, ClusterRole)
+    assert rres.obj.metadata.name == cr.metadata.name
+    dcr = cr.dup()
+    dcr.metadata.labels['new-label'] = 'new-value'
+    pres = dcr.patchClusterRole(dcr.metadata.name)
+    assert pres.obj
+    assert isinstance(pres.obj, ClusterRole)
+    assert pres.obj.metadata.name == cr.metadata.name
+    dres = ClusterRole.deleteClusterRole(cr.metadata.name)
+    assert dres.obj
 
 
 if __name__ == "__main__":

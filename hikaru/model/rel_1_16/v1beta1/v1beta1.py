@@ -43,6 +43,7 @@ from kubernetes.client import AuthorizationV1beta1Api
 from kubernetes.client import BatchV1beta1Api
 from kubernetes.client import CertificatesV1beta1Api
 from kubernetes.client import CoordinationV1beta1Api
+from kubernetes.client import CoreV1Api
 from kubernetes.client import EventsV1beta1Api
 from kubernetes.client import ExtensionsV1beta1Api
 from kubernetes.client import NetworkingV1beta1Api
@@ -85,7 +86,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "SelfSubjectRulesReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1beta1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1beta1"
     kind: Optional[str] = "SelfSubjectRulesReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectRulesReviewStatus"] = None
@@ -891,6 +892,72 @@ class StatefulSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedStatefulSetStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified StatefulSet
+
+        operationID: replaceNamespacedStatefulSetStatus
+        path: /apis/apps/v1beta1/namespaces/{namespace}/statefulsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   StatefulSet    OK
+          201   StatefulSet    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_namespaced_stateful_set_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_stateful_set_status_with_http_info "
+                "on AppsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class StatefulSetSpec(HikaruBase):
@@ -1493,7 +1560,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "admissionregistration/v1beta1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1beta1"
     kind: Optional[str] = "ValidatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["ValidatingWebhook"]] = field(default_factory=list)
@@ -2171,7 +2238,7 @@ class StorageClass(HikaruDocumentBase):
     _version = "v1beta1"
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "StorageClass"
     metadata: Optional["ObjectMeta"] = None
     reclaimPolicy: Optional[str] = None
@@ -3261,7 +3328,7 @@ class ClusterRole(HikaruDocumentBase):
 
     _version = "v1beta1"
     aggregationRule: Optional["AggregationRule"] = None
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "ClusterRole"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -3749,7 +3816,7 @@ class ClusterRoleList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["ClusterRole"]
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "ClusterRoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -4286,7 +4353,7 @@ class RoleBinding(HikaruDocumentBase):
 
     _version = "v1beta1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "RoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -4794,7 +4861,7 @@ class RoleBindingList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["RoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "RoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -5591,7 +5658,7 @@ class APIService(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "apiregistration/v1beta1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1beta1"
     kind: Optional[str] = "APIService"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["APIServiceSpec"] = None
@@ -6067,6 +6134,67 @@ class APIService(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceAPIServiceStatus(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified APIService
+
+        operationID: replaceAPIServiceStatus
+        path: /apis/apiregistration.k8s.io/v1beta1/apiservices/{name}/status
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   APIService    OK
+          201   APIService    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = ApiregistrationV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_api_service_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_api_service_status_with_http_info "
+                "on ApiregistrationV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class APIServiceList(HikaruDocumentBase):
@@ -6090,7 +6218,7 @@ class APIServiceList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["APIService"]
-    apiVersion: Optional[str] = "apiregistration/v1beta1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1beta1"
     kind: Optional[str] = "APIServiceList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -7293,7 +7421,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     _version = "v1beta1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "ClusterRoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -7816,7 +7944,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1beta1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1beta1"
     kind: Optional[str] = "LocalSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -8018,7 +8146,7 @@ class Lease(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "coordination/v1beta1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1beta1"
     kind: Optional[str] = "Lease"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["LeaseSpec"] = None
@@ -8662,7 +8790,7 @@ class LeaseList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["Lease"]
-    apiVersion: Optional[str] = "coordination/v1beta1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1beta1"
     kind: Optional[str] = "LeaseList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -11593,6 +11721,72 @@ class ReplicaSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedReplicaSetStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified ReplicaSet
+
+        operationID: replaceNamespacedReplicaSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/replicasets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ReplicaSet    OK
+          201   ReplicaSet    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_namespaced_replica_set_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_replica_set_status_with_http_info "
+                "on ExtensionsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class ReplicaSetList(HikaruDocumentBase):
@@ -12499,7 +12693,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "CustomResourceDefinitionSpec"
-    apiVersion: Optional[str] = "apiextensions/v1beta1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1beta1"
     kind: Optional[str] = "CustomResourceDefinition"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["CustomResourceDefinitionStatus"] = None
@@ -12976,6 +13170,69 @@ class CustomResourceDefinition(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceCustomResourceDefinitionStatus(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified CustomResourceDefinition
+
+        operationID: replaceCustomResourceDefinitionStatus
+        path: /apis/apiextensions.k8s.io/v1beta1/customresourcedefinitions/{name}/status
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CustomResourceDefinition    OK
+          201   CustomResourceDefinition    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = ApiextensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_custom_resource_definition_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_custom_resource_definition_status_with_http_info "
+                "on ApiextensionsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class IPBlock(HikaruBase):
@@ -13268,7 +13525,7 @@ class VolumeAttachment(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "VolumeAttachmentSpec"
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "VolumeAttachment"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["VolumeAttachmentStatus"] = None
@@ -13804,7 +14061,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["CustomResourceDefinition"]
-    apiVersion: Optional[str] = "apiextensions/v1beta1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1beta1"
     kind: Optional[str] = "CustomResourceDefinitionList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -14697,6 +14954,72 @@ class Deployment(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedDeploymentStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified Deployment
+
+        operationID: replaceNamespacedDeploymentStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/deployments/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Deployment    OK
+          201   Deployment    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = AppsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_namespaced_deployment_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_deployment_status_with_http_info "
+                "on AppsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class DeploymentStatus(HikaruBase):
@@ -14762,7 +15085,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "SelfSubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1beta1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1beta1"
     kind: Optional[str] = "SelfSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -15440,6 +15763,72 @@ class DaemonSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedDaemonSetStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified DaemonSet
+
+        operationID: replaceNamespacedDaemonSetStatus
+        path: /apis/extensions/v1beta1/namespaces/{namespace}/daemonsets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   DaemonSet    OK
+          201   DaemonSet    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = ExtensionsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_namespaced_daemon_set_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_daemon_set_status_with_http_info "
+                "on ExtensionsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class DaemonSetSpec(HikaruBase):
@@ -15523,7 +15912,7 @@ class Event(HikaruDocumentBase):
     _version = "v1beta1"
     eventTime: str
     action: Optional[str] = None
-    apiVersion: Optional[str] = "events/v1beta1"
+    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
     deprecatedCount: Optional[int] = None
     deprecatedFirstTimestamp: Optional[str] = None
     deprecatedLastTimestamp: Optional[str] = None
@@ -17217,7 +17606,7 @@ class TokenRequest(HikaruDocumentBase):
 
     _version = "v1"
     spec: "TokenRequestSpec"
-    apiVersion: Optional[str] = "authentication/v1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1"
     kind: Optional[str] = "TokenRequest"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenRequestStatus"] = None
@@ -18019,7 +18408,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["ClusterRoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "ClusterRoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -18563,7 +18952,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "admissionregistration/v1beta1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1beta1"
     kind: Optional[str] = "MutatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["MutatingWebhook"]] = field(default_factory=list)
@@ -19072,7 +19461,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["MutatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1beta1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1beta1"
     kind: Optional[str] = "MutatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -19315,7 +19704,7 @@ class StorageClassList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["StorageClass"]
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "StorageClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -19471,7 +19860,7 @@ class Role(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "Role"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -20263,7 +20652,7 @@ class RoleList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["Role"]
-    apiVersion: Optional[str] = "rbac.authorization/v1beta1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "RoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -20423,7 +20812,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["ValidatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1beta1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1beta1"
     kind: Optional[str] = "ValidatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -20986,7 +21375,7 @@ class EventList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["Event"]
-    apiVersion: Optional[str] = "events/v1beta1"
+    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
     kind: Optional[str] = "EventList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -21222,7 +21611,7 @@ class TokenReview(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "TokenReviewSpec"
-    apiVersion: Optional[str] = "authentication/v1beta1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1beta1"
     kind: Optional[str] = "TokenReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenReviewStatus"] = None
@@ -21330,7 +21719,7 @@ class PriorityClass(HikaruDocumentBase):
 
     _version = "v1beta1"
     value: int
-    apiVersion: Optional[str] = "scheduling/v1beta1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1beta1"
     description: Optional[str] = None
     globalDefault: Optional[bool] = None
     kind: Optional[str] = "PriorityClass"
@@ -23721,7 +24110,7 @@ class SubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1beta1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1beta1"
     kind: Optional[str] = "SubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -23819,7 +24208,7 @@ class PriorityClassList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["PriorityClass"]
-    apiVersion: Optional[str] = "scheduling/v1beta1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1beta1"
     kind: Optional[str] = "PriorityClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -24344,7 +24733,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["VolumeAttachment"]
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "VolumeAttachmentList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -25021,6 +25410,72 @@ class PodDisruptionBudget(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedPodDisruptionBudgetStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified PodDisruptionBudget
+
+        operationID: replaceNamespacedPodDisruptionBudgetStatus
+        path: /apis/policy/v1beta1/namespaces/{namespace}/poddisruptionbudgets/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PodDisruptionBudget    OK
+          201   PodDisruptionBudget    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_namespaced_pod_disruption_budget_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_pod_disruption_budget_status_with_http_info "
+                "on PolicyV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class PodDisruptionBudgetSpec(HikaruBase):
@@ -25315,7 +25770,7 @@ class RuntimeClass(HikaruDocumentBase):
 
     _version = "v1beta1"
     handler: str
-    apiVersion: Optional[str] = "node/v1beta1"
+    apiVersion: Optional[str] = "node.k8s.io/v1beta1"
     kind: Optional[str] = "RuntimeClass"
     metadata: Optional["ObjectMeta"] = None
     overhead: Optional["Overhead"] = None
@@ -25815,7 +26270,7 @@ class RuntimeClassList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["RuntimeClass"]
-    apiVersion: Optional[str] = "node/v1beta1"
+    apiVersion: Optional[str] = "node.k8s.io/v1beta1"
     kind: Optional[str] = "RuntimeClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -26622,7 +27077,7 @@ class Ingress(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "networking/v1beta1"
+    apiVersion: Optional[str] = "networking.k8s.io/v1beta1"
     kind: Optional[str] = "Ingress"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["IngressSpec"] = None
@@ -27231,6 +27686,70 @@ class Ingress(HikaruDocumentBase):
         if the_method is None:  # pragma: no cover
             raise RuntimeError(
                 "Unable to locate method replace_namespaced_ingress_with_http_info "
+                "on NetworkingV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
+    def replaceNamespacedIngressStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified Ingress
+
+        operationID: replaceNamespacedIngressStatus
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Ingress    OK
+          201   Ingress    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_ingress_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_ingress_status_with_http_info "
                 "on NetworkingV1beta1Api; possible release mismatch?"
             )
         all_args = dict()
@@ -27911,7 +28430,7 @@ class CSINode(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "CSINodeSpec"
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "CSINode"
     metadata: Optional["ObjectMeta"] = None
     # noinspection PyDataclass
@@ -28142,7 +28661,7 @@ class CSIDriver(HikaruDocumentBase):
 
     _version = "v1beta1"
     spec: "CSIDriverSpec"
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "CSIDriver"
     metadata: Optional["ObjectMeta"] = None
     # noinspection PyDataclass
@@ -28861,6 +29380,70 @@ class CronJob(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceNamespacedCronJobStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified CronJob
+
+        operationID: replaceNamespacedCronJobStatus
+        path: /apis/batch/v1beta1/namespaces/{namespace}/cronjobs/{name}/status
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CronJob    OK
+          201   CronJob    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = BatchV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_cron_job_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_namespaced_cron_job_status_with_http_info "
+                "on BatchV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class CronJobSpec(HikaruBase):
@@ -28950,7 +29533,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    apiVersion: Optional[str] = "certificates/v1beta1"
+    apiVersion: Optional[str] = "certificates.k8s.io/v1beta1"
     kind: Optional[str] = "CertificateSigningRequest"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["CertificateSigningRequestSpec"] = None
@@ -29474,6 +30057,69 @@ class CertificateSigningRequest(HikaruDocumentBase):
         codes_returning_objects = (200, 201)
         return Response(result, codes_returning_objects)
 
+    def replaceCertificateSigningRequestStatus(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        replace status of the specified CertificateSigningRequest
+
+        operationID: replaceCertificateSigningRequestStatus
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/status
+
+        :param name: part of the URL path
+        :param dry_run: When present, indicates that modifications should not
+            be persisted. An invalid or unrecognized dryRun directive will
+            result in an error response and no further processing of the
+            request. Valid values are: - All: all dry run stages will be
+            processed
+        :param field_manager: fieldManager is a name associated with the
+            actor or entity that is making these changes. The value must
+            be less than or 128 characters long, and only contain
+            printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CertificateSigningRequest    OK
+          201   CertificateSigningRequest    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "replace_certificate_signing_request_status_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method replace_certificate_signing_request_status_with_http_info "
+                "on CertificatesV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response(result, codes_returning_objects)
+
 
 @dataclass
 class CertificateSigningRequestSpec(HikaruBase):
@@ -29725,7 +30371,7 @@ class CSIDriverList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["CSIDriver"]
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "CSIDriverList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -29882,7 +30528,7 @@ class CSINodeList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["CSINode"]
-    apiVersion: Optional[str] = "storage/v1beta1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1beta1"
     kind: Optional[str] = "CSINodeList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -30501,7 +31147,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
 
     _version = "v1beta1"
     items: List["CertificateSigningRequest"]
-    apiVersion: Optional[str] = "certificates/v1beta1"
+    apiVersion: Optional[str] = "certificates.k8s.io/v1beta1"
     kind: Optional[str] = "CertificateSigningRequestList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass

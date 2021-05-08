@@ -75,7 +75,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SelfSubjectRulesReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SelfSubjectRulesReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectRulesReviewStatus"] = None
@@ -948,7 +948,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "ValidatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["ValidatingWebhook"]] = field(default_factory=list)
@@ -1146,7 +1146,7 @@ class StorageClass(HikaruDocumentBase):
     _version = "v1"
     provisioner: str
     allowVolumeExpansion: Optional[bool] = None
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "StorageClass"
     metadata: Optional["ObjectMeta"] = None
     reclaimPolicy: Optional[str] = None
@@ -1725,7 +1725,7 @@ class ClusterRole(HikaruDocumentBase):
 
     _version = "v1alpha1"
     aggregationRule: Optional["AggregationRule"] = None
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "ClusterRole"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -2213,7 +2213,7 @@ class ClusterRoleList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["ClusterRole"]
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "ClusterRoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -2750,7 +2750,7 @@ class RoleBinding(HikaruDocumentBase):
 
     _version = "v1alpha1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "RoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -3258,7 +3258,7 @@ class RoleBindingList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["RoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "RoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -4059,7 +4059,7 @@ class APIService(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "apiregistration/v1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1"
     kind: Optional[str] = "APIService"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["APIServiceSpec"] = None
@@ -4090,7 +4090,7 @@ class APIServiceList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["APIService"]
-    apiVersion: Optional[str] = "apiregistration/v1"
+    apiVersion: Optional[str] = "apiregistration.k8s.io/v1"
     kind: Optional[str] = "APIServiceList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -5166,7 +5166,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     _version = "v1alpha1"
     roleRef: "RoleRef"
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "ClusterRoleBinding"
     metadata: Optional["ObjectMeta"] = None
     subjects: Optional[List["Subject"]] = field(default_factory=list)
@@ -5689,7 +5689,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "LocalSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -5844,7 +5844,7 @@ class Lease(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "coordination/v1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1"
     kind: Optional[str] = "Lease"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["LeaseSpec"] = None
@@ -5875,7 +5875,7 @@ class LeaseList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["Lease"]
-    apiVersion: Optional[str] = "coordination/v1"
+    apiVersion: Optional[str] = "coordination.k8s.io/v1"
     kind: Optional[str] = "LeaseList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -8372,7 +8372,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     _version = "v1"
     spec: "CustomResourceDefinitionSpec"
-    apiVersion: Optional[str] = "apiextensions/v1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1"
     kind: Optional[str] = "CustomResourceDefinition"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["CustomResourceDefinitionStatus"] = None
@@ -8670,7 +8670,7 @@ class VolumeAttachment(HikaruDocumentBase):
 
     _version = "v1alpha1"
     spec: "VolumeAttachmentSpec"
-    apiVersion: Optional[str] = "storage/v1alpha1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1alpha1"
     kind: Optional[str] = "VolumeAttachment"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["VolumeAttachmentStatus"] = None
@@ -9206,7 +9206,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["CustomResourceDefinition"]
-    apiVersion: Optional[str] = "apiextensions/v1"
+    apiVersion: Optional[str] = "apiextensions.k8s.io/v1"
     kind: Optional[str] = "CustomResourceDefinitionList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -9420,7 +9420,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SelfSubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SelfSubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -9986,7 +9986,7 @@ class TokenRequest(HikaruDocumentBase):
 
     _version = "v1"
     spec: "TokenRequestSpec"
-    apiVersion: Optional[str] = "authentication/v1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1"
     kind: Optional[str] = "TokenRequest"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenRequestStatus"] = None
@@ -10287,7 +10287,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["ClusterRoleBinding"]
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "ClusterRoleBindingList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -10830,7 +10830,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "MutatingWebhookConfiguration"
     metadata: Optional["ObjectMeta"] = None
     webhooks: Optional[List["MutatingWebhook"]] = field(default_factory=list)
@@ -10861,7 +10861,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["MutatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "MutatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -10977,7 +10977,7 @@ class StorageClassList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["StorageClass"]
-    apiVersion: Optional[str] = "storage/v1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1"
     kind: Optional[str] = "StorageClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -11006,7 +11006,7 @@ class Role(HikaruDocumentBase):
     """
 
     _version = "v1alpha1"
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "Role"
     metadata: Optional["ObjectMeta"] = None
     rules: Optional[List["PolicyRule"]] = field(default_factory=list)
@@ -11798,7 +11798,7 @@ class RoleList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["Role"]
-    apiVersion: Optional[str] = "rbac.authorization/v1alpha1"
+    apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1alpha1"
     kind: Optional[str] = "RoleList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -11958,7 +11958,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["ValidatingWebhookConfiguration"]
-    apiVersion: Optional[str] = "admissionregistration/v1"
+    apiVersion: Optional[str] = "admissionregistration.k8s.io/v1"
     kind: Optional[str] = "ValidatingWebhookConfigurationList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -12239,7 +12239,7 @@ class TokenReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "TokenReviewSpec"
-    apiVersion: Optional[str] = "authentication/v1"
+    apiVersion: Optional[str] = "authentication.k8s.io/v1"
     kind: Optional[str] = "TokenReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["TokenReviewStatus"] = None
@@ -12304,7 +12304,7 @@ class PriorityClass(HikaruDocumentBase):
 
     _version = "v1alpha1"
     value: int
-    apiVersion: Optional[str] = "scheduling/v1alpha1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1alpha1"
     description: Optional[str] = None
     globalDefault: Optional[bool] = None
     kind: Optional[str] = "PriorityClass"
@@ -12804,7 +12804,7 @@ class NetworkPolicy(HikaruDocumentBase):
     """
 
     _version = "v1"
-    apiVersion: Optional[str] = "networking/v1"
+    apiVersion: Optional[str] = "networking.k8s.io/v1"
     kind: Optional[str] = "NetworkPolicy"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["NetworkPolicySpec"] = None
@@ -13348,7 +13348,7 @@ class NetworkPolicyList(HikaruDocumentBase):
 
     _version = "v1"
     items: List["NetworkPolicy"]
-    apiVersion: Optional[str] = "networking/v1"
+    apiVersion: Optional[str] = "networking.k8s.io/v1"
     kind: Optional[str] = "NetworkPolicyList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -13523,7 +13523,7 @@ class SubjectAccessReview(HikaruDocumentBase):
 
     _version = "v1"
     spec: "SubjectAccessReviewSpec"
-    apiVersion: Optional[str] = "authorization/v1"
+    apiVersion: Optional[str] = "authorization.k8s.io/v1"
     kind: Optional[str] = "SubjectAccessReview"
     metadata: Optional["ObjectMeta"] = None
     status: Optional["SubjectAccessReviewStatus"] = None
@@ -13578,7 +13578,7 @@ class PriorityClassList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["PriorityClass"]
-    apiVersion: Optional[str] = "scheduling/v1alpha1"
+    apiVersion: Optional[str] = "scheduling.k8s.io/v1alpha1"
     kind: Optional[str] = "PriorityClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -13846,7 +13846,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["VolumeAttachment"]
-    apiVersion: Optional[str] = "storage/v1alpha1"
+    apiVersion: Optional[str] = "storage.k8s.io/v1alpha1"
     kind: Optional[str] = "VolumeAttachmentList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -14001,7 +14001,7 @@ class AuditSink(HikaruDocumentBase):
     """
 
     _version = "v1alpha1"
-    apiVersion: Optional[str] = "auditregistration/v1alpha1"
+    apiVersion: Optional[str] = "auditregistration.k8s.io/v1alpha1"
     kind: Optional[str] = "AuditSink"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["AuditSinkSpec"] = None
@@ -14592,7 +14592,7 @@ class PodPreset(HikaruDocumentBase):
     """
 
     _version = "v1alpha1"
-    apiVersion: Optional[str] = "settings/v1alpha1"
+    apiVersion: Optional[str] = "settings.k8s.io/v1alpha1"
     kind: Optional[str] = "PodPreset"
     metadata: Optional["ObjectMeta"] = None
     spec: Optional["PodPresetSpec"] = None
@@ -15111,7 +15111,7 @@ class PodPresetList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["PodPreset"]
-    apiVersion: Optional[str] = "settings/v1alpha1"
+    apiVersion: Optional[str] = "settings.k8s.io/v1alpha1"
     kind: Optional[str] = "PodPresetList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -15414,7 +15414,7 @@ class AuditSinkList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["AuditSink"]
-    apiVersion: Optional[str] = "auditregistration/v1alpha1"
+    apiVersion: Optional[str] = "auditregistration.k8s.io/v1alpha1"
     kind: Optional[str] = "AuditSinkList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -15613,7 +15613,7 @@ class EndpointSlice(HikaruDocumentBase):
     _version = "v1alpha1"
     endpoints: List["Endpoint"]
     addressType: Optional[str] = None
-    apiVersion: Optional[str] = "discovery/v1alpha1"
+    apiVersion: Optional[str] = "discovery.k8s.io/v1alpha1"
     kind: Optional[str] = "EndpointSlice"
     metadata: Optional["ObjectMeta"] = None
     ports: Optional[List["EndpointPort"]] = field(default_factory=list)
@@ -16204,7 +16204,7 @@ class EndpointSliceList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["EndpointSlice"]
-    apiVersion: Optional[str] = "discovery/v1alpha1"
+    apiVersion: Optional[str] = "discovery.k8s.io/v1alpha1"
     kind: Optional[str] = "EndpointSliceList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass
@@ -16370,7 +16370,7 @@ class RuntimeClass(HikaruDocumentBase):
 
     _version = "v1alpha1"
     spec: "RuntimeClassSpec"
-    apiVersion: Optional[str] = "node/v1alpha1"
+    apiVersion: Optional[str] = "node.k8s.io/v1alpha1"
     kind: Optional[str] = "RuntimeClass"
     metadata: Optional["ObjectMeta"] = None
     # noinspection PyDataclass
@@ -16868,7 +16868,7 @@ class RuntimeClassList(HikaruDocumentBase):
 
     _version = "v1alpha1"
     items: List["RuntimeClass"]
-    apiVersion: Optional[str] = "node/v1alpha1"
+    apiVersion: Optional[str] = "node.k8s.io/v1alpha1"
     kind: Optional[str] = "RuntimeClassList"
     metadata: Optional["ListMeta"] = None
     # noinspection PyDataclass

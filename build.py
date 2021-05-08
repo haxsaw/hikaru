@@ -740,7 +740,7 @@ class ClassDescriptor(object):
         x_k8s = d.get("x-kubernetes-group-version-kind")
         if x_k8s is not None:
             x_k8s = x_k8s[0]
-            self.group = x_k8s["group"].replace(".k8s.io", "")
+            self.group = x_k8s["group"]
             if self.group == "":
                 self.group = "core"
             self.kind = x_k8s["kind"]
@@ -1401,6 +1401,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
     if whose_method:
         guess = _best_guess(new_op)
         if (guess and whose_method is cd_in_responses and
+                whose_method is not cd_in_params and
                 whose_method.short_name != guess.short_name):
             guess.add_operation(new_op)
         else:
