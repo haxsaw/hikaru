@@ -1025,16 +1025,21 @@ def test56():
     assert dres.obj
 
 
-def test57():
-    """
-    test service account crud operations
-    """
+def make_sa57() -> ServiceAccount:
     sa = ServiceAccount(
         metadata=ObjectMeta(
             name='user-cert-generator',
             labels={'kiamol': 'ch17'}
         )
     )
+    return sa
+
+
+def test57():
+    """
+    test service account crud operations
+    """
+    sa = make_sa57()
     res = sa.createNamespacedServiceAccount('default')
     assert res.obj
     assert isinstance(res.obj, ServiceAccount)
@@ -1056,12 +1061,8 @@ def test57():
     assert dres.obj
 
 
-def test58():
-    """
-    test crud ops on cluster roles
-    """
+def make_cr58() -> ClusterRole:
     cr = ClusterRole(
-        # apiVersion='rbac.authorization.k8s.io/v1',
         metadata=ObjectMeta(
             name='create-approve-csr',
             labels={'kiamol': 'ch17'}
@@ -1081,6 +1082,14 @@ def test58():
                        verbs=['approve'])
         ]
     )
+    return cr
+
+
+def test58():
+    """
+    test crud ops on cluster roles
+    """
+    cr = make_cr58()
     res = cr.createClusterRole()
     assert res.obj
     assert isinstance(res.obj, ClusterRole)
@@ -1096,6 +1105,167 @@ def test58():
     assert isinstance(pres.obj, ClusterRole)
     assert pres.obj.metadata.name == cr.metadata.name
     dres = ClusterRole.deleteClusterRole(cr.metadata.name)
+    assert dres.obj
+
+
+def test59():
+    """
+    test binding a cluster role to a service account
+    """
+    sa = make_sa57()
+    cr = make_cr58()
+    crb = ClusterRoleBinding(
+        metadata=ObjectMeta(
+            name='user-cert-generator',
+            labels={'kiamol': 'ch17'}
+        ),
+        subjects=[Subject(kind='ServiceAccount',
+                          name=sa.metadata.name,
+                          namespace='default')],
+        roleRef=RoleRef(
+            apiGroup='rbac.authorization.k8s.io',
+            kind='ClusterRole',
+            name=cr.metadata.name
+        )
+    )
+    sa_res = sa.createNamespacedServiceAccount('default')
+    assert sa_res.obj
+    cr_res = cr.createClusterRole()
+    assert cr_res.obj
+    crb_res = crb.createClusterRoleBinding()
+    assert crb_res.obj
+    assert isinstance(crb_res.obj, ClusterRoleBinding)
+    assert crb_res.obj.metadata.name == crb.metadata.name
+    rres = ClusterRoleBinding.readClusterRoleBinding(crb.metadata.name)
+    assert rres.obj
+    assert isinstance(rres.obj, ClusterRoleBinding)
+    assert rres.obj.metadata.name == crb.metadata.name
+    dcr = cr.dup()
+    dcr.rules[1].verbs.append('watch')
+    pres = dcr.patchClusterRole(dcr.metadata.name)
+    assert pres.obj
+    dres = ClusterRoleBinding.deleteClusterRoleBinding(crb.metadata.name)
+    assert dres.obj
+    _ = ClusterRole.deleteClusterRole(cr.metadata.name)
+    _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
+                                                      'default')
+
+
+def test60():
+    """
+    trying reading component status
+    """
+    cs = ComponentStatus(metadata=ObjectMeta(name='test60'))
+    res = cs.readComponentStatus('controller-manager')
+    assert res.obj
+    assert isinstance(res.obj, ComponentStatus)
+    assert len(res.obj.conditions) > 0
+
+
+def test61():
+    """
+    test listing endpoints
+    """
+    res = Endpoints.listEndpointsForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, EndpointsList)
+    assert len(res.obj.items) > 0
+
+
+def test62():
+    """
+    test horizontal pod autoscaling
+    """
+    hpa = HorizontalPodAutoscaler(
+        metadata=ObjectMeta(name='pi-cpu'),
+        spec=HorizontalPodAutoscalerSpec(
+            scaleTargetRef=CrossVersionObjectReference(
+                kind='Deployment',
+                apiVersion='apps/v1',
+                name='pi-web'
+            ),
+            minReplicas=1,
+            maxReplicas=5,
+            targetCPUUtilizationPercentage=75
+        )
+    )
+    res = hpa.createNamespacedHorizontalPodAutoscaler(namespace='default')
+    assert res.obj
+    assert isinstance(res.obj, HorizontalPodAutoscaler)
+    assert res.obj.metadata.name == hpa.metadata.name
+    rres = HorizontalPodAutoscaler.readNamespacedHorizontalPodAutoscaler(
+        name=hpa.metadata.name, namespace='default'
+    )
+    assert rres.obj
+    assert isinstance(rres.obj, HorizontalPodAutoscaler)
+    assert rres.obj.metadata.name == hpa.metadata.name
+    dhpa = hpa.dup()
+    dhpa.metadata.labels = {'new-label': 'see'}
+    dhpa.patchNamespacedHorizontalPodAutoscaler(dhpa.metadata.name,
+                                                'default')
+    dres = HorizontalPodAutoscaler.deleteNamespacedHorizontalPodAutoscaler(
+        name=hpa.metadata.name, namespace='default'
+    )
+    assert dres.obj
+
+
+def test63():
+    """
+    test crud ops on Lease
+    """
+    l = Lease(
+        metadata=ObjectMeta(name='test63-lease'),
+        spec=LeaseSpec()
+    )
+    res = Lease.listLeaseForAllNamespaces()
+    assert res.obj
+    assert isinstance(res.obj, LeaseList)
+    before_len = len(res.obj.items)
+    res = l.createNamespacedLease('default')
+    assert res.obj
+    assert isinstance(res.obj, Lease)
+    assert res.obj.metadata.name == l.metadata.name
+    res = Lease.listLeaseForAllNamespaces()
+    assert isinstance(res.obj, LeaseList)
+    assert before_len < len(res.obj.items)
+    rres = Lease.readNamespacedLease(l.metadata.name,
+                                     'default')
+    assert rres.obj
+    assert rres.obj.metadata.name == l.metadata.name
+    dres = Lease.deleteNamespacedLease(l.metadata.name, 'default')
+    assert dres.obj
+
+
+def test64():
+    """
+    test crud ops on LimitRanges
+    """
+    res = LimitRangeList.listNamespacedLimitRange('default')
+    before_len = len(res.obj.items)
+    lr = LimitRange(
+        metadata=ObjectMeta(name='test65-limitrange'),
+        spec=LimitRangeSpec(
+            limits=[LimitRangeItem(type="Pod")]
+        )
+    )
+    res = lr.createNamespacedLimitRange('default')
+    assert res.obj
+    assert isinstance(res.obj, LimitRange)
+    assert res.obj.metadata.name == lr.metadata.name
+    res = LimitRangeList.listNamespacedLimitRange('default')
+    assert before_len < len(res.obj.items)
+    rres = LimitRange.readNamespacedLimitRange(lr.metadata.name,
+                                               'default')
+    assert rres.obj
+    assert rres.obj.metadata.name == lr.metadata.name
+    dlr = lr.dup()
+    dlr.metadata.labels = {'new_label': 'now'}
+    pres = dlr.patchNamespacedLimitRange(dlr.metadata.name,
+                                         'default')
+    assert pres.obj
+    assert pres.obj.metadata.name == dlr.metadata.name
+    dres = LimitRange.deleteNamespacedLimitRange(lr.metadata.name,
+                                                 'default')
     assert dres.obj
 
 
