@@ -24,7 +24,14 @@ Normally, you would begin with:
 
     from hikaru import *
 
-...to load in all the symbols you need, including all the v1 Kubernetes objects. You can of
+...to load in all the functions and class you need, except any Hikaru K8s objects; if you
+need to use the default release's default version's object, you'd add the following line:
+
+..code:: python
+
+    from hikaru.model import *
+
+You can of
 course load in just the bits you want to work with, as shown below. The following are
 the 'bread and butter' functions of Hikaru.
 
@@ -77,5 +84,5 @@ the :ref:`get_python_source()` function:
     print(get_python_source(p, assign_to='x'))
 
 This will output a PEP8-compliant set of Python. Generation may take a short while
-depending on how many deeply nested Python objects are involved.
+depending on how many deeply nested the Python objects involved are.
 

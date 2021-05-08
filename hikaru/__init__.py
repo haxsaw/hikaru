@@ -18,20 +18,29 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from hikaru.meta import (HikaruBase, CatalogEntry, TypeWarning, DiffDetail)
+from hikaru.meta import (HikaruBase, HikaruDocumentBase, CatalogEntry, TypeWarning,
+                         DiffDetail)
 from hikaru.generate import (get_python_source, get_clean_dict, get_yaml, get_json,
                              load_full_yaml, get_processors, process_api_version,
                              from_dict, from_json)
-from hikaru.model import *
+from hikaru.naming import (set_global_default_release, set_default_release,
+                           get_default_release, camel_to_pep8)
+from hikaru.version_kind import (register_version_kind_class,
+                                 get_version_kind_class)
+from hikaru.utils import Response
+
 
 model_classes = [k for k, v in globals().items()
                  if type(v) == type and
                  k != HikaruBase]
 
-__version__ = "v0.2a0"
+__version__ = "v0.4b"
 
 __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_source",
            "get_clean_dict", "load_full_yaml", "get_processors", "TypeWarning",
-           "DiffDetail", "process_api_version", "from_dict", "from_json"]
+           "DiffDetail", "process_api_version", "from_dict", "from_json",
+           "set_default_release", "set_global_default_release", "get_default_release",
+           "camel_to_pep8", "HikaruDocumentBase", "Response",
+           'register_version_kind_class', 'get_version_kind_class']
 __all__.extend(model_classes)
 del model_classes

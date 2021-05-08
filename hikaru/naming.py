@@ -18,7 +18,61 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict
+from threading import current_thread, Thread
+
+
+# this is the prefix to use for attributes that otherwise start with '$'
+dprefix = 'dollar_'
+
+
+_default_release = None
+
+_default_release_by_thread: Dict[str, str] = {}
+
+
+def get_default_release() -> Optional[str]:
+    """
+    Returns the currently set default release to use when loading YAML/JSON
+
+    :return: string; the value of the default release for the current thread.
+        If unknown, the current global default release is returned, whatever
+        the value (possibly None).
+    """
+    global _default_release
+    ct: Thread = current_thread()
+    def_rel = _default_release_by_thread.get(ct.name)
+    if def_rel is None:
+        if _default_release is None:
+            from hikaru.model import default_release
+            _default_release = default_release
+        def_rel = _default_release
+    return def_rel
+
+
+def set_default_release(relname: str):
+    """
+    Sets the default release for the current thread.
+
+    :param relname: string; the name of the release to use for this same thread.
+         NOTE: there is no checking that this release package exists!
+    """
+    ct: Thread = current_thread()
+    _default_release_by_thread[ct.name] = relname
+
+
+def set_global_default_release(relname: str):
+    """
+    Sets the global default release to use to the specified release
+
+    This is the release value used if there is no per-thread default release
+
+    :param relname: string; the name of a release module in the model
+        package. NOTE: there is no checking that this release package
+        exists!
+    """
+    global _default_release
+    _default_release = relname
 
 
 def process_api_version(api_version: str) -> Tuple[str, str]:
@@ -62,13 +116,47 @@ def process_swagger_name(sname: str) -> Tuple[str, str, str]:
     full_name = full_swagger_name(sname)
     name_parts = full_name.split(".")
     name = name_parts[-1]
-    version = name_parts[-2]
-    if version.startswith("v1") or version.startswith("v2"):
+    version = name_parts[-2] if len(name_parts) >= 2 else None
+    if version and (version.startswith("v1") or version.startswith("v2")):
         swagger_group = ".".join(name_parts[:-2])
     else:
         version = None
         swagger_group = ".".join(name_parts[:-1])
+    if not swagger_group:
+        swagger_group = None
     return swagger_group, version, name
+
+
+def make_swagger_name(group: str, version: str, name: str) -> str:
+    """
+    This function creates properly formatted swagger names for an object
+    :param group: string; group that the object belongs to
+    :param version: string; version that the object belongs to
+    :param name: string: name of the object (class)
+    :return: A single string that combines the three input elements; can
+        be fed to process_swagger_name() and receive the original broken-out
+        parts.
+    """
+    return f"{group}.{version}.{name}" if group is not None else f"{version}.{name}"
+
+
+def camel_to_pep8(name: str) -> str:
+    """
+    Converts a camelcase identifier name a PEP8 param name using underscores
+    :param name: string; a possibly camel-cased name
+    :return: a PEP8 equivalent with the upper case leter mapped to '_<lower>'
+
+    NOTE: will turn strings like 'FQDN' to '_f_q_d_n'; probably not what you want.
+    """
+    letters = [a if a.islower() else f"_{a.lower()}"
+               for a in name]
+    result = ''.join(letters)
+    # icky patch for when we've split apart 'API', 'CSI', or 'V<number>'
+    return (result.replace("a_p_i", "api").replace("c_s_i", "csi").
+            replace('v_1', 'v1').replace('v_2', 'v2').replace('beta_1', 'beta1').
+            replace('beta_2', 'beta2').replace('alpha_1', 'alpha1').
+            replace('f_q_d_n', 'fqdn').replace('u_u_i_d', 'uuid').
+            replace('_i_d', '_id'))
 
 
 # mapping the group in apiVersion to the swagger group string
@@ -96,3 +184,7 @@ _api_group_swagger_map = {
     "scheduling.k8s.io": "io.k8s.api.scheduling",
     "storage.k8s.io": "io.k8s.api.storage"
 }
+
+
+# inverted version of the above map
+swagger_to_api_group_map = {v: k for k, v in _api_group_swagger_map.items()}

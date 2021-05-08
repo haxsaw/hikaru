@@ -27,10 +27,10 @@ from autopep8 import fix_code
 from black import format_file_contents, FileMode
 from ruamel.yaml import YAML
 
-from hikaru.model import *
-from hikaru.meta import HikaruBase
-from hikaru.naming import process_api_version
-from hikaru.version_kind import version_kind_map
+# from hikaru.model import *
+from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.naming import process_api_version, dprefix
+from hikaru.version_kind import get_version_kind_class
 
 
 def get_python_source(obj: HikaruBase, assign_to: str = None,
@@ -77,6 +77,12 @@ def _clean_dict(d: dict) -> dict:
     # returns a new dict missing any keys in d that have None for its value
     clean = {}
     for k, v in d.items():
+        assert isinstance(k, str)
+        if k.startswith(dprefix):
+            k = f'${k.replace(dprefix, "")}'
+        k = k.replace('_', '-')
+        if k.endswith("-"):
+            k = k[:-1]
         if v is None:
             continue
         if isinstance(v, (list, dict)) and not v:  # this is an empty container
@@ -188,7 +194,8 @@ def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
     return from_dict(d, cls=cls)
 
 
-def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
+def from_dict(adict: dict, cls: Optional[type] = None,
+              translate: bool = False) -> HikaruBase:
     """
     Create Hikaru objects from a ``get_clean_dict()`` dict
 
@@ -207,6 +214,9 @@ def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
     :param cls: optional; a HikaruBase subclass (*not* the string name
         of the class). This should match the kind of object that was dumped into
         the dict.
+    :param translate: optional bool, default False. If True, then all attributes
+        that are fetched from the dict are first run through camel_to_pep8 to
+        use the underscore-embedded versions of the attribute names.
     :return: an instance of a HikaruBase subclass with all attributes and contained
         objects recreated.
     :raises RuntimeError: if no cls was specified and Hikaru was unable to determine
@@ -223,14 +233,14 @@ def from_dict(adict: dict, cls: Optional[type] = None) -> HikaruBase:
     parser.dump(adict, stream=sio)
 
     if cls is None:
-        docs = load_full_yaml(yaml=sio.getvalue())
+        docs = load_full_yaml(yaml=sio.getvalue(), translate=translate)
         doc = docs[0]
     else:
         assert issubclass(cls, HikaruBase)
         parser = YAML(typ="safe")
         sio.seek(0)
         yaml = parser.load(sio)
-        doc = cls.from_yaml(yaml)
+        doc = cls.from_yaml(yaml, translate=translate)
     return doc
 
 
@@ -273,7 +283,9 @@ def get_processors(path: str = None, stream: TextIO = None,
 
 
 def load_full_yaml(path: str = None, stream: TextIO = None,
-                   yaml: str = None) -> List[HikaruBase]:
+                   yaml: str = None,
+                   release: Optional[str] = None,
+                   translate: bool = False) -> List[HikaruDocumentBase]:
     """
     Parse/process the indicated Kubernetes yaml file and return a list of Hikaru objects
 
@@ -294,7 +306,14 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     :param path: string; path to a yaml file that will be opened, read, and processed
     :param stream: return of the open() function, or any file-like (TextIO) object
     :param yaml: string; the actual YAML to process
-    :return: list of HikaruBase subclasses, one for each document in the YAML file
+    :param release: optional string; if supplied, indicates which release to load classes
+        from. Must be one of the subpackage of hikaru.model, such as rel_1_16 or
+        rel_unversioned. If unspecified, the release specified from
+        hikaru.naming.set_default_release() is used; if that hasn't been called,
+        then the default from when hikaru was built will be used.
+        NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
+        Python client; use appropriately.
+    :return: list of HikaruDocumentBase subclasses, one for each document in the YAML file
     :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
         api_version/kind pair; Hikaru can't determine what class to instantiate, or
         if none of the YAML input sources have been specified.
@@ -302,15 +321,19 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
     for i, doc in enumerate(docs):
-        _, api_version = process_api_version(doc.get('apiVersion', ""))
+        api_version = doc.get('apiVersion', '--NOPE--')
+        if api_version == '--NOPE--':
+            api_version = doc.get('api_version', '')
+        _, api_version = process_api_version(api_version)
         kind = doc.get('kind', "")
-        klass = version_kind_map.get((api_version, kind))
+        klass = get_version_kind_class(api_version, kind, release)
         if klass is None:
             raise RuntimeError(f"Doc number {i} in the supplied YAML has an"
                                f" unrecognized api_version ({api_version}) and"
                                f" kind ({kind}) pair; can't determine the class"
                                f" to instantiate")
-        inst = klass.from_yaml(doc)
+        assert issubclass(klass, HikaruDocumentBase)
+        inst = klass.from_yaml(doc, translate=translate)
         objs.append(inst)
 
     return objs

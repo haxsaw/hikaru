@@ -43,14 +43,25 @@ Pretty simple, actually:
 1. Set your PYTHONPATH so that it can find the hikaru package root,
 2. 'cd' into the directory above the package root where build.py is
 3. Run the following:
-    python build.py openapi/<swagger file name>
+
+    python build.py <relname> <swagger-file-name>+
+
+...where <relname> is the name of the generated release that will be the default
+when someone does 'from hikaru.model import *', and is then followed by one or more
+swagger JSON files, <swagger-file-name>, which will be processed and saved to a
+sub-package under model with the name 'rel_<relnumber>'.
 
 This will result in:
 
 - The 'model' directory being created if it doesn't already exist
 - All files in the 'model' directory being deleted.
-- An __init__.py file will be generated in model.
-- A non-version-specific module of object classes will be created in
+- An __init__.py file will be generated in model which will import all the
+  symbols from the specified main release (relname)
+
+Then, for each of the swagger files:
+- A subpackage with name 'rel_<relname>' is created. In it will be created:
+- An __init__.py that will import the default model version will be created.
+- Any non-version-specific module of object classes will be created in
   the unversioned.py module.
 - A series of modules whose names match the version of the objects they
   encompass will be created, each containing either the specific objects

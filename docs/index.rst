@@ -6,7 +6,7 @@
 Hikaru: Usage and Reference
 ==================================
 
-Version: 0.2a0
+Release: |release|
 
 .. toctree::
    :maxdepth: 2
@@ -15,8 +15,11 @@ Version: 0.2a0
    introduction
    installation-quickstart
    key-functions
-   models
+   model-releases-and-versions
    hikaru-base
+   hikaru-document
+   using-with-kubernetes
+   advanced
    patterns-recipes
    issues
    reference
