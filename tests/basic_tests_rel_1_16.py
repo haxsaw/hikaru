@@ -27,6 +27,7 @@ from hikaru import *
 from hikaru.model.rel_1_16 import *
 import json
 from build import *
+from hikaru.meta import DiffDetail, DiffType
 from hikaru.naming import make_swagger_name
 from hikaru.version_kind import get_version_kind_class
 
@@ -662,19 +663,20 @@ def test060():
     om1 = ObjectMeta(labels={'a': '1', 'b': '2'})
     om2 = ObjectMeta(labels={'a': '1', 'c': '2'})
     diffs = om1.diff(om2)
-    assert len(diffs) == 1
-    assert "Key mismatch" in diffs[0].report
+    assert len(diffs) == 2
+    assert any(map(lambda d: d.diff_type == DiffType.ADDED, diffs))
+    assert any(map(lambda d: d.diff_type == DiffType.REMOVED, diffs))
 
 
 def test061():
     """
-    check that dict key differences are caught by diff
+    check that dict value differences are caught by diff
     """
     om1 = ObjectMeta(labels={'a': '1', 'b': '2'})
     om2 = ObjectMeta(labels={'a': '1', 'b': '99'})
     diffs = om1.diff(om2)
     assert len(diffs) == 1
-    assert "Item mismatch" in diffs[0].report
+    assert diffs[0].diff_type == DiffType.VALUE_CHANGED
 
 
 def test062():
@@ -685,7 +687,7 @@ def test062():
     ps2 = PodSpec(containers=[ObjectMeta()])
     diffs = ps1.diff(ps2)
     assert len(diffs) == 1
-    assert "Element mismatch" in diffs[0].report
+    assert diffs[0].diff_type == DiffType.TYPE_CHANGED
 
 
 def test063():
@@ -695,8 +697,8 @@ def test063():
     ps1 = PodSpec(containers=[Container('first')])
     ps2 = PodSpec(containers=[Container('second')])
     diffs = ps1.diff(ps2)
-    assert len(diffs) == 1, f'len is {len(diffs)}'
-    assert "Value mismatch" in diffs[0].report, diffs[0].report
+    assert len(diffs) == 1
+    assert diffs[0].diff_type == DiffType.VALUE_CHANGED
 
 
 def test064():
@@ -890,10 +892,10 @@ def test080():
     assert isinstance(p, Pod)
     copy1: Pod = p.dup()
     copy2: Pod = p.dup()
-    copy1.metadata.annotations = {"one": "uno", "two": "dos"}
-    copy2.metadata.annotations = {"two": "dos", "three": "tres"}
+    copy1.metadata.annotations = {"one": "uno", "two": "dos", "same" : "val"}
+    copy2.metadata.annotations = {"two": "dos", "three": "tres", "same" : "val"}
     diffs = copy1.diff(copy2)
-    assert len(diffs) == 1
+    assert len(diffs) == 2
 
 
 def test081():
