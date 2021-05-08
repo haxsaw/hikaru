@@ -1269,6 +1269,336 @@ def test64():
     assert dres.obj
 
 
+def test65():
+    """
+    test network policy crud ops
+    """
+    np = NetworkPolicy(
+        metadata=ObjectMeta(name='apod-api'),
+        spec=NetworkPolicySpec(
+            podSelector=LabelSelector(
+                matchLabels={'app': 'apod-api'}
+            ),
+            ingress=[NetworkPolicyIngressRule(
+                from_=[NetworkPolicyPeer(
+                    podSelector=LabelSelector(
+                        matchLabels={'app': 'apod-web'}
+                    )
+                )],
+                ports=[NetworkPolicyPort(port='api')]
+            )]
+        )
+    )
+    res = np.createNamespacedNetworkPolicy('default')
+    assert res.obj
+    assert isinstance(res.obj, NetworkPolicy)
+    assert res.obj.metadata.name == np.metadata.name
+    rres = NetworkPolicy.readNamespacedNetworkPolicy(np.metadata.name,
+                                                     'default')
+    assert rres.obj
+    assert isinstance(rres.obj, NetworkPolicy)
+    assert np.metadata.name == rres.obj.metadata.name
+    dnp = np.dup()
+    dnp.metadata.labels = {'new_labels': 'are_here'}
+    pres = dnp.patchNamespacedNetworkPolicy(dnp.metadata.name,
+                                            'default')
+    assert pres.obj
+    assert isinstance(pres.obj, NetworkPolicy)
+    assert pres.obj.metadata.name == np.metadata.name
+    dres = NetworkPolicy.deleteNamespacedNetworkPolicy(np.metadata.name,
+                                                       'default')
+    assert dres.obj
+
+
+def test66():
+    """
+    test priority class crud ops
+    """
+    pc = PriorityClass(
+        metadata=ObjectMeta(name='test66-low'),
+        value=100,
+        globalDefault=True,
+        description='test low priority class'
+    )
+    res = pc.createPriorityClass()
+    assert res.obj
+    assert isinstance(res.obj, PriorityClass)
+    assert res.obj.metadata.name == pc.metadata.name
+    rres = PriorityClass.readPriorityClass(pc.metadata.name)
+    assert rres.obj
+    assert isinstance(rres.obj, PriorityClass)
+    assert rres.obj.metadata.name == pc.metadata.name
+    dpc = pc.dup()
+    dpc.metadata.labels = {'new_labels': 'here'}
+    pres = dpc.patchPriorityClass(dpc.metadata.name)
+    assert pres.obj
+    dres = PriorityClass.deletePriorityClass(pc.metadata.name)
+    assert dres.obj
+
+
+def test67():
+    """
+    test replica set crud operations
+    """
+    rs = ReplicaSet(
+        metadata=ObjectMeta(name='whoami-web'),
+        spec=ReplicaSetSpec(
+            replicas=1,
+            selector=LabelSelector(
+                matchLabels={'app': 'whoami-web'}
+            ),
+            template=PodTemplateSpec(
+                metadata=ObjectMeta(labels={'app': 'whoami-web'},
+                                    name='whoami-web'),
+                spec=PodSpec(
+                    containers=[Container(image='nginx',
+                                          name='nginx',
+                                          ports=[ContainerPort(
+                                              containerPort=80,
+                                              protocol='TCP'
+                                          )]
+                                          )
+                                ]
+                )
+            )
+        )
+    )
+    res = rs.createNamespacedReplicaSet('default')
+    assert res.obj
+    assert isinstance(res.obj, ReplicaSet)
+    assert res.obj.metadata.name == rs.metadata.name
+    rres = ReplicaSet.readNamespacedReplicaSet(rs.metadata.name, 'default')
+    assert rres.obj
+    drs = rs.dup()
+    drs.metadata.labels = {'newLabel': 'here'}
+    pres = drs.patchNamespacedReplicaSet(drs.metadata.name, 'default')
+    assert pres.obj
+    dres = ReplicaSet.deleteNamespacedReplicaSet(rs.metadata.name,
+                                                 'default')
+    assert dres.obj
+
+
+def test68():
+    """
+    test resource quota crud ops
+    """
+    rq = ResourceQuota(
+        metadata=ObjectMeta(name='memory-quota'),
+        spec=ResourceQuotaSpec(
+            hard={'limits.memory': '150Mi'}
+        )
+    )
+    res = rq.createNamespacedResourceQuota('default')
+    assert res.obj
+    assert isinstance(res.obj, ResourceQuota)
+    assert res.obj.metadata.name == rq.metadata.name
+    rres = ResourceQuota.readNamespacedResourceQuota(rq.metadata.name, 'default')
+    assert rres.obj
+    drq = rq.dup()
+    drq.metadata.labels = {'newLabel': 'here'}
+    pres = drq.patchNamespacedResourceQuota(drq.metadata.name, 'default')
+    assert pres.obj
+    dres = ResourceQuota.deleteNamespacedResourceQuota(rq.metadata.name,
+                                                       'default')
+    assert dres.obj
+
+
+def test69():
+    """
+    test role binding crud ops
+    """
+    rb = RoleBinding(
+        metadata=ObjectMeta(name='reader-view'),
+        subjects=[Subject(
+            kind='User',
+            name='reader@kiamol.net',
+            apiGroup='rbac.authorization.k8s.io'
+        )],
+        roleRef=RoleRef(
+            kind='ClusterRole',
+            name='view',
+            apiGroup='rbac.authorization.k8s.io'
+        )
+    )
+    res = rb.createNamespacedRoleBinding('default')
+    assert res.obj
+    assert isinstance(res.obj, RoleBinding)
+    assert res.obj.metadata.name == rb.metadata.name
+    rres = RoleBinding.readNamespacedRoleBinding(rb.metadata.name, 'default')
+    assert rres.obj
+    drb = rb.dup()
+    drb.metadata.labels = {'whowantsalabel': 'me'}
+    pres = drb.patchNamespacedRoleBinding(drb.metadata.name, 'default')
+    assert pres.obj
+    dres = RoleBinding.deleteNamespacedRoleBinding(rb.metadata.name, 'default')
+
+
+base_ss = StatefulSet(
+    apiVersion="apps/v1",
+    kind="StatefulSet",
+    metadata=ObjectMeta(name="todo-db", labels={"kiamol": "ch08"}),
+    spec=StatefulSetSpec(
+        selector=LabelSelector(matchLabels={"app": "todo-db"}),
+        serviceName="todo-db",
+        template=PodTemplateSpec(
+            metadata=ObjectMeta(labels={"app": "todo-db"}),
+            spec=PodSpec(
+                containers=[
+                    Container(
+                        name="db",
+                        image="postgres:11.6-alpine",
+                        command=["/scripts/startup.sh"],
+                        env=[
+                            EnvVar(
+                                name="POSTGRES_PASSWORD_FILE",
+                                value="/secrets/postgres_password",
+                            ),
+                            EnvVar(
+                                name="PGPASSWORD",
+                                valueFrom=EnvVarSource(
+                                    secretKeyRef=SecretKeySelector(
+                                        key="POSTGRES_PASSWORD", name="todo-db-secret"
+                                    )
+                                ),
+                            ),
+                        ],
+                        envFrom=[
+                            EnvFromSource(
+                                configMapRef=ConfigMapEnvSource(name="todo-db-env")
+                            )
+                        ],
+                        volumeMounts=[
+                            VolumeMount(mountPath="/secrets", name="secret"),
+                            VolumeMount(mountPath="/scripts", name="scripts"),
+                            VolumeMount(mountPath="/conf", name="config"),
+                            VolumeMount(
+                                mountPath="/docker-entrypoint-initdb.d", name="initdb"
+                            ),
+                        ],
+                    )
+                ],
+                initContainers=[
+                    Container(
+                        name="wait-service",
+                        image="kiamol/ch03-sleep",
+                        command=["/scripts/wait-service.sh"],
+                        envFrom=[
+                            EnvFromSource(
+                                configMapRef=ConfigMapEnvSource(name="todo-db-env")
+                            )
+                        ],
+                        volumeMounts=[
+                            VolumeMount(mountPath="/scripts", name="scripts")
+                        ],
+                    ),
+                    Container(
+                        name="initialize-replication",
+                        image="postgres:11.6-alpine",
+                        command=["/scripts/initialize-replication.sh"],
+                        env=[
+                            EnvVar(
+                                name="PGPASSWORD",
+                                valueFrom=EnvVarSource(
+                                    secretKeyRef=SecretKeySelector(
+                                        key="POSTGRES_PASSWORD", name="todo-db-secret"
+                                    )
+                                ),
+                            )
+                        ],
+                        envFrom=[
+                            EnvFromSource(
+                                configMapRef=ConfigMapEnvSource(name="todo-db-env")
+                            )
+                        ],
+                        volumeMounts=[
+                            VolumeMount(mountPath="/scripts", name="scripts"),
+                            VolumeMount(
+                                mountPath="/docker-entrypoint-initdb.d", name="initdb"
+                            ),
+                        ],
+                    ),
+                ],
+                volumes=[
+                    Volume(
+                        name="secret",
+                        secret=SecretVolumeSource(
+                            defaultMode=400,
+                            secretName="todo-db-secret",
+                            items=[
+                                KeyToPath(
+                                    key="POSTGRES_PASSWORD", path="postgres_password"
+                                )
+                            ],
+                        ),
+                    ),
+                    Volume(
+                        name="scripts",
+                        configMap=ConfigMapVolumeSource(
+                            defaultMode=555, name="todo-db-scripts"
+                        ),
+                    ),
+                    Volume(
+                        name="config",
+                        configMap=ConfigMapVolumeSource(
+                            defaultMode=444, name="todo-db-config"
+                        ),
+                    ),
+                    Volume(name="initdb", emptyDir=EmptyDirVolumeSource()),
+                ],
+            ),
+        ),
+        replicas=2,
+    ),
+)
+
+
+def test70():
+    """
+    test stateful set crud ops
+    """
+    ss = base_ss.dup()
+    res = ss.createNamespacedStatefulSet('default')
+    assert res.obj
+    assert isinstance(res.obj, StatefulSet)
+    assert res.obj.metadata.name == ss.metadata.name
+    rres = StatefulSet.readNamespacedStatefulSet(ss.metadata.name,
+                                                 'default')
+    assert rres.obj
+    dss = ss.dup()
+    dss.metadata.labels['newkey'] = 'value'
+    pres = dss.patchNamespacedStatefulSet(dss.metadata.name,
+                                          'default')
+    assert pres.obj
+    dres = StatefulSet.deleteNamespacedStatefulSet(dss.metadata.name,
+                                                   'default')
+    assert dres.obj
+
+
+def test71():
+    """
+    test token request
+    """
+    sa = make_sa57()
+    tr = TokenRequest(
+        metadata=ObjectMeta(namespace='test71-tokenrequest'),
+        spec=TokenRequestSpec(
+            audiences=[sa.metadata.name],
+            expirationSeconds=60*10
+        )
+    )
+    res = sa.createNamespacedServiceAccount('default')
+    assert res.obj
+    try:
+        res = tr.createNamespacedServiceAccountToken(sa.metadata.name,
+                                                     'default')
+        assert res.obj
+        assert isinstance(res.obj, TokenRequest)
+        assert res.obj.status.token
+    finally:
+        _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
+                                                          'default')
+
+
 if __name__ == "__main__":
     beginning()
     the_tests = {k: v for k, v in globals().items()
