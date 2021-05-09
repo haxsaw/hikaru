@@ -469,17 +469,17 @@ class HikaruBase(object):
     @classmethod
     def _diff(cls, attr: Any, other_attr: Any, containing_cls: Type, attr_path: List[str],
               formatted_attr_path: str) -> List[DiffDetail]:
-        """
-        Recursively compares attr to other_attr and returns list of differences and where they are
-
-        :param attr: any object, not necessarily a HikaruBase subclass.
-        :param other_attr: any object, not necessarily a HikaruBase subclass.
-        :param containing_cls: the HikaruBase subclass that contains attr and other_attr
-        :param attr_path: a list of the attribute names in the path to attr and other_attr
-        :param formatted_attr_path: a string version of attr_path like 'Pod.spec.containers[0]'
-        :return: a list of DiffDetail namedtuples that describe all the discovered
-            differences. If the list is empty then the two are equal.
-                """
+        # Recursively compares attr to other_attr and returns list of differences and where they are
+        # we use this classmethod instead of diff() because this is recursively called on non-hikaru classes
+        # like int and float
+        #
+        # attr: any object, not necessarily a HikaruBase subclass.
+        # other_attr: any object, not necessarily a HikaruBase subclass.
+        # containing_cls: the HikaruBase subclass that contains attr and other_attr
+        # attr_path: a list of the attribute names in the path to attr and other_attr
+        # formatted_attr_path: a string version of attr_path like 'Pod.spec.containers[0]'
+        # returns a list of DiffDetail namedtuples that describe all the discovered
+        # differences. If the list is empty then the two are equal.
         if attr is not None and other_attr is None:
             return [DiffDetail(DiffType.ADDED,
                                containing_cls,
@@ -564,9 +564,9 @@ class HikaruBase(object):
         that have been set.
 
         :param other: some kind of HikaruBase subclass. If not the same class as
-            self, then a single DiffDetail namedtuple is returned describing this
+            self, then a single DiffDetail object is returned describing this
             and the diff stops.
-        :return: a list of DiffDetail namedtuples that describe all the discovered
+        :return: a list of DiffDetail objects that describe all the discovered
             differences. If the list is empty then the two are equal.
         """
         if self.__class__ != other.__class__:

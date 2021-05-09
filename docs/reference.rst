@@ -15,7 +15,7 @@ CatalogEntry is a namedtuple that is returned as list elements from the
 .. autoclass:: hikaru.TypeWarning
    :members:
 
-TypeWarning is a namedtuple that is returned as list elements from the
+TypeWarning is a dataclass that is returned as list elements from the
 :meth:`get_type_warnings()<hikaru.HikaruBase.get_type_warnings>` method of HikaruBase.
 
 .. _DiffDetail doc:
@@ -25,6 +25,13 @@ TypeWarning is a namedtuple that is returned as list elements from the
 
 DiffDetail is a namedtuple that is returned as list elements from the
 :meth:`diff()<hikaru.HikaruBase.diff>` method of HikaruBase.
+
+.. _DiffType doc:
+
+.. autoclass:: hikaru.DiffType
+   :members:
+
+DiffType is an enum that is used by DiffDetail to specify the type of change.
 
 .. _HikaruBase doc:
 
