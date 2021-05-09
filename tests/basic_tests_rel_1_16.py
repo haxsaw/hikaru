@@ -18,6 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import copy
 from importlib import import_module
 from dataclasses import dataclass, InitVar
 from typing import Optional, Any
@@ -1439,6 +1440,17 @@ def test121():
     assert new_o.inner.intField == 43
     assert new_o.inner.optIntField == 121
     assert new_o.inner.optStrField is None
+
+
+def test122():
+    """
+    test that you can run object_at_path on the path returned by diff()
+    """
+    pod = Pod(spec=PodSpec(containers=[Container(name="a")]))
+    pod2 = copy.deepcopy(pod)
+    pod2.spec.containers[0].name = "b"
+    diff = pod.diff(pod2)
+    assert pod2.object_at_path(diff[0].path) == "b"
 
 
 if __name__ == "__main__":
