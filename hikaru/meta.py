@@ -485,7 +485,7 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Key added: self.{formatted_attr_path} is {attr} but does not exist in other",
+                               f"Added: {formatted_attr_path} is {attr} in self but does not exist in other",
                                attr,
                                None)]
         elif attr is None and other_attr is not None:
@@ -493,7 +493,7 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Key removed: self.{formatted_attr_path} does not exist but in other it is is"
+                               f"Removed: {formatted_attr_path} does not exist in self but in other it is"
                                f" {other_attr}",
                                None,
                                other_attr)]
@@ -502,7 +502,7 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Type mismatch: self.{formatted_attr_path} is a {type(attr)} but other's is a"
+                               f"Type mismatch: {formatted_attr_path} is a {type(attr)} in self but in other it is a"
                                f" {type(other_attr)}",
                                attr,
                                other_attr)]
@@ -513,7 +513,8 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Value mismatch: self.{formatted_attr_path} is {attr} but other's is {other_attr}",
+                               f"Value mismatch: {formatted_attr_path} is {attr} in self but in other it is"
+                               f" {other_attr}",
                                attr,
                                other_attr)]
         elif isinstance(attr, HikaruBase):
@@ -534,7 +535,7 @@ class HikaruBase(object):
         elif isinstance(attr, list):
             if len(attr) != len(other_attr):
                 return [DiffDetail(DiffType.LIST_LENGTH_CHANGED, containing_cls, formatted_attr_path, attr_path,
-                                   f"Length mismatch: list self.{formatted_attr_path} has {len(attr)}"
+                                   f"Length mismatch: list {formatted_attr_path} has {len(attr)}"
                                    " elements, but other has {len(other_attr)}",
                                    attr,
                                    other_attr)]
