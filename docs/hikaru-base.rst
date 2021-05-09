@@ -225,15 +225,17 @@ The ``diff()`` method provides you a way to determine where two different Hikaru
 This can be handy when two objects that are supposed to be equal (==) aren't, and it is
 difficult to determine where they are different.
 
-The ``diff()`` method takes another Hikaru object as an argument and recusively compares all
+The ``diff()`` method takes another Hikaru object as an argument and recursively compares all
 attributes of each object. If a difference it found, a :ref:`DiffDetail<DiffDetail doc>` dataclass
 is created and returned in a list. The DiffDetail includes the following fields:
 
-  - diff_type: is a DiffType enum specifying the type of change (see below)
+  - diff_type: is a :ref:`DiffDetail<DiffType doc>` enum specifying the type of change (see below)
   - cls: is the class where the difference was found
-  - attrname: is the name of the attribute on class where the difference was found
-  - path: a list of strings that show how to reach the attribute where the difference was found
+  - formatted_path: is a string like ``Pod.spec.containers[0]`` specifying what changed
+  - path: a list of strings that show how to reach the attribute where the difference was found. e.g. ``['spec', 'containers', 0]``
   - report: a string that describes the difference found
+  - value: the value of the changed attribute in self
+  - other_value: the value of the changed attribute in the object passed to ``diff()`` as a parameter
 
 If the list is empty, then the two objects have no differences.
 
