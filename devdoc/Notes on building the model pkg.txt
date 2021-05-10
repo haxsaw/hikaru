@@ -99,23 +99,11 @@ then run the build again. This generally solves any issues.
 Build caveats
 -------------
 
-- The modules imported into the generated modules is mostly static, so
+- The modules imported into the generated modules are mostly static, so
   sometimes not every imported module is needed. If you run a linter it
   will complain about this.
-- We do not process any object definitions from any groups with
-  'apiextensions' in the group name. This is because there is one object
-  that is recursively defined and hence it breaks the topological sort
-  used to determine what order to output the Python classes for the API
-  objects. It also results in illegal Python code, as the item in question
-  is self-referential and hence can't be represented as a dataclass. We're
-  looking for a solution that will provide all the desired features of the
-  existing system, but until then objects in this group aren't included in
-  the model.
 - The test suite for the kubernetes client includes a yaml doc, list.yaml,
   that has a kind value of 'List'. However, the input JSON doesn't define
   any such object, hence hikaru has no support for this. The test suite
   does warn on this as it is an expected failure given the state of the
-  input, so don't look at the build as part of the problem. From the looks
-  of the yaml in list.yaml, this may also pose problems for a topological
-  sort in the build process.
-
+  input, so don't look at the build as part of the problem.
