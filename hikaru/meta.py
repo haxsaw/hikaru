@@ -28,8 +28,9 @@ it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
 from ast import literal_eval
+from enum import Enum
 from inspect import getmodule
-from typing import Union, List, Dict, Any, ForwardRef, get_type_hints
+from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints
 from dataclasses import fields, dataclass, is_dataclass, asdict, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
@@ -54,7 +55,25 @@ CatalogEntry = namedtuple('CatalogEntry', ['cls', 'attrname', 'path'])
 
 TypeWarning = namedtuple('TypeWarning', ['cls', 'attrname', 'path', 'warning'])
 
-DiffDetail = namedtuple('DiffDetail', ['cls', 'attrname', 'path', 'report'])
+
+class DiffType (Enum):
+    ADDED = 0
+    REMOVED = 1
+    VALUE_CHANGED = 2
+    TYPE_CHANGED = 3
+    LIST_LENGTH_CHANGED = 4
+    INCOMPATIBLE_DIFF = 5
+
+
+@dataclass
+class DiffDetail:
+    diff_type: DiffType
+    cls: Type
+    formatted_path: str
+    path: List[str]
+    report: str
+    value: Any = None
+    other_value: Any = None
 
 
 @dataclass
@@ -447,12 +466,97 @@ class HikaruBase(object):
         new_inst = cls(**kw_args)
         return new_inst
 
+    @classmethod
+    def _diff(cls, attr: Any, other_attr: Any, containing_cls: Type, attr_path: List[str],
+              formatted_attr_path: str) -> List[DiffDetail]:
+        # Recursively compares attr to other_attr and returns list of differences and where they are
+        # we use this classmethod instead of diff() because this is recursively called on non-hikaru classes
+        # like int and float
+        #
+        # attr: any object, not necessarily a HikaruBase subclass.
+        # other_attr: any object, not necessarily a HikaruBase subclass.
+        # containing_cls: the HikaruBase subclass that contains attr and other_attr
+        # attr_path: a list of the attribute names in the path to attr and other_attr
+        # formatted_attr_path: a string version of attr_path like 'Pod.spec.containers[0]'
+        # returns a list of DiffDetail namedtuples that describe all the discovered
+        # differences. If the list is empty then the two are equal.
+        if attr is not None and other_attr is None:
+            return [DiffDetail(DiffType.ADDED,
+                               containing_cls,
+                               formatted_attr_path,
+                               attr_path,
+                               f"Added: {formatted_attr_path} is {attr} in self but does not exist in other",
+                               attr,
+                               None)]
+        elif attr is None and other_attr is not None:
+            return [DiffDetail(DiffType.REMOVED,
+                               containing_cls,
+                               formatted_attr_path,
+                               attr_path,
+                               f"Removed: {formatted_attr_path} does not exist in self but in other it is"
+                               f" {other_attr}",
+                               None,
+                               other_attr)]
+        elif type(attr) != type(other_attr):
+            return [DiffDetail(DiffType.TYPE_CHANGED,
+                               containing_cls,
+                               formatted_attr_path,
+                               attr_path,
+                               f"Type mismatch: {formatted_attr_path} is a {type(attr)} in self but in other it is a"
+                               f" {type(other_attr)}",
+                               attr,
+                               other_attr)]
+        elif issubclass(type(attr), (str, int, float, bool, NoneType)):
+            if attr == other_attr:
+                return []
+            return [DiffDetail(DiffType.VALUE_CHANGED,
+                               containing_cls,
+                               formatted_attr_path,
+                               attr_path,
+                               f"Value mismatch: {formatted_attr_path} is {attr} in self but in other it is"
+                               f" {other_attr}",
+                               attr,
+                               other_attr)]
+        elif isinstance(attr, HikaruBase):
+            diffs = []
+            for f in fields(attr):
+                sub_attr = getattr(attr, f.name)
+                other_sub_attr = getattr(other_attr, f.name)
+                diffs.extend(cls._diff(sub_attr, other_sub_attr, attr.__class__,
+                                       attr_path + [f.name], f"{formatted_attr_path}.{f.name}"))
+            return diffs
+        elif isinstance(attr, dict):
+            diffs = []
+            all_keys = set(list(attr.keys()) + list(other_attr.keys()))
+            for key in all_keys:
+                diffs.extend(cls._diff(attr.get(key), other_attr.get(key), containing_cls,
+                                       attr_path + [key], f"{formatted_attr_path}['{key}']"))
+            return diffs
+        elif isinstance(attr, list):
+            if len(attr) != len(other_attr):
+                return [DiffDetail(DiffType.LIST_LENGTH_CHANGED, containing_cls, formatted_attr_path, attr_path,
+                                   f"Length mismatch: list {formatted_attr_path} has {len(attr)}"
+                                   " elements, but other has {len(other_attr)}",
+                                   attr,
+                                   other_attr)]
+            else:
+                diffs = []
+                for i, self_element in enumerate(attr):
+                    diffs.extend(cls._diff(self_element, other_attr[i], containing_cls, attr_path + [i],
+                                           f"{formatted_attr_path}[{i}]"))
+                return diffs
+        else:
+            raise NotImplementedError(f"Internal error! Don't know how to compare"
+                                      f" attribute {attr} with {other_attr}."
+                                      f" Please file a bug "
+                                      f"report")  # pragma: no cover
+
     def diff(self, other) -> List[DiffDetail]:
         """
         Compares self to other and returns list of differences and where they are
 
         The ``diff()`` method goes field-by-field between two objects looking for
-        differences. Whenever any are found, a DiffDetail namedtuple is added to
+        differences. Whenever any are found, a DiffDetail object is added to
         the returned list. The diff is carried out recursively across any containers
         or inner objects; the path to any differences found is recorded from
         self to any nested difference.
@@ -461,95 +565,16 @@ class HikaruBase(object):
         that have been set.
 
         :param other: some kind of HikaruBase subclass. If not the same class as
-            self, then a single DiffDetail namedtuple is returned describing this
+            self, then a single DiffDetail object is returned describing this
             and the diff stops.
-        :return: a list of DiffDetail namedtuples that describe all the discovered
+        :return: a list of DiffDetail objects that describe all the discovered
             differences. If the list is empty then the two are equal.
         """
-        diffs = []
         if self.__class__ != other.__class__:
-            diffs.append(DiffDetail(self.__class__, None, [],
-                                    f'Incompatible:'
-                                    f'self is a {self.__class__.__name__} while'
-                                    f' other is a {other.__class__.__name__}'))
-            return diffs
-        for f in fields(self):
-            self_attr = getattr(self, f.name)
-            other_attr = getattr(other, f.name)
-            if type(self_attr) != type(other_attr):
-                diffs.append(DiffDetail(self.__class__, f.name, [f.name],
-                                        f"Type mismatch:"
-                                        f"self.{f.name} is a {type(self_attr)}"
-                                        f" but other's is a {type(other_attr)}"))
-            elif issubclass(type(self_attr), (str, int, float, bool, NoneType)):
-                if self_attr != other_attr:
-                    diffs.append(DiffDetail(self.__class__, f.name, [f.name],
-                                            f"Value mismatch:"
-                                            f"self.{f.name} is {self_attr}"
-                                            f" but other's is {other_attr}"))
-            elif isinstance(self_attr, HikaruBase):
-                inner_diffs = self_attr.diff(other_attr)
-                diffs.extend([DiffDetail(d.cls, d.attrname, [f.name] + d.path,
-                                         d.report) for d in inner_diffs])
-            elif isinstance(self_attr, dict):
-                self_keys = set(self_attr.keys())
-                other_keys = set(other_attr.keys())
-                if self_keys != other_keys:
-                    diffs.append(DiffDetail(self.__class__, f.name, [f.name],
-                                            f"Key mismatch:"
-                                            f"self.{f.name} has different keys"
-                                            f"than does other"))
-                else:
-                    for k, v in self_attr.items():
-                        if v != other_attr[k]:
-                            diffs.append(DiffDetail(self.__class__, f.name, [f.name],
-                                                    f"Item mismatch:"
-                                                    f"self.{f.name}[{k}] is {v}"
-                                                    f" but other has {other_attr[k]}"))
-            elif isinstance(self_attr, list):
-                if len(self_attr) != len(other_attr):
-                    diffs.append(DiffDetail(self.__class__, f.name, [f.name],
-                                            f"Length mismatch:"
-                                            f"list self.{f.name} has {len(self_attr)}"
-                                            f" elements, but other has "
-                                            f"{len(other_attr)}"))
-                else:
-                    for i, self_element in enumerate(self_attr):
-                        other_element = other_attr[i]
-                        if type(self_element) != type(other_element):
-                            diffs.append(DiffDetail(self.__class__, f.name,
-                                                    [f.name, i],
-                                                    f"Element mismatch:"
-                                                    f"self.{f.name}[{i}] is"
-                                                    f" {type(self_element)}, while"
-                                                    f" other is {type(other_element)}"))
-                        elif issubclass(type(self_element), (str, int, bool, float,
-                                                             NoneType)):
-                            if self_element != other_element:
-                                dd = DiffDetail(self.__class__, f.name,
-                                                [f.name, i],
-                                                f"Element mismatch:"
-                                                f"self.{f.name}[{i}] is {self_element}"
-                                                f" but other is {other_element}")
-                                diffs.append(dd)
-                        elif isinstance(self_element, HikaruBase):
-                            inner_diffs = self_element.diff(other_element)
-                            diffs.extend([DiffDetail(d.cls, d.attrname,
-                                                     [f.name, i] + d.path,
-                                                     d.report)
-                                          for d in inner_diffs])
-                        else:
-                            raise NotImplementedError(f"Internal error! Don't know how to "
-                                                      f"compare element {self_element}"
-                                                      f" with {other_element}."
-                                                      f" Please file a "
-                                                      f"bug report.")  # pragma: no cover
-            else:
-                raise NotImplementedError(f"Internal error! Don't know how to compare"
-                                          f" attribute {self_attr} with {other_attr}."
-                                          f" Please file a bug "
-                                          f"report")  # pragma: no cover
-        return diffs
+            return [DiffDetail(DiffType.INCOMPATIBLE_DIFF, self.__class__, "", [],
+                               f'Incompatible: self is a {self.__class__.__name__} while'
+                               f'other is a {other.__class__.__name__}')]
+        return self._diff(self, other, self.__class__, [], self.__class__.__name__)
 
     def get_type_warnings(self) -> List[TypeWarning]:
         """

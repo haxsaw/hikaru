@@ -185,7 +185,7 @@ which yields something like:
 
 .. code:: 
 
-    [DiffDetail(cls=<class 'hikaru.model.v1beta1.Deployment'>, attrname=None, path=[], report='Incompatible:self is a Deployment while other is a Deployment')]
+    [DiffDetail(diff_type=<DiffType.ATTRIBUTE_ADDED: 0>, cls=<class 'hikaru.model.rel_1_16.v1.v1.ObjectMeta'>, formatted_path="ObjectMeta.labels['b']", path=['labels', 'b'], report="Key added: self.ObjectMeta.labels['b'] is 2 but does not exist in other", value='2', other_value=None)]
 
 The report says 'Incompatible:self is a Deployment while other is a Deployment'? Wait, are they the same or not?
 

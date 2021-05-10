@@ -70,7 +70,7 @@ def test_yaml(yamlpath: pathlib.Path):
             print()
             for dd in x.diff(doc):
                 assert isinstance(dd, DiffDetail)
-                print(f">>{dd.cls.__name__}.{dd.attrname}: {dd.report}")
+                print(f">>{dd.cls.__name__}.{dd.formatted_path}: {dd.report}")
             raise
 
         # next try rendered yaml yields the same object

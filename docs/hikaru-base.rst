@@ -225,16 +225,28 @@ The ``diff()`` method provides you a way to determine where two different Hikaru
 This can be handy when two objects that are supposed to be equal (==) aren't, and it is
 difficult to determine where they are different.
 
-The ``diff()`` method takes another Hikaru object as an argument and recusively compares all
-attributes of each object. If a difference it found, a :ref:`DiffDetail<DiffDetail doc>` namedtuple
+The ``diff()`` method takes another Hikaru object as an argument and recursively compares all
+attributes of each object. If a difference it found, a :ref:`DiffDetail<DiffDetail doc>` dataclass
 is created and returned in a list. The DiffDetail includes the following fields:
 
+  - diff_type: is a :ref:`DiffDetail<DiffType doc>` enum specifying the type of change (see below)
   - cls: is the class where the difference was found
-  - attrname: is the name of the attribute on class where the difference was found
-  - path: a list of strings that show how to reach the attribute where the difference was found
+  - formatted_path: is a string like ``Pod.spec.containers[0]`` specifying what changed
+  - path: a list of strings that show how to reach the attribute where the difference was found. e.g. ``['spec', 'containers', 0]``
   - report: a string that describes the difference found
+  - value: the value of the changed attribute in self
+  - other_value: the value of the changed attribute in the object passed to ``diff()`` as a parameter
 
 If the list is empty, then the two objects have no differences.
+
+The DiffType enum has the following possible values:
+
+  - DiffType.ADDED: an attribute was changed from None to a non-None value or a dictionary key was added.
+  - DiffType.REMOVED: an attribute was changed from a non-None value to None or a dictionary key was removed.
+  - DiffType.VALUE_CHANGED: the value of an attribute, dictionary item, or list item changed but the type didn't change
+  - DiffType.TYPE_CHANGED: the Python type of an attribute, dictionary item, or list item changed.
+  - DiffType.LIST_LENGTH_CHANGED: the length of a list changed. This is the only DiffType that will be issued for the list. No DiffTypes will be issued for individual list elements.
+  - DiffType.INCOMPATIBLE_DIFF: this is returned when calling ``a.diff(b)`` and ``a`` and ``b`` have different types. This is not returned when calling ``a.diff(b)`` and an attribute like ``a.c`` has a different type than ``b.c``. (In that case a DiffType.TYPE_CHANGED is used.)
 
 object_at_path()
 *************************
