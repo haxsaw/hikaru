@@ -79,7 +79,7 @@ Building the models
 --------------------
 
 Notes on building the models of Kubernetes objects can be found 
-in the `Notes on building the model pkg.txt <Notes on building the model pkg.txt>`_
+in the `Notes on building the model pkg.txt <Notes%20on%20building%20the%20model%20pkg.txt>`_
 file in this directory.
 
 
