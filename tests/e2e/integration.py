@@ -43,7 +43,7 @@ else:
     # assume we're running in the parent directory
     base_path = Path('test_yaml')
 del cwd
-e2e_namespace = 'e2e-tests'
+e2e_namespace = 'e2e-tests-v1'
 
 
 setup_calls = 0
@@ -344,7 +344,12 @@ def test10():
     assert rres.obj
     assert rres.obj.metadata.name == name
     assert 2 == rres.obj.spec.replicas
-
+    drc = rc.dup()
+    drc.spec.replicas = rc.spec.replicas + 1
+    pres = drc.patchNamespacedReplicationController(drc.metadata.name, 'default')
+    assert pres.obj
+    assert isinstance(pres.obj, ReplicationController)
+    assert pres.obj.spec.replicas == rc.spec.replicas + 1
     _ = ReplicationController.deleteNamespacedReplicationController(name,
                                                                     namespace='default')
 
@@ -1597,6 +1602,52 @@ def test71():
     finally:
         _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
                                                           'default')
+
+
+def test72():
+    """
+    test validating webhook configuration crud ops
+    """
+    name = "servicetokenpolicy"
+    vwc = ValidatingWebhookConfiguration(
+        metadata=ObjectMeta(
+            name=name,
+            labels={'kiamol': 'ch16'}
+        ),
+        webhooks=[ValidatingWebhook(
+            name='servicetokenpolicy.kiamol.net',
+            sideEffects='None',
+            admissionReviewVersions=['v1'],
+            rules=[RuleWithOperations(
+                operations=['CREATE', 'UPDATE'],
+                apiGroups=[""],
+                apiVersions=["v1"],
+                resources=["pods"]
+            )],
+            clientConfig=WebhookClientConfig(
+                service=ServiceReference(
+                    name='admission-webhook',
+                    namespace='default',
+                    path="/validate"
+                ),
+            )
+        )]
+    )
+    res = vwc.createValidatingWebhookConfiguration()
+    assert res.obj
+    assert isinstance(res.obj, ValidatingWebhookConfiguration)
+    assert res.obj.metadata.name == vwc.metadata.name
+    try:
+        rres = ValidatingWebhookConfiguration.readValidatingWebhookConfiguration(name)
+        assert rres.obj
+        assert isinstance(rres.obj, ValidatingWebhookConfiguration)
+        assert rres.obj.metadata.name == name
+        vwc.metadata.labels['new_label'] = 'value'
+        pres = vwc.patchValidatingWebhookConfiguration(name)
+        assert pres.obj
+    finally:
+        dres = ValidatingWebhookConfiguration.deleteValidatingWebhookConfiguration(name)
+        assert dres.obj
 
 
 if __name__ == "__main__":
