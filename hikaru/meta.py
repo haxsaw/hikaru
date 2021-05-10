@@ -75,6 +75,10 @@ class DiffDetail:
     value: Any = None
     other_value: Any = None
 
+    @property
+    def attrname(self):
+        return self.path[-1] if self.path else None
+
 
 @dataclass
 class HikaruBase(object):
@@ -485,7 +489,8 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Added: {formatted_attr_path} is {attr} in self but does not exist in other",
+                               f"Added: {formatted_attr_path} is {attr} in self but "
+                               f"does not exist in other",
                                attr,
                                None)]
         elif attr is None and other_attr is not None:
@@ -493,16 +498,18 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Removed: {formatted_attr_path} does not exist in self but in other it is"
+                               f"Removed: {formatted_attr_path} does not exist in self "
+                               f"but in other it is"
                                f" {other_attr}",
                                None,
                                other_attr)]
         elif type(attr) != type(other_attr):
-            return [DiffDetail(DiffType.TYPE_CHANGED,
+            return [DiffDetail(DiffType.INCOMPATIBLE_DIFF,
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Type mismatch: {formatted_attr_path} is a {type(attr)} in self but in other it is a"
+                               f"Type mismatch: {formatted_attr_path} is a {type(attr)} "
+                               f"in self but in other it is a"
                                f" {type(other_attr)}",
                                attr,
                                other_attr)]
@@ -513,7 +520,8 @@ class HikaruBase(object):
                                containing_cls,
                                formatted_attr_path,
                                attr_path,
-                               f"Value mismatch: {formatted_attr_path} is {attr} in self but in other it is"
+                               f"Value mismatch: {formatted_attr_path} is {attr} in self "
+                               f"but in other it is"
                                f" {other_attr}",
                                attr,
                                other_attr)]
@@ -523,26 +531,31 @@ class HikaruBase(object):
                 sub_attr = getattr(attr, f.name)
                 other_sub_attr = getattr(other_attr, f.name)
                 diffs.extend(cls._diff(sub_attr, other_sub_attr, attr.__class__,
-                                       attr_path + [f.name], f"{formatted_attr_path}.{f.name}"))
+                                       attr_path + [f.name],
+                                       f"{formatted_attr_path}.{f.name}"))
             return diffs
         elif isinstance(attr, dict):
             diffs = []
             all_keys = set(list(attr.keys()) + list(other_attr.keys()))
             for key in all_keys:
                 diffs.extend(cls._diff(attr.get(key), other_attr.get(key), containing_cls,
-                                       attr_path + [key], f"{formatted_attr_path}['{key}']"))
+                                       attr_path + [key],
+                                       f"{formatted_attr_path}['{key}']"))
             return diffs
         elif isinstance(attr, list):
             if len(attr) != len(other_attr):
-                return [DiffDetail(DiffType.LIST_LENGTH_CHANGED, containing_cls, formatted_attr_path, attr_path,
-                                   f"Length mismatch: list {formatted_attr_path} has {len(attr)}"
-                                   " elements, but other has {len(other_attr)}",
+                return [DiffDetail(DiffType.LIST_LENGTH_CHANGED, containing_cls,
+                                   formatted_attr_path, attr_path,
+                                   f"Length mismatch: list {formatted_attr_path} has "
+                                   f"{len(attr)} elements, but other has "
+                                   f"{len(other_attr)}",
                                    attr,
                                    other_attr)]
             else:
                 diffs = []
                 for i, self_element in enumerate(attr):
-                    diffs.extend(cls._diff(self_element, other_attr[i], containing_cls, attr_path + [i],
+                    diffs.extend(cls._diff(self_element, other_attr[i], containing_cls,
+                                           attr_path + [i],
                                            f"{formatted_attr_path}[{i}]"))
                 return diffs
         else:
