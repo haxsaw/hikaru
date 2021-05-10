@@ -23,15 +23,9 @@ TypeWarning is a dataclass that is returned as list elements from the
 .. autoclass:: hikaru.DiffDetail
    :members:
 
-DiffDetail is a namedtuple that is returned as list elements from the
-:meth:`diff()<hikaru.HikaruBase.diff>` method of HikaruBase.
-
 .. _DiffType doc:
 
 .. autoclass:: hikaru.DiffType
-   :members:
-
-DiffType is an enum that is used by DiffDetail to specify the type of change.
 
 .. _HikaruBase doc:
 

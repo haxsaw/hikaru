@@ -57,6 +57,25 @@ TypeWarning = namedtuple('TypeWarning', ['cls', 'attrname', 'path', 'warning'])
 
 
 class DiffType (Enum):
+    """
+    These are the types of diffs that can be detected by :meth:`diff(
+    )<hikaru.HikaruBase.diff>` and reported in the
+    :class:`DiffDetail<hikaru.DiffDetail>` object
+
+    The possible values are:
+
+    ===================  ================================================================
+    Value:               ...means:
+    ===================  ================================================================
+    ADDED                the other object has a value where self does not for this attribute
+    REMOVED              the other object has None where self does not for this attribute
+    VALUE_CHANGED        the other object's value differs from self's for this attribute
+    TYPE_CHANGED         the type of this attribute changed from self to other
+    LIST_LENGTH_CHANGED  list len between self and other changed for this attributes
+    INCOMPATIBLE_DIFF    the value of an attribute in self and other are incomparable types
+    ===================  ================================================================
+    """
+
     ADDED = 0
     REMOVED = 1
     VALUE_CHANGED = 2
@@ -67,6 +86,20 @@ class DiffType (Enum):
 
 @dataclass
 class DiffDetail:
+    """
+    The details of a difference found between two Hikaru objects using diff().
+
+    This dataclass contains information detailing the nature of the difference
+    between two Hikaru objects. It provides a type of difference (a
+    :class:`DiffType<hikaru.DiffType>` value),
+    the class where the difference was found, a formatted_path to the difference
+    a list of path elements that can be used to find the actual value using
+    :meth:`object_at_path()<hikaru.HikaruBase.object_at_path>`, additionally the two
+    values of the item being compared.
+
+    Additionally, a read-only property named 'attrname' will return the name of the
+    attribute where the difference was found. This is the same as path[-1].
+    """
     diff_type: DiffType
     cls: Type
     formatted_path: str
@@ -77,6 +110,9 @@ class DiffDetail:
 
     @property
     def attrname(self):
+        """
+        returns the name of the attribute where the diff was found; same as path[-1]
+        """
         return self.path[-1] if self.path else None
 
 
