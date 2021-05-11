@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = "v0.2a0"
+__version__ = "0.4b"
 
 
 def get_long_desc():
@@ -16,7 +16,15 @@ def get_requirements():
 setup(
     name="hikaru",
     version=__version__,
-    packages=["hikaru", "hikaru.model", "hikaru.model.*"],
+    packages=["hikaru", "hikaru.model",
+              "hikaru.model.rel_1_16",
+                "hikaru.model.rel_1_16.v1",
+                "hikaru.model.rel_1_16.v1alpha1",
+                "hikaru.model.rel_1_16.v1beta1",
+                "hikaru.model.rel_1_16.v1beta2",
+                "hikaru.model.rel_1_16.v2alpha1",
+                "hikaru.model.rel_1_16.v2beta1",
+                "hikaru.model.rel_1_16.v2beta2"],
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
     long_description=get_long_desc(),

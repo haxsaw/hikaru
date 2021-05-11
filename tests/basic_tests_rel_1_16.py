@@ -26,9 +26,8 @@ import pytest
 from hikaru import *
 from hikaru.model.rel_1_16 import *
 import json
-from build import *
 from hikaru.meta import DiffDetail, DiffType
-from hikaru.naming import make_swagger_name
+from hikaru.naming import make_swagger_name, process_swagger_name
 from hikaru.version_kind import get_version_kind_class
 
 p = None
@@ -1067,100 +1066,40 @@ def test096():
     """
     Test processing the group, version, name back into a swagger name
     """
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        swagger_name = make_swagger_name(cd.group, cd.version, cd.short_name)
-        break
-    g, v, n = process_swagger_name(swagger_name)
-    assert g == cd.group, "Group doesn't match"
-    assert v == cd.version, "Version doesn't match"
-    assert n == cd.short_name, "Named doesn't match"
+    try:
+        from build import ClassDescriptor
+    except ImportError:
+        pass
+    else:
+        f = open("recursive.json", "r")
+        jdict = json.load(f)
+        for k, v in jdict.items():
+            cd = ClassDescriptor(k, v)
+            swagger_name = make_swagger_name(cd.group, cd.version, cd.short_name)
+            break
+        g, v, n = process_swagger_name(swagger_name)
+        assert g == cd.group, "Group doesn't match"
+        assert v == cd.version, "Version doesn't match"
+        assert n == cd.short_name, "Named doesn't match"
 
 
 def test097():
     """
     Check that we can process a recursively defined swagger object
     """
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    cd = None
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        cd.process_properties()
-        break
-    assert True
-
-
-def test098():
-    """
-    Check that we get a new ClassDescriptor as an alternate base
-    """
-    raise SkipTest("no alternate base now, so rest of test is redundant")
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    cd = None
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        cd.process_properties()
-        break
-    assert cd.has_alternate_base() is True
-    assert isinstance(cd.alternate_base, ClassDescriptor)
-
-
-def test099():
-    """
-    Check that an existing ClassDecriptor depends on its alternate base
-    """
-    raise SkipTest('alternate base no longer exists')
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    cd = None
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        cd.process_properties()
-        break
-    assert cd.has_alternate_base() is True
-    assert isinstance(cd.alternate_base, ClassDescriptor)
-    assert cd.alternate_base in cd.depends_on()
-
-
-def test100():
-    """
-    Check that we can generate sane Python source for the alternate base
-    """
-    raise SkipTest('alternate base no longer exists')
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    cd = None
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        cd.process_properties()
-        break
-    ab = cd.alternate_base
-    assert isinstance(ab, ClassDescriptor)
-    src = ab.as_python_class(for_version='v1')
-    assert src
-
-
-def test101():
-    """
-    Check that if there's an alternate base it is the base class for the parsed one
-    """
-    raise SkipTest('alternate base no longer exists')
-    f = open("recursive.json", "r")
-    jdict = json.load(f)
-    cd = None
-    for k, v in jdict.items():
-        cd = ClassDescriptor(k, v)
-        cd.process_properties()
-        break
-    ab = cd.alternate_base
-    assert isinstance(ab, ClassDescriptor)
-    expected = f'{cd.short_name}({ab.short_name})'
-    src = cd.as_python_class(for_version='v1')
-    assert expected in src
+    try:
+        from build import ClassDescriptor
+    except ImportError:
+        pass
+    else:
+        f = open("recursive.json", "r")
+        jdict = json.load(f)
+        cd = None
+        for k, v in jdict.items():
+            cd = ClassDescriptor(k, v)
+            cd.process_properties()
+            break
+        assert True
 
 
 def test102():

@@ -5,15 +5,80 @@ Release Notes
 v0.4b
 -----
 
-Hikaru had to break the API contract implied by the semantic version number as the package structure has changed to support future features; this will
-slightly change the API for import statements (see below); this should be a one-time change. 
+Hikaru had to break the API contract implied by the semantic version number as the
+``model`` sub-package structure has changed to support future features; this will
+slightly change the API for import statements (see below). This should be a one-time
+change.
 
-- Enriched the output of the ``diff()`` method of HikaruBase objects to provide more details on the difference as well as the differing values in the DiffDetail dataclass. You can now see exactly what was added/removed/modified.
-- Integrated the official Kubernetes Python client with the Hikaru classes; you can now invoke relevant operations from the objects that the operations involve, for example creating a Pod directly from the Pod object.
-- Re-organized the structure of the ``model`` subpackage to provide future support for multiple releases of Kubernetes in the future. The user will always be able to determine which is the current *default* release that is in use, but will also be able to specify a different release to use. This is covered in more detail in the documentation on versions and releases.
-- As part of the revamp to support multiple releases, added a ``documents`` modules that provides a view of just the ``HikaruDocumentBase`` subclasses if all your require in your namespace are the top-level classes. This keeps the namespace from getting cluttered.
-- Modified the approach to annotations previously taken that now allows forward references to classes and cyclic dependencies. Hence, recursive objects can now be directly represented in the model files, and objects with mutual references can be created. This is important in support attaching operations as methods to relevant classes. This eliminates the need for the workarounds for ``JSONSchemProps``, and that class now is modeled just like all of the others.
-- Fixed a bug in populating the field catalog that each HikaruBase object maintains; now all fields are always properly reported after a repopulate_catalog() call.
+- Integrated the official Kubernetes Python client with the Hikaru classes; you can now
+  invoke relevant operations from the objects that the operations involve, for example
+  creating a Pod directly from the Pod object. More work remains to create high-level
+  interfaces on these basic operations. Because of this integration, Hikaru now requires
+  the Kubernetes Python client, so be sure to upgrade your dependencies. Usage is
+  covered in the documentation.
+- Added support for multiple releases for Kubernetes in the **model** subpackage.
+  Users will now be able to direct their code to use Hikaru objects from a specific
+  Kubernetes release. If you don't need work with multiple releases, Hikaru makes
+  sensible choices for defaults and you can query what release Hikaru is defaulting to.
+  Release selection can be global for a program or on a per-thread basis. See the
+  documentation for the functions **get_default_release()**, **set_default_release()**,
+  and **set_global_default_release()**.
+- Added the ability for users to create their own derived classes of Hikaru document
+  classes such as ``Pod`` or ``Deployment``, and then register their new subclass
+  with Hikaru so that it will make instances of the user's class instead of the parent
+  class. For details, see the documentation for the **register_version_kind_class()**
+  function. **NOTE**: There is currently no support in Hikaru for sending custom
+  operators into Kubernetes; you'll need to access the lower-level Kubernetes client
+  if you want to do that currently.
+- Enriched the output of the **diff()** method of HikaruBase objects to provide more details
+  on the difference as well as the differing values in the ``DiffDetail`` dataclass. You
+  can now see exactly what was added/removed/modified.
+- As part of the revamp to support multiple releases, added a **documents** modules that
+  provides a view of just the ``HikaruDocumentBase`` subclasses if all you require in
+  your namespace are the top-level classes. This keeps the namespace from getting cluttered.
+- Modified the approach to annotations previously taken that now allows forward references
+  to classes and cyclic dependencies. Hence, recursive objects can now be directly
+  represented in the model files, and objects with mutual references can be created. This
+  eliminates the need for the workarounds for ``JSONSchemProps`` in previous releases.
+- Fixed a bug in populating the field catalog that each HikaruBase object maintains; now
+  all fields are always properly reported after a repopulate_catalog() call.
+
+.. note::
+
+    Hikaru was integration tested on K3s and some issues have emerged. The following are
+    known problems and will be investigated further:
+
+    - Using the **APIServerList.listAPIService()** class method results in an exception
+      in the underlying Kubernetes Python client when processing the results from K3s; it
+      complains about a field that is None that is supposed to be required. It is unclear if
+      the problem lies in the client code or in what is sent back from K3s.
+    - Some methods of **Scale** don't return with success although the calls seem to
+      operate correctly. Reading Scales from other objects like a ReplicationController
+      yields correct results, patching a Scale results in an error 'object not found'.
+      More investigation is needed to determine if the methods are being used incorrectly
+      of if the issue is with K3s.
+    - The following objects and/or methods haven't been integration tested:
+
+      ===============================  =========================================
+      Class/Method                     Issue
+      ===============================  =========================================
+      Binding                          Marked as deprecated; not tested
+      ControllerRevision               Documented as internal; skipped
+      LocalSubjectAccessReview (CRUD)  Need useful examples
+      MutatingWebhookConfiguration     Need useful examples
+      Node.createNode()                Need a better dev environment
+      SubjectAccessReview (CRUD)       Need useful examples
+      SubjectAccessRulesReview (CRUD)  Need useful examples
+      StorageClass (CRUD)              Need useful examples
+      SubjectAccessReivew (CRUD)       Need useful examples
+      TokenReview (CRUD)               Need useful examples
+      VolumeAttachment (CRUD)          Need useful examples
+      ===============================  =========================================
+
+      In some cases, reading lists of these objects has been conducted successfully,
+      but good examples of CRUD operations on these objects are required to put
+      together some illustrative tests. In some cases, the existing infrastructure
+      is an impediment.
 
 v0.3b
 ------

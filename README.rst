@@ -60,6 +60,16 @@ Hikaru can output a Python Kubernetes object as Python source code,
 YAML, JSON, or a Python dict, and go back to any of these representations, allowing you
 to shift easily between representational formats for various purposes.
 
+Talk to Kubernetes
+~~~~~~~~~~~~~~~~~~
+
+You can use Hikaru objects to interact with a Kubernetes system. Hikaru wraps the Kubernetes
+Python client and maps API operations on to the Hikaru model they involve. For example, you
+can now create a Pod directly from a Pod object.
+
+Hikaru can work with any Kubernetes-compliant system such as `K3s <https://k3s.io/>`_
+and `minikube <https://minikube.sigs.k8s.io/docs/>`_.
+
 Alternative to templating for customisation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

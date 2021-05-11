@@ -1,3 +1,6 @@
+CLA assistant at:  https://cla-assistant.io/
+Assistant repo: https://github.com/cla-assistant/cla-assistant
+
 SO question about finding the types inside a Union
 https://stackoverflow.com/questions/45957615/check-a-variable-against-union-type-at-runtime-in-python-3-6
 
