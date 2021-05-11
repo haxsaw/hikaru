@@ -70,6 +70,15 @@ can now create a Pod directly from a Pod object.
 Hikaru can work with any Kubernetes-compliant system such as `K3s <https://k3s.io/>`_
 and `minikube <https://minikube.sigs.k8s.io/docs/>`_.
 
+Integrate your own subclasses
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can not only in create your own subclasses of Hikaru document classes for your own
+use, but you can also register these classes with Hikaru and it will make instances
+of your classes when Hikaru encounters the relevant ``apiVersion`` and ``kind``
+values. So for example, you can create your own ``MyPod`` subclass of ``Pod``, and
+Hikaru will instantiate your subclass when reading Pod YAML.
+
 Alternative to templating for customisation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -92,23 +101,15 @@ example, you can check the types of all attributes in a config against the defin
 types for each attribute, you can diff two configs to see where they aren't the same,
 and you can search through a config for specific values and contained objects.
 
-API Coverage
+API coverage
 ~~~~~~~~~~~~
 
-Currently, Hikaru supports all objects in the OpenAPI swagger spec for
-the Kubernetes API except those in the ‘apiextensions’ group. There are
-recusively defined objects in that group which can neither be
-topologically sorted or represented by Python dataclasses, so an
-alternative for those objects is being investigated. But all other
-objects in the swagger file are available, as well as version v1 through
-v2beta2 of the API’s objects.
+Hikaru supports all objects in the OpenAPI swagger spec for
+the Kubernetes API **v 1.16**, and has initial support for methods on those objects
+from the same swagger spec.
 
-Additionally, the Kubernetes Python client includes a test that assumes
-the availability of support for a ‘List’ kind, however the swagger file
-contains no support for a List object.
-
-Usage
------
+Usage examples
+-----~~~~~~~~~
 
 To create Python objects from a Kubernetes YAML source, use
 ``load_full_yaml()``:
@@ -285,11 +286,12 @@ automated control.
 Future work
 ~~~~~~~~~~~
 
-Since both the classes of Hikaru and those in the official
-Python Kubernetes client are generated from the same swagger file, if a
-means to determine a mapping between the two can be established it
-should be possible to integrate these Python classes directly into the
-Kubernetes client for actioning on a Kubernetes cluster.
+The current expression of operations on Hikaru methods follows the
+naming conventions of the swagger spec's ``operationId``. Mapping these
+into consistently-named CRUD methods with appropriate arguments is the
+main focus of the coming release. So for example, you will be able to
+perform the opertation ``createNamespacedReplicationController()`` with
+a new method ``create()`` with similar arugments.
 
 About
 ~~~~~

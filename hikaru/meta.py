@@ -38,7 +38,7 @@ from hikaru.naming import camel_to_pep8
 
 try:
     from typing import get_args, get_origin
-except ImportError:
+except ImportError:  # pragma: no cover
     def get_args(tp):
         return tp.__args__ if hasattr(tp, "__args__") else ()
 

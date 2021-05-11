@@ -15,7 +15,10 @@ change.
   creating a Pod directly from the Pod object. More work remains to create high-level
   interfaces on these basic operations. Because of this integration, Hikaru now requires
   the Kubernetes Python client, so be sure to upgrade your dependencies. Usage is
-  covered in the documentation.
+  covered in the documentation. Additionally, there is currently no support in Hikaru
+  itself for other Kubernetes Python client abilities such as ``watch`` and ``stream``.
+  Hikaru can still be used with these facilities, but you'll need to run the Hikaru
+  objects into Python dicts and use the lower-level Kubernetes interfaces.
 - Added support for multiple releases for Kubernetes in the **model** subpackage.
   Users will now be able to direct their code to use Hikaru objects from a specific
   Kubernetes release. If you don't need work with multiple releases, Hikaru makes
@@ -73,12 +76,19 @@ change.
       SubjectAccessReivew (CRUD)       Need useful examples
       TokenReview (CRUD)               Need useful examples
       VolumeAttachment (CRUD)          Need useful examples
+      \'collection\' methods           Need useful examples
       ===============================  =========================================
 
-      In some cases, reading lists of these objects has been conducted successfully,
+      In many cases, tests reading lists of these objects has been conducted successfully,
       but good examples of CRUD operations on these objects are required to put
       together some illustrative tests. In some cases, the existing infrastructure
       is an impediment.
+
+      As it has been tested that **every** Hikaru method can be called which
+      in turn invokes the underlying Kubernetes Python client API call and all arguments
+      are passed successfully, not all argument combinations into Hikaru methods have
+      been tested. However, both async and dry run calls have been minimally tested and
+      operate properly.
 
 v0.3b
 ------

@@ -119,5 +119,5 @@ class Response(object):
             self._process_result(result)
         else:
             raise RuntimeError(f"Received an unknown type of response from K8s: "
-                               f"type={type(result)}, value={result}")
+                               f"type={type(result)}, value={result}")  # pragma: no cover
         return self.obj, self.code, self.headers

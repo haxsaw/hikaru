@@ -20,7 +20,8 @@
 # SOFTWARE.
 """
 This module seeks to implement equivalent tests from various modules in the
-official Kubernetes client's e2e_test sub-package.
+official Kubernetes client's e2e_test sub-package, as well as other methods
+on various objects.
 
 It is based on having access to a Linux install of k3s.
 """

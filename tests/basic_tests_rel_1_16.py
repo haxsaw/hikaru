@@ -1068,7 +1068,7 @@ def test096():
     """
     try:
         from build import ClassDescriptor
-    except ImportError:
+    except ImportError:  # this test is only for in dev for the build
         pass
     else:
         f = open("recursive.json", "r")
@@ -1089,7 +1089,7 @@ def test097():
     """
     try:
         from build import ClassDescriptor
-    except ImportError:
+    except ImportError:  # this test is only for in dev for the build
         pass
     else:
         f = open("recursive.json", "r")

@@ -8,6 +8,21 @@ interaction method, it can be possible to not use a single Kubernetes Python cal
 entirely in Hikaru objects. Hikaru also provides a way for the user to explicitly set the
 ``kubernetes.client.ApiClient`` instance to use when interacting with Kubernetes.
 
+All methods return a :ref:`Response<Response doc>` object. These objects contain
+references to the returned result code, HTTP headers, and any object returned by
+Kubernetes (as a Hikaru object).
+
+If you requested an operation to be done asynchronously using the async_req=True
+argument,
+then the above three attributes aren't filled out when the method returns and instead the
+Response can be used
+to sync with the arrival of the response data with a calling thread. Using the ``get()``
+method call on the
+Response object, you can block the caller (with optional timeout) until Kubernetes
+responds to your request. When get() returns, the code, object, and header fields will be
+filled out in the Response object. The ``get()`` call also returns a three-tuple
+containing this same data.
+
 To illustrate this, we'll start with a fully explicit verion with commented interaction and
 then show how you can pare it down based on defaults. In this example,
 we'll create and delete a Pod using the K3s lightweight Kubernetes package.
