@@ -1,3 +1,10 @@
+Dumb things you always forget
+=============================
+
+building the package: python setup.py bdist_wheel
+publishing to official PyPI: twine upload dist/*
+publishing to test PyPI: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
 CLA assistant at:  https://cla-assistant.io/
 Assistant repo: https://github.com/cla-assistant/cla-assistant
 
