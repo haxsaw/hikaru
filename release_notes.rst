@@ -42,7 +42,7 @@ change.
 - Modified the approach to annotations previously taken that now allows forward references
   to classes and cyclic dependencies. Hence, recursive objects can now be directly
   represented in the model files, and objects with mutual references can be created. This
-  eliminates the need for the workarounds for ``JSONSchemProps`` in previous releases.
+  eliminates the need for the workarounds for ``JSONSchemaProps`` in previous releases.
 - Fixed a bug in populating the field catalog that each HikaruBase object maintains; now
   all fields are always properly reported after a repopulate_catalog() call.
 
