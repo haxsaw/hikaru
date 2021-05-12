@@ -109,7 +109,7 @@ the Kubernetes API **v 1.16**, and has initial support for methods on those obje
 from the same swagger spec.
 
 Usage examples
------~~~~~~~~~
+~~~~~~~~~~~~~~
 
 To create Python objects from a Kubernetes YAML source, use
 ``load_full_yaml()``:
