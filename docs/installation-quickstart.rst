@@ -9,7 +9,7 @@ From PyPI, you can just use the normal ``pip install`` dance:
 
     ``pip install hikaru``
 
-Or if installing from source,  cd into the project root an then you can install from setup.py:
+Or if installing from source,  cd into the project root and then you can install from setup.py:
 
     ``python setup.py install``
 
