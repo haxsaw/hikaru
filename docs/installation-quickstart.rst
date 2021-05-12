@@ -27,7 +27,7 @@ Normally, you would begin with:
 ...to load in all the functions and class you need, except any Hikaru K8s objects; if you
 need to use the default release's default version's object, you'd add the following line:
 
-..code:: python
+.. code:: python
 
     from hikaru.model import *
 
