@@ -278,48 +278,6 @@ def write_documents_module(path: Path, version: str):
     f.close()
 
 
-def write_misc_module(path: Path, version: str):
-    if version is None:
-        return
-    misc_file = path.open('w+')
-    print(_module_docstring, file=misc_file)
-    print("from typing import *", file=misc_file)
-    print("from hikaru import HikaruOpsBase", file=misc_file)
-    print("from hikaru.utils import Response", file=misc_file)
-    print("from kubernetes.client import CoreV1Api, ApiClient", file=misc_file)
-
-    print("\n", file=misc_file)
-    vops = ops_by_version.get(version)
-    if vops is not None:
-        for domain, qops in vops.query_ops.items():
-            if qops.operations:
-                class_content = []
-                for op in qops.operations.values():
-                    op.is_staticmethod = True
-                    if op.op_id is None:
-                        print(f"still can't render {op.op_path}; no op_id")
-                        continue
-                    kube_client = _search_for_free_method(op.op_id)
-                    if kube_client is None:
-                        print(f"Can't find the K8S method for {op.op_id}")
-                        continue
-                    op.set_k8s_access(kube_client)
-                    lines = op.as_python_method()
-                    if lines:
-                        if not class_content:
-                            class_content.append(
-                                f"class {domain.capitalize()}Ops(HikaruOpsBase):")
-                            class_content.append("")
-                        class_content.extend([f"    {line}" for line in lines])
-                        class_content.append("")
-                code = "\n".join(class_content)
-                try:
-                    code = format_file_contents(code, fast=False, mode=FileMode())
-                except NothingChanged:
-                    pass
-                print(code, file=misc_file)
-
-
 def write_modules(pkgpath: str):
     pkg = Path(pkgpath)
     d = module_defs()
@@ -348,7 +306,6 @@ def write_modules(pkgpath: str):
             write_documents_module(documents_path, md.version)
             # misc_path = version_path / remaining_ops_module
             # misc_path.touch()
-            # write_misc_module(misc_path, md.version)
 
     # finally, capture the names of all the version modules in version module
     versions = pkg / 'versions.py'
@@ -1181,37 +1138,6 @@ class QueryDomainOperations(object):
         self.operations[op_id] = operation
 
 
-class APIVersionOperations(object):
-    def __init__(self, version):
-        self.version = version
-        # key is the input object's swagger name
-        self.object_ops: Dict[str, ObjectOperations] = {}
-        # key is the domain of the operation
-        self.query_ops: Dict[str, QueryDomainOperations] = {}
-
-    def add_obj_operation(self, full_k8s_name: str, op: Operation):
-        obops = self.object_ops.get(full_k8s_name)
-        if obops is None:
-            obops = ObjectOperations(full_k8s_name)
-            self.object_ops[full_k8s_name] = obops
-        obops.add_operation(op.op_id, op)
-
-    def add_query_operation(self, domain: str, op: Operation):
-        qops = self.query_ops.get(domain)
-        if qops is None:
-            qops = QueryDomainOperations(domain)
-            self.query_ops[domain] = qops
-        qops.add_operation(op.op_id, op)
-
-
-def get_version_ops(version: str) -> APIVersionOperations:
-    vops = ops_by_version.get(version)
-    if vops is None:
-        vops = APIVersionOperations(version)
-        ops_by_version[version] = vops
-    return vops
-
-
 def get_path_version(path: str) -> str:
     version = None
     parts = path.split('/')
@@ -1297,8 +1223,6 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                                  gvk_dict: dict,
                                  reuse_op: Operation = None) -> Operation:
     version = get_path_version(path)
-    vops = get_version_ops(version)
-    domain = get_path_domain(path)
     if reuse_op is None:
         new_op = Operation(verb, path, op_id, description, gvk_dict)
     else:
@@ -1413,7 +1337,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         if guess:
             guess.add_operation(new_op)
         else:
-            vops.add_query_operation(domain, new_op)
+            print(f'Wanted to add a query op: {new_op.op_id}')
     return new_op
 
 
@@ -1600,9 +1524,6 @@ _all_module_defs = {}
 model_package = "hikaru/model"
 
 
-ops_by_version: Dict[str, APIVersionOperations] = {}
-
-
 # version, opid
 written_methods: Set[Tuple[str, str]] = set()
 
@@ -1611,24 +1532,10 @@ def reset_all():
     objop_param_mismatches.clear()
     response_mismatches.clear()
     _all_module_defs.clear()
-    ops_by_version.clear()
     written_methods.clear()
 
 
 _release_in_process = None
-
-
-def check_for_stragglers():
-    total = 0
-    print("LOOKING FOR STRAGGLERS")
-    for k, vops in ops_by_version.items():
-        for domain, qops in vops.query_ops.items():
-            for op in qops.operations.values():
-                if (op.version, op.op_id) not in written_methods:
-                    print(f"version {k}, dom {domain}, verb {op.verb}, opid {op.op_id},"
-                          f" path {op.op_path}")
-                    total += 1
-    print(f"END LOOKING FOR STRAGGLERS; found {total}")
 
 
 def build_it(swagger_file: str, main_rel: str):
@@ -1650,7 +1557,6 @@ def build_it(swagger_file: str, main_rel: str):
     if main_rel == relname:
         # this is the main release; make the root package default to it
         make_root_init(model_package, main_rel)
-    # check_for_stragglers()
     _release_in_process = None
 
 
