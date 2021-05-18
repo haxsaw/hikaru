@@ -324,7 +324,8 @@ else:
 inst = {k8s_class_name}(api_client=client_to_use)
 the_method = getattr(inst, '{k8s_method_name}_with_http_info')
 if the_method is None:  # pragma: no cover
-    raise RuntimeError("Unable to locate method {k8s_method_name}_with_http_info "
+    raise RuntimeError("Unable to locate method "
+                       "{k8s_method_name}_with_http_info "
                        "on {k8s_class_name}; possible release mismatch?")
 all_args = dict()
 {arg_assignment_lines}
@@ -341,7 +342,8 @@ _static_method_body_template = \
 inst = {k8s_class_name}(api_client=client_to_use)
 the_method = getattr(inst, '{k8s_method_name}_with_http_info')
 if the_method is None:  # pragma: no cover
-    raise RuntimeError("Unable to locate method {k8s_method_name}_with_http_info "
+    raise RuntimeError("Unable to locate method "
+                       "{k8s_method_name}_with_http_info "
                        "on {k8s_class_name}; possible release mismatch?")
 all_args = dict()
 {arg_assignment_lines}
@@ -359,7 +361,8 @@ _static_method_nobody_template = \
 inst = {k8s_class_name}(api_client=client_to_use)
 the_method = getattr(inst, '{k8s_method_name}_with_http_info')
 if the_method is None:  # pragma: no cover
-    raise RuntimeError("Unable to locate method {k8s_method_name}_with_http_info "
+    raise RuntimeError("Unable to locate method "
+                       "{k8s_method_name}_with_http_info "
                        "on {k8s_class_name}; possible release mismatch?")
 all_args = dict()
 {arg_assignment_lines}
@@ -498,15 +501,16 @@ class Operation(object):
     # (UNSPECIFIED!) 'v1_delete_options' parameter. Horrifying...
     del_collection_prefix = "delete_collection"
 
-    def make_docstring(self) -> List[str]:
+    def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
         docstring_parts = ['    r"""', f'    {self.description}']
         docstring_parts.append("")
         docstring_parts.append(f'    operationID: {self.op_id}')
         docstring_parts.append(f'    path: {self.op_path}')
-        if self.parameters:
+        if parameters:
             docstring_parts.append("")
-            for p in self.parameters:
-                docstring_parts.append(f'   {p.docstring()}')
+            for p in parameters:
+                ds = p.docstring(hanging_indent="          ", linelen=80)
+                docstring_parts.append(f'   {ds}')
         docstring_parts.append("    :param client: optional; instance of "
                                "kubernetes.client.api_client.ApiClient")
         docstring_parts.append("    :param async_req: bool; if True, call is "
@@ -529,7 +533,118 @@ class Operation(object):
         docstring_parts.append('   """')
         return docstring_parts
 
-    def as_python_method(self, cd=None) -> List[str]:
+    def crud_counterpart_name(self) -> Optional[str]:
+        """
+        If self is a kind of CRUD method, return the associated CRUD verb name
+
+        Checks self.op_id and decides if the id could be a synonym for a CRUD verb.
+
+        :return: str  which is the name of the CRUD verb to use or None if no
+            CRUD verb maps to this operation
+        """
+        if self.op_id.startswith('create'):
+            return 'create'
+        if self.op_id.startswith('read'):
+            return 'read'
+        if self.op_id.startswith('patch'):
+            return 'update'
+        if (self.op_id.startswith('delete') and
+                not self.op_id.startswith('deleteCollection')):
+            return 'delete'
+        return None
+
+    def as_crud_python_method(self) -> List[str]:
+        crud_lines = []
+        crud_name = self.crud_counterpart_name()
+        if crud_name:
+            pass
+        return crud_lines
+
+    def get_meth_decorators(self) -> List[str]:
+        return ["@staticmethod"] if self.is_staticmethod else []
+
+    def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
+        def_parts = []
+        if parameters is None:
+            parameters = self.parameters
+        version = get_path_version(self.op_path)
+        if version is None:
+            version = ""
+        else:
+            version = version.replace('v', 'V')
+        meth_name = self.op_id.replace(version, '')
+        def_parts.append(f"def {meth_name}(")
+        required = [p for p in parameters if p.required]
+        optional = [p for p in parameters if not p.required]
+        params = []
+        if not self.is_staticmethod:
+            params.append('self')
+        # else:
+        #     if self.self_param:
+        #         optional.append(self.self_param)
+        params.extend([p.as_python()
+                       for p in chain(required, optional)])
+        # here, we add any standard parameter(s) that all should have:
+        params.append('client: ApiClient = None')
+        params.append('async_req: bool = False')
+        # end standards
+        def_parts.append(", ".join(params))
+        def_parts.append(") -> Response:")
+        return "".join(def_parts)
+
+    def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
+                      cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        assignment_list = []
+        body_seen = False
+        if parameters is None:
+            parameters = self.parameters
+        required = [p for p in parameters if p.required]
+        optional = [p for p in parameters if not p.required]
+        for p in chain(required, optional):
+            assert isinstance(p, OpParameter)
+            if not body_seen and p.name in ('v1_delete_options', 'body'):
+                body_seen = True
+            if p.name in python_reserved:
+                assignment_list.append(f"all_args['_{p.name}'] = {p.name}_")
+            else:
+                assignment_list.append(f"all_args['{camel_to_pep8(p.name)}'] = "
+                                       f"{camel_to_pep8(p.name)}")
+        if (cd and cd.short_name == "DeleteOptions"
+                and _release_in_process == 'rel_1_15' and
+                self.k8s_access_tuple[3].startswith(self.del_collection_prefix)):
+            body_key = 'v1_delete_options'
+        else:
+            body_key = 'body'
+        object_response_codes = str(tuple(self.response_codes_returning_object()))
+        body_lines = self._get_method_body(self.k8s_access_tuple[2],
+                                           self.k8s_access_tuple[3],
+                                           assignment_list,
+                                           object_response_codes,
+                                           body_key=body_key,
+                                           use_body=body_seen)
+        body = [f"    {bl}" for bl in body_lines]
+        return body
+
+    def prep_params(self) -> List['OpParameter']:
+        return list(self.parameters)
+
+    def as_python_method(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        if self.op_id is None:
+            return []
+        written_methods.add((self.version, self.op_id))
+        parameters = self.prep_params()
+        if self.is_staticmethod and self.self_param:
+            parameters.append(self.self_param)
+        lines = []
+        lines.extend(self.get_meth_decorators())
+        lines.append(self.get_meth_defline(parameters=parameters))
+        ds = self.make_docstring(parameters=parameters)
+        if ds:
+            lines.extend(ds)
+        lines.extend(self.get_meth_body(parameters=parameters, cd=cd))
+        return lines
+
+    def old_as_python_method(self, cd=None) -> List[str]:
         written_methods.add((self.version, self.op_id))
         if self.op_id is None:
             return []
@@ -554,14 +669,14 @@ class Operation(object):
                 optional.append(self.self_param)
         params.extend([p.as_python()
                        for p in chain(required, optional)])
-        # here, we add any standard parmeter(s) that all should have:
+        # here, we add any standard parameter(s) that all should have:
         params.append('client: ApiClient = None')
         params.append('async_req: bool = False')
         # end standards
         parts.append(", ".join(params))
         parts.append(") -> Response:")
 
-        docstring_parts = self.make_docstring()
+        docstring_parts = self.make_docstring(parameters=self.parameters)
         docstring = '\n'.join(docstring_parts)
         defline = "".join(parts)
         # do the work to create the method body; we need a list of assignment
@@ -1081,13 +1196,13 @@ class OpParameter(object):
         self.required = required
         self.is_bodyany: bool = True if name == 'body' and ptype == 'Any' else False
 
-    def docstring(self):
+    def docstring(self, prefix="", hanging_indent="      ", linelen=70):
         name = camel_to_pep8(self.name)
         name = f"{name}_" if name in python_reserved else name
         line = f':param {name}: {self.description}'
-        final_lines = ClassDescriptor.split_line(line, prefix="",
-                                                 hanging_indent="      ",
-                                                 linelen=70)
+        final_lines = ClassDescriptor.split_line(line, prefix=prefix,
+                                                 hanging_indent=hanging_indent,
+                                                 linelen=linelen)
         return "\n".join(final_lines)
 
     def as_python(self) -> str:
