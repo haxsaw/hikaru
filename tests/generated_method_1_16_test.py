@@ -60,6 +60,7 @@ all_params = []
 for version in versions:
     test_classes = []
     mod = importlib.import_module(f".{version}", f'hikaru.model.rel_1_16.{version}')
+    om_class = getattr(mod, 'ObjectMeta')
     for c in vars(mod).values():
         if (type(c) is type and ((issubclass(c, HikaruDocumentBase) and
                 c is not HikaruDocumentBase) or
@@ -74,6 +75,7 @@ for version in versions:
                     # we aren't actually doing that, we just set it after the
                     # the instances is made
                     inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default')
                     mock_client = MockApiClient()
                     inst.client = mock_client
                     params = {'self': inst}
@@ -86,9 +88,26 @@ for version in versions:
                             params[p.name] = "the_name"
                         else:
                             params[p.name] = None
-                    all_params.append((attr, params))
+                    all_params.append((attr, False, params))
                     # now do it again, but his time adding the client to the params
                     # that are passed into the method
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default')
+                    mock_client = MockApiClient()
+                    params = {'self': inst}
+                    for p in sig.parameters.values():
+                        if p.name == 'self':
+                            continue
+                        if p.name == "client":
+                            params["client"] = mock_client
+                        elif p.name == "namespace":
+                            params[p.name] = "the_namespace"
+                        elif p.name == "name":
+                            params[p.name] = "the_name"
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, False, params))
+                    # again, but this time without metadata at all; should raise
                     inst = cls.get_empty_instance()
                     mock_client = MockApiClient()
                     params = {'self': inst}
@@ -103,7 +122,40 @@ for version in versions:
                             params[p.name] = "the_name"
                         else:
                             params[p.name] = None
-                    all_params.append((attr, params))
+                    all_params.append((attr, True, params))
+                    # and again, but this time with no namespace
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class()
+                    mock_client = MockApiClient()
+                    params = {'self': inst}
+                    for p in sig.parameters.values():
+                        if p.name == 'self':
+                            continue
+                        if p.name == "client":
+                            params["client"] = mock_client
+                        elif p.name == "name":
+                            params[p.name] = "the_name"
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, True, params))
+                    # and again, with the namespace in the metadata, not the args,
+                    # BUT only for a crud method
+                    if name not in {'create', 'update', 'delete'}:
+                        continue
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default')
+                    mock_client = MockApiClient()
+                    params = {'self': inst}
+                    for p in sig.parameters.values():
+                        if p.name == 'self':
+                            continue
+                        if p.name == "client":
+                            params["client"] = mock_client
+                        elif p.name == "name":
+                            params[p.name] = "the_name"
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, False, params))
                 elif isinstance(attr, staticmethod):
                     # process static methods here
                     smeth = getattr(cls, name)
@@ -123,7 +175,7 @@ for version in versions:
                             params[p.name] = 'somePath'
                         else:
                             params[p.name] = None
-                    all_params.append((smeth, params))
+                    all_params.append((smeth, False, params))
     #
     # misc.py has been removed for now; we'll keep this in case it comes back
     #
@@ -155,9 +207,16 @@ for version in versions:
     #                 all_params.append((smeth, params))
 
 
-@pytest.mark.parametrize('func, kwargs', all_params)
-def test_methods(func, kwargs):
-    func(**kwargs)
+@pytest.mark.parametrize('func, should_raise, kwargs', all_params)
+def test_methods(func, should_raise, kwargs):
+    if should_raise:
+        try:
+            func(**kwargs)
+            assert False, f"should_raise case for {func} didn't"
+        except:
+            assert True
+    else:
+        func(**kwargs)
 
 
 if __name__ == "__main__":

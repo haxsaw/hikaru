@@ -382,6 +382,11 @@ class Operation(object):
     """
 
     regexp = re.compile(r'{(?P<pname>[a-z]+)}')
+    # the crud_registry allows derived classes to register with Operation
+    # as to their support for specific crud verbs (create, read, etc).
+    # keys are one of the verbs, all lower case, and values are a class object
+    # that is derived from SyntheticOperation
+    crud_registry: Dict[str, type] = {}
 
     def __init__(self, verb: str, op_path: str, op_id: str, description: str,
                  gvk_dict: dict):
@@ -421,6 +426,13 @@ class Operation(object):
         url_params.sort()
         for pname in url_params:
             self.add_parameter(pname, "str", "part of the URL path", required=True)
+        # determine the method name for this operation
+        version = get_path_version(self.op_path)
+        if version is None:
+            version = ""
+        else:
+            version = version.replace('v', 'V')
+        self.meth_name = self.op_id.replace(version, '') if self.op_id else None
 
     def depends_on(self) -> list:
         deps = [p.ptype for p in self.parameters if isinstance(p.ptype, ClassDescriptor)]
@@ -542,22 +554,37 @@ class Operation(object):
         :return: str  which is the name of the CRUD verb to use or None if no
             CRUD verb maps to this operation
         """
-        if self.op_id.startswith('create'):
+        if self.op_id.startswith('create') and self.op_id != 'create':
             return 'create'
-        if self.op_id.startswith('read'):
+        if (self.op_id.startswith('read') and self.op_id != 'read' and
+            not self.op_id.endswith('Log')):
             return 'read'
-        if self.op_id.startswith('patch'):
+        if self.op_id.startswith('patch') and self.op_id != 'patch':
             return 'update'
         if (self.op_id.startswith('delete') and
-                not self.op_id.startswith('deleteCollection')):
+                not self.op_id.startswith('deleteCollection') and
+                self.op_id != 'delete'):
             return 'delete'
         return None
 
-    def as_crud_python_method(self) -> List[str]:
+    def as_crud_python_method(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
         crud_lines = []
+        # Scale is full of read methods! skip it entirely
+        if cd and cd.short_name == 'Scale':
+            return crud_lines
         crud_name = self.crud_counterpart_name()
-        if crud_name:
-            pass
+        if crud_name is None:
+            return crud_lines
+        crud_class = self.crud_registry.get(crud_name)
+        if crud_class is None:
+            return crud_lines
+        assert issubclass(crud_class, SyntheticOperation)
+        if crud_class.op_name in cd.crud_ops_created:
+            return crud_lines
+        cd.crud_ops_created.add(crud_class.op_name)
+        crud_lines.extend(["", ""])
+        crud_op: Operation = crud_class(self)
+        crud_lines.extend(crud_op.as_python_method(cd))
         return crud_lines
 
     def get_meth_decorators(self) -> List[str]:
@@ -567,21 +594,12 @@ class Operation(object):
         def_parts = []
         if parameters is None:
             parameters = self.parameters
-        version = get_path_version(self.op_path)
-        if version is None:
-            version = ""
-        else:
-            version = version.replace('v', 'V')
-        meth_name = self.op_id.replace(version, '')
-        def_parts.append(f"def {meth_name}(")
+        def_parts.append(f"def {self.meth_name}(")
         required = [p for p in parameters if p.required]
         optional = [p for p in parameters if not p.required]
         params = []
         if not self.is_staticmethod:
             params.append('self')
-        # else:
-        #     if self.self_param:
-        #         optional.append(self.self_param)
         params.extend([p.as_python()
                        for p in chain(required, optional)])
         # here, we add any standard parameter(s) that all should have:
@@ -642,78 +660,134 @@ class Operation(object):
         if ds:
             lines.extend(ds)
         lines.extend(self.get_meth_body(parameters=parameters, cd=cd))
+        lines.extend(self.as_crud_python_method(cd))
         return lines
 
-    def old_as_python_method(self, cd=None) -> List[str]:
-        written_methods.add((self.version, self.op_id))
-        if self.op_id is None:
-            return []
-        if cd is not None:
-            assert isinstance(cd, ClassDescriptor)
-        version = get_path_version(self.op_path)
-        if version is None:
-            version = ""
-        else:
-            version = version.replace('v', 'V')
-        stmt_name = self.op_id.replace(version, '')
-        parts = []
+
+def register_crud_class(verb: str):
+    def rcc(cls):
+        Operation.crud_registry[verb] = cls
+        return cls
+    return rcc
+
+
+class SyntheticOperation(Operation):
+    op_name = 'noop'  # must be overridden by derived classes for the real op name
+
+    def __init__(self, base_op: Operation):
+        gvk = {'group': base_op.group,
+               'version': base_op.gvk_version,
+               'kind': base_op.kind}
+        super(SyntheticOperation, self).__init__(base_op.verb, base_op.op_path,
+                                                 self.op_name,
+                                                 base_op.description,
+                                                 gvk)
+        for p in base_op.parameters:
+            self.add_parameter(p.name, p.ptype, p.description, p.required)
+        for r in base_op.returns.values():
+            assert isinstance(r, OpResponse)
+            self.add_return(str(r.code), r.ref, r.description)
+        self.base_op = base_op
+
+
+@register_crud_class('read')
+class ReadOperation(SyntheticOperation):
+    """
+    A synthetic operation; simple read() method for a more complex class
+    """
+    op_name = 'read'
+
+    def get_meth_decorators(self) -> List[str]:
+        return []
+
+    def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
+        return f'{self.op_name} = {self.base_op.meth_name}'
+
+    def prep_params(self) -> List['OpParameter']:
+        return []
+
+    def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
+        return []
+
+    def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
+                      cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        return []
+
+
+_create_body_with_namespace = \
+"""
+    if not self.metadata:
+        raise RuntimeError(
+            "Your resource must contain metadata to use '{classname}.create()'")
+    if namespace is not None:
+        effective_namespace = namespace
+    elif not self.metadata.namespace:
+        raise RuntimeError("There must be a namespace supplied in either "
+                           "the arguments to create() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_namespace = self.metadata.namespace
+    return self.{methname}({paramlist})
+"""
+
+_create_body_no_namespace = \
+"""
+    if not self.metadata:
+        raise RuntimeError(
+            "Your resource must contain metadata to use '{classname}.create()'")
+    return self.{methname}({paramlist})
+"""
+
+
+@register_crud_class('create')
+class CreateOperation(SyntheticOperation):
+    """
+    A synthetic operation; making a synonym named 'create()' for whatever the
+    actual create method is
+    """
+    op_name = 'create'
+
+    def get_meth_decorators(self) -> List[str]:
+        return []
+
+    def prep_params(self) -> List['OpParameter']:
         params = []
-        parts.append(f"def {stmt_name}(")
-        required = [p for p in self.parameters if p.required]
-        optional = [p for p in self.parameters if not p.required]
+        for p in self.parameters:
+            if p.name == 'namespace':
+                p.required = False
+                p.description = f"{p.description}. NOTE: if you leave out the " \
+                                f"namespace from the arguments you *must* have " \
+                                f"filled in the namespace attribute in the metadata " \
+                                f"for the resource!"
+            params.append(p)
+        return params
 
-        if not self.is_staticmethod:
-            params.append('self')
-        else:
-            if self.self_param:
-                optional.append(self.self_param)
-        params.extend([p.as_python()
-                       for p in chain(required, optional)])
-        # here, we add any standard parameter(s) that all should have:
-        params.append('client: ApiClient = None')
-        params.append('async_req: bool = False')
-        # end standards
-        parts.append(", ".join(params))
-        parts.append(") -> Response:")
-
-        docstring_parts = self.make_docstring(parameters=self.parameters)
-        docstring = '\n'.join(docstring_parts)
-        defline = "".join(parts)
-        # do the work to create the method body; we need a list of assignment
-        # statements that captures the data in each parameter that came into
-        # the method to be passed to the k8s method. These are to be assigned
-        # to keys in the 'all_args' dict
-        assignment_list = []
-        body_seen = False
+    def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
+                      cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        required = [p for p in parameters if p.required]
+        optional = [p for p in parameters if not p.required]
+        param_assignments = []
+        seen_namespace = False
         for p in chain(required, optional):
             assert isinstance(p, OpParameter)
-            if not body_seen and p.name in ('v1_delete_options', 'body'):
-                body_seen = True
-            if p.name in python_reserved:
-                assignment_list.append(f"all_args['_{p.name}'] = {p.name}_")
+            if p.name == "namespace":
+                seen_namespace = True
+                local_name = 'effective_namespace'
+                param_name = camel_to_pep8(p.name)
             else:
-                assignment_list.append(f"all_args['{camel_to_pep8(p.name)}'] = "
-                                       f"{camel_to_pep8(p.name)}")
-        if (cd and cd.short_name == "DeleteOptions"
-                and _release_in_process == 'rel_1_15' and
-                self.k8s_access_tuple[3].startswith(self.del_collection_prefix)):
-            body_key = 'v1_delete_options'
-        else:
-            body_key = 'body'
-        object_response_codes = str(tuple(self.response_codes_returning_object()))
-        body_lines = self._get_method_body(self.k8s_access_tuple[2],
-                                           self.k8s_access_tuple[3],
-                                           assignment_list,
-                                           object_response_codes,
-                                           body_key=body_key,
-                                           use_body=body_seen)
-        body = [f"    {bl}" for bl in body_lines]
-        final = []
-        if self.is_staticmethod:
-            final.append("@staticmethod")
-        final.extend([defline, docstring] if docstring else [defline])
-        final.extend(body)
-        return final
+                local_name = param_name = camel_to_pep8(p.name)
+            param_assignments.append(f"{param_name}={local_name}")
+        param_assignments.append("client=client")
+        param_assignments.append("async_req=async_req")
+        body_str = (_create_body_with_namespace
+                    if seen_namespace else
+                    _create_body_no_namespace)
+        fdict = {"classname": cd.short_name if cd else 'UNKNOWN',
+                 "methname": self.base_op.meth_name,
+                 'paramlist': ", ".join(param_assignments)}
+        body = body_str.format(**fdict)
+        return body.split("\n")
+
 
 # maybe later...
 # class ListCreateOperation(Operation):
@@ -747,18 +821,6 @@ class Operation(object):
 #         self._op_id = name
 
 
-class ObjectOperations(object):
-    """
-    This object captures all of the operations that a doc is input for
-    """
-    def __init__(self, full_k8s_name: str):
-        self.full_k8s_name = full_k8s_name
-        self.operations: Dict[str, Operation] = {}
-
-    def add_operation(self, op_id: str, operation: Operation):
-        self.operations[op_id] = operation
-
-
 class ClassDescriptor(object):
     def __init__(self, key, d):
         self.full_name = full_swagger_name(key)
@@ -778,6 +840,11 @@ class ClassDescriptor(object):
         self.required_props = []
         self.optional_props = []
         self.update(d)
+        # crud_ops_created is a set of SytheticOperation.op_name values
+        # for operations already created on this object. the contents
+        # of this set is managed by the Operation instances so it can
+        # see when an operation has already be generated for this object
+        self.crud_ops_created = set()
         # OK, now a hack for Kubernetes:
         # Although K8s defines top-level objects that are collections
         # of other objects, and there are API calls that fetch these collection

@@ -138,6 +138,33 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+        r"""
+        create a SelfSubjectRulesReview
+
+        operationID: create
+        path: /apis/authorization.k8s.io/v1/selfsubjectrulesreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   SelfSubjectRulesReview    OK
+          201   SelfSubjectRulesReview    Created
+          202   SelfSubjectRulesReview    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'SelfSubjectRulesReview.create()'"
+            )
+        return self.createSelfSubjectRulesReview(client=client, async_req=async_req)
+
 
 @dataclass
 class ObjectMeta(HikaruBase):
@@ -609,6 +636,68 @@ class StatefulSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a StatefulSet
+
+        operationID: create
+        path: /apis/apps/v1/namespaces/{namespace}/statefulsets
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   StatefulSet    OK
+          201   StatefulSet    Created
+          202   StatefulSet    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'StatefulSet.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "StatefulSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedStatefulSet(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedStatefulSet(
         name: str,
@@ -745,6 +834,8 @@ class StatefulSet(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedStatefulSet
 
     def patchNamespacedStatefulSet(
         self,
@@ -1650,6 +1741,68 @@ class Pod(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Pod
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/pods
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Pod    OK
+          201   Pod    Created
+          202   Pod    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Pod.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Pod's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedPod(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedPod(
         name: str,
@@ -1786,6 +1939,8 @@ class Pod(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedPod
 
     def patchNamespacedPod(
         self,
@@ -3804,6 +3959,53 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ValidatingWebhookConfiguration
+
+        operationID: create
+        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ValidatingWebhookConfiguration    OK
+          201   ValidatingWebhookConfiguration    Created
+          202   ValidatingWebhookConfiguration    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ValidatingWebhookConfiguration.create()'"
+            )
+        return self.createValidatingWebhookConfiguration(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteValidatingWebhookConfiguration(
         name: str,
@@ -3938,6 +4140,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readValidatingWebhookConfiguration
 
     def patchValidatingWebhookConfiguration(
         self,
@@ -4471,6 +4675,53 @@ class StorageClass(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a StorageClass
+
+        operationID: create
+        path: /apis/storage.k8s.io/v1/storageclasses
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   StorageClass    OK
+          201   StorageClass    Created
+          202   StorageClass    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'StorageClass.create()'"
+            )
+        return self.createStorageClass(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteStorageClass(
         name: str,
@@ -4601,6 +4852,8 @@ class StorageClass(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readStorageClass
 
     def patchStorageClass(
         self,
@@ -5011,6 +5264,68 @@ class Secret(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Secret
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/secrets
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Secret    OK
+          201   Secret    Created
+          202   Secret    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Secret.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Secret's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedSecret(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedSecret(
         name: str,
@@ -5147,6 +5462,8 @@ class Secret(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedSecret
 
     def patchNamespacedSecret(
         self,
@@ -5922,6 +6239,68 @@ class ReplicationController(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ReplicationController
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/replicationcontrollers
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ReplicationController    OK
+          201   ReplicationController    Created
+          202   ReplicationController    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ReplicationController.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ReplicationController's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedReplicationController(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedReplicationController(
         name: str,
@@ -6062,6 +6441,8 @@ class ReplicationController(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedReplicationController
 
     def patchNamespacedReplicationController(
         self,
@@ -7016,6 +7397,53 @@ class ClusterRole(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ClusterRole
+
+        operationID: create
+        path: /apis/rbac.authorization.k8s.io/v1/clusterroles
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ClusterRole    OK
+          201   ClusterRole    Created
+          202   ClusterRole    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ClusterRole.create()'"
+            )
+        return self.createClusterRole(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteClusterRole(
         name: str,
@@ -7137,6 +7565,8 @@ class ClusterRole(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readClusterRole
 
     def patchClusterRole(
         self,
@@ -7559,6 +7989,8 @@ class ComponentStatus(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readComponentStatus
 
 
 @dataclass
@@ -8195,6 +8627,68 @@ class RoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a RoleBinding
+
+        operationID: create
+        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   RoleBinding    OK
+          201   RoleBinding    Created
+          202   RoleBinding    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'RoleBinding.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedRoleBinding(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedRoleBinding(
         name: str,
@@ -8322,6 +8816,8 @@ class RoleBinding(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedRoleBinding
 
     def patchNamespacedRoleBinding(
         self,
@@ -9288,6 +9784,68 @@ class ResourceQuota(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ResourceQuota
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/resourcequotas
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ResourceQuota    OK
+          201   ResourceQuota    Created
+          202   ResourceQuota    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ResourceQuota.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ResourceQuota's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedResourceQuota(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedResourceQuota(
         name: str,
@@ -9424,6 +9982,8 @@ class ResourceQuota(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedResourceQuota
 
     def patchNamespacedResourceQuota(
         self,
@@ -9913,6 +10473,68 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a PersistentVolumeClaim
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/persistentvolumeclaims
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PersistentVolumeClaim    OK
+          201   PersistentVolumeClaim    Created
+          202   PersistentVolumeClaim    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PersistentVolumeClaim.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "PersistentVolumeClaim's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedPersistentVolumeClaim(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedPersistentVolumeClaim(
         name: str,
@@ -10053,6 +10675,8 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedPersistentVolumeClaim
 
     def patchNamespacedPersistentVolumeClaim(
         self,
@@ -10564,6 +11188,53 @@ class APIService(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create an APIService
+
+        operationID: create
+        path: /apis/apiregistration.k8s.io/v1/apiservices
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   APIService    OK
+          201   APIService    Created
+          202   APIService    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'APIService.create()'"
+            )
+        return self.createAPIService(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteAPIService(
         name: str,
@@ -10694,6 +11365,8 @@ class APIService(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readAPIService
 
     def patchAPIService(
         self,
@@ -11632,6 +12305,68 @@ class ConfigMap(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ConfigMap
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/configmaps
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ConfigMap    OK
+          201   ConfigMap    Created
+          202   ConfigMap    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ConfigMap.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ConfigMap's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedConfigMap(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedConfigMap(
         name: str,
@@ -11768,6 +12503,8 @@ class ConfigMap(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedConfigMap
 
     def patchNamespacedConfigMap(
         self,
@@ -13156,6 +13893,53 @@ class ClusterRoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ClusterRoleBinding
+
+        operationID: create
+        path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ClusterRoleBinding    OK
+          201   ClusterRoleBinding    Created
+          202   ClusterRoleBinding    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ClusterRoleBinding.create()'"
+            )
+        return self.createClusterRoleBinding(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteClusterRoleBinding(
         name: str,
@@ -13277,6 +14061,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readClusterRoleBinding
 
     def patchClusterRoleBinding(
         self,
@@ -13515,6 +14301,54 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
+
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a LocalSubjectAccessReview
+
+        operationID: create
+        path: /apis/authorization.k8s.io/v1/namespaces/{namespace}/localsubjectaccessreviews
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   LocalSubjectAccessReview    OK
+          201   LocalSubjectAccessReview    Created
+          202   LocalSubjectAccessReview    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'LocalSubjectAccessReview.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "LocalSubjectAccessReview's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedLocalSubjectAccessReview(
+            namespace=effective_namespace, client=client, async_req=async_req
+        )
 
 
 @dataclass
@@ -13806,6 +14640,53 @@ class PersistentVolume(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a PersistentVolume
+
+        operationID: create
+        path: /api/v1/persistentvolumes
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PersistentVolume    OK
+          201   PersistentVolume    Created
+          202   PersistentVolume    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PersistentVolume.create()'"
+            )
+        return self.createPersistentVolume(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deletePersistentVolume(
         name: str,
@@ -13936,6 +14817,8 @@ class PersistentVolume(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readPersistentVolume
 
     def patchPersistentVolume(
         self,
@@ -14631,6 +15514,68 @@ class Lease(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Lease
+
+        operationID: create
+        path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Lease    OK
+          201   Lease    Created
+          202   Lease    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Lease.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Lease's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedLease(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedLease(
         name: str,
@@ -14767,6 +15712,8 @@ class Lease(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedLease
 
     def patchNamespacedLease(
         self,
@@ -16174,6 +17121,53 @@ class Namespace(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Namespace
+
+        operationID: create
+        path: /api/v1/namespaces
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Namespace    OK
+          201   Namespace    Created
+          202   Namespace    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Namespace.create()'"
+            )
+        return self.createNamespace(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespace(
         name: str,
@@ -16304,6 +17298,8 @@ class Namespace(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespace
 
     def patchNamespace(
         self,
@@ -17081,6 +18077,68 @@ class Endpoints(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create Endpoints
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/endpoints
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Endpoints    OK
+          201   Endpoints    Created
+          202   Endpoints    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Endpoints.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Endpoints's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedEndpoints(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedEndpoints(
         name: str,
@@ -17217,6 +18275,8 @@ class Endpoints(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedEndpoints
 
     def patchNamespacedEndpoints(
         self,
@@ -18266,6 +19326,68 @@ class LimitRange(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a LimitRange
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/limitranges
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   LimitRange    OK
+          201   LimitRange    Created
+          202   LimitRange    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'LimitRange.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "LimitRange's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedLimitRange(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedLimitRange(
         name: str,
@@ -18402,6 +19524,8 @@ class LimitRange(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedLimitRange
 
     def patchNamespacedLimitRange(
         self,
@@ -19090,6 +20214,68 @@ class ReplicaSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ReplicaSet
+
+        operationID: create
+        path: /apis/apps/v1/namespaces/{namespace}/replicasets
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ReplicaSet    OK
+          201   ReplicaSet    Created
+          202   ReplicaSet    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ReplicaSet.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ReplicaSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedReplicaSet(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedReplicaSet(
         name: str,
@@ -19226,6 +20412,8 @@ class ReplicaSet(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedReplicaSet
 
     def patchNamespacedReplicaSet(
         self,
@@ -19995,6 +21183,68 @@ class Service(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Service
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/services
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Service    OK
+          201   Service    Created
+          202   Service    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Service.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Service's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedService(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedService(
         name: str,
@@ -20131,6 +21381,8 @@ class Service(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedService
 
     def patchNamespacedService(
         self,
@@ -21812,6 +23064,53 @@ class CustomResourceDefinition(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a CustomResourceDefinition
+
+        operationID: create
+        path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CustomResourceDefinition    OK
+          201   CustomResourceDefinition    Created
+          202   CustomResourceDefinition    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'CustomResourceDefinition.create()'"
+            )
+        return self.createCustomResourceDefinition(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteCustomResourceDefinition(
         name: str,
@@ -21942,6 +23241,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readCustomResourceDefinition
 
     def patchCustomResourceDefinition(
         self,
@@ -22627,6 +23928,53 @@ class VolumeAttachment(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a VolumeAttachment
+
+        operationID: create
+        path: /apis/storage.k8s.io/v1/volumeattachments
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   VolumeAttachment    OK
+          201   VolumeAttachment    Created
+          202   VolumeAttachment    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'VolumeAttachment.create()'"
+            )
+        return self.createVolumeAttachment(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteVolumeAttachment(
         name: str,
@@ -22757,6 +24105,8 @@ class VolumeAttachment(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readVolumeAttachment
 
     def patchVolumeAttachment(
         self,
@@ -23602,6 +24952,68 @@ class Deployment(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Deployment
+
+        operationID: create
+        path: /apis/apps/v1/namespaces/{namespace}/deployments
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Deployment    OK
+          201   Deployment    Created
+          202   Deployment    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Deployment.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Deployment's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedDeployment(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedDeployment(
         name: str,
@@ -23738,6 +25150,8 @@ class Deployment(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedDeployment
 
     def patchNamespacedDeployment(
         self,
@@ -24052,6 +25466,33 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
+
+    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+        r"""
+        create a SelfSubjectAccessReview
+
+        operationID: create
+        path: /apis/authorization.k8s.io/v1/selfsubjectaccessreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   SelfSubjectAccessReview    OK
+          201   SelfSubjectAccessReview    Created
+          202   SelfSubjectAccessReview    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'SelfSubjectAccessReview.create()'"
+            )
+        return self.createSelfSubjectAccessReview(client=client, async_req=async_req)
 
 
 @dataclass
@@ -24396,6 +25837,68 @@ class DaemonSet(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a DaemonSet
+
+        operationID: create
+        path: /apis/apps/v1/namespaces/{namespace}/daemonsets
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   DaemonSet    OK
+          201   DaemonSet    Created
+          202   DaemonSet    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'DaemonSet.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "DaemonSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedDaemonSet(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedDaemonSet(
         name: str,
@@ -24532,6 +26035,8 @@ class DaemonSet(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedDaemonSet
 
     def patchNamespacedDaemonSet(
         self,
@@ -25148,6 +26653,68 @@ class Event(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create an Event
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/events
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Event    OK
+          201   Event    Created
+          202   Event    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Event.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Event's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedEvent(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedEvent(
         name: str,
@@ -25284,6 +26851,8 @@ class Event(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedEvent
 
     def patchNamespacedEvent(
         self,
@@ -26537,6 +28106,56 @@ class TokenRequest(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        name: str,
+        namespace: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create token of a ServiceAccount
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}/token
+
+        :param name: part of the URL path
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   TokenRequest    OK
+          201   TokenRequest    Created
+          202   TokenRequest    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'TokenRequest.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "TokenRequest's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedServiceAccountToken(
+            name=name, namespace=effective_namespace, client=client, async_req=async_req
+        )
+
 
 @dataclass
 class TokenRequestStatus(HikaruBase):
@@ -26993,6 +28612,68 @@ class ControllerRevision(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ControllerRevision
+
+        operationID: create
+        path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ControllerRevision    OK
+          201   ControllerRevision    Created
+          202   ControllerRevision    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ControllerRevision.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ControllerRevision's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedControllerRevision(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedControllerRevision(
         name: str,
@@ -27131,6 +28812,8 @@ class ControllerRevision(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedControllerRevision
 
     def patchNamespacedControllerRevision(
         self,
@@ -28059,6 +29742,53 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a MutatingWebhookConfiguration
+
+        operationID: create
+        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   MutatingWebhookConfiguration    OK
+          201   MutatingWebhookConfiguration    Created
+          202   MutatingWebhookConfiguration    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'MutatingWebhookConfiguration.create()'"
+            )
+        return self.createMutatingWebhookConfiguration(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteMutatingWebhookConfiguration(
         name: str,
@@ -28191,6 +29921,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readMutatingWebhookConfiguration
 
     def patchMutatingWebhookConfiguration(
         self,
@@ -28832,6 +30564,68 @@ class Job(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Job
+
+        operationID: create
+        path: /apis/batch/v1/namespaces/{namespace}/jobs
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Job    OK
+          201   Job    Created
+          202   Job    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Job.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Job's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedJob(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedJob(
         name: str,
@@ -28968,6 +30762,8 @@ class Job(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedJob
 
     def patchNamespacedJob(
         self,
@@ -29425,6 +31221,68 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a HorizontalPodAutoscaler
+
+        operationID: create
+        path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   HorizontalPodAutoscaler    OK
+          201   HorizontalPodAutoscaler    Created
+          202   HorizontalPodAutoscaler    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'HorizontalPodAutoscaler.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "HorizontalPodAutoscaler's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedHorizontalPodAutoscaler(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedHorizontalPodAutoscaler(
         name: str,
@@ -29565,6 +31423,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedHorizontalPodAutoscaler
 
     def patchNamespacedHorizontalPodAutoscaler(
         self,
@@ -30152,6 +32012,68 @@ class Role(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Role
+
+        operationID: create
+        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Role    OK
+          201   Role    Created
+          202   Role    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Role.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedRole(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedRole(
         name: str,
@@ -30279,6 +32201,8 @@ class Role(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedRole
 
     def patchNamespacedRole(
         self,
@@ -31538,6 +33462,68 @@ class ServiceAccount(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a ServiceAccount
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/serviceaccounts
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ServiceAccount    OK
+          201   ServiceAccount    Created
+          202   ServiceAccount    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ServiceAccount.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "ServiceAccount's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedServiceAccount(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedServiceAccount(
         name: str,
@@ -31674,6 +33660,8 @@ class ServiceAccount(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedServiceAccount
 
     def patchNamespacedServiceAccount(
         self,
@@ -32409,6 +34397,53 @@ class Node(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Node
+
+        operationID: create
+        path: /api/v1/nodes
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Node    OK
+          201   Node    Created
+          202   Node    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Node.create()'"
+            )
+        return self.createNode(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNode(
         name: str,
@@ -32539,6 +34574,8 @@ class Node(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNode
 
     def patchNode(
         self,
@@ -33372,6 +35409,33 @@ class TokenReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+        r"""
+        create a TokenReview
+
+        operationID: create
+        path: /apis/authentication.k8s.io/v1/tokenreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   TokenReview    OK
+          201   TokenReview    Created
+          202   TokenReview    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'TokenReview.create()'"
+            )
+        return self.createTokenReview(client=client, async_req=async_req)
+
 
 @dataclass
 class TokenReviewSpec(HikaruBase):
@@ -33635,6 +35699,53 @@ class PriorityClass(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a PriorityClass
+
+        operationID: create
+        path: /apis/scheduling.k8s.io/v1/priorityclasses
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PriorityClass    OK
+          201   PriorityClass    Created
+          202   PriorityClass    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PriorityClass.create()'"
+            )
+        return self.createPriorityClass(
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deletePriorityClass(
         name: str,
@@ -33765,6 +35876,8 @@ class PriorityClass(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readPriorityClass
 
     def patchPriorityClass(
         self,
@@ -34128,6 +36241,68 @@ class NetworkPolicy(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a NetworkPolicy
+
+        operationID: create
+        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   NetworkPolicy    OK
+          201   NetworkPolicy    Created
+          202   NetworkPolicy    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'NetworkPolicy.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "NetworkPolicy's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedNetworkPolicy(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedNetworkPolicy(
         name: str,
@@ -34264,6 +36439,8 @@ class NetworkPolicy(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedNetworkPolicy
 
     def patchNamespacedNetworkPolicy(
         self,
@@ -34634,6 +36811,68 @@ class PodTemplate(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a PodTemplate
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/podtemplates
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PodTemplate    OK
+          201   PodTemplate    Created
+          202   PodTemplate    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PodTemplate.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "PodTemplate's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedPodTemplate(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+            async_req=async_req,
+        )
+
     @staticmethod
     def deleteNamespacedPodTemplate(
         name: str,
@@ -34770,6 +37009,8 @@ class PodTemplate(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    read = readNamespacedPodTemplate
 
     def patchNamespacedPodTemplate(
         self,
@@ -35568,6 +37809,54 @@ class Binding(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
+
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        create a Binding
+
+        operationID: create
+        path: /api/v1/namespaces/{namespace}/bindings
+
+        :param namespace: part of the URL path. NOTE: if you leave out the namespace
+            from the arguments you *must* have filled in the namespace attribute
+            in the metadata for the resource!
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Binding    OK
+          201   Binding    Created
+          202   Binding    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Binding.create()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Binding's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.createNamespacedBinding(
+            namespace=effective_namespace, client=client, async_req=async_req
+        )
 
     def createNamespacedPodBinding(
         self,
@@ -37214,6 +39503,33 @@ class SubjectAccessReview(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
+
+    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+        r"""
+        create a SubjectAccessReview
+
+        operationID: create
+        path: /apis/authorization.k8s.io/v1/subjectaccessreviews
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   SubjectAccessReview    OK
+          201   SubjectAccessReview    Created
+          202   SubjectAccessReview    Accepted
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'SubjectAccessReview.create()'"
+            )
+        return self.createSubjectAccessReview(client=client, async_req=async_req)
 
 
 @dataclass
