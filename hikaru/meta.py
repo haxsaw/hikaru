@@ -778,7 +778,7 @@ class HikaruBase(object):
             of what was previously there. Always parse with an empty instance
             of the object.
 
-        :raises TypeError: in these if the YAML is missing a required property.
+        :raises TypeError: in the case if the YAML is missing a required property.
         """
 
         # OK, there are some cases where embedded objects are actually dicts
@@ -820,9 +820,10 @@ class HikaruBase(object):
             if (type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                          bool, float))
                     or initial_type == object):
-                # we convert timestamps to strings - this is a temporary workaround to fix
-                # the fact that timestamps are serialized by asdict() in a format that the
-                # kubernetes apiserver doesn't like and therefore API calls fail
+                # FIXME: we convert timestamps to strings - this is a workaround to fix
+                # the fact that apparently the YAML processor gives us datetimes when it
+                # sees what it decides is a timestamp, and the kubernetes Python client
+                # appears to output such objects in the wrong format.
                 if type(val) is datetime.datetime and val.tzinfo is None:
                     val = val.isoformat() + "Z"
                 setattr(self, f.name, val)
