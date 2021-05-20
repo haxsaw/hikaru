@@ -1,0 +1,83 @@
+What to do about replace vs patch?  ANSWERED
+==================================
+Some objects have both a patch and replace method. Which should we prefer
+for the 'U' in crud? We need to investigate what the implications are of
+using each.
+
+ANSWER:
+Patch should be used for 'update' in crud, and 'replace' is kept as-is, or
+perhaps it can be set up to get a simple 'replace' method, so we have
+crud-p.
+
+What about turning delete methods to more intelligent instance meths?  ANSWERED
+===========================================================================
+ANSWER:
+Delete should probably really be an instance method.
+
+How to the crud methods get written?
+====================================
+I'm beginning to thing the method-generation method for Operation
+should recognize when the method being written should be a crud op; that
+puts all the knowledge into that object. The as_python_method() method
+already returns a list of strings; it could include the content for the
+crud method if appropriate, and nothing else will be the wiser. In some
+cases we'll be able to reuse the doc strings, but we'll have to skip
+some params when we do some of the methods (that need name/namespace).
+
+ANSWER:
+The current Operation.as_python_method() method returns a list of strings to be
+rendered into target module. We should add the new crud method generation
+to the end of this method and it will extend the list with new code if appropriate.
+
+Should we include an optional namespace arg? ANSWERED
+============================================
+ANSWER:
+Yes. Namespace is optional in the metadata and can be be specified when
+an object is created. That means that it might not be in the object that
+is self when invoking things like 'delete()'. But we'll have to have a
+strict policy that checks that somewhere there's a namespace so that
+the underlyng calls will work (and if both are there then both must
+agree).
+
+What to do about deleteCollection*?
+===================================
+This might be more straightforward; it may be that we only want the method
+that deletes a single object for crud operations, and people should go to
+the specific method for deleting collections. Does raise the question as
+to how that actually works, since it appears to be a method on a singleton
+object class and not on the associated List class, where it might make
+more sense. It does appear that on at least some of these methods, there's
+actually not a resource object involved-- for example, it appears that
+LabelSelectors are used to perhaps select which storage classes to delete,
+and a StorageClass is in neither the input nor output (but ol' DeleteOptions
+is). If that's the case, then leaving this to be a static method on the
+class object is probably fine.
+
+What about the watch and exec methods?
+======================================
+We need to learn more about these to figure out what to do here.
+
+Where do the crud methods go?
+=============================
+Do we just add crud instance methods that call either the associated
+instance or staticmethod? That seems a way to create more crowded namespaces
+on classes. Or should these get sequestered away into a 'crud' property
+that has the methods? We can't just use a single one; not every read/update/
+etc have the same args, an so we'd have to write docstrings out for each
+independently. But this approach does yield a tidier namespace on the
+object. It just isn't clear that this really yields that much benefit.
+
+Should all crud methods actually be written as instance methods?
+================================================================
+In some ways, it might make sense to keep some of the crud methods as
+staticmethods on the class, most notably read(). It seems kind of odd
+to have an instance that may only have name/namespace filled in and use
+it to read another fully-filled instance. It might make more sense to
+keep read as a static method with a couple of args that results in the
+new object.
+
+Another option for read would be a 'read_into()' method. This would
+indeed be an instance method that would merge in all of the data from
+the read object into the object against which read() was called. Maybe
+the right thing here is to support 'read()' as a static method and
+'read_into()' as an instance method.
