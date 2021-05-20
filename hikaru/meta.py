@@ -27,6 +27,7 @@ class provides all of the machinery for working with the both Python and YAML:
 it can do the YAML parsing, the Python generation, and the Python runtime
 object management.
 """
+import datetime
 from ast import literal_eval
 from enum import Enum
 from inspect import getmodule
@@ -777,7 +778,7 @@ class HikaruBase(object):
             of what was previously there. Always parse with an empty instance
             of the object.
 
-        :raises TypeError: in these if the YAML is missing a required property.
+        :raises TypeError: in the case if the YAML is missing a required property.
         """
 
         # OK, there are some cases where embedded objects are actually dicts
@@ -819,7 +820,12 @@ class HikaruBase(object):
             if (type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                          bool, float))
                     or initial_type == object):
-                # take as is
+                # FIXME: we convert timestamps to strings - this is a workaround to fix
+                # the fact that apparently the YAML processor gives us datetimes when it
+                # sees what it decides is a timestamp, and the kubernetes Python client
+                # appears to output such objects in the wrong format.
+                if type(val) is datetime.datetime and val.tzinfo is None:
+                    val = val.isoformat() + "Z"
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
                 obj = initial_type.get_empty_instance()
