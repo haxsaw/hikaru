@@ -10212,7 +10212,7 @@ class CronJob(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param continue_: The continue option should be set when retrieving more
             results from the server. Since this value is server defined, clients
             may only use the continue value from a previous query result with
@@ -10324,10 +10324,6 @@ class CronJob(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -10347,7 +10343,7 @@ class CronJob(HikaruDocumentBase):
         operationID: createNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10405,12 +10401,12 @@ class CronJob(HikaruDocumentBase):
         r"""
         create a CronJob
 
-        operationID: create
+        operationID: createNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
 
-        :param namespace: part of the URL path. NOTE: if you leave out the namespace
-            from the arguments you *must* have filled in the namespace attribute
-            in the metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10474,8 +10470,8 @@ class CronJob(HikaruDocumentBase):
         operationID: deleteNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10528,14 +10524,109 @@ class CronJob(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a CronJob
+
+        operationID: deleteNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'CronJob.delete()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "CronJob's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "CronJob's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteNamespacedCronJob(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readNamespacedCronJob(
@@ -10553,8 +10644,8 @@ class CronJob(HikaruDocumentBase):
         operationID: readNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -10611,8 +10702,8 @@ class CronJob(HikaruDocumentBase):
         operationID: patchNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10665,6 +10756,75 @@ class CronJob(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified CronJob
+
+        operationID: patchNamespacedCronJob
+        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CronJob    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'CronJob.update()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "CronJob's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.patchNamespacedCronJob(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceNamespacedCronJob(
         self,
         name: str,
@@ -10680,8 +10840,8 @@ class CronJob(HikaruDocumentBase):
         operationID: replaceNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10743,8 +10903,8 @@ class CronJob(HikaruDocumentBase):
         operationID: replaceNamespacedCronJobStatus
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}/status
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -10963,7 +11123,7 @@ class CronJobList(HikaruDocumentBase):
         operationID: listNamespacedCronJob
         path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
             type "BOOKMARK". Servers that do not implement bookmarks may ignore
             this flag and bookmarks are sent at the server's discretion. Clients

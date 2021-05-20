@@ -97,6 +97,24 @@ def test01():
     assert res.obj and isinstance(res.obj, Status)
 
 
+@pytest.mark.xfail
+def test01a():
+    """
+    Test patching a Deployment but do so with returned object; issue #10 in github
+    """
+    name = 'test01adep'
+    path = base_path / 'apps-deployment.yaml'
+    d: Deployment = cast(Deployment, load_full_yaml(path=str(path))[0])
+    d.metadata.name = name
+    rd: Deployment = d.createNamespacedDeployment(e2e_namespace).obj
+    rd.spec.replicas += 1
+    try:
+        res = rd.patchNamespacedDeployment(name, e2e_namespace)
+        assert res.obj
+    finally:
+        _ = Deployment.deleteNamespacedDeployment(name, e2e_namespace)
+
+
 def test02():
     """
     Create, read, and delete a Pod

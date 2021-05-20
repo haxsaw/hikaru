@@ -1862,10 +1862,6 @@ class ClusterRole(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -1939,7 +1935,7 @@ class ClusterRole(HikaruDocumentBase):
         r"""
         create a ClusterRole
 
-        operationID: create
+        operationID: createClusterRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles
 
         :param dry_run: When present, indicates that modifications should not be
@@ -1993,7 +1989,7 @@ class ClusterRole(HikaruDocumentBase):
         operationID: deleteClusterRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -2045,14 +2041,93 @@ class ClusterRole(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a ClusterRole
+
+        operationID: deleteClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ClusterRole.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "ClusterRole's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteClusterRole(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readClusterRole(
@@ -2067,7 +2142,7 @@ class ClusterRole(HikaruDocumentBase):
         operationID: readClusterRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
@@ -2115,7 +2190,7 @@ class ClusterRole(HikaruDocumentBase):
         operationID: patchClusterRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -2167,6 +2242,60 @@ class ClusterRole(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified ClusterRole
+
+        operationID: patchClusterRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ClusterRole    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ClusterRole.update()'"
+            )
+        return self.patchClusterRole(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceClusterRole(
         self,
         name: str,
@@ -2181,7 +2310,7 @@ class ClusterRole(HikaruDocumentBase):
         operationID: replaceClusterRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterroles/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -2811,7 +2940,7 @@ class RoleBinding(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param continue_: The continue option should be set when retrieving more
             results from the server. Since this value is server defined, clients
             may only use the continue value from a previous query result with
@@ -2923,10 +3052,6 @@ class RoleBinding(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -2946,7 +3071,7 @@ class RoleBinding(HikaruDocumentBase):
         operationID: createNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -3004,12 +3129,12 @@ class RoleBinding(HikaruDocumentBase):
         r"""
         create a RoleBinding
 
-        operationID: create
+        operationID: createNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings
 
-        :param namespace: part of the URL path. NOTE: if you leave out the namespace
-            from the arguments you *must* have filled in the namespace attribute
-            in the metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -3073,8 +3198,8 @@ class RoleBinding(HikaruDocumentBase):
         operationID: deleteNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -3127,14 +3252,109 @@ class RoleBinding(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a RoleBinding
+
+        operationID: deleteNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'RoleBinding.delete()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteNamespacedRoleBinding(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readNamespacedRoleBinding(
@@ -3150,8 +3370,8 @@ class RoleBinding(HikaruDocumentBase):
         operationID: readNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
@@ -3201,8 +3421,8 @@ class RoleBinding(HikaruDocumentBase):
         operationID: patchNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -3255,6 +3475,75 @@ class RoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified RoleBinding
+
+        operationID: patchNamespacedRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
+
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   RoleBinding    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'RoleBinding.update()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.patchNamespacedRoleBinding(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceNamespacedRoleBinding(
         self,
         name: str,
@@ -3270,8 +3559,8 @@ class RoleBinding(HikaruDocumentBase):
         operationID: replaceNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -3368,7 +3657,7 @@ class RoleBindingList(HikaruDocumentBase):
         operationID: listNamespacedRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/rolebindings
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
             type "BOOKMARK". Servers that do not implement bookmarks may ignore
             this flag and bookmarks are sent at the server's discretion. Clients
@@ -5382,10 +5671,6 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -5459,7 +5744,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         r"""
         create a ClusterRoleBinding
 
-        operationID: create
+        operationID: createClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings
 
         :param dry_run: When present, indicates that modifications should not be
@@ -5513,7 +5798,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: deleteClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -5565,14 +5850,94 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a ClusterRoleBinding
+
+        operationID: deleteClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'ClusterRoleBinding.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "ClusterRoleBinding's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteClusterRoleBinding(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readClusterRoleBinding(
@@ -5587,7 +5952,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: readClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
@@ -5635,7 +6000,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: patchClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -5687,6 +6052,60 @@ class ClusterRoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified ClusterRoleBinding
+
+        operationID: patchClusterRoleBinding
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   ClusterRoleBinding    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'ClusterRoleBinding.update()'"
+            )
+        return self.patchClusterRoleBinding(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceClusterRoleBinding(
         self,
         name: str,
@@ -5701,7 +6120,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         operationID: replaceClusterRoleBinding
         path: /apis/rbac.authorization.k8s.io/v1alpha1/clusterrolebindings/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -8921,10 +9340,6 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -8998,7 +9413,7 @@ class VolumeAttachment(HikaruDocumentBase):
         r"""
         create a VolumeAttachment
 
-        operationID: create
+        operationID: createVolumeAttachment
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments
 
         :param dry_run: When present, indicates that modifications should not be
@@ -9052,7 +9467,7 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: deleteVolumeAttachment
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -9104,14 +9519,94 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a VolumeAttachment
+
+        operationID: deleteVolumeAttachment
+        path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'VolumeAttachment.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "VolumeAttachment's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteVolumeAttachment(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readVolumeAttachment(
@@ -9128,7 +9623,7 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: readVolumeAttachment
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -9183,7 +9678,7 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: patchVolumeAttachment
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -9235,6 +9730,60 @@ class VolumeAttachment(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified VolumeAttachment
+
+        operationID: patchVolumeAttachment
+        path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   VolumeAttachment    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'VolumeAttachment.update()'"
+            )
+        return self.patchVolumeAttachment(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceVolumeAttachment(
         self,
         name: str,
@@ -9249,7 +9798,7 @@ class VolumeAttachment(HikaruDocumentBase):
         operationID: replaceVolumeAttachment
         path: /apis/storage.k8s.io/v1alpha1/volumeattachments/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -11180,7 +11729,7 @@ class Role(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param continue_: The continue option should be set when retrieving more
             results from the server. Since this value is server defined, clients
             may only use the continue value from a previous query result with
@@ -11290,10 +11839,6 @@ class Role(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -11313,7 +11858,7 @@ class Role(HikaruDocumentBase):
         operationID: createNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -11371,12 +11916,12 @@ class Role(HikaruDocumentBase):
         r"""
         create a Role
 
-        operationID: create
+        operationID: createNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles
 
-        :param namespace: part of the URL path. NOTE: if you leave out the namespace
-            from the arguments you *must* have filled in the namespace attribute
-            in the metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -11440,8 +11985,8 @@ class Role(HikaruDocumentBase):
         operationID: deleteNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -11494,14 +12039,109 @@ class Role(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a Role
+
+        operationID: deleteNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Role.delete()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteNamespacedRole(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readNamespacedRole(
@@ -11517,8 +12157,8 @@ class Role(HikaruDocumentBase):
         operationID: readNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
@@ -11568,8 +12208,8 @@ class Role(HikaruDocumentBase):
         operationID: patchNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -11622,6 +12262,75 @@ class Role(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified Role
+
+        operationID: patchNamespacedRole
+        path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
+
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Role    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'Role.update()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.patchNamespacedRole(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceNamespacedRole(
         self,
         name: str,
@@ -11637,8 +12346,8 @@ class Role(HikaruDocumentBase):
         operationID: replaceNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -12009,7 +12718,7 @@ class RoleList(HikaruDocumentBase):
         operationID: listNamespacedRole
         path: /apis/rbac.authorization.k8s.io/v1alpha1/namespaces/{namespace}/roles
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
             type "BOOKMARK". Servers that do not implement bookmarks may ignore
             this flag and bookmarks are sent at the server's discretion. Clients
@@ -12621,10 +13330,6 @@ class PriorityClass(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12698,7 +13403,7 @@ class PriorityClass(HikaruDocumentBase):
         r"""
         create a PriorityClass
 
-        operationID: create
+        operationID: createPriorityClass
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses
 
         :param dry_run: When present, indicates that modifications should not be
@@ -12752,7 +13457,7 @@ class PriorityClass(HikaruDocumentBase):
         operationID: deletePriorityClass
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -12804,14 +13509,93 @@ class PriorityClass(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a PriorityClass
+
+        operationID: deletePriorityClass
+        path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'PriorityClass.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "PriorityClass's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deletePriorityClass(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readPriorityClass(
@@ -12828,7 +13612,7 @@ class PriorityClass(HikaruDocumentBase):
         operationID: readPriorityClass
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -12883,7 +13667,7 @@ class PriorityClass(HikaruDocumentBase):
         operationID: patchPriorityClass
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -12935,6 +13719,60 @@ class PriorityClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified PriorityClass
+
+        operationID: patchPriorityClass
+        path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PriorityClass    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PriorityClass.update()'"
+            )
+        return self.patchPriorityClass(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replacePriorityClass(
         self,
         name: str,
@@ -12949,7 +13787,7 @@ class PriorityClass(HikaruDocumentBase):
         operationID: replacePriorityClass
         path: /apis/scheduling.k8s.io/v1alpha1/priorityclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -14340,10 +15178,6 @@ class AuditSink(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -14417,7 +15251,7 @@ class AuditSink(HikaruDocumentBase):
         r"""
         create an AuditSink
 
-        operationID: create
+        operationID: createAuditSink
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks
 
         :param dry_run: When present, indicates that modifications should not be
@@ -14471,7 +15305,7 @@ class AuditSink(HikaruDocumentBase):
         operationID: deleteAuditSink
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -14523,14 +15357,93 @@ class AuditSink(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete an AuditSink
+
+        operationID: deleteAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'AuditSink.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "AuditSink's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteAuditSink(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readAuditSink(
@@ -14547,7 +15460,7 @@ class AuditSink(HikaruDocumentBase):
         operationID: readAuditSink
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -14602,7 +15515,7 @@ class AuditSink(HikaruDocumentBase):
         operationID: patchAuditSink
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -14654,6 +15567,60 @@ class AuditSink(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified AuditSink
+
+        operationID: patchAuditSink
+        path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   AuditSink    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'AuditSink.update()'"
+            )
+        return self.patchAuditSink(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceAuditSink(
         self,
         name: str,
@@ -14668,7 +15635,7 @@ class AuditSink(HikaruDocumentBase):
         operationID: replaceAuditSink
         path: /apis/auditregistration.k8s.io/v1alpha1/auditsinks/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -14860,7 +15827,7 @@ class PodPreset(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param continue_: The continue option should be set when retrieving more
             results from the server. Since this value is server defined, clients
             may only use the continue value from a previous query result with
@@ -14972,10 +15939,6 @@ class PodPreset(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -14995,7 +15958,7 @@ class PodPreset(HikaruDocumentBase):
         operationID: createNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -15053,12 +16016,12 @@ class PodPreset(HikaruDocumentBase):
         r"""
         create a PodPreset
 
-        operationID: create
+        operationID: createNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
 
-        :param namespace: part of the URL path. NOTE: if you leave out the namespace
-            from the arguments you *must* have filled in the namespace attribute
-            in the metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -15122,8 +16085,8 @@ class PodPreset(HikaruDocumentBase):
         operationID: deleteNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -15176,14 +16139,109 @@ class PodPreset(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a PodPreset
+
+        operationID: deleteNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'PodPreset.delete()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "PodPreset's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "PodPreset's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteNamespacedPodPreset(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readNamespacedPodPreset(
@@ -15201,8 +16259,8 @@ class PodPreset(HikaruDocumentBase):
         operationID: readNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -15259,8 +16317,8 @@ class PodPreset(HikaruDocumentBase):
         operationID: patchNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -15313,6 +16371,75 @@ class PodPreset(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified PodPreset
+
+        operationID: patchNamespacedPodPreset
+        path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
+
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PodPreset    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'PodPreset.update()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "PodPreset's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.patchNamespacedPodPreset(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceNamespacedPodPreset(
         self,
         name: str,
@@ -15328,8 +16455,8 @@ class PodPreset(HikaruDocumentBase):
         operationID: replaceNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -15427,7 +16554,7 @@ class PodPresetList(HikaruDocumentBase):
         operationID: listNamespacedPodPreset
         path: /apis/settings.k8s.io/v1alpha1/namespaces/{namespace}/podpresets
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
             type "BOOKMARK". Servers that do not implement bookmarks may ignore
             this flag and bookmarks are sent at the server's discretion. Clients
@@ -15914,7 +17041,7 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: deleteCollectionNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param continue_: The continue option should be set when retrieving more
             results from the server. Since this value is server defined, clients
             may only use the continue value from a previous query result with
@@ -16026,10 +17153,6 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -16049,7 +17172,7 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: createNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -16107,12 +17230,12 @@ class EndpointSlice(HikaruDocumentBase):
         r"""
         create an EndpointSlice
 
-        operationID: create
+        operationID: createNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
 
-        :param namespace: part of the URL path. NOTE: if you leave out the namespace
-            from the arguments you *must* have filled in the namespace attribute
-            in the metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -16176,8 +17299,8 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: deleteNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -16230,14 +17353,109 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete an EndpointSlice
+
+        operationID: deleteNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'EndpointSlice.delete()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "EndpointSlice's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "EndpointSlice's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteNamespacedEndpointSlice(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readNamespacedEndpointSlice(
@@ -16255,8 +17473,8 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: readNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -16313,8 +17531,8 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: patchNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -16367,6 +17585,75 @@ class EndpointSlice(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified EndpointSlice
+
+        operationID: patchNamespacedEndpointSlice
+        path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
+
+        :param namespace: namespace for the resource. NOTE: if you leave out the
+            namespace from the arguments you *must* have filled in the namespace
+            attribute in the metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   EndpointSlice    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'EndpointSlice.update()'"
+            )
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "EndpointSlice's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        return self.patchNamespacedEndpointSlice(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceNamespacedEndpointSlice(
         self,
         name: str,
@@ -16382,8 +17669,8 @@ class EndpointSlice(HikaruDocumentBase):
         operationID: replaceNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices/{name}
 
-        :param name: part of the URL path
-        :param namespace: part of the URL path
+        :param name: name for the resource
+        :param namespace: namespace for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -16553,7 +17840,7 @@ class EndpointSliceList(HikaruDocumentBase):
         operationID: listNamespacedEndpointSlice
         path: /apis/discovery.k8s.io/v1alpha1/namespaces/{namespace}/endpointslices
 
-        :param namespace: part of the URL path
+        :param namespace: namespace for the resource
         :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
             type "BOOKMARK". Servers that do not implement bookmarks may ignore
             this flag and bookmarks are sent at the server's discretion. Clients
@@ -16822,10 +18109,6 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -16899,7 +18182,7 @@ class RuntimeClass(HikaruDocumentBase):
         r"""
         create a RuntimeClass
 
-        operationID: create
+        operationID: createRuntimeClass
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses
 
         :param dry_run: When present, indicates that modifications should not be
@@ -16953,7 +18236,7 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: deleteRuntimeClass
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -17005,14 +18288,93 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        if body is not None:
-            body = get_clean_dict(body) if isinstance(body, HikaruBase) else body
-        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
         return Response(result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        delete a RuntimeClass
+
+        operationID: deleteRuntimeClass
+        path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
+
+        :param name: name for the resource. NOTE: if you leave out the name from the
+            arguments you *must* have filled in the name attribute in the
+            metadata for the resource!
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'RuntimeClass.delete()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "RuntimeClass's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        return self.deleteRuntimeClass(
+            name=effective_name,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+            async_req=async_req,
+        )
 
     @staticmethod
     def readRuntimeClass(
@@ -17029,7 +18391,7 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: readRuntimeClass
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param exact: Should the export be exact. Exact export maintains
             cluster-specific fields like 'Namespace'. Deprecated. Planned for
             removal in 1.18.
@@ -17084,7 +18446,7 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: patchRuntimeClass
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
@@ -17136,6 +18498,60 @@ class RuntimeClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response:
+        r"""
+        partially update the specified RuntimeClass
+
+        operationID: patchRuntimeClass
+        path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
+
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False,  which
+            makes the call blocking.
+
+        :return: hikaru.utils.Response instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   RuntimeClass    OK
+          401   None    Unauthorized
+        """
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata to use 'RuntimeClass.update()'"
+            )
+        return self.patchRuntimeClass(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+            async_req=async_req,
+        )
+
     def replaceRuntimeClass(
         self,
         name: str,
@@ -17150,7 +18566,7 @@ class RuntimeClass(HikaruDocumentBase):
         operationID: replaceRuntimeClass
         path: /apis/node.k8s.io/v1alpha1/runtimeclasses/{name}
 
-        :param name: part of the URL path
+        :param name: name for the resource
         :param dry_run: When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid

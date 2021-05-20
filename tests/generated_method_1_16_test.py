@@ -70,12 +70,14 @@ for version in versions:
         for name, attr in vars(cls).items():
             if not name.startswith("__"):
                 if isinstance(attr, MethodType) or isinstance(attr, FunctionType):
+                    if cls.__name__ == "StatefulSet" and name == 'delete':
+                        _ = 1
                     sig = signature(attr)
                     # first do it with the client provided at instance creation;
                     # we aren't actually doing that, we just set it after the
                     # the instances is made
                     inst = cls.get_empty_instance()
-                    inst.metadata = om_class(namespace='default')
+                    inst.metadata = om_class(namespace='default', name='the_name')
                     mock_client = MockApiClient()
                     inst.client = mock_client
                     params = {'self': inst}
@@ -92,14 +94,12 @@ for version in versions:
                     # now do it again, but his time adding the client to the params
                     # that are passed into the method
                     inst = cls.get_empty_instance()
-                    inst.metadata = om_class(namespace='default')
+                    inst.metadata = om_class(namespace='default', name='the_name')
                     mock_client = MockApiClient()
-                    params = {'self': inst}
+                    params = {'self': inst, 'client': mock_client}
                     for p in sig.parameters.values():
-                        if p.name == 'self':
+                        if p.name in {'client', 'self'}:
                             continue
-                        if p.name == "client":
-                            params["client"] = mock_client
                         elif p.name == "namespace":
                             params[p.name] = "the_namespace"
                         elif p.name == "name":
@@ -110,12 +110,10 @@ for version in versions:
                     # again, but this time without metadata at all; should raise
                     inst = cls.get_empty_instance()
                     mock_client = MockApiClient()
-                    params = {'self': inst}
+                    params = {'self': inst, 'client': mock_client}
                     for p in sig.parameters.values():
-                        if p.name == 'self':
+                        if p.name in {'client', 'self'}:
                             continue
-                        if p.name == "client":
-                            params["client"] = mock_client
                         elif p.name == "namespace":
                             params[p.name] = "the_namespace"
                         elif p.name == "name":
@@ -125,14 +123,12 @@ for version in versions:
                     all_params.append((attr, True, params))
                     # and again, but this time with no namespace
                     inst = cls.get_empty_instance()
-                    inst.metadata = om_class()
+                    inst.metadata = om_class(name='the_name')
                     mock_client = MockApiClient()
-                    params = {'self': inst}
+                    params = {'self': inst, 'client': mock_client}
                     for p in sig.parameters.values():
-                        if p.name == 'self':
+                        if p.name in {'client', 'self'}:
                             continue
-                        if p.name == "client":
-                            params["client"] = mock_client
                         elif p.name == "name":
                             params[p.name] = "the_name"
                         else:
@@ -143,16 +139,38 @@ for version in versions:
                     if name not in {'create', 'update', 'delete'}:
                         continue
                     inst = cls.get_empty_instance()
-                    inst.metadata = om_class(namespace='default')
+                    inst.metadata = om_class(namespace='default', name='the_name')
                     mock_client = MockApiClient()
-                    params = {'self': inst}
+                    params = {'self': inst, 'client': mock_client}
                     for p in sig.parameters.values():
-                        if p.name == 'self':
+                        if p.name in {'client', 'self'}:
                             continue
-                        if p.name == "client":
-                            params["client"] = mock_client
                         elif p.name == "name":
                             params[p.name] = "the_name"
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, False, params))
+                    # another permutation, this time ensuring that there is
+                    # no name supplied in either the metadata or args
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default')
+                    mock_client = MockApiClient()
+                    params = {'self': inst, 'client': mock_client}
+                    for p in sig.parameters.values():
+                        if p.name in {'client', 'self'}:
+                            continue
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, True, params))
+                    # and another, this time with the name in the metadata and not
+                    # the parameters
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default', name='the_name')
+                    mock_client = MockApiClient()
+                    params = {'self': inst, 'client': mock_client}
+                    for p in sig.parameters.values():
+                        if p.name in {'client', 'self'}:
+                            continue
                         else:
                             params[p.name] = None
                     all_params.append((attr, False, params))
@@ -220,8 +238,8 @@ def test_methods(func, should_raise, kwargs):
 
 
 if __name__ == "__main__":
-    for func, params in all_params:
-        test_methods(func, params)
+    for func, should_raise, params in all_params:
+        test_methods(func, should_raise, params)
         print('.', end="")
     print()
 

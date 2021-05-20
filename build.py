@@ -425,7 +425,7 @@ class Operation(object):
             match = self.regexp.search(search_str)
         url_params.sort()
         for pname in url_params:
-            self.add_parameter(pname, "str", "part of the URL path", required=True)
+            self.add_parameter(pname, "str", f"{pname} for the resource", required=True)
         # determine the method name for this operation
         version = get_path_version(self.op_path)
         if version is None:
@@ -516,7 +516,7 @@ class Operation(object):
     def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
         docstring_parts = ['    r"""', f'    {self.description}']
         docstring_parts.append("")
-        docstring_parts.append(f'    operationID: {self.op_id}')
+        docstring_parts.append(f'    operationID: {self.get_effective_op_id()}')
         docstring_parts.append(f'    path: {self.op_path}')
         if parameters:
             docstring_parts.append("")
@@ -544,6 +544,9 @@ class Operation(object):
                                        f"  {ret.description}")
         docstring_parts.append('   """')
         return docstring_parts
+
+    def get_effective_op_id(self) -> str:
+        return self.op_id
 
     def crud_counterpart_name(self) -> Optional[str]:
         """
@@ -643,14 +646,17 @@ class Operation(object):
         body = [f"    {bl}" for bl in body_lines]
         return body
 
-    def prep_params(self) -> List['OpParameter']:
+    def prep_inbound_params(self) -> List['OpParameter']:
         return list(self.parameters)
+
+    def prep_outbound_params(self) -> List['OpParameter']:
+        return self.prep_inbound_params()
 
     def as_python_method(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
         if self.op_id is None:
             return []
         written_methods.add((self.version, self.op_id))
-        parameters = self.prep_params()
+        parameters = self.prep_inbound_params()
         if self.is_staticmethod and self.self_param:
             parameters.append(self.self_param)
         lines = []
@@ -659,7 +665,8 @@ class Operation(object):
         ds = self.make_docstring(parameters=parameters)
         if ds:
             lines.extend(ds)
-        lines.extend(self.get_meth_body(parameters=parameters, cd=cd))
+        lines.extend(self.get_meth_body(parameters=self.prep_outbound_params(),
+                                        cd=cd))
         lines.extend(self.as_crud_python_method(cd))
         return lines
 
@@ -689,6 +696,9 @@ class SyntheticOperation(Operation):
             self.add_return(str(r.code), r.ref, r.description)
         self.base_op = base_op
 
+    def get_effective_op_id(self) -> str:
+        return self.base_op.op_id
+
 
 @register_crud_class('read')
 class ReadOperation(SyntheticOperation):
@@ -703,7 +713,7 @@ class ReadOperation(SyntheticOperation):
     def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
         return f'{self.op_name} = {self.base_op.meth_name}'
 
-    def prep_params(self) -> List['OpParameter']:
+    def prep_inbound_params(self) -> List['OpParameter']:
         return []
 
     def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
@@ -718,12 +728,12 @@ _create_body_with_namespace = \
 """
     if not self.metadata:
         raise RuntimeError(
-            "Your resource must contain metadata to use '{classname}.create()'")
+            "Your resource must contain metadata to use '{classname}.{op_name}()'")
     if namespace is not None:
         effective_namespace = namespace
     elif not self.metadata.namespace:
         raise RuntimeError("There must be a namespace supplied in either "
-                           "the arguments to create() or in a "
+                           "the arguments to {op_name}() or in a "
                            "{classname}'s metadata")
     else:
         effective_namespace = self.metadata.namespace
@@ -734,7 +744,7 @@ _create_body_no_namespace = \
 """
     if not self.metadata:
         raise RuntimeError(
-            "Your resource must contain metadata to use '{classname}.create()'")
+            "Your resource must contain metadata to use '{classname}.{op_name}()'")
     return self.{methname}({paramlist})
 """
 
@@ -750,7 +760,12 @@ class CreateOperation(SyntheticOperation):
     def get_meth_decorators(self) -> List[str]:
         return []
 
-    def prep_params(self) -> List['OpParameter']:
+    def prep_inbound_params(self) -> List['OpParameter']:
+        params = [p for p in self.prep_outbound_params()
+                  if p.name != 'name']
+        return params
+
+    def prep_outbound_params(self) -> List['OpParameter']:
         params = []
         for p in self.parameters:
             if p.name == 'namespace':
@@ -762,6 +777,18 @@ class CreateOperation(SyntheticOperation):
             params.append(p)
         return params
 
+    def _with_namespace_template(self):
+        return _create_body_with_namespace
+
+    def _without_namespace_template(self):
+        return _create_body_no_namespace
+
+    def namespace_name(self):
+        return 'effective_namespace'
+
+    def name_name(self):
+        return 'self.metadata.name'
+
     def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
                       cd: Optional['ClassDescriptor'] = None) -> List[str]:
         required = [p for p in parameters if p.required]
@@ -772,21 +799,118 @@ class CreateOperation(SyntheticOperation):
             assert isinstance(p, OpParameter)
             if p.name == "namespace":
                 seen_namespace = True
-                local_name = 'effective_namespace'
+                local_name = self.namespace_name()
+                param_name = camel_to_pep8(p.name)
+            elif p.name == 'name':
+                local_name = self.name_name()
                 param_name = camel_to_pep8(p.name)
             else:
                 local_name = param_name = camel_to_pep8(p.name)
             param_assignments.append(f"{param_name}={local_name}")
         param_assignments.append("client=client")
         param_assignments.append("async_req=async_req")
-        body_str = (_create_body_with_namespace
+        body_str = (self._with_namespace_template()
                     if seen_namespace else
-                    _create_body_no_namespace)
+                    self._without_namespace_template())
         fdict = {"classname": cd.short_name if cd else 'UNKNOWN',
                  "methname": self.base_op.meth_name,
-                 'paramlist': ", ".join(param_assignments)}
+                 'paramlist': ", ".join(param_assignments),
+                 'op_name': self.op_name}
         body = body_str.format(**fdict)
         return body.split("\n")
+
+
+@register_crud_class('update')
+class UpdateOperation(CreateOperation):
+    """
+    A synthetic operation to make an 'update()' crud method to provide a synonym
+    to the patch method
+    """
+    op_name = 'update'
+
+
+_delete_body_with_namespace = \
+"""
+    # noinspection PyDataclass
+    client = client or self.client
+        
+    if not self.metadata:
+        raise RuntimeError(
+            "Your resource must contain metadata "
+            "to use '{classname}.{op_name}()'")
+            
+    if namespace is not None:
+        effective_namespace = namespace
+    elif not self.metadata.namespace:
+        raise RuntimeError("There must be a namespace supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_namespace = self.metadata.namespace
+
+    if name is not None:
+        effective_name = name
+    elif not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
+    return self.{methname}({paramlist})
+"""
+
+_delete_body_without_namespace = \
+"""
+    # noinspection PyDataclass
+    client = client or self.client
+
+    if not self.metadata:
+        raise RuntimeError(
+            "Your resource must contain metadata "
+            "to use '{classname}.{op_name}()'")
+
+    if name is not None:
+        effective_name = name
+    elif not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
+    return self.{methname}({paramlist})
+"""
+
+
+@register_crud_class('delete')
+class DeleteOperation(CreateOperation):
+    op_name = 'delete'
+
+    def get_meth_decorators(self) -> List[str]:
+        return []
+
+    def prep_inbound_params(self) -> List['OpParameter']:
+        return self.prep_outbound_params()
+
+    def prep_outbound_params(self) -> List['OpParameter']:
+        params = []
+        for p in self.parameters:
+            if p.name in ('namespace', 'name'):
+                p.required = False
+                p.description = f"{p.description}. NOTE: if you leave out the " \
+                                f"{p.name} from the arguments you *must* have " \
+                                f"filled in the {p.name} attribute in the metadata " \
+                                f"for the resource!"
+            params.append(p)
+        return params
+
+    def name_name(self):
+        return 'effective_name'
+
+    def _with_namespace_template(self):
+        return _delete_body_with_namespace
+
+    def _without_namespace_template(self):
+        return _delete_body_without_namespace
 
 
 # maybe later...
