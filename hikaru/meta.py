@@ -32,7 +32,7 @@ from ast import literal_eval
 from enum import Enum
 from inspect import getmodule
 from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints
-from dataclasses import fields, dataclass, is_dataclass, asdict, InitVar
+from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 from hikaru.naming import camel_to_pep8
@@ -468,8 +468,6 @@ class HikaruBase(object):
         init_var_hints = {k for k, v in get_type_hints(cls).items()
                           if isinstance(v, InitVar) or v is InitVar}
         hints = cls._get_hints()
-        if cls.__name__ == "CrossVersionObjectReference":
-            _ = 1
         for p in sig.parameters.values():
             if p.name in ('self', 'client') or p.name in init_var_hints:
                 continue
@@ -625,6 +623,158 @@ class HikaruBase(object):
                                f'Incompatible: self is a {self.__class__.__name__} while'
                                f'other is a {other.__class__.__name__}')]
         return self._diff(self, other, self.__class__, [], self.__class__.__name__)
+
+    def merge(self, other, overwrite: bool = False, enforce_version=False):
+        """
+        Merges the values of another object of the same type into self
+
+        Merge allows you to take the values from another HikaruBase subclass instance
+        of the same type as self and merge them into self. The merge can be done one
+        of two ways:
+
+        - The default is to pull over any non-None fields from other into self. If
+          additional subobjects are in other then new copies of them are put into
+          self (if none exists already), otherwise values are merged into the subobject.
+        - If ``overwrite`` is True, then every field from other is pulled into
+          self. That means that it is possible that a field in self that previously
+          had a value may become None after a merge with overwrite. Overwrite also
+          implies replacing all contents of dicts and lists in self.
+
+        :param other: source of values to merge into self. Must be the same 'type'
+            as self, but the interpretation of 'type' is governed by the
+            enforce_version parameter (see below).
+        :param overwrite: optional bool, default False. The default only merges in
+            attributes from other that are non-None. Hence, None attributes in other
+            will never replace actual values in self. If True, then all data is taken
+            from other verbatim, which can result in a loss of attribute values in self.
+        :param enforce_version: optional bool, default False. The default simply checks
+            to see if self and other have the same class *names* rather than the
+            same actual class. This allows for merging data from objects from one
+            version of Kubernetes to another. If enforce_version is True, then merge()
+            will check to see both self and other are from the same class. If either
+            of these versions of type checking don't match, then merge will raise
+            a TypeError.
+        :raises TypeError: if other has an attribute to merge into self that self
+            doesn't know about, or if checking that the 'type' of self and other,
+            or any of their components, results in them not being merge-able.
+        :return: self with values for other merged in
+        """
+        if enforce_version:
+            if self.__class__ is not other.__class__:
+                raise TypeError(f'Strict type mismatch: trying to merge a '
+                                f'{other.__class__} into a '
+                                f'{self.__class__}; perhaps these '
+                                f'are from different version modules?')
+        elif self.__class__.__name__ != other.__class__.__name__:
+            raise TypeError(f'Type name mismatch: trying to merge a '
+                            f'{other.__class__.__name__} into a '
+                            f'{self.__class__.__name__}')
+        if self.__class__.__name__ == "ObjectMeta":
+            _ = 1
+        for k in get_type_hints(self).keys():
+            self_val = getattr(self, k)
+            other_val = getattr(other, k)
+            if other_val is None:
+                if overwrite:
+                    setattr(self, k, None)
+                continue
+            # here we know other_val is non-None; see what it is and process accordingly
+            # first check the scalars
+            if isinstance(other_val, (str, int, float, bool)):
+                if overwrite or self_val is None:
+                    setattr(self, k, other_val)
+                continue
+            # look for dicts
+            if isinstance(other_val, dict):
+                if overwrite or self_val is None:
+                    setattr(self, k, dict(other_val))
+                elif type(self_val) is not dict:
+                    raise TypeError(f"Failed merging {k}: tried to merge a dict "
+                                    f"into a {self_val.__class__.__name__}")
+                else:
+                    for key, val in other_val.items():
+                        if (key not in self_val or
+                                self_val[key] is None or
+                                overwrite):
+                            self_val[key] = val
+                continue
+            # look for nested HikaruBase objects
+            if isinstance(other_val, HikaruBase):
+                if overwrite or self_val is None:
+                    setattr(self, k, other_val.dup())
+                elif not isinstance(self_val, HikaruBase):
+                    raise TypeError(f"Failed merging {k}: tried to merge a "
+                                    f"{other_val.__class__.__name__} into a non-"
+                                    f"HikaruBase instance")
+                else:
+                    self_val.merge(other_val, overwrite=overwrite,
+                                   enforce_version=enforce_version)
+                continue
+            # finally, look for lists. this is tricky, as you not only have
+            # to do all the checks you did for plain attributes, but you
+            # also need to deal with different sized lists
+            if isinstance(other_val, list):
+                if self_val is not None and not isinstance(self_val, list):
+                    raise TypeError(f"Failed merging {k}: tried to merge a "
+                                    f"list into a {self_val.__class__.__name__}")
+                if self_val is None:
+                    self_val = []
+                    setattr(self, k, self_val)
+                for i, other_item in enumerate(other_val):
+                    if other_item is None and overwrite:
+                        if i + 1 > len(self_val):
+                            self_val.append(None)
+                        else:
+                            self_val[i] = None
+                        continue
+                    if isinstance(other_item, (str, int, float, bool)):
+                        if i + 1 > len(self_val):
+                            self_val.append(other_item)
+                        elif overwrite or self_val[i] is None:
+                            self_val[i] = other_item
+                        continue
+                    if isinstance(other_item, HikaruBase):
+                        if i + 1 > len(self_val):
+                            self_val.append(other_item.dup())
+                        elif overwrite or self_val[i] is None:
+                            self_val[i] = other_item.dup()
+                        elif not isinstance(self_val[i], HikaruBase):
+                            raise TypeError(f"Failed merging item {i} of {k}: "
+                                            f"can't merge a HikaruBase subclass "
+                                            f"into a {self_val[i].__class__.__name__}")
+                        else:
+                            self_val[i].merge(other_item,
+                                              overwrite=overwrite,
+                                              enforce_version=enforce_version)
+                        continue
+                    # as of Hikaru 0.5, there is no list of dicts in the
+                    # spec for any classes in Kubernetes. So we're going to
+                    # put a 'no cover' pragma on the statement block
+                    if isinstance(other_item, dict):  # pragma: no cover
+                        if i + 1 > len(self_val):
+                            self_val.append(dict(other_item))
+                        elif overwrite or self_val[i] is None:
+                            self_val[i] = dict(other_item)
+                        elif not isinstance(self_val[i], dict):
+                            raise TypeError(f"Failed merging item {i} of {k}: "
+                                            f"can't merge a dict into a "
+                                            f"{self_val[i].__class__.__name__}")
+                        else:
+                            for key, val in other_item.items():
+                                if (key not in self_val[i] or
+                                        self_val[i][key] is None or
+                                        overwrite):
+                                    self_val[i][key] = val
+                        continue
+                    raise NotImplementedError(f"Don't know how to merge item {i}, "
+                                              f"a {other_item.__class__.__name__}, "
+                                              f"of {k}")  # pragma: no cover
+                continue
+            raise NotImplementedError(
+                f"Don't know how to merge {k}'s "
+                f"{other_val.__class__.__name__}"
+            )  # pragma: no cover
+        return self
 
     def get_type_warnings(self) -> List[TypeWarning]:
         """

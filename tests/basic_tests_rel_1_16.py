@@ -1392,6 +1392,191 @@ def test122():
     assert diff[0].attrname == 'name'
 
 
+def test123():
+    """
+    Test merging a loaded Pod into an empty one
+    """
+    original: Pod = setup_pod()
+    p1: Pod = Pod()
+    assert p1 != original
+    p1.merge(original, overwrite=True)
+    assert p1 == original
+
+
+def test124():
+    """
+    Check merging different versions of the same object fails with enforce_version
+    """
+    from hikaru.model.rel_1_16.v1beta2 import Pod as Podv1beta2
+    pv1: Pod = Pod()
+    pv1beta2: Podv1beta2 = Podv1beta2()
+    try:
+        pv1.merge(pv1beta2, enforce_version=True)
+        assert False, "Should have raised a type error of enforce_version"
+    except TypeError:
+        pass
+
+
+def test125():
+    """
+    Check merging fails for two different types
+    """
+    p: Pod = Pod()
+    ps: PodSpec = PodSpec(containers=[])
+    try:
+        p.merge(ps)
+        assert False, "Should have raised a type error"
+    except TypeError:
+        pass
+
+
+def test126():
+    """
+    Check that we can merge different version objects with the same name
+    """
+    from hikaru.model.rel_1_16.v1beta2 import Pod as Podv1beta2
+    pv1: Pod = Pod()
+    pv1beta2: Podv1beta2 = Podv1beta2()
+    pv1.merge(pv1beta2)
+
+
+def test127():
+    """
+    merge into a more fully-filled object with fewer None attrs
+    """
+    orig: Pod = setup_pod()
+    dup: Pod = orig.dup()
+    dup.merge(orig)
+    assert dup == orig
+
+
+def test128():
+    """
+    merge into a full object with fewer Nones and overwrite
+    """
+    orig: ObjectMeta = ObjectMeta(labels={'a': '1', 'b': '2'})
+    dup: ObjectMeta = orig.dup()
+    dup.merge(orig, overwrite=True)
+    assert dup == orig
+
+
+def test129():
+    """
+    ensure new keys are merged in
+    """
+    orig: ObjectMeta = ObjectMeta(labels={'a': '1', 'b': '2'})
+    dup: ObjectMeta = orig.dup()
+    orig.labels['newbie'] = 'bingo'
+    dup.merge(orig, overwrite=True)
+    assert dup == orig
+
+
+def test130():
+    """
+    ensure we get a TypeError for a dict trying to merge into a non-dict
+    """
+    orig: ObjectMeta = ObjectMeta(labels={'a': '1', 'b': '2'})
+    other: ObjectMeta = ObjectMeta(labels=['1', '2', '3'])
+    try:
+        other.merge(orig)
+        assert False, "Should have raised a TypeError"
+    except TypeError:
+        pass
+
+
+def test131():
+    """
+    ensure we merge into an empty key
+    """
+    orig: ObjectMeta = ObjectMeta(labels={'a': '1', 'b': '2'})
+    dup: ObjectMeta = orig.dup()
+    dup.labels['a'] = None
+    del dup.labels['b']
+    dup.merge(orig)
+    assert dup == orig
+
+
+def test132():
+    """
+    ensure merge complains for trying to merge into something not a HikaruBase
+    """
+    p: Pod = setup_pod()
+    dup = p.dup()
+    dup.metadata = {}
+    try:
+        dup.merge(p)
+        assert False, "This should have raised"
+    except TypeError:
+        pass
+
+
+def test133():
+    """
+    ensure merge raises for trying to merge a list into a non-list
+    """
+    p: Pod = setup_pod()
+    dup: Pod = p.dup()
+    dup.spec.containers = {}
+    try:
+        dup.merge(p)
+        assert False, "This should have raised"
+    except TypeError:
+        pass
+
+
+def test134():
+    """
+    ensure we force a None onto an existing list element using overwrite
+    """
+    pso: PodSpec = PodSpec(containers=[Container(name='first'),
+                                       Container(name='second')])
+    dup: PodSpec = pso.dup()
+    assert dup.containers[0] is not None
+    pso.containers[0] = None
+    dup.merge(pso, overwrite=True)
+    assert dup.containers[0] is None
+
+
+def test135():
+    """
+    ensure we grow a list when merging one in that contains Nones
+    """
+    pso: PodSpec = PodSpec(containers=[Container(name='first'),
+                                       Container(name='second')])
+    dup: PodSpec = pso.dup()
+    assert dup.containers[0] is not None
+    pso.containers[0] = None
+    dup.containers = None
+    dup.merge(pso, overwrite=True)
+    assert dup.containers[0] is None
+
+
+def test136():
+    """
+    ensure we grow a list when merging one in that contains strings
+    """
+    cmd: ExecAction = ExecAction(command=['echo', 'wassup'])
+    dup: ExecAction = cmd.dup()
+    del dup.command[0]
+    dup.command[0] = None
+    dup.merge(cmd)
+    assert len(dup.command) == 2
+
+
+def test137():
+    """
+    ensure we raise when trying to merge a list into something of the wrong type
+    """
+    ps: PodSpec = PodSpec(containers=[Container(name='first'),
+                                      Container(name='second')])
+    dup: PodSpec = ps.dup()
+    dup.containers[0] = {}
+    try:
+        dup.merge(ps)
+        assert False, "this should have raised"
+    except TypeError:
+        pass
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
