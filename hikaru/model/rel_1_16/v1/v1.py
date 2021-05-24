@@ -26,7 +26,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
 
-from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
@@ -104,8 +104,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1/selfsubjectrulesreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -138,32 +137,31 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
-    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+    def create(self, client: ApiClient = None) -> "SelfSubjectRulesReview":
         r"""
-        create a SelfSubjectRulesReview
+            create a SelfSubjectRulesReview
 
-        operationID: createSelfSubjectRulesReview
-        path: /apis/authorization.k8s.io/v1/selfsubjectrulesreviews
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   SelfSubjectRulesReview    OK
-          201   SelfSubjectRulesReview    Created
-          202   SelfSubjectRulesReview    Accepted
-          401   None    Unauthorized
+            operationID: createSelfSubjectRulesReview
+            path: /apis/authorization.k8s.io/v1/selfsubjectrulesreviews
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'SelfSubjectRulesReview.create()'"
             )
-        return self.createSelfSubjectRulesReview(client=client, async_req=async_req)
+        res = self.createSelfSubjectRulesReview(client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -533,8 +531,7 @@ class StatefulSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -596,8 +593,7 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -638,38 +634,31 @@ class StatefulSet(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StatefulSet":
         r"""
-        create a StatefulSet
+            create a StatefulSet
 
-        operationID: createNamespacedStatefulSet
-        path: /apis/apps/v1/namespaces/{namespace}/statefulsets
+            operationID: createNamespacedStatefulSet
+            path: /apis/apps/v1/namespaces/{namespace}/statefulsets
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   StatefulSet    OK
-          201   StatefulSet    Created
-          202   StatefulSet    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -686,13 +675,17 @@ class StatefulSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedStatefulSet(
+        res = self.createNamespacedStatefulSet(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedStatefulSet(
@@ -739,8 +732,7 @@ class StatefulSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -780,54 +772,48 @@ class StatefulSet(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StatefulSet":
         r"""
-        delete a StatefulSet
+            delete a StatefulSet
 
-        operationID: deleteNamespacedStatefulSet
-        path: /apis/apps/v1/namespaces/{namespace}/statefulsets/{name}
+            operationID: deleteNamespacedStatefulSet
+            path: /apis/apps/v1/namespaces/{namespace}/statefulsets/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -859,7 +845,7 @@ class StatefulSet(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedStatefulSet(
+        res = self.deleteNamespacedStatefulSet(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -867,8 +853,12 @@ class StatefulSet(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedStatefulSet(
@@ -896,8 +886,7 @@ class StatefulSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -926,7 +915,84 @@ class StatefulSet(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedStatefulSet
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "StatefulSet":
+        r"""
+            read the specified StatefulSet
+
+            operationID: readNamespacedStatefulSet
+            path: /apis/apps/v1/namespaces/{namespace}/statefulsets/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'StatefulSet.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "StatefulSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "StatefulSet's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedStatefulSet(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedStatefulSet(
         self,
@@ -962,8 +1028,7 @@ class StatefulSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1005,42 +1070,37 @@ class StatefulSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StatefulSet":
         r"""
-        partially update the specified StatefulSet
+            partially update the specified StatefulSet
 
-        operationID: patchNamespacedStatefulSet
-        path: /apis/apps/v1/namespaces/{namespace}/statefulsets/{name}
+            operationID: patchNamespacedStatefulSet
+            path: /apis/apps/v1/namespaces/{namespace}/statefulsets/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   StatefulSet    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -1057,15 +1117,19 @@ class StatefulSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedStatefulSet(
+        res = self.patchNamespacedStatefulSet(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedStatefulSet(
         self,
@@ -1094,8 +1158,7 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1157,8 +1220,7 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1800,8 +1862,7 @@ class Pod(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1861,8 +1922,7 @@ class Pod(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1903,38 +1963,31 @@ class Pod(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Pod":
         r"""
-        create a Pod
+            create a Pod
 
-        operationID: createNamespacedPod
-        path: /api/v1/namespaces/{namespace}/pods
+            operationID: createNamespacedPod
+            path: /api/v1/namespaces/{namespace}/pods
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Pod    OK
-          201   Pod    Created
-          202   Pod    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -1951,13 +2004,17 @@ class Pod(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedPod(
+        res = self.createNamespacedPod(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedPod(
@@ -2004,8 +2061,7 @@ class Pod(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2045,54 +2101,48 @@ class Pod(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Pod":
         r"""
-        delete a Pod
+            delete a Pod
 
-        operationID: deleteNamespacedPod
-        path: /api/v1/namespaces/{namespace}/pods/{name}
+            operationID: deleteNamespacedPod
+            path: /api/v1/namespaces/{namespace}/pods/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -2124,7 +2174,7 @@ class Pod(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedPod(
+        res = self.deleteNamespacedPod(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -2132,8 +2182,12 @@ class Pod(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedPod(
@@ -2161,8 +2215,7 @@ class Pod(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2191,7 +2244,84 @@ class Pod(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedPod
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Pod":
+        r"""
+            read the specified Pod
+
+            operationID: readNamespacedPod
+            path: /api/v1/namespaces/{namespace}/pods/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Pod.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Pod's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Pod's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedPod(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedPod(
         self,
@@ -2227,8 +2357,7 @@ class Pod(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2270,42 +2399,37 @@ class Pod(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Pod":
         r"""
-        partially update the specified Pod
+            partially update the specified Pod
 
-        operationID: patchNamespacedPod
-        path: /api/v1/namespaces/{namespace}/pods/{name}
+            operationID: patchNamespacedPod
+            path: /api/v1/namespaces/{namespace}/pods/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Pod    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -2322,15 +2446,19 @@ class Pod(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedPod(
+        res = self.patchNamespacedPod(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedPod(
         self,
@@ -2359,8 +2487,7 @@ class Pod(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2429,8 +2556,7 @@ class Pod(HikaruDocumentBase):
             false.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2475,8 +2601,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2537,8 +2662,7 @@ class Pod(HikaruDocumentBase):
             call. Defaults to false.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2584,8 +2708,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2655,8 +2778,7 @@ class Pod(HikaruDocumentBase):
             beginning of every line of log output. Defaults to false.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2709,8 +2831,7 @@ class Pod(HikaruDocumentBase):
         :param ports: List of ports to forward Required when using WebSockets
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2753,8 +2874,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2796,8 +2916,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2837,8 +2956,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2878,8 +2996,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2924,8 +3041,7 @@ class Pod(HikaruDocumentBase):
         :param path: Path is the URL path to use for the current proxy request to pod.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2968,8 +3084,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3009,8 +3124,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3050,8 +3164,7 @@ class Pod(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3096,8 +3209,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3145,8 +3257,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3194,8 +3305,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3243,8 +3353,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3292,8 +3401,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3341,8 +3449,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3390,8 +3497,7 @@ class Pod(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3447,8 +3553,7 @@ class Pod(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3570,8 +3675,7 @@ class Pod(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3691,8 +3795,7 @@ class Pod(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3814,8 +3917,7 @@ class Pod(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3970,8 +4072,7 @@ class PodList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4178,8 +4279,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4238,8 +4338,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4280,47 +4379,42 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ValidatingWebhookConfiguration":
         r"""
-        create a ValidatingWebhookConfiguration
+            create a ValidatingWebhookConfiguration
 
-        operationID: createValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations
+            operationID: createValidatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ValidatingWebhookConfiguration    OK
-          201   ValidatingWebhookConfiguration    Created
-          202   ValidatingWebhookConfiguration    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ValidatingWebhookConfiguration.create()'"
             )
-        return self.createValidatingWebhookConfiguration(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createValidatingWebhookConfiguration(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteValidatingWebhookConfiguration(
@@ -4365,8 +4459,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4406,51 +4499,45 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ValidatingWebhookConfiguration":
         r"""
-        delete a ValidatingWebhookConfiguration
+            delete a ValidatingWebhookConfiguration
 
-        operationID: deleteValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/{name}
+            operationID: deleteValidatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -4472,15 +4559,19 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteValidatingWebhookConfiguration(
+        res = self.deleteValidatingWebhookConfiguration(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readValidatingWebhookConfiguration(
@@ -4506,8 +4597,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4537,7 +4627,69 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readValidatingWebhookConfiguration
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ValidatingWebhookConfiguration":
+        r"""
+            read the specified ValidatingWebhookConfiguration
+
+            operationID: readValidatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'ValidatingWebhookConfiguration.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ValidatingWebhookConfiguration's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readValidatingWebhookConfiguration(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchValidatingWebhookConfiguration(
         self,
@@ -4571,8 +4723,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4614,53 +4765,52 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ValidatingWebhookConfiguration":
         r"""
-        partially update the specified ValidatingWebhookConfiguration
+            partially update the specified ValidatingWebhookConfiguration
 
-        operationID: patchValidatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/{name}
+            operationID: patchValidatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/validatingwebhookconfigurations/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ValidatingWebhookConfiguration    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ValidatingWebhookConfiguration.update()'"
             )
-        return self.patchValidatingWebhookConfiguration(
+        res = self.patchValidatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceValidatingWebhookConfiguration(
         self,
@@ -4687,8 +4837,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5028,8 +5177,7 @@ class StorageClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5086,8 +5234,7 @@ class StorageClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5126,47 +5273,42 @@ class StorageClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StorageClass":
         r"""
-        create a StorageClass
+            create a StorageClass
 
-        operationID: createStorageClass
-        path: /apis/storage.k8s.io/v1/storageclasses
+            operationID: createStorageClass
+            path: /apis/storage.k8s.io/v1/storageclasses
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   StorageClass    OK
-          201   StorageClass    Created
-          202   StorageClass    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'StorageClass.create()'"
             )
-        return self.createStorageClass(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createStorageClass(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteStorageClass(
@@ -5211,8 +5353,7 @@ class StorageClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5250,51 +5391,45 @@ class StorageClass(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StorageClass":
         r"""
-        delete a StorageClass
+            delete a StorageClass
 
-        operationID: deleteStorageClass
-        path: /apis/storage.k8s.io/v1/storageclasses/{name}
+            operationID: deleteStorageClass
+            path: /apis/storage.k8s.io/v1/storageclasses/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -5315,15 +5450,19 @@ class StorageClass(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteStorageClass(
+        res = self.deleteStorageClass(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readStorageClass(
@@ -5349,8 +5488,7 @@ class StorageClass(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5378,7 +5516,68 @@ class StorageClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readStorageClass
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "StorageClass":
+        r"""
+            read the specified StorageClass
+
+            operationID: readStorageClass
+            path: /apis/storage.k8s.io/v1/storageclasses/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'StorageClass.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "StorageClass's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readStorageClass(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchStorageClass(
         self,
@@ -5412,8 +5611,7 @@ class StorageClass(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5453,53 +5651,52 @@ class StorageClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "StorageClass":
         r"""
-        partially update the specified StorageClass
+            partially update the specified StorageClass
 
-        operationID: patchStorageClass
-        path: /apis/storage.k8s.io/v1/storageclasses/{name}
+            operationID: patchStorageClass
+            path: /apis/storage.k8s.io/v1/storageclasses/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   StorageClass    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'StorageClass.update()'"
             )
-        return self.patchStorageClass(
+        res = self.patchStorageClass(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceStorageClass(
         self,
@@ -5526,8 +5723,7 @@ class StorageClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5742,8 +5938,7 @@ class Secret(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5803,8 +5998,7 @@ class Secret(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5845,38 +6039,31 @@ class Secret(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Secret":
         r"""
-        create a Secret
+            create a Secret
 
-        operationID: createNamespacedSecret
-        path: /api/v1/namespaces/{namespace}/secrets
+            operationID: createNamespacedSecret
+            path: /api/v1/namespaces/{namespace}/secrets
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Secret    OK
-          201   Secret    Created
-          202   Secret    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -5893,13 +6080,17 @@ class Secret(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedSecret(
+        res = self.createNamespacedSecret(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedSecret(
@@ -5946,8 +6137,7 @@ class Secret(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5987,54 +6177,48 @@ class Secret(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Secret":
         r"""
-        delete a Secret
+            delete a Secret
 
-        operationID: deleteNamespacedSecret
-        path: /api/v1/namespaces/{namespace}/secrets/{name}
+            operationID: deleteNamespacedSecret
+            path: /api/v1/namespaces/{namespace}/secrets/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -6066,7 +6250,7 @@ class Secret(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedSecret(
+        res = self.deleteNamespacedSecret(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -6074,8 +6258,12 @@ class Secret(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedSecret(
@@ -6103,8 +6291,7 @@ class Secret(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6133,7 +6320,84 @@ class Secret(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedSecret
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Secret":
+        r"""
+            read the specified Secret
+
+            operationID: readNamespacedSecret
+            path: /api/v1/namespaces/{namespace}/secrets/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Secret.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Secret's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Secret's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedSecret(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedSecret(
         self,
@@ -6169,8 +6433,7 @@ class Secret(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6212,42 +6475,37 @@ class Secret(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Secret":
         r"""
-        partially update the specified Secret
+            partially update the specified Secret
 
-        operationID: patchNamespacedSecret
-        path: /api/v1/namespaces/{namespace}/secrets/{name}
+            operationID: patchNamespacedSecret
+            path: /api/v1/namespaces/{namespace}/secrets/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Secret    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -6264,15 +6522,19 @@ class Secret(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedSecret(
+        res = self.patchNamespacedSecret(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedSecret(
         self,
@@ -6301,8 +6563,7 @@ class Secret(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6424,8 +6685,7 @@ class Secret(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6578,8 +6838,7 @@ class SecretList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6873,8 +7132,7 @@ class ReplicationController(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6936,8 +7194,7 @@ class ReplicationController(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6980,38 +7237,31 @@ class ReplicationController(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicationController":
         r"""
-        create a ReplicationController
+            create a ReplicationController
 
-        operationID: createNamespacedReplicationController
-        path: /api/v1/namespaces/{namespace}/replicationcontrollers
+            operationID: createNamespacedReplicationController
+            path: /api/v1/namespaces/{namespace}/replicationcontrollers
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicationController    OK
-          201   ReplicationController    Created
-          202   ReplicationController    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -7028,13 +7278,17 @@ class ReplicationController(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedReplicationController(
+        res = self.createNamespacedReplicationController(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedReplicationController(
@@ -7081,8 +7335,7 @@ class ReplicationController(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7124,54 +7377,48 @@ class ReplicationController(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicationController":
         r"""
-        delete a ReplicationController
+            delete a ReplicationController
 
-        operationID: deleteNamespacedReplicationController
-        path: /api/v1/namespaces/{namespace}/replicationcontrollers/{name}
+            operationID: deleteNamespacedReplicationController
+            path: /api/v1/namespaces/{namespace}/replicationcontrollers/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -7204,7 +7451,7 @@ class ReplicationController(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedReplicationController(
+        res = self.deleteNamespacedReplicationController(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -7212,8 +7459,12 @@ class ReplicationController(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedReplicationController(
@@ -7241,8 +7492,7 @@ class ReplicationController(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7273,7 +7523,85 @@ class ReplicationController(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedReplicationController
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ReplicationController":
+        r"""
+            read the specified ReplicationController
+
+            operationID: readNamespacedReplicationController
+            path: /api/v1/namespaces/{namespace}/replicationcontrollers/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'ReplicationController.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ReplicationController's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ReplicationController's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedReplicationController(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedReplicationController(
         self,
@@ -7309,8 +7637,7 @@ class ReplicationController(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7354,42 +7681,37 @@ class ReplicationController(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicationController":
         r"""
-        partially update the specified ReplicationController
+            partially update the specified ReplicationController
 
-        operationID: patchNamespacedReplicationController
-        path: /api/v1/namespaces/{namespace}/replicationcontrollers/{name}
+            operationID: patchNamespacedReplicationController
+            path: /api/v1/namespaces/{namespace}/replicationcontrollers/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicationController    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -7406,15 +7728,19 @@ class ReplicationController(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedReplicationController(
+        res = self.patchNamespacedReplicationController(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedReplicationController(
         self,
@@ -7443,8 +7769,7 @@ class ReplicationController(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7508,8 +7833,7 @@ class ReplicationController(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7666,8 +7990,7 @@ class ReplicationControllerList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7790,8 +8113,7 @@ class ReplicationControllerList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8200,8 +8522,7 @@ class ClusterRole(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8258,8 +8579,7 @@ class ClusterRole(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8298,47 +8618,42 @@ class ClusterRole(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRole":
         r"""
-        create a ClusterRole
+            create a ClusterRole
 
-        operationID: createClusterRole
-        path: /apis/rbac.authorization.k8s.io/v1/clusterroles
+            operationID: createClusterRole
+            path: /apis/rbac.authorization.k8s.io/v1/clusterroles
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ClusterRole    OK
-          201   ClusterRole    Created
-          202   ClusterRole    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ClusterRole.create()'"
             )
-        return self.createClusterRole(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createClusterRole(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteClusterRole(
@@ -8383,8 +8698,7 @@ class ClusterRole(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8422,51 +8736,45 @@ class ClusterRole(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRole":
         r"""
-        delete a ClusterRole
+            delete a ClusterRole
 
-        operationID: deleteClusterRole
-        path: /apis/rbac.authorization.k8s.io/v1/clusterroles/{name}
+            operationID: deleteClusterRole
+            path: /apis/rbac.authorization.k8s.io/v1/clusterroles/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -8487,15 +8795,19 @@ class ClusterRole(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteClusterRole(
+        res = self.deleteClusterRole(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readClusterRole(
@@ -8514,8 +8826,7 @@ class ClusterRole(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8541,7 +8852,55 @@ class ClusterRole(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readClusterRole
+    def read(
+        self,
+        name: Optional[str] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ClusterRole":
+        r"""
+            read the specified ClusterRole
+
+            operationID: readClusterRole
+            path: /apis/rbac.authorization.k8s.io/v1/clusterroles/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ClusterRole.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ClusterRole's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readClusterRole(name=effective_name, pretty=pretty, client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchClusterRole(
         self,
@@ -8575,8 +8934,7 @@ class ClusterRole(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8616,53 +8974,52 @@ class ClusterRole(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRole":
         r"""
-        partially update the specified ClusterRole
+            partially update the specified ClusterRole
 
-        operationID: patchClusterRole
-        path: /apis/rbac.authorization.k8s.io/v1/clusterroles/{name}
+            operationID: patchClusterRole
+            path: /apis/rbac.authorization.k8s.io/v1/clusterroles/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ClusterRole    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ClusterRole.update()'"
             )
-        return self.patchClusterRole(
+        res = self.patchClusterRole(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceClusterRole(
         self,
@@ -8689,8 +9046,7 @@ class ClusterRole(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8840,8 +9196,7 @@ class ClusterRoleList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8992,8 +9347,7 @@ class ComponentStatus(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9019,7 +9373,57 @@ class ComponentStatus(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readComponentStatus
+    def read(
+        self,
+        name: Optional[str] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ComponentStatus":
+        r"""
+            read the specified ComponentStatus
+
+            operationID: readComponentStatus
+            path: /api/v1/componentstatuses/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ComponentStatus.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ComponentStatus's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readComponentStatus(
+            name=effective_name, pretty=pretty, client=client
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -9138,8 +9542,7 @@ class ComponentStatusList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9553,8 +9956,7 @@ class RoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9616,8 +10018,7 @@ class RoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9658,38 +10059,31 @@ class RoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "RoleBinding":
         r"""
-        create a RoleBinding
+            create a RoleBinding
 
-        operationID: createNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings
+            operationID: createNamespacedRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   RoleBinding    OK
-          201   RoleBinding    Created
-          202   RoleBinding    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -9706,13 +10100,17 @@ class RoleBinding(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedRoleBinding(
+        res = self.createNamespacedRoleBinding(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedRoleBinding(
@@ -9759,8 +10157,7 @@ class RoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9800,54 +10197,48 @@ class RoleBinding(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "RoleBinding":
         r"""
-        delete a RoleBinding
+            delete a RoleBinding
 
-        operationID: deleteNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}
+            operationID: deleteNamespacedRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -9879,7 +10270,7 @@ class RoleBinding(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedRoleBinding(
+        res = self.deleteNamespacedRoleBinding(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -9887,8 +10278,12 @@ class RoleBinding(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedRoleBinding(
@@ -9909,8 +10304,7 @@ class RoleBinding(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9937,7 +10331,75 @@ class RoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedRoleBinding
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "RoleBinding":
+        r"""
+            read the specified RoleBinding
+
+            operationID: readNamespacedRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'RoleBinding.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "RoleBinding's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedRoleBinding(
+            name=effective_name,
+            namespace=effective_namespace,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedRoleBinding(
         self,
@@ -9973,8 +10435,7 @@ class RoleBinding(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10016,42 +10477,37 @@ class RoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "RoleBinding":
         r"""
-        partially update the specified RoleBinding
+            partially update the specified RoleBinding
 
-        operationID: patchNamespacedRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}
+            operationID: patchNamespacedRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   RoleBinding    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -10068,15 +10524,19 @@ class RoleBinding(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedRoleBinding(
+        res = self.patchNamespacedRoleBinding(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedRoleBinding(
         self,
@@ -10105,8 +10565,7 @@ class RoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10259,8 +10718,7 @@ class RoleBindingList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10870,8 +11328,7 @@ class ResourceQuota(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10933,8 +11390,7 @@ class ResourceQuota(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10975,38 +11431,31 @@ class ResourceQuota(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ResourceQuota":
         r"""
-        create a ResourceQuota
+            create a ResourceQuota
 
-        operationID: createNamespacedResourceQuota
-        path: /api/v1/namespaces/{namespace}/resourcequotas
+            operationID: createNamespacedResourceQuota
+            path: /api/v1/namespaces/{namespace}/resourcequotas
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ResourceQuota    OK
-          201   ResourceQuota    Created
-          202   ResourceQuota    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -11023,13 +11472,17 @@ class ResourceQuota(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedResourceQuota(
+        res = self.createNamespacedResourceQuota(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedResourceQuota(
@@ -11076,8 +11529,7 @@ class ResourceQuota(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11117,54 +11569,48 @@ class ResourceQuota(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ResourceQuota":
         r"""
-        delete a ResourceQuota
+            delete a ResourceQuota
 
-        operationID: deleteNamespacedResourceQuota
-        path: /api/v1/namespaces/{namespace}/resourcequotas/{name}
+            operationID: deleteNamespacedResourceQuota
+            path: /api/v1/namespaces/{namespace}/resourcequotas/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -11196,7 +11642,7 @@ class ResourceQuota(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedResourceQuota(
+        res = self.deleteNamespacedResourceQuota(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -11204,8 +11650,12 @@ class ResourceQuota(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedResourceQuota(
@@ -11233,8 +11683,7 @@ class ResourceQuota(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11263,7 +11712,84 @@ class ResourceQuota(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedResourceQuota
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ResourceQuota":
+        r"""
+            read the specified ResourceQuota
+
+            operationID: readNamespacedResourceQuota
+            path: /api/v1/namespaces/{namespace}/resourcequotas/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ResourceQuota.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ResourceQuota's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ResourceQuota's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedResourceQuota(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedResourceQuota(
         self,
@@ -11299,8 +11825,7 @@ class ResourceQuota(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11342,42 +11867,37 @@ class ResourceQuota(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ResourceQuota":
         r"""
-        partially update the specified ResourceQuota
+            partially update the specified ResourceQuota
 
-        operationID: patchNamespacedResourceQuota
-        path: /api/v1/namespaces/{namespace}/resourcequotas/{name}
+            operationID: patchNamespacedResourceQuota
+            path: /api/v1/namespaces/{namespace}/resourcequotas/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ResourceQuota    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -11394,15 +11914,19 @@ class ResourceQuota(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedResourceQuota(
+        res = self.patchNamespacedResourceQuota(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedResourceQuota(
         self,
@@ -11431,8 +11955,7 @@ class ResourceQuota(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11494,8 +12017,7 @@ class ResourceQuota(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11717,8 +12239,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11780,8 +12301,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11824,38 +12344,31 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolumeClaim":
         r"""
-        create a PersistentVolumeClaim
+            create a PersistentVolumeClaim
 
-        operationID: createNamespacedPersistentVolumeClaim
-        path: /api/v1/namespaces/{namespace}/persistentvolumeclaims
+            operationID: createNamespacedPersistentVolumeClaim
+            path: /api/v1/namespaces/{namespace}/persistentvolumeclaims
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PersistentVolumeClaim    OK
-          201   PersistentVolumeClaim    Created
-          202   PersistentVolumeClaim    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -11872,13 +12385,17 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedPersistentVolumeClaim(
+        res = self.createNamespacedPersistentVolumeClaim(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedPersistentVolumeClaim(
@@ -11925,8 +12442,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11968,54 +12484,48 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolumeClaim":
         r"""
-        delete a PersistentVolumeClaim
+            delete a PersistentVolumeClaim
 
-        operationID: deleteNamespacedPersistentVolumeClaim
-        path: /api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}
+            operationID: deleteNamespacedPersistentVolumeClaim
+            path: /api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -12048,7 +12558,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedPersistentVolumeClaim(
+        res = self.deleteNamespacedPersistentVolumeClaim(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -12056,8 +12566,12 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedPersistentVolumeClaim(
@@ -12085,8 +12599,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12117,7 +12630,85 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedPersistentVolumeClaim
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "PersistentVolumeClaim":
+        r"""
+            read the specified PersistentVolumeClaim
+
+            operationID: readNamespacedPersistentVolumeClaim
+            path: /api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'PersistentVolumeClaim.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "PersistentVolumeClaim's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "PersistentVolumeClaim's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedPersistentVolumeClaim(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedPersistentVolumeClaim(
         self,
@@ -12153,8 +12744,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12198,42 +12788,37 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolumeClaim":
         r"""
-        partially update the specified PersistentVolumeClaim
+            partially update the specified PersistentVolumeClaim
 
-        operationID: patchNamespacedPersistentVolumeClaim
-        path: /api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}
+            operationID: patchNamespacedPersistentVolumeClaim
+            path: /api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PersistentVolumeClaim    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -12250,15 +12835,19 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedPersistentVolumeClaim(
+        res = self.patchNamespacedPersistentVolumeClaim(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedPersistentVolumeClaim(
         self,
@@ -12287,8 +12876,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12352,8 +12940,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12601,8 +13188,7 @@ class APIService(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12659,8 +13245,7 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12699,47 +13284,42 @@ class APIService(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "APIService":
         r"""
-        create an APIService
+            create an APIService
 
-        operationID: createAPIService
-        path: /apis/apiregistration.k8s.io/v1/apiservices
+            operationID: createAPIService
+            path: /apis/apiregistration.k8s.io/v1/apiservices
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   APIService    OK
-          201   APIService    Created
-          202   APIService    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'APIService.create()'"
             )
-        return self.createAPIService(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createAPIService(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteAPIService(
@@ -12784,8 +13364,7 @@ class APIService(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12823,51 +13402,45 @@ class APIService(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "APIService":
         r"""
-        delete an APIService
+            delete an APIService
 
-        operationID: deleteAPIService
-        path: /apis/apiregistration.k8s.io/v1/apiservices/{name}
+            operationID: deleteAPIService
+            path: /apis/apiregistration.k8s.io/v1/apiservices/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -12888,15 +13461,19 @@ class APIService(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteAPIService(
+        res = self.deleteAPIService(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readAPIService(
@@ -12922,8 +13499,7 @@ class APIService(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12951,7 +13527,68 @@ class APIService(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readAPIService
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "APIService":
+        r"""
+            read the specified APIService
+
+            operationID: readAPIService
+            path: /apis/apiregistration.k8s.io/v1/apiservices/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'APIService.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "APIService's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readAPIService(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchAPIService(
         self,
@@ -12985,8 +13622,7 @@ class APIService(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13026,53 +13662,52 @@ class APIService(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "APIService":
         r"""
-        partially update the specified APIService
+            partially update the specified APIService
 
-        operationID: patchAPIService
-        path: /apis/apiregistration.k8s.io/v1/apiservices/{name}
+            operationID: patchAPIService
+            path: /apis/apiregistration.k8s.io/v1/apiservices/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   APIService    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'APIService.update()'"
             )
-        return self.patchAPIService(
+        res = self.patchAPIService(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceAPIService(
         self,
@@ -13099,8 +13734,7 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13159,8 +13793,7 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13310,8 +13943,7 @@ class APIServiceList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13524,8 +14156,7 @@ class ResourceQuotaList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13646,8 +14277,7 @@ class ResourceQuotaList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13841,8 +14471,7 @@ class ConfigMap(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13904,8 +14533,7 @@ class ConfigMap(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13946,38 +14574,31 @@ class ConfigMap(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ConfigMap":
         r"""
-        create a ConfigMap
+            create a ConfigMap
 
-        operationID: createNamespacedConfigMap
-        path: /api/v1/namespaces/{namespace}/configmaps
+            operationID: createNamespacedConfigMap
+            path: /api/v1/namespaces/{namespace}/configmaps
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ConfigMap    OK
-          201   ConfigMap    Created
-          202   ConfigMap    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -13994,13 +14615,17 @@ class ConfigMap(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedConfigMap(
+        res = self.createNamespacedConfigMap(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedConfigMap(
@@ -14047,8 +14672,7 @@ class ConfigMap(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14088,54 +14712,48 @@ class ConfigMap(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ConfigMap":
         r"""
-        delete a ConfigMap
+            delete a ConfigMap
 
-        operationID: deleteNamespacedConfigMap
-        path: /api/v1/namespaces/{namespace}/configmaps/{name}
+            operationID: deleteNamespacedConfigMap
+            path: /api/v1/namespaces/{namespace}/configmaps/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -14167,7 +14785,7 @@ class ConfigMap(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedConfigMap(
+        res = self.deleteNamespacedConfigMap(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -14175,8 +14793,12 @@ class ConfigMap(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedConfigMap(
@@ -14204,8 +14826,7 @@ class ConfigMap(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14234,7 +14855,84 @@ class ConfigMap(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedConfigMap
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ConfigMap":
+        r"""
+            read the specified ConfigMap
+
+            operationID: readNamespacedConfigMap
+            path: /api/v1/namespaces/{namespace}/configmaps/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ConfigMap.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ConfigMap's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ConfigMap's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedConfigMap(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedConfigMap(
         self,
@@ -14270,8 +14968,7 @@ class ConfigMap(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14313,42 +15010,37 @@ class ConfigMap(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ConfigMap":
         r"""
-        partially update the specified ConfigMap
+            partially update the specified ConfigMap
 
-        operationID: patchNamespacedConfigMap
-        path: /api/v1/namespaces/{namespace}/configmaps/{name}
+            operationID: patchNamespacedConfigMap
+            path: /api/v1/namespaces/{namespace}/configmaps/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ConfigMap    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -14365,15 +15057,19 @@ class ConfigMap(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedConfigMap(
+        res = self.patchNamespacedConfigMap(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedConfigMap(
         self,
@@ -14402,8 +15098,7 @@ class ConfigMap(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14637,8 +15332,7 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15593,8 +16287,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15653,8 +16346,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15693,47 +16385,42 @@ class ClusterRoleBinding(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRoleBinding":
         r"""
-        create a ClusterRoleBinding
+            create a ClusterRoleBinding
 
-        operationID: createClusterRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings
+            operationID: createClusterRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ClusterRoleBinding    OK
-          201   ClusterRoleBinding    Created
-          202   ClusterRoleBinding    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ClusterRoleBinding.create()'"
             )
-        return self.createClusterRoleBinding(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createClusterRoleBinding(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteClusterRoleBinding(
@@ -15778,8 +16465,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15817,51 +16503,45 @@ class ClusterRoleBinding(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRoleBinding":
         r"""
-        delete a ClusterRoleBinding
+            delete a ClusterRoleBinding
 
-        operationID: deleteClusterRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}
+            operationID: deleteClusterRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -15883,15 +16563,19 @@ class ClusterRoleBinding(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteClusterRoleBinding(
+        res = self.deleteClusterRoleBinding(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readClusterRoleBinding(
@@ -15910,8 +16594,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15937,7 +16620,58 @@ class ClusterRoleBinding(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readClusterRoleBinding
+    def read(
+        self,
+        name: Optional[str] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ClusterRoleBinding":
+        r"""
+            read the specified ClusterRoleBinding
+
+            operationID: readClusterRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'ClusterRoleBinding.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ClusterRoleBinding's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readClusterRoleBinding(
+            name=effective_name, pretty=pretty, client=client
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchClusterRoleBinding(
         self,
@@ -15971,8 +16705,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16012,53 +16745,52 @@ class ClusterRoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ClusterRoleBinding":
         r"""
-        partially update the specified ClusterRoleBinding
+            partially update the specified ClusterRoleBinding
 
-        operationID: patchClusterRoleBinding
-        path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}
+            operationID: patchClusterRoleBinding
+            path: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ClusterRoleBinding    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'ClusterRoleBinding.update()'"
             )
-        return self.patchClusterRoleBinding(
+        res = self.patchClusterRoleBinding(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceClusterRoleBinding(
         self,
@@ -16085,8 +16817,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16195,8 +16926,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16232,33 +16962,24 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     def create(
-        self,
-        namespace: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+        self, namespace: Optional[str] = None, client: ApiClient = None
+    ) -> "LocalSubjectAccessReview":
         r"""
-        create a LocalSubjectAccessReview
+            create a LocalSubjectAccessReview
 
-        operationID: createNamespacedLocalSubjectAccessReview
-        path: /apis/authorization.k8s.io/v1/namespaces/{namespace}/localsubjectaccessreviews
+            operationID: createNamespacedLocalSubjectAccessReview
+            path: /apis/authorization.k8s.io/v1/namespaces/{namespace}/localsubjectaccessreviews
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   LocalSubjectAccessReview    OK
-          201   LocalSubjectAccessReview    Created
-          202   LocalSubjectAccessReview    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -16275,9 +16996,14 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedLocalSubjectAccessReview(
-            namespace=effective_namespace, client=client, async_req=async_req
+        res = self.createNamespacedLocalSubjectAccessReview(
+            namespace=effective_namespace, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -16472,8 +17198,7 @@ class PersistentVolume(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16530,8 +17255,7 @@ class PersistentVolume(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16570,47 +17294,42 @@ class PersistentVolume(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolume":
         r"""
-        create a PersistentVolume
+            create a PersistentVolume
 
-        operationID: createPersistentVolume
-        path: /api/v1/persistentvolumes
+            operationID: createPersistentVolume
+            path: /api/v1/persistentvolumes
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PersistentVolume    OK
-          201   PersistentVolume    Created
-          202   PersistentVolume    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'PersistentVolume.create()'"
             )
-        return self.createPersistentVolume(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createPersistentVolume(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deletePersistentVolume(
@@ -16655,8 +17374,7 @@ class PersistentVolume(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16694,51 +17412,45 @@ class PersistentVolume(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolume":
         r"""
-        delete a PersistentVolume
+            delete a PersistentVolume
 
-        operationID: deletePersistentVolume
-        path: /api/v1/persistentvolumes/{name}
+            operationID: deletePersistentVolume
+            path: /api/v1/persistentvolumes/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -16760,15 +17472,19 @@ class PersistentVolume(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deletePersistentVolume(
+        res = self.deletePersistentVolume(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readPersistentVolume(
@@ -16794,8 +17510,7 @@ class PersistentVolume(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16823,7 +17538,69 @@ class PersistentVolume(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readPersistentVolume
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "PersistentVolume":
+        r"""
+            read the specified PersistentVolume
+
+            operationID: readPersistentVolume
+            path: /api/v1/persistentvolumes/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'PersistentVolume.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "PersistentVolume's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readPersistentVolume(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchPersistentVolume(
         self,
@@ -16857,8 +17634,7 @@ class PersistentVolume(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16898,53 +17674,52 @@ class PersistentVolume(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PersistentVolume":
         r"""
-        partially update the specified PersistentVolume
+            partially update the specified PersistentVolume
 
-        operationID: patchPersistentVolume
-        path: /api/v1/persistentvolumes/{name}
+            operationID: patchPersistentVolume
+            path: /api/v1/persistentvolumes/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PersistentVolume    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'PersistentVolume.update()'"
             )
-        return self.patchPersistentVolume(
+        res = self.patchPersistentVolume(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replacePersistentVolume(
         self,
@@ -16971,8 +17746,7 @@ class PersistentVolume(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17031,8 +17805,7 @@ class PersistentVolume(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17184,8 +17957,7 @@ class PersistentVolumeList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17336,8 +18108,7 @@ class Lease(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17472,8 +18243,7 @@ class Lease(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17533,8 +18303,7 @@ class Lease(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17575,38 +18344,31 @@ class Lease(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Lease":
         r"""
-        create a Lease
+            create a Lease
 
-        operationID: createNamespacedLease
-        path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases
+            operationID: createNamespacedLease
+            path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Lease    OK
-          201   Lease    Created
-          202   Lease    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -17623,13 +18385,17 @@ class Lease(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedLease(
+        res = self.createNamespacedLease(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedLease(
@@ -17676,8 +18442,7 @@ class Lease(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17717,54 +18482,48 @@ class Lease(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Lease":
         r"""
-        delete a Lease
+            delete a Lease
 
-        operationID: deleteNamespacedLease
-        path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases/{name}
+            operationID: deleteNamespacedLease
+            path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -17796,7 +18555,7 @@ class Lease(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedLease(
+        res = self.deleteNamespacedLease(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -17804,8 +18563,12 @@ class Lease(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedLease(
@@ -17833,8 +18596,7 @@ class Lease(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17863,7 +18625,84 @@ class Lease(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedLease
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Lease":
+        r"""
+            read the specified Lease
+
+            operationID: readNamespacedLease
+            path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Lease.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Lease's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Lease's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedLease(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedLease(
         self,
@@ -17899,8 +18738,7 @@ class Lease(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17942,42 +18780,37 @@ class Lease(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Lease":
         r"""
-        partially update the specified Lease
+            partially update the specified Lease
 
-        operationID: patchNamespacedLease
-        path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases/{name}
+            operationID: patchNamespacedLease
+            path: /apis/coordination.k8s.io/v1/namespaces/{namespace}/leases/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Lease    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -17994,15 +18827,19 @@ class Lease(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedLease(
+        res = self.patchNamespacedLease(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedLease(
         self,
@@ -18031,8 +18868,7 @@ class Lease(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18186,8 +19022,7 @@ class LeaseList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19305,8 +20140,7 @@ class Namespace(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19345,47 +20179,42 @@ class Namespace(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Namespace":
         r"""
-        create a Namespace
+            create a Namespace
 
-        operationID: createNamespace
-        path: /api/v1/namespaces
+            operationID: createNamespace
+            path: /api/v1/namespaces
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Namespace    OK
-          201   Namespace    Created
-          202   Namespace    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'Namespace.create()'"
             )
-        return self.createNamespace(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createNamespace(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespace(
@@ -19430,8 +20259,7 @@ class Namespace(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19469,51 +20297,45 @@ class Namespace(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Namespace":
         r"""
-        delete a Namespace
+            delete a Namespace
 
-        operationID: deleteNamespace
-        path: /api/v1/namespaces/{name}
+            operationID: deleteNamespace
+            path: /api/v1/namespaces/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -19534,15 +20356,19 @@ class Namespace(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespace(
+        res = self.deleteNamespace(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespace(
@@ -19568,8 +20394,7 @@ class Namespace(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19597,7 +20422,68 @@ class Namespace(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespace
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Namespace":
+        r"""
+            read the specified Namespace
+
+            operationID: readNamespace
+            path: /api/v1/namespaces/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Namespace.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Namespace's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespace(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespace(
         self,
@@ -19631,8 +20517,7 @@ class Namespace(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19672,53 +20557,52 @@ class Namespace(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Namespace":
         r"""
-        partially update the specified Namespace
+            partially update the specified Namespace
 
-        operationID: patchNamespace
-        path: /api/v1/namespaces/{name}
+            operationID: patchNamespace
+            path: /api/v1/namespaces/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Namespace    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'Namespace.update()'"
             )
-        return self.patchNamespace(
+        res = self.patchNamespace(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespace(
         self,
@@ -19745,8 +20629,7 @@ class Namespace(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19792,8 +20675,7 @@ class Namespace(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19850,8 +20732,7 @@ class Namespace(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20003,8 +20884,7 @@ class NamespaceList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20190,8 +21070,7 @@ class Endpoints(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20326,8 +21205,7 @@ class Endpoints(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20389,8 +21267,7 @@ class Endpoints(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20431,38 +21308,31 @@ class Endpoints(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Endpoints":
         r"""
-        create Endpoints
+            create Endpoints
 
-        operationID: createNamespacedEndpoints
-        path: /api/v1/namespaces/{namespace}/endpoints
+            operationID: createNamespacedEndpoints
+            path: /api/v1/namespaces/{namespace}/endpoints
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Endpoints    OK
-          201   Endpoints    Created
-          202   Endpoints    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -20479,13 +21349,17 @@ class Endpoints(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedEndpoints(
+        res = self.createNamespacedEndpoints(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedEndpoints(
@@ -20532,8 +21406,7 @@ class Endpoints(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20573,54 +21446,48 @@ class Endpoints(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Endpoints":
         r"""
-        delete Endpoints
+            delete Endpoints
 
-        operationID: deleteNamespacedEndpoints
-        path: /api/v1/namespaces/{namespace}/endpoints/{name}
+            operationID: deleteNamespacedEndpoints
+            path: /api/v1/namespaces/{namespace}/endpoints/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -20652,7 +21519,7 @@ class Endpoints(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedEndpoints(
+        res = self.deleteNamespacedEndpoints(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -20660,8 +21527,12 @@ class Endpoints(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedEndpoints(
@@ -20689,8 +21560,7 @@ class Endpoints(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20719,7 +21589,84 @@ class Endpoints(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedEndpoints
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Endpoints":
+        r"""
+            read the specified Endpoints
+
+            operationID: readNamespacedEndpoints
+            path: /api/v1/namespaces/{namespace}/endpoints/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Endpoints.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Endpoints's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Endpoints's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedEndpoints(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedEndpoints(
         self,
@@ -20755,8 +21702,7 @@ class Endpoints(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20798,42 +21744,37 @@ class Endpoints(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Endpoints":
         r"""
-        partially update the specified Endpoints
+            partially update the specified Endpoints
 
-        operationID: patchNamespacedEndpoints
-        path: /api/v1/namespaces/{namespace}/endpoints/{name}
+            operationID: patchNamespacedEndpoints
+            path: /api/v1/namespaces/{namespace}/endpoints/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Endpoints    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -20850,15 +21791,19 @@ class Endpoints(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedEndpoints(
+        res = self.patchNamespacedEndpoints(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedEndpoints(
         self,
@@ -20887,8 +21832,7 @@ class Endpoints(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21042,8 +21986,7 @@ class EndpointsList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21735,8 +22678,7 @@ class LimitRange(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21798,8 +22740,7 @@ class LimitRange(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21840,38 +22781,31 @@ class LimitRange(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "LimitRange":
         r"""
-        create a LimitRange
+            create a LimitRange
 
-        operationID: createNamespacedLimitRange
-        path: /api/v1/namespaces/{namespace}/limitranges
+            operationID: createNamespacedLimitRange
+            path: /api/v1/namespaces/{namespace}/limitranges
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   LimitRange    OK
-          201   LimitRange    Created
-          202   LimitRange    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -21888,13 +22822,17 @@ class LimitRange(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedLimitRange(
+        res = self.createNamespacedLimitRange(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedLimitRange(
@@ -21941,8 +22879,7 @@ class LimitRange(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21982,54 +22919,48 @@ class LimitRange(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "LimitRange":
         r"""
-        delete a LimitRange
+            delete a LimitRange
 
-        operationID: deleteNamespacedLimitRange
-        path: /api/v1/namespaces/{namespace}/limitranges/{name}
+            operationID: deleteNamespacedLimitRange
+            path: /api/v1/namespaces/{namespace}/limitranges/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -22061,7 +22992,7 @@ class LimitRange(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedLimitRange(
+        res = self.deleteNamespacedLimitRange(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -22069,8 +23000,12 @@ class LimitRange(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedLimitRange(
@@ -22098,8 +23033,7 @@ class LimitRange(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22128,7 +23062,84 @@ class LimitRange(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedLimitRange
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "LimitRange":
+        r"""
+            read the specified LimitRange
+
+            operationID: readNamespacedLimitRange
+            path: /api/v1/namespaces/{namespace}/limitranges/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'LimitRange.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "LimitRange's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "LimitRange's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedLimitRange(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedLimitRange(
         self,
@@ -22164,8 +23175,7 @@ class LimitRange(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22207,42 +23217,37 @@ class LimitRange(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "LimitRange":
         r"""
-        partially update the specified LimitRange
+            partially update the specified LimitRange
 
-        operationID: patchNamespacedLimitRange
-        path: /api/v1/namespaces/{namespace}/limitranges/{name}
+            operationID: patchNamespacedLimitRange
+            path: /api/v1/namespaces/{namespace}/limitranges/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   LimitRange    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -22259,15 +23264,19 @@ class LimitRange(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedLimitRange(
+        res = self.patchNamespacedLimitRange(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedLimitRange(
         self,
@@ -22296,8 +23305,7 @@ class LimitRange(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22450,8 +23458,7 @@ class LimitRangeList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22573,8 +23580,7 @@ class LimitRangeList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22783,8 +23789,7 @@ class ReplicaSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22846,8 +23851,7 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22888,38 +23892,31 @@ class ReplicaSet(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicaSet":
         r"""
-        create a ReplicaSet
+            create a ReplicaSet
 
-        operationID: createNamespacedReplicaSet
-        path: /apis/apps/v1/namespaces/{namespace}/replicasets
+            operationID: createNamespacedReplicaSet
+            path: /apis/apps/v1/namespaces/{namespace}/replicasets
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicaSet    OK
-          201   ReplicaSet    Created
-          202   ReplicaSet    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -22936,13 +23933,17 @@ class ReplicaSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedReplicaSet(
+        res = self.createNamespacedReplicaSet(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedReplicaSet(
@@ -22989,8 +23990,7 @@ class ReplicaSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23030,54 +24030,48 @@ class ReplicaSet(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicaSet":
         r"""
-        delete a ReplicaSet
+            delete a ReplicaSet
 
-        operationID: deleteNamespacedReplicaSet
-        path: /apis/apps/v1/namespaces/{namespace}/replicasets/{name}
+            operationID: deleteNamespacedReplicaSet
+            path: /apis/apps/v1/namespaces/{namespace}/replicasets/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -23109,7 +24103,7 @@ class ReplicaSet(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedReplicaSet(
+        res = self.deleteNamespacedReplicaSet(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -23117,8 +24111,12 @@ class ReplicaSet(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedReplicaSet(
@@ -23146,8 +24144,7 @@ class ReplicaSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23176,7 +24173,84 @@ class ReplicaSet(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedReplicaSet
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ReplicaSet":
+        r"""
+            read the specified ReplicaSet
+
+            operationID: readNamespacedReplicaSet
+            path: /apis/apps/v1/namespaces/{namespace}/replicasets/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ReplicaSet.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ReplicaSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ReplicaSet's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedReplicaSet(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedReplicaSet(
         self,
@@ -23212,8 +24286,7 @@ class ReplicaSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23255,42 +24328,37 @@ class ReplicaSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ReplicaSet":
         r"""
-        partially update the specified ReplicaSet
+            partially update the specified ReplicaSet
 
-        operationID: patchNamespacedReplicaSet
-        path: /apis/apps/v1/namespaces/{namespace}/replicasets/{name}
+            operationID: patchNamespacedReplicaSet
+            path: /apis/apps/v1/namespaces/{namespace}/replicasets/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ReplicaSet    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -23307,15 +24375,19 @@ class ReplicaSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedReplicaSet(
+        res = self.patchNamespacedReplicaSet(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedReplicaSet(
         self,
@@ -23344,8 +24416,7 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23407,8 +24478,7 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23565,8 +24635,7 @@ class ReplicaSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23687,8 +24756,7 @@ class ReplicaSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23979,8 +25047,7 @@ class Service(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24021,38 +25088,31 @@ class Service(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Service":
         r"""
-        create a Service
+            create a Service
 
-        operationID: createNamespacedService
-        path: /api/v1/namespaces/{namespace}/services
+            operationID: createNamespacedService
+            path: /api/v1/namespaces/{namespace}/services
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Service    OK
-          201   Service    Created
-          202   Service    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -24069,13 +25129,17 @@ class Service(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedService(
+        res = self.createNamespacedService(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedService(
@@ -24122,8 +25186,7 @@ class Service(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24163,54 +25226,48 @@ class Service(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Service":
         r"""
-        delete a Service
+            delete a Service
 
-        operationID: deleteNamespacedService
-        path: /api/v1/namespaces/{namespace}/services/{name}
+            operationID: deleteNamespacedService
+            path: /api/v1/namespaces/{namespace}/services/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -24242,7 +25299,7 @@ class Service(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedService(
+        res = self.deleteNamespacedService(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -24250,8 +25307,12 @@ class Service(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedService(
@@ -24279,8 +25340,7 @@ class Service(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24309,7 +25369,84 @@ class Service(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedService
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Service":
+        r"""
+            read the specified Service
+
+            operationID: readNamespacedService
+            path: /api/v1/namespaces/{namespace}/services/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Service.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Service's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Service's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedService(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedService(
         self,
@@ -24345,8 +25482,7 @@ class Service(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24388,42 +25524,37 @@ class Service(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Service":
         r"""
-        partially update the specified Service
+            partially update the specified Service
 
-        operationID: patchNamespacedService
-        path: /api/v1/namespaces/{namespace}/services/{name}
+            operationID: patchNamespacedService
+            path: /api/v1/namespaces/{namespace}/services/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Service    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -24440,15 +25571,19 @@ class Service(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedService(
+        res = self.patchNamespacedService(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedService(
         self,
@@ -24477,8 +25612,7 @@ class Service(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24527,8 +25661,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24570,8 +25703,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24613,8 +25745,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24665,8 +25796,7 @@ class Service(HikaruDocumentBase):
             Path is _search?q=user:kimchy.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24709,8 +25839,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24752,8 +25881,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24795,8 +25923,7 @@ class Service(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24843,8 +25970,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24892,8 +26018,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24941,8 +26066,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24990,8 +26114,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25039,8 +26162,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25088,8 +26210,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25137,8 +26258,7 @@ class Service(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25194,8 +26314,7 @@ class Service(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25317,8 +26436,7 @@ class Service(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25440,8 +26558,7 @@ class Service(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25803,7 +26920,7 @@ class JSONSchemaProps(HikaruBase):
     default: Optional[object] = field(default_factory=dict)
     definitions: Optional[Dict[str, str]] = field(default_factory=dict)
     dependencies: Optional[Dict[str, str]] = field(default_factory=dict)
-    enum: Optional[List[Any]] = field(default_factory=list)
+    enum: Optional[List[object]] = field(default_factory=list)
     example: Optional[object] = field(default_factory=dict)
     items: Optional[object] = field(default_factory=dict)
     oneOf: Optional[List["JSONSchemaProps"]] = field(default_factory=list)
@@ -25961,8 +27078,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26021,8 +27137,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26061,47 +27176,42 @@ class CustomResourceDefinition(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CustomResourceDefinition":
         r"""
-        create a CustomResourceDefinition
+            create a CustomResourceDefinition
 
-        operationID: createCustomResourceDefinition
-        path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions
+            operationID: createCustomResourceDefinition
+            path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   CustomResourceDefinition    OK
-          201   CustomResourceDefinition    Created
-          202   CustomResourceDefinition    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'CustomResourceDefinition.create()'"
             )
-        return self.createCustomResourceDefinition(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createCustomResourceDefinition(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteCustomResourceDefinition(
@@ -26146,8 +27256,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26185,51 +27294,45 @@ class CustomResourceDefinition(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CustomResourceDefinition":
         r"""
-        delete a CustomResourceDefinition
+            delete a CustomResourceDefinition
 
-        operationID: deleteCustomResourceDefinition
-        path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/{name}
+            operationID: deleteCustomResourceDefinition
+            path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -26251,15 +27354,19 @@ class CustomResourceDefinition(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteCustomResourceDefinition(
+        res = self.deleteCustomResourceDefinition(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readCustomResourceDefinition(
@@ -26285,8 +27392,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26314,7 +27420,69 @@ class CustomResourceDefinition(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readCustomResourceDefinition
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "CustomResourceDefinition":
+        r"""
+            read the specified CustomResourceDefinition
+
+            operationID: readCustomResourceDefinition
+            path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'CustomResourceDefinition.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "CustomResourceDefinition's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readCustomResourceDefinition(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchCustomResourceDefinition(
         self,
@@ -26348,8 +27516,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26389,53 +27556,52 @@ class CustomResourceDefinition(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CustomResourceDefinition":
         r"""
-        partially update the specified CustomResourceDefinition
+            partially update the specified CustomResourceDefinition
 
-        operationID: patchCustomResourceDefinition
-        path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/{name}
+            operationID: patchCustomResourceDefinition
+            path: /apis/apiextensions.k8s.io/v1/customresourcedefinitions/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   CustomResourceDefinition    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'CustomResourceDefinition.update()'"
             )
-        return self.patchCustomResourceDefinition(
+        res = self.patchCustomResourceDefinition(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceCustomResourceDefinition(
         self,
@@ -26462,8 +27628,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26522,8 +27687,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26957,8 +28121,7 @@ class VolumeAttachment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27015,8 +28178,7 @@ class VolumeAttachment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27055,47 +28217,42 @@ class VolumeAttachment(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "VolumeAttachment":
         r"""
-        create a VolumeAttachment
+            create a VolumeAttachment
 
-        operationID: createVolumeAttachment
-        path: /apis/storage.k8s.io/v1/volumeattachments
+            operationID: createVolumeAttachment
+            path: /apis/storage.k8s.io/v1/volumeattachments
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   VolumeAttachment    OK
-          201   VolumeAttachment    Created
-          202   VolumeAttachment    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'VolumeAttachment.create()'"
             )
-        return self.createVolumeAttachment(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createVolumeAttachment(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteVolumeAttachment(
@@ -27140,8 +28297,7 @@ class VolumeAttachment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27179,51 +28335,45 @@ class VolumeAttachment(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "VolumeAttachment":
         r"""
-        delete a VolumeAttachment
+            delete a VolumeAttachment
 
-        operationID: deleteVolumeAttachment
-        path: /apis/storage.k8s.io/v1/volumeattachments/{name}
+            operationID: deleteVolumeAttachment
+            path: /apis/storage.k8s.io/v1/volumeattachments/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -27245,15 +28395,19 @@ class VolumeAttachment(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteVolumeAttachment(
+        res = self.deleteVolumeAttachment(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readVolumeAttachment(
@@ -27279,8 +28433,7 @@ class VolumeAttachment(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27308,7 +28461,69 @@ class VolumeAttachment(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readVolumeAttachment
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "VolumeAttachment":
+        r"""
+            read the specified VolumeAttachment
+
+            operationID: readVolumeAttachment
+            path: /apis/storage.k8s.io/v1/volumeattachments/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'VolumeAttachment.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "VolumeAttachment's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readVolumeAttachment(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchVolumeAttachment(
         self,
@@ -27342,8 +28557,7 @@ class VolumeAttachment(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27383,53 +28597,52 @@ class VolumeAttachment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "VolumeAttachment":
         r"""
-        partially update the specified VolumeAttachment
+            partially update the specified VolumeAttachment
 
-        operationID: patchVolumeAttachment
-        path: /apis/storage.k8s.io/v1/volumeattachments/{name}
+            operationID: patchVolumeAttachment
+            path: /apis/storage.k8s.io/v1/volumeattachments/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   VolumeAttachment    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'VolumeAttachment.update()'"
             )
-        return self.patchVolumeAttachment(
+        res = self.patchVolumeAttachment(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceVolumeAttachment(
         self,
@@ -27456,8 +28669,7 @@ class VolumeAttachment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27516,8 +28728,7 @@ class VolumeAttachment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27705,8 +28916,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27969,8 +29179,7 @@ class Deployment(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28105,8 +29314,7 @@ class Deployment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28168,8 +29376,7 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28210,38 +29417,31 @@ class Deployment(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Deployment":
         r"""
-        create a Deployment
+            create a Deployment
 
-        operationID: createNamespacedDeployment
-        path: /apis/apps/v1/namespaces/{namespace}/deployments
+            operationID: createNamespacedDeployment
+            path: /apis/apps/v1/namespaces/{namespace}/deployments
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Deployment    OK
-          201   Deployment    Created
-          202   Deployment    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -28258,13 +29458,17 @@ class Deployment(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedDeployment(
+        res = self.createNamespacedDeployment(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedDeployment(
@@ -28311,8 +29515,7 @@ class Deployment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28352,54 +29555,48 @@ class Deployment(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Deployment":
         r"""
-        delete a Deployment
+            delete a Deployment
 
-        operationID: deleteNamespacedDeployment
-        path: /apis/apps/v1/namespaces/{namespace}/deployments/{name}
+            operationID: deleteNamespacedDeployment
+            path: /apis/apps/v1/namespaces/{namespace}/deployments/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -28431,7 +29628,7 @@ class Deployment(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedDeployment(
+        res = self.deleteNamespacedDeployment(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -28439,8 +29636,12 @@ class Deployment(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedDeployment(
@@ -28468,8 +29669,7 @@ class Deployment(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28498,7 +29698,84 @@ class Deployment(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedDeployment
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Deployment":
+        r"""
+            read the specified Deployment
+
+            operationID: readNamespacedDeployment
+            path: /apis/apps/v1/namespaces/{namespace}/deployments/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Deployment.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Deployment's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Deployment's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedDeployment(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedDeployment(
         self,
@@ -28534,8 +29811,7 @@ class Deployment(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28577,42 +29853,37 @@ class Deployment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Deployment":
         r"""
-        partially update the specified Deployment
+            partially update the specified Deployment
 
-        operationID: patchNamespacedDeployment
-        path: /apis/apps/v1/namespaces/{namespace}/deployments/{name}
+            operationID: patchNamespacedDeployment
+            path: /apis/apps/v1/namespaces/{namespace}/deployments/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Deployment    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -28629,15 +29900,19 @@ class Deployment(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedDeployment(
+        res = self.patchNamespacedDeployment(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedDeployment(
         self,
@@ -28666,8 +29941,7 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28729,8 +30003,7 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28849,8 +30122,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1/selfsubjectaccessreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28883,32 +30155,31 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
-    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+    def create(self, client: ApiClient = None) -> "SelfSubjectAccessReview":
         r"""
-        create a SelfSubjectAccessReview
+            create a SelfSubjectAccessReview
 
-        operationID: createSelfSubjectAccessReview
-        path: /apis/authorization.k8s.io/v1/selfsubjectaccessreviews
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   SelfSubjectAccessReview    OK
-          201   SelfSubjectAccessReview    Created
-          202   SelfSubjectAccessReview    Accepted
-          401   None    Unauthorized
+            operationID: createSelfSubjectAccessReview
+            path: /apis/authorization.k8s.io/v1/selfsubjectaccessreviews
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'SelfSubjectAccessReview.create()'"
             )
-        return self.createSelfSubjectAccessReview(client=client, async_req=async_req)
+        res = self.createSelfSubjectAccessReview(client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -29150,8 +30421,7 @@ class DaemonSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29213,8 +30483,7 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29255,38 +30524,31 @@ class DaemonSet(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "DaemonSet":
         r"""
-        create a DaemonSet
+            create a DaemonSet
 
-        operationID: createNamespacedDaemonSet
-        path: /apis/apps/v1/namespaces/{namespace}/daemonsets
+            operationID: createNamespacedDaemonSet
+            path: /apis/apps/v1/namespaces/{namespace}/daemonsets
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   DaemonSet    OK
-          201   DaemonSet    Created
-          202   DaemonSet    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -29303,13 +30565,17 @@ class DaemonSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedDaemonSet(
+        res = self.createNamespacedDaemonSet(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedDaemonSet(
@@ -29356,8 +30622,7 @@ class DaemonSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29397,54 +30662,48 @@ class DaemonSet(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "DaemonSet":
         r"""
-        delete a DaemonSet
+            delete a DaemonSet
 
-        operationID: deleteNamespacedDaemonSet
-        path: /apis/apps/v1/namespaces/{namespace}/daemonsets/{name}
+            operationID: deleteNamespacedDaemonSet
+            path: /apis/apps/v1/namespaces/{namespace}/daemonsets/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -29476,7 +30735,7 @@ class DaemonSet(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedDaemonSet(
+        res = self.deleteNamespacedDaemonSet(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -29484,8 +30743,12 @@ class DaemonSet(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedDaemonSet(
@@ -29513,8 +30776,7 @@ class DaemonSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29543,7 +30805,84 @@ class DaemonSet(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedDaemonSet
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "DaemonSet":
+        r"""
+            read the specified DaemonSet
+
+            operationID: readNamespacedDaemonSet
+            path: /apis/apps/v1/namespaces/{namespace}/daemonsets/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'DaemonSet.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "DaemonSet's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "DaemonSet's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedDaemonSet(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedDaemonSet(
         self,
@@ -29579,8 +30918,7 @@ class DaemonSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29622,42 +30960,37 @@ class DaemonSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "DaemonSet":
         r"""
-        partially update the specified DaemonSet
+            partially update the specified DaemonSet
 
-        operationID: patchNamespacedDaemonSet
-        path: /apis/apps/v1/namespaces/{namespace}/daemonsets/{name}
+            operationID: patchNamespacedDaemonSet
+            path: /apis/apps/v1/namespaces/{namespace}/daemonsets/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   DaemonSet    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -29674,15 +31007,19 @@ class DaemonSet(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedDaemonSet(
+        res = self.patchNamespacedDaemonSet(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedDaemonSet(
         self,
@@ -29711,8 +31048,7 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29774,8 +31110,7 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29992,8 +31327,7 @@ class Event(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30128,8 +31462,7 @@ class Event(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30189,8 +31522,7 @@ class Event(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30231,38 +31563,31 @@ class Event(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Event":
         r"""
-        create an Event
+            create an Event
 
-        operationID: createNamespacedEvent
-        path: /api/v1/namespaces/{namespace}/events
+            operationID: createNamespacedEvent
+            path: /api/v1/namespaces/{namespace}/events
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          201   Event    Created
-          202   Event    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -30279,13 +31604,17 @@ class Event(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedEvent(
+        res = self.createNamespacedEvent(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedEvent(
@@ -30332,8 +31661,7 @@ class Event(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30373,54 +31701,48 @@ class Event(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Event":
         r"""
-        delete an Event
+            delete an Event
 
-        operationID: deleteNamespacedEvent
-        path: /api/v1/namespaces/{namespace}/events/{name}
+            operationID: deleteNamespacedEvent
+            path: /api/v1/namespaces/{namespace}/events/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -30452,7 +31774,7 @@ class Event(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedEvent(
+        res = self.deleteNamespacedEvent(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -30460,8 +31782,12 @@ class Event(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedEvent(
@@ -30489,8 +31815,7 @@ class Event(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30519,7 +31844,84 @@ class Event(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedEvent
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Event":
+        r"""
+            read the specified Event
+
+            operationID: readNamespacedEvent
+            path: /api/v1/namespaces/{namespace}/events/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Event.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Event's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Event's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedEvent(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedEvent(
         self,
@@ -30555,8 +31957,7 @@ class Event(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30598,42 +31999,37 @@ class Event(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Event":
         r"""
-        partially update the specified Event
+            partially update the specified Event
 
-        operationID: patchNamespacedEvent
-        path: /api/v1/namespaces/{namespace}/events/{name}
+            operationID: patchNamespacedEvent
+            path: /api/v1/namespaces/{namespace}/events/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -30650,15 +32046,19 @@ class Event(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedEvent(
+        res = self.patchNamespacedEvent(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedEvent(
         self,
@@ -30687,8 +32087,7 @@ class Event(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30943,8 +32342,7 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31007,8 +32405,7 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31072,8 +32469,7 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31129,8 +32525,7 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31191,8 +32586,7 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31254,8 +32648,7 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31309,8 +32702,7 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31371,8 +32763,7 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31434,8 +32825,7 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31491,8 +32881,7 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31553,8 +32942,7 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31616,8 +33004,7 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31670,7 +33057,7 @@ class ScaleSpec(HikaruBase):
 
 
 @dataclass
-class WatchEvent(HikaruDocumentBase):
+class WatchEvent(HikaruBase):
     r"""
     Event represents a single event to a watched resource.
 
@@ -31683,11 +33070,8 @@ class WatchEvent(HikaruDocumentBase):
     type:
     """
 
-    _version = "v1"
     object: object
     type: str
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -31805,8 +33189,7 @@ class TokenRequest(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31843,33 +33226,24 @@ class TokenRequest(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     def create(
-        self,
-        namespace: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+        self, namespace: Optional[str] = None, client: ApiClient = None
+    ) -> "TokenRequest":
         r"""
-        create token of a ServiceAccount
+            create token of a ServiceAccount
 
-        operationID: createNamespacedServiceAccountToken
-        path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}/token
+            operationID: createNamespacedServiceAccountToken
+            path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}/token
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   TokenRequest    OK
-          201   TokenRequest    Created
-          202   TokenRequest    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -31886,12 +33260,14 @@ class TokenRequest(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedServiceAccountToken(
-            name=self.metadata.name,
-            namespace=effective_namespace,
-            client=client,
-            async_req=async_req,
+        res = self.createNamespacedServiceAccountToken(
+            name=self.metadata.name, namespace=effective_namespace, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -32244,8 +33620,7 @@ class ControllerRevision(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32307,8 +33682,7 @@ class ControllerRevision(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32351,38 +33725,31 @@ class ControllerRevision(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ControllerRevision":
         r"""
-        create a ControllerRevision
+            create a ControllerRevision
 
-        operationID: createNamespacedControllerRevision
-        path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions
+            operationID: createNamespacedControllerRevision
+            path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ControllerRevision    OK
-          201   ControllerRevision    Created
-          202   ControllerRevision    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -32399,13 +33766,17 @@ class ControllerRevision(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedControllerRevision(
+        res = self.createNamespacedControllerRevision(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedControllerRevision(
@@ -32452,8 +33823,7 @@ class ControllerRevision(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32495,54 +33865,48 @@ class ControllerRevision(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ControllerRevision":
         r"""
-        delete a ControllerRevision
+            delete a ControllerRevision
 
-        operationID: deleteNamespacedControllerRevision
-        path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions/{name}
+            operationID: deleteNamespacedControllerRevision
+            path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -32575,7 +33939,7 @@ class ControllerRevision(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedControllerRevision(
+        res = self.deleteNamespacedControllerRevision(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -32583,8 +33947,12 @@ class ControllerRevision(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedControllerRevision(
@@ -32612,8 +33980,7 @@ class ControllerRevision(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32642,7 +34009,85 @@ class ControllerRevision(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedControllerRevision
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ControllerRevision":
+        r"""
+            read the specified ControllerRevision
+
+            operationID: readNamespacedControllerRevision
+            path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'ControllerRevision.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ControllerRevision's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ControllerRevision's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedControllerRevision(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedControllerRevision(
         self,
@@ -32678,8 +34123,7 @@ class ControllerRevision(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32723,42 +34167,37 @@ class ControllerRevision(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ControllerRevision":
         r"""
-        partially update the specified ControllerRevision
+            partially update the specified ControllerRevision
 
-        operationID: patchNamespacedControllerRevision
-        path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions/{name}
+            operationID: patchNamespacedControllerRevision
+            path: /apis/apps/v1/namespaces/{namespace}/controllerrevisions/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ControllerRevision    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -32775,15 +34214,19 @@ class ControllerRevision(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedControllerRevision(
+        res = self.patchNamespacedControllerRevision(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedControllerRevision(
         self,
@@ -32812,8 +34255,7 @@ class ControllerRevision(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32988,8 +34430,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33539,8 +34980,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33599,8 +35039,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33641,47 +35080,42 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "MutatingWebhookConfiguration":
         r"""
-        create a MutatingWebhookConfiguration
+            create a MutatingWebhookConfiguration
 
-        operationID: createMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations
+            operationID: createMutatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   MutatingWebhookConfiguration    OK
-          201   MutatingWebhookConfiguration    Created
-          202   MutatingWebhookConfiguration    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'MutatingWebhookConfiguration.create()'"
             )
-        return self.createMutatingWebhookConfiguration(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createMutatingWebhookConfiguration(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteMutatingWebhookConfiguration(
@@ -33726,8 +35160,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33767,51 +35200,45 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "MutatingWebhookConfiguration":
         r"""
-        delete a MutatingWebhookConfiguration
+            delete a MutatingWebhookConfiguration
 
-        operationID: deleteMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/{name}
+            operationID: deleteMutatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -33833,15 +35260,19 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteMutatingWebhookConfiguration(
+        res = self.deleteMutatingWebhookConfiguration(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readMutatingWebhookConfiguration(
@@ -33867,8 +35298,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33896,7 +35326,69 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readMutatingWebhookConfiguration
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "MutatingWebhookConfiguration":
+        r"""
+            read the specified MutatingWebhookConfiguration
+
+            operationID: readMutatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'MutatingWebhookConfiguration.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "MutatingWebhookConfiguration's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readMutatingWebhookConfiguration(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchMutatingWebhookConfiguration(
         self,
@@ -33930,8 +35422,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33973,53 +35464,52 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "MutatingWebhookConfiguration":
         r"""
-        partially update the specified MutatingWebhookConfiguration
+            partially update the specified MutatingWebhookConfiguration
 
-        operationID: patchMutatingWebhookConfiguration
-        path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/{name}
+            operationID: patchMutatingWebhookConfiguration
+            path: /apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   MutatingWebhookConfiguration    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'MutatingWebhookConfiguration.update()'"
             )
-        return self.patchMutatingWebhookConfiguration(
+        res = self.patchMutatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceMutatingWebhookConfiguration(
         self,
@@ -34046,8 +35536,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34200,8 +35689,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34355,8 +35843,7 @@ class Job(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34491,8 +35978,7 @@ class Job(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34552,8 +36038,7 @@ class Job(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34594,38 +36079,31 @@ class Job(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Job":
         r"""
-        create a Job
+            create a Job
 
-        operationID: createNamespacedJob
-        path: /apis/batch/v1/namespaces/{namespace}/jobs
+            operationID: createNamespacedJob
+            path: /apis/batch/v1/namespaces/{namespace}/jobs
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Job    OK
-          201   Job    Created
-          202   Job    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -34642,13 +36120,17 @@ class Job(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedJob(
+        res = self.createNamespacedJob(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedJob(
@@ -34695,8 +36177,7 @@ class Job(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34736,54 +36217,48 @@ class Job(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Job":
         r"""
-        delete a Job
+            delete a Job
 
-        operationID: deleteNamespacedJob
-        path: /apis/batch/v1/namespaces/{namespace}/jobs/{name}
+            operationID: deleteNamespacedJob
+            path: /apis/batch/v1/namespaces/{namespace}/jobs/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -34815,7 +36290,7 @@ class Job(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedJob(
+        res = self.deleteNamespacedJob(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -34823,8 +36298,12 @@ class Job(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedJob(
@@ -34852,8 +36331,7 @@ class Job(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34882,7 +36360,84 @@ class Job(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedJob
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Job":
+        r"""
+            read the specified Job
+
+            operationID: readNamespacedJob
+            path: /apis/batch/v1/namespaces/{namespace}/jobs/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Job.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Job's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Job's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedJob(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedJob(
         self,
@@ -34918,8 +36473,7 @@ class Job(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34961,42 +36515,37 @@ class Job(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Job":
         r"""
-        partially update the specified Job
+            partially update the specified Job
 
-        operationID: patchNamespacedJob
-        path: /apis/batch/v1/namespaces/{namespace}/jobs/{name}
+            operationID: patchNamespacedJob
+            path: /apis/batch/v1/namespaces/{namespace}/jobs/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Job    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -35013,15 +36562,19 @@ class Job(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedJob(
+        res = self.patchNamespacedJob(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedJob(
         self,
@@ -35050,8 +36603,7 @@ class Job(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35113,8 +36665,7 @@ class Job(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35303,8 +36854,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35367,8 +36917,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35411,38 +36960,31 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "HorizontalPodAutoscaler":
         r"""
-        create a HorizontalPodAutoscaler
+            create a HorizontalPodAutoscaler
 
-        operationID: createNamespacedHorizontalPodAutoscaler
-        path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers
+            operationID: createNamespacedHorizontalPodAutoscaler
+            path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   HorizontalPodAutoscaler    OK
-          201   HorizontalPodAutoscaler    Created
-          202   HorizontalPodAutoscaler    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -35459,13 +37001,17 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedHorizontalPodAutoscaler(
+        res = self.createNamespacedHorizontalPodAutoscaler(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedHorizontalPodAutoscaler(
@@ -35512,8 +37058,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35555,54 +37100,48 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "HorizontalPodAutoscaler":
         r"""
-        delete a HorizontalPodAutoscaler
+            delete a HorizontalPodAutoscaler
 
-        operationID: deleteNamespacedHorizontalPodAutoscaler
-        path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+            operationID: deleteNamespacedHorizontalPodAutoscaler
+            path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -35635,7 +37174,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedHorizontalPodAutoscaler(
+        res = self.deleteNamespacedHorizontalPodAutoscaler(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -35643,8 +37182,12 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedHorizontalPodAutoscaler(
@@ -35672,8 +37215,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35704,7 +37246,85 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedHorizontalPodAutoscaler
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "HorizontalPodAutoscaler":
+        r"""
+            read the specified HorizontalPodAutoscaler
+
+            operationID: readNamespacedHorizontalPodAutoscaler
+            path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata "
+                "to use 'HorizontalPodAutoscaler.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "HorizontalPodAutoscaler's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "HorizontalPodAutoscaler's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedHorizontalPodAutoscaler(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedHorizontalPodAutoscaler(
         self,
@@ -35740,8 +37360,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35785,42 +37404,37 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "HorizontalPodAutoscaler":
         r"""
-        partially update the specified HorizontalPodAutoscaler
+            partially update the specified HorizontalPodAutoscaler
 
-        operationID: patchNamespacedHorizontalPodAutoscaler
-        path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers/{name}
+            operationID: patchNamespacedHorizontalPodAutoscaler
+            path: /apis/autoscaling/v1/namespaces/{namespace}/horizontalpodautoscalers/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   HorizontalPodAutoscaler    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -35837,15 +37451,19 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedHorizontalPodAutoscaler(
+        res = self.patchNamespacedHorizontalPodAutoscaler(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedHorizontalPodAutoscaler(
         self,
@@ -35874,8 +37492,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35939,8 +37556,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36094,8 +37710,7 @@ class StorageClassList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36260,8 +37875,7 @@ class Role(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36321,8 +37935,7 @@ class Role(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36363,38 +37976,31 @@ class Role(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Role":
         r"""
-        create a Role
+            create a Role
 
-        operationID: createNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles
+            operationID: createNamespacedRole
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Role    OK
-          201   Role    Created
-          202   Role    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -36411,13 +38017,17 @@ class Role(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedRole(
+        res = self.createNamespacedRole(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedRole(
@@ -36464,8 +38074,7 @@ class Role(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36505,54 +38114,48 @@ class Role(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Role":
         r"""
-        delete a Role
+            delete a Role
 
-        operationID: deleteNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}
+            operationID: deleteNamespacedRole
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -36584,7 +38187,7 @@ class Role(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedRole(
+        res = self.deleteNamespacedRole(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -36592,8 +38195,12 @@ class Role(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedRole(
@@ -36614,8 +38221,7 @@ class Role(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36642,7 +38248,75 @@ class Role(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedRole
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Role":
+        r"""
+            read the specified Role
+
+            operationID: readNamespacedRole
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Role.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Role's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedRole(
+            name=effective_name,
+            namespace=effective_namespace,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedRole(
         self,
@@ -36678,8 +38352,7 @@ class Role(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36721,42 +38394,37 @@ class Role(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Role":
         r"""
-        partially update the specified Role
+            partially update the specified Role
 
-        operationID: patchNamespacedRole
-        path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}
+            operationID: patchNamespacedRole
+            path: /apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Role    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -36773,15 +38441,19 @@ class Role(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedRole(
+        res = self.patchNamespacedRole(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedRole(
         self,
@@ -36810,8 +38482,7 @@ class Role(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36933,8 +38604,7 @@ class Role(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37086,8 +38756,7 @@ class ServiceList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37239,8 +38908,7 @@ class RoleList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37391,8 +39059,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37545,8 +39212,7 @@ class StatefulSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37667,8 +39333,7 @@ class StatefulSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37868,8 +39533,7 @@ class ServiceAccount(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37931,8 +39595,7 @@ class ServiceAccount(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -37973,38 +39636,31 @@ class ServiceAccount(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ServiceAccount":
         r"""
-        create a ServiceAccount
+            create a ServiceAccount
 
-        operationID: createNamespacedServiceAccount
-        path: /api/v1/namespaces/{namespace}/serviceaccounts
+            operationID: createNamespacedServiceAccount
+            path: /api/v1/namespaces/{namespace}/serviceaccounts
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ServiceAccount    OK
-          201   ServiceAccount    Created
-          202   ServiceAccount    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -38021,13 +39677,17 @@ class ServiceAccount(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedServiceAccount(
+        res = self.createNamespacedServiceAccount(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedServiceAccount(
@@ -38074,8 +39734,7 @@ class ServiceAccount(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38115,54 +39774,48 @@ class ServiceAccount(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ServiceAccount":
         r"""
-        delete a ServiceAccount
+            delete a ServiceAccount
 
-        operationID: deleteNamespacedServiceAccount
-        path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}
+            operationID: deleteNamespacedServiceAccount
+            path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -38195,7 +39848,7 @@ class ServiceAccount(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedServiceAccount(
+        res = self.deleteNamespacedServiceAccount(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -38203,8 +39856,12 @@ class ServiceAccount(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedServiceAccount(
@@ -38232,8 +39889,7 @@ class ServiceAccount(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38262,7 +39918,84 @@ class ServiceAccount(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedServiceAccount
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "ServiceAccount":
+        r"""
+            read the specified ServiceAccount
+
+            operationID: readNamespacedServiceAccount
+            path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'ServiceAccount.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "ServiceAccount's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "ServiceAccount's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedServiceAccount(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedServiceAccount(
         self,
@@ -38298,8 +40031,7 @@ class ServiceAccount(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38341,42 +40073,37 @@ class ServiceAccount(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "ServiceAccount":
         r"""
-        partially update the specified ServiceAccount
+            partially update the specified ServiceAccount
 
-        operationID: patchNamespacedServiceAccount
-        path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}
+            operationID: patchNamespacedServiceAccount
+            path: /api/v1/namespaces/{namespace}/serviceaccounts/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   ServiceAccount    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -38393,15 +40120,19 @@ class ServiceAccount(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedServiceAccount(
+        res = self.patchNamespacedServiceAccount(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedServiceAccount(
         self,
@@ -38430,8 +40161,7 @@ class ServiceAccount(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38586,8 +40316,7 @@ class ServiceAccountList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38762,8 +40491,7 @@ class EventList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -38970,8 +40698,7 @@ class Node(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39028,8 +40755,7 @@ class Node(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39068,47 +40794,42 @@ class Node(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Node":
         r"""
-        create a Node
+            create a Node
 
-        operationID: createNode
-        path: /api/v1/nodes
+            operationID: createNode
+            path: /api/v1/nodes
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Node    OK
-          201   Node    Created
-          202   Node    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'Node.create()'"
             )
-        return self.createNode(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createNode(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNode(
@@ -39153,8 +40874,7 @@ class Node(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39192,51 +40912,45 @@ class Node(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Node":
         r"""
-        delete a Node
+            delete a Node
 
-        operationID: deleteNode
-        path: /api/v1/nodes/{name}
+            operationID: deleteNode
+            path: /api/v1/nodes/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -39257,15 +40971,19 @@ class Node(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNode(
+        res = self.deleteNode(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNode(
@@ -39291,8 +41009,7 @@ class Node(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39320,7 +41037,68 @@ class Node(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNode
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Node":
+        r"""
+            read the specified Node
+
+            operationID: readNode
+            path: /api/v1/nodes/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'Node.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Node's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNode(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNode(
         self,
@@ -39354,8 +41132,7 @@ class Node(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39395,53 +41172,52 @@ class Node(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "Node":
         r"""
-        partially update the specified Node
+            partially update the specified Node
 
-        operationID: patchNode
-        path: /api/v1/nodes/{name}
+            operationID: patchNode
+            path: /api/v1/nodes/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Node    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'Node.update()'"
             )
-        return self.patchNode(
+        res = self.patchNode(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNode(
         self,
@@ -39468,8 +41244,7 @@ class Node(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39516,8 +41291,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39555,8 +41329,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39594,8 +41367,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39637,8 +41409,7 @@ class Node(HikaruDocumentBase):
         :param path: Path is the URL path to use for the current proxy request to node.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39677,8 +41448,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39716,8 +41486,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39755,8 +41524,7 @@ class Node(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39795,8 +41563,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39836,8 +41603,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39877,8 +41643,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39918,8 +41683,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -39961,8 +41725,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40002,8 +41765,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40043,8 +41805,7 @@ class Node(HikaruDocumentBase):
         :param path: path for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40095,8 +41856,7 @@ class Node(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40174,8 +41934,7 @@ class TokenReview(HikaruDocumentBase):
         path: /apis/authentication.k8s.io/v1/tokenreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40208,32 +41967,31 @@ class TokenReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
-    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+    def create(self, client: ApiClient = None) -> "TokenReview":
         r"""
-        create a TokenReview
+            create a TokenReview
 
-        operationID: createTokenReview
-        path: /apis/authentication.k8s.io/v1/tokenreviews
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   TokenReview    OK
-          201   TokenReview    Created
-          202   TokenReview    Accepted
-          401   None    Unauthorized
+            operationID: createTokenReview
+            path: /apis/authentication.k8s.io/v1/tokenreviews
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'TokenReview.create()'"
             )
-        return self.createTokenReview(client=client, async_req=async_req)
+        res = self.createTokenReview(client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -40401,8 +42159,7 @@ class PriorityClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40459,8 +42216,7 @@ class PriorityClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40499,47 +42255,42 @@ class PriorityClass(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PriorityClass":
         r"""
-        create a PriorityClass
+            create a PriorityClass
 
-        operationID: createPriorityClass
-        path: /apis/scheduling.k8s.io/v1/priorityclasses
+            operationID: createPriorityClass
+            path: /apis/scheduling.k8s.io/v1/priorityclasses
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PriorityClass    OK
-          201   PriorityClass    Created
-          202   PriorityClass    Accepted
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'PriorityClass.create()'"
             )
-        return self.createPriorityClass(
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-            async_req=async_req,
+        res = self.createPriorityClass(
+            dry_run=dry_run, field_manager=field_manager, client=client
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deletePriorityClass(
@@ -40584,8 +42335,7 @@ class PriorityClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40623,51 +42373,45 @@ class PriorityClass(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PriorityClass":
         r"""
-        delete a PriorityClass
+            delete a PriorityClass
 
-        operationID: deletePriorityClass
-        path: /apis/scheduling.k8s.io/v1/priorityclasses/{name}
+            operationID: deletePriorityClass
+            path: /apis/scheduling.k8s.io/v1/priorityclasses/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -40688,15 +42432,19 @@ class PriorityClass(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deletePriorityClass(
+        res = self.deletePriorityClass(
             name=effective_name,
             dry_run=dry_run,
             grace_period_seconds=grace_period_seconds,
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readPriorityClass(
@@ -40722,8 +42470,7 @@ class PriorityClass(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40751,7 +42498,68 @@ class PriorityClass(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readPriorityClass
+    def read(
+        self,
+        name: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "PriorityClass":
+        r"""
+            read the specified PriorityClass
+
+            operationID: readPriorityClass
+            path: /apis/scheduling.k8s.io/v1/priorityclasses/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'PriorityClass.read()'"
+            )
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "PriorityClass's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readPriorityClass(
+            name=effective_name,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchPriorityClass(
         self,
@@ -40785,8 +42593,7 @@ class PriorityClass(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -40826,53 +42633,52 @@ class PriorityClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PriorityClass":
         r"""
-        partially update the specified PriorityClass
+            partially update the specified PriorityClass
 
-        operationID: patchPriorityClass
-        path: /apis/scheduling.k8s.io/v1/priorityclasses/{name}
+            operationID: patchPriorityClass
+            path: /apis/scheduling.k8s.io/v1/priorityclasses/{name}
 
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PriorityClass    OK
-          401   None    Unauthorized
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'PriorityClass.update()'"
             )
-        return self.patchPriorityClass(
+        res = self.patchPriorityClass(
             name=self.metadata.name,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replacePriorityClass(
         self,
@@ -40899,8 +42705,7 @@ class PriorityClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41066,8 +42871,7 @@ class NetworkPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41129,8 +42933,7 @@ class NetworkPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41171,38 +42974,31 @@ class NetworkPolicy(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "NetworkPolicy":
         r"""
-        create a NetworkPolicy
+            create a NetworkPolicy
 
-        operationID: createNamespacedNetworkPolicy
-        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies
+            operationID: createNamespacedNetworkPolicy
+            path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   NetworkPolicy    OK
-          201   NetworkPolicy    Created
-          202   NetworkPolicy    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -41219,13 +43015,17 @@ class NetworkPolicy(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedNetworkPolicy(
+        res = self.createNamespacedNetworkPolicy(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedNetworkPolicy(
@@ -41272,8 +43072,7 @@ class NetworkPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41313,54 +43112,48 @@ class NetworkPolicy(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "NetworkPolicy":
         r"""
-        delete a NetworkPolicy
+            delete a NetworkPolicy
 
-        operationID: deleteNamespacedNetworkPolicy
-        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies/{name}
+            operationID: deleteNamespacedNetworkPolicy
+            path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -41392,7 +43185,7 @@ class NetworkPolicy(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedNetworkPolicy(
+        res = self.deleteNamespacedNetworkPolicy(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -41400,8 +43193,12 @@ class NetworkPolicy(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedNetworkPolicy(
@@ -41429,8 +43226,7 @@ class NetworkPolicy(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41459,7 +43255,84 @@ class NetworkPolicy(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedNetworkPolicy
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "NetworkPolicy":
+        r"""
+            read the specified NetworkPolicy
+
+            operationID: readNamespacedNetworkPolicy
+            path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'NetworkPolicy.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "NetworkPolicy's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "NetworkPolicy's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedNetworkPolicy(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedNetworkPolicy(
         self,
@@ -41495,8 +43368,7 @@ class NetworkPolicy(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41538,42 +43410,37 @@ class NetworkPolicy(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "NetworkPolicy":
         r"""
-        partially update the specified NetworkPolicy
+            partially update the specified NetworkPolicy
 
-        operationID: patchNamespacedNetworkPolicy
-        path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies/{name}
+            operationID: patchNamespacedNetworkPolicy
+            path: /apis/networking.k8s.io/v1/namespaces/{namespace}/networkpolicies/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   NetworkPolicy    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -41590,15 +43457,19 @@ class NetworkPolicy(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedNetworkPolicy(
+        res = self.patchNamespacedNetworkPolicy(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedNetworkPolicy(
         self,
@@ -41627,8 +43498,7 @@ class NetworkPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41796,8 +43666,7 @@ class PodTemplate(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41859,8 +43728,7 @@ class PodTemplate(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -41901,38 +43769,31 @@ class PodTemplate(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PodTemplate":
         r"""
-        create a PodTemplate
+            create a PodTemplate
 
-        operationID: createNamespacedPodTemplate
-        path: /api/v1/namespaces/{namespace}/podtemplates
+            operationID: createNamespacedPodTemplate
+            path: /api/v1/namespaces/{namespace}/podtemplates
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PodTemplate    OK
-          201   PodTemplate    Created
-          202   PodTemplate    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -41949,13 +43810,17 @@ class PodTemplate(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedPodTemplate(
+        res = self.createNamespacedPodTemplate(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedPodTemplate(
@@ -42002,8 +43867,7 @@ class PodTemplate(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42043,54 +43907,48 @@ class PodTemplate(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PodTemplate":
         r"""
-        delete a PodTemplate
+            delete a PodTemplate
 
-        operationID: deleteNamespacedPodTemplate
-        path: /api/v1/namespaces/{namespace}/podtemplates/{name}
+            operationID: deleteNamespacedPodTemplate
+            path: /api/v1/namespaces/{namespace}/podtemplates/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -42122,7 +43980,7 @@ class PodTemplate(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedPodTemplate(
+        res = self.deleteNamespacedPodTemplate(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -42130,8 +43988,12 @@ class PodTemplate(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedPodTemplate(
@@ -42159,8 +44021,7 @@ class PodTemplate(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42189,7 +44050,84 @@ class PodTemplate(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedPodTemplate
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "PodTemplate":
+        r"""
+            read the specified PodTemplate
+
+            operationID: readNamespacedPodTemplate
+            path: /api/v1/namespaces/{namespace}/podtemplates/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'PodTemplate.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "PodTemplate's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "PodTemplate's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedPodTemplate(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedPodTemplate(
         self,
@@ -42225,8 +44163,7 @@ class PodTemplate(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42268,42 +44205,37 @@ class PodTemplate(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "PodTemplate":
         r"""
-        partially update the specified PodTemplate
+            partially update the specified PodTemplate
 
-        operationID: patchNamespacedPodTemplate
-        path: /api/v1/namespaces/{namespace}/podtemplates/{name}
+            operationID: patchNamespacedPodTemplate
+            path: /api/v1/namespaces/{namespace}/podtemplates/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PodTemplate    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -42320,15 +44252,19 @@ class PodTemplate(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedPodTemplate(
+        res = self.patchNamespacedPodTemplate(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedPodTemplate(
         self,
@@ -42357,8 +44293,7 @@ class PodTemplate(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42512,8 +44447,7 @@ class JobList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42758,8 +44692,7 @@ class PodTemplateList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -42944,8 +44877,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43024,8 +44956,7 @@ class Binding(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43059,33 +44990,24 @@ class Binding(HikaruDocumentBase):
         return Response(result, codes_returning_objects)
 
     def create(
-        self,
-        namespace: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+        self, namespace: Optional[str] = None, client: ApiClient = None
+    ) -> "Binding":
         r"""
-        create a Binding
+            create a Binding
 
-        operationID: createNamespacedBinding
-        path: /api/v1/namespaces/{namespace}/bindings
+            operationID: createNamespacedBinding
+            path: /api/v1/namespaces/{namespace}/bindings
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Binding    OK
-          201   Binding    Created
-          202   Binding    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -43102,9 +45024,12 @@ class Binding(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedBinding(
-            namespace=effective_namespace, client=client, async_req=async_req
-        )
+        res = self.createNamespacedBinding(namespace=effective_namespace, client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def createNamespacedPodBinding(
         self,
@@ -43123,8 +45048,7 @@ class Binding(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43245,8 +45169,7 @@ class Binding(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43398,8 +45321,7 @@ class NodeList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43574,8 +45496,7 @@ class DeploymentList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -43882,8 +45803,7 @@ class NetworkPolicyList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44004,8 +45924,7 @@ class NetworkPolicyList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44186,8 +46105,7 @@ class ControllerRevisionList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44311,8 +46229,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44503,8 +46420,7 @@ class ConfigMapList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44626,8 +46542,7 @@ class ConfigMapList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44718,8 +46633,7 @@ class SubjectAccessReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1/subjectaccessreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -44752,32 +46666,31 @@ class SubjectAccessReview(HikaruDocumentBase):
         codes_returning_objects = (200, 201, 202)
         return Response(result, codes_returning_objects)
 
-    def create(self, client: ApiClient = None, async_req: bool = False) -> Response:
+    def create(self, client: ApiClient = None) -> "SubjectAccessReview":
         r"""
-        create a SubjectAccessReview
+            create a SubjectAccessReview
 
-        operationID: createSubjectAccessReview
-        path: /apis/authorization.k8s.io/v1/subjectaccessreviews
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   SubjectAccessReview    OK
-          201   SubjectAccessReview    Created
-          202   SubjectAccessReview    Accepted
-          401   None    Unauthorized
+            operationID: createSubjectAccessReview
+            path: /apis/authorization.k8s.io/v1/subjectaccessreviews
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
             raise RuntimeError(
                 "Your resource must contain metadata to use 'SubjectAccessReview.create()'"
             )
-        return self.createSubjectAccessReview(client=client, async_req=async_req)
+        res = self.createSubjectAccessReview(client=client)
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
 
 @dataclass
@@ -44920,8 +46833,7 @@ class PriorityClassList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -45152,8 +47064,7 @@ class DaemonSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -45275,8 +47186,7 @@ class DaemonSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -45427,8 +47337,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:

@@ -391,6 +391,7 @@ def test036():
     """
     Use find_by_name to find a field with non-consecutive following fields
     """
+    p: Pod = setup_pod()
     assert isinstance(p, Pod)
     results = p.find_by_name('name', following='containers.lifecycle.httpGet')
     assert len(results) == 1
@@ -1577,8 +1578,10 @@ def test137():
     except TypeError:
         pass
 
+
 if __name__ == "__main__":
     setup()
+    test036()
     the_tests = {k: v for k, v in globals().items()
                  if k.startswith('test') and callable(v)}
     for k, v in the_tests.items():

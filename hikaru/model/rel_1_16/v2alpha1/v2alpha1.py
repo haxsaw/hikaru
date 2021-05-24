@@ -26,7 +26,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
 
-from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
@@ -6657,7 +6657,7 @@ class JSONSchemaProps(HikaruBase):
     default: Optional[object] = field(default_factory=dict)
     definitions: Optional[Dict[str, str]] = field(default_factory=dict)
     dependencies: Optional[Dict[str, str]] = field(default_factory=dict)
-    enum: Optional[List[Any]] = field(default_factory=list)
+    enum: Optional[List[object]] = field(default_factory=list)
     example: Optional[object] = field(default_factory=dict)
     items: Optional[object] = field(default_factory=dict)
     oneOf: Optional[List["JSONSchemaProps"]] = field(default_factory=list)
@@ -7743,7 +7743,7 @@ class ScaleSpec(HikaruBase):
 
 
 @dataclass
-class WatchEvent(HikaruDocumentBase):
+class WatchEvent(HikaruBase):
     r"""
     Event represents a single event to a watched resource.
 
@@ -7756,11 +7756,8 @@ class WatchEvent(HikaruDocumentBase):
     type:
     """
 
-    _version = "v1"
     object: object
     type: str
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
 
 
 @dataclass
@@ -10291,8 +10288,7 @@ class CronJob(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10354,8 +10350,7 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10396,38 +10391,31 @@ class CronJob(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CronJob":
         r"""
-        create a CronJob
+            create a CronJob
 
-        operationID: createNamespacedCronJob
-        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
+            operationID: createNamespacedCronJob
+            path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   CronJob    OK
-          201   CronJob    Created
-          202   CronJob    Accepted
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -10444,13 +10432,17 @@ class CronJob(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.createNamespacedCronJob(
+        res = self.createNamespacedCronJob(
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def deleteNamespacedCronJob(
@@ -10497,8 +10489,7 @@ class CronJob(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10538,54 +10529,48 @@ class CronJob(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CronJob":
         r"""
-        delete a CronJob
+            delete a CronJob
 
-        operationID: deleteNamespacedCronJob
-        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+            operationID: deleteNamespacedCronJob
+            path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param name: name for the resource. NOTE: if you leave out the name from the
-            arguments you *must* have filled in the name attribute in the
-            metadata for the resource!
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         # noinspection PyDataclass
@@ -10617,7 +10602,7 @@ class CronJob(HikaruDocumentBase):
             )
         else:
             effective_name = self.metadata.name
-        return self.deleteNamespacedCronJob(
+        res = self.deleteNamespacedCronJob(
             name=effective_name,
             namespace=effective_namespace,
             dry_run=dry_run,
@@ -10625,8 +10610,12 @@ class CronJob(HikaruDocumentBase):
             orphan_dependents=orphan_dependents,
             propagation_policy=propagation_policy,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     @staticmethod
     def readNamespacedCronJob(
@@ -10654,8 +10643,7 @@ class CronJob(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10684,7 +10672,84 @@ class CronJob(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
-    read = readNamespacedCronJob
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "CronJob":
+        r"""
+            read the specified CronJob
+
+            operationID: readNamespacedCronJob
+            path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if not self.metadata:
+            raise RuntimeError(
+                "Your resource must contain metadata " "to use 'CronJob.read()'"
+            )
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "CronJob's metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "CronJob's metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedCronJob(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def patchNamespacedCronJob(
         self,
@@ -10720,8 +10785,7 @@ class CronJob(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10763,42 +10827,37 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
+    ) -> "CronJob":
         r"""
-        partially update the specified CronJob
+            partially update the specified CronJob
 
-        operationID: patchNamespacedCronJob
-        path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
+            operationID: patchNamespacedCronJob
+            path: /apis/batch/v2alpha1/namespaces/{namespace}/cronjobs/{name}
 
-        :param namespace: namespace for the resource. NOTE: if you leave out the
-            namespace from the arguments you *must* have filled in the namespace
-            attribute in the metadata for the resource!
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   CronJob    OK
-          401   None    Unauthorized
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
         """
 
         if not self.metadata:
@@ -10815,15 +10874,19 @@ class CronJob(HikaruDocumentBase):
             )
         else:
             effective_namespace = self.metadata.namespace
-        return self.patchNamespacedCronJob(
+        res = self.patchNamespacedCronJob(
             name=self.metadata.name,
             namespace=effective_namespace,
             dry_run=dry_run,
             field_manager=field_manager,
             force=force,
             client=client,
-            async_req=async_req,
         )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
 
     def replaceNamespacedCronJob(
         self,
@@ -10852,8 +10915,7 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10915,8 +10977,7 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11068,8 +11129,7 @@ class CronJobList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -11191,8 +11251,7 @@ class CronJobList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which
-            makes the call blocking.
+            .get() on the returned Response object. Default is False,  which makes the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:

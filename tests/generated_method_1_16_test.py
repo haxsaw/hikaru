@@ -3,9 +3,9 @@ from types import MethodType, FunctionType
 from inspect import signature
 from random import choice
 import pytest
-from hikaru import HikaruDocumentBase
+from hikaru import HikaruDocumentBase, Response
 from hikaru.model.rel_1_16.versions import versions
-from hikaru import set_default_release
+from hikaru import set_default_release, from_dict
 
 
 set_default_release('rel_1_16')
@@ -14,10 +14,27 @@ set_default_release('rel_1_16')
 special_classes_to_test = {'Patch'}
 
 
+def beginning():
+    Response.set_false_for_internal_tests = False
+    return Response
+
+
+def ending():
+    Response.set_false_for_internal_tests = True
+
+
+@pytest.fixture(scope='module', autouse=True)
+def setup():
+    res = beginning()
+    yield res
+    ending()
+
+
 class MockApiClient(object):
-    def __init__(self):
+    def __init__(self, gen_failure=False):
         self.body = None
         self.client_side_validation = 1
+        self.gen_failure = gen_failure
 
     def select_header_accept(self, accepts):
         """Returns `Accept` based on an array of accepts provided.
@@ -48,12 +65,10 @@ class MockApiClient(object):
 
     def call_api(self, path, verb, path_params, query_params, header_params,
                  body=None, **kwargs):
+        if isinstance(body, dict):
+            body = from_dict(body)
         self.body = body
-        coin = choice(('heads', 'tails'))
-        if coin == 'heads':
-            return None, 401, {}
-        else:
-            return 1
+        return self.body, 400 if self.gen_failure else 200, {}
 
 
 all_params = []
@@ -70,8 +85,6 @@ for version in versions:
         for name, attr in vars(cls).items():
             if not name.startswith("__"):
                 if isinstance(attr, MethodType) or isinstance(attr, FunctionType):
-                    if cls.__name__ == "StatefulSet" and name == 'delete':
-                        _ = 1
                     sig = signature(attr)
                     # first do it with the client provided at instance creation;
                     # we aren't actually doing that, we just set it after the
@@ -136,7 +149,7 @@ for version in versions:
                     all_params.append((attr, True, params))
                     # and again, with the namespace in the metadata, not the args,
                     # BUT only for a crud method
-                    if name not in {'create', 'update', 'delete'}:
+                    if name not in {'create', 'update', 'delete', 'read'}:
                         continue
                     inst = cls.get_empty_instance()
                     inst.metadata = om_class(namespace='default', name='the_name')
@@ -174,6 +187,18 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((attr, False, params))
+                    # (probably) the last one: same as previous, but tell
+                    # the client to generate a failure
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default', name='the_name')
+                    mock_client = MockApiClient(gen_failure=True)
+                    params = {'self': inst, 'client': mock_client}
+                    for p in sig.parameters.values():
+                        if p.name in {'client', 'self'}:
+                            continue
+                        else:
+                            params[p.name] = None
+                    all_params.append((attr, True, params))
                 elif isinstance(attr, staticmethod):
                     # process static methods here
                     smeth = getattr(cls, name)
@@ -238,8 +263,10 @@ def test_methods(func, should_raise, kwargs):
 
 
 if __name__ == "__main__":
+    beginning()
     for func, should_raise, params in all_params:
         test_methods(func, should_raise, params)
         print('.', end="")
+    ending()
     print()
 

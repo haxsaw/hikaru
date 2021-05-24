@@ -268,7 +268,6 @@ def get_processors(path: str = None, stream: TextIO = None,
     """
     if path is None and stream is None and yaml is None:
         raise RuntimeError("One of path, stream, or yaml must be specified")
-    objs = []
     if path:
         f = open(path, "r")
     if stream:
@@ -313,6 +312,11 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
         then the default from when hikaru was built will be used.
         NOTE: rel_unversioned is for pre-release models from the github repo of the K8s
         Python client; use appropriately.
+    :param translate: option bool, default False. Generally not needed by users of
+        Hikaru, it instructs whether or not camel case identifiers should be turned
+        into PEP8 identifiers (this only happens when True). If you're going some
+        odd tests and getting complaints about PEP8-style attributes are missing,
+        you might want to set this to True.
     :return: list of HikaruDocumentBase subclasses, one for each document in the YAML file
     :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
         api_version/kind pair; Hikaru can't determine what class to instantiate, or

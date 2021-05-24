@@ -39,25 +39,7 @@ strict policy that checks that somewhere there's a namespace so that
 the underlyng calls will work (and if both are there then both must
 agree).
 
-What to do about deleteCollection*?
-===================================
-This might be more straightforward; it may be that we only want the method
-that deletes a single object for crud operations, and people should go to
-the specific method for deleting collections. Does raise the question as
-to how that actually works, since it appears to be a method on a singleton
-object class and not on the associated List class, where it might make
-more sense. It does appear that on at least some of these methods, there's
-actually not a resource object involved-- for example, it appears that
-LabelSelectors are used to perhaps select which storage classes to delete,
-and a StorageClass is in neither the input nor output (but ol' DeleteOptions
-is). If that's the case, then leaving this to be a static method on the
-class object is probably fine.
-
-What about the watch and exec methods?
-======================================
-We need to learn more about these to figure out what to do here.
-
-Where do the crud methods go?
+Where do the crud methods go?  ANSWERED
 =============================
 Do we just add crud instance methods that call either the associated
 instance or staticmethod? That seems a way to create more crowded namespaces
@@ -67,7 +49,10 @@ etc have the same args, an so we'd have to write docstrings out for each
 independently. But this approach does yield a tidier namespace on the
 object. It just isn't clear that this really yields that much benefit.
 
-Should all crud methods actually be written as instance methods?
+ANSWER:
+These are going onto the methods of the object they involve.
+
+Should all crud methods actually be written as instance methods? ANSWERED
 ================================================================
 In some ways, it might make sense to keep some of the crud methods as
 staticmethods on the class, most notably read(). It seems kind of odd
@@ -81,3 +66,29 @@ indeed be an instance method that would merge in all of the data from
 the read object into the object against which read() was called. Maybe
 the right thing here is to support 'read()' as a static method and
 'read_into()' as an instance method.
+
+ANSWER:
+We're going to treat the CRUD methods as higher-level methods that differ
+slightly from their existing counterparts:
+
+1) they will all be instance methods
+2) They will all return self, not a Response object
+3) They will all permute the state of self when the results come back from K8s
+4) they are all blocking; if you want async execution then use the lower-level
+
+What to do about deleteCollection*?  ANSWERED
+===================================
+This might be more straightforward; it may be that we only want the method
+that deletes a single object for crud operations, and people should go to
+the specific method for deleting collections. Does raise the question as
+to how that actually works, since it appears to be a method on a singleton
+object class and not on the associated List class, where it might make
+more sense. It does appear that on at least some of these methods, there's
+actually not a resource object involved-- for example, it appears that
+LabelSelectors are used to perhaps select which storage classes to delete,
+and a StorageClass is in neither the input nor output (but ol' DeleteOptions
+is). If that's the case, then leaving this to be a static method on the
+class object is probably fine.
+
+ANSWER:
+Nothing. These are lower-level methods and won't have a CRUD representation.

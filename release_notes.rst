@@ -2,6 +2,26 @@
 Release Notes
 *************
 
+v0.5b
+-----
+
+- Hikaru has grown a set of higher-level *CRUD*-style methods on HikaruDocumentBase
+  subclasses. These have a simpler interface and while they can do a bit less (no
+  async), they also
+  have consistent names and more uniform arguments. For the full capability of the API
+  you can continue to use the existing more verbosely-named methods.
+- Added a **merge()** method to HikaruBase the can merge the contents of one object
+  into another. Merges can either only merge new values or else overwrite all values
+  of the target object.
+- Fixed a bug in the field catalog where you can sometimes get duplicated field
+  entries.
+- Fixed a bug in handling timestamps from K8s; now returns a properly formatted
+  string instead of a datetime object.
+- Fixed a bug in creating 'empty' instances so that they always round-trip
+  properly (this was mostly an issue in testing).
+- Fixed a bug in building Hikaru model modules from the swagger spec file where certain
+  objects were being incorrectly created as subclasses of HikaruDocumentBase.
+
 v0.4b
 -----
 

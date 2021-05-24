@@ -64,10 +64,13 @@ def ending():
     res: Response = Pod.listPodForAllNamespaces()
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
-        if (pod.metadata.namespace == 'default' and
+        if (pod.metadata.namespace in ('default', e2e_namespace) and
             (pod.metadata.name.startswith('rc-test') or
              pod.metadata.name.startswith('job-test'))):
-            Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
+            try:
+                Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
+            except:
+                pass
 
 
 @pytest.fixture(scope='module', autouse=True)
@@ -89,12 +92,13 @@ def test01():
     path = base_path / 'apps-deployment.yaml'
     d: Deployment = cast(Deployment, load_full_yaml(path=str(path))[0])
     res = d.createNamespacedDeployment(e2e_namespace)
-    assert res.obj and isinstance(res.obj, Deployment)
-    res = Deployment.readNamespacedDeployment(d.metadata.name, e2e_namespace)
-    assert res.obj and isinstance(res.obj, Deployment)
-    res = Deployment.deleteNamespacedDeployment(d.metadata.name,
-                                                e2e_namespace)
-    assert res.obj and isinstance(res.obj, Status)
+    try:
+        assert res.obj and isinstance(res.obj, Deployment)
+        res = Deployment.readNamespacedDeployment(d.metadata.name, e2e_namespace)
+        assert res.obj and isinstance(res.obj, Deployment)
+    finally:
+        _ = Deployment.deleteNamespacedDeployment(d.metadata.name,
+                                                  e2e_namespace)
 
 
 def test01a():
@@ -106,10 +110,10 @@ def test01a():
     d: Deployment = cast(Deployment, load_full_yaml(path=str(path))[0])
     d.metadata.name = name
     rd: Deployment = d.createNamespacedDeployment(e2e_namespace).obj
-    assert rd
-    rd = Deployment.readNamespacedDeployment(name, e2e_namespace).obj
-    rd.spec.replicas += 1
     try:
+        assert rd
+        rd = Deployment.readNamespacedDeployment(name, e2e_namespace).obj
+        rd.spec.replicas += 1
         res = rd.patchNamespacedDeployment(name, e2e_namespace)
         assert res.obj
     finally:
@@ -123,11 +127,12 @@ def test02():
     path = base_path / "core-pod.yaml"
     p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
     res = p.createNamespacedPod(e2e_namespace)
-    assert res.obj and isinstance(res.obj, Pod)
-    res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
-    assert res.obj and isinstance(res.obj, Pod)
-    res = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
-    assert res.obj and isinstance(res.obj, Pod)
+    try:
+        assert res.obj and isinstance(res.obj, Pod)
+        res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
+        assert res.obj and isinstance(res.obj, Pod)
+    finally:
+        _ = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
 
 
 def test03():
@@ -137,11 +142,12 @@ def test03():
     path = base_path / "core-service.yaml"
     s: Service = cast(Service, load_full_yaml(path=str(path))[0])
     res = s.createNamespacedService(e2e_namespace)
-    assert res.obj and isinstance(res.obj, Service), f"actually got a {type(res.obj)}"
-    res = Service.readNamespacedService(s.metadata.name, e2e_namespace)
-    assert res.obj and isinstance(res.obj, Service)
-    res = Service.deleteNamespacedService(s.metadata.name, e2e_namespace)
-    assert res.obj
+    try:
+        assert res.obj and isinstance(res.obj, Service), f"actually got a {type(res.obj)}"
+        res = Service.readNamespacedService(s.metadata.name, e2e_namespace)
+        assert res.obj and isinstance(res.obj, Service)
+    finally:
+        _ = Service.deleteNamespacedService(s.metadata.name, e2e_namespace)
 
 
 def test04():
@@ -151,11 +157,12 @@ def test04():
     path = base_path / "core-namespace.yaml"
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path))[0])
     res = ns.createNamespace()
-    assert res.obj and isinstance(res.obj, Namespace)
-    res = Namespace.readNamespace(ns.metadata.name)
-    assert res.obj and isinstance(res.obj, Namespace)
-    res = Namespace.deleteNamespace(ns.metadata.name)
-    assert res.obj
+    try:
+        assert res.obj and isinstance(res.obj, Namespace)
+        res = Namespace.readNamespace(ns.metadata.name)
+        assert res.obj and isinstance(res.obj, Namespace)
+    finally:
+        _ = Namespace.deleteNamespace(ns.metadata.name)
 
 
 def test05():
@@ -167,11 +174,12 @@ def test05():
     # this has its own namespace specified in the request so we need
     # to make sure they agree
     res = r.createNamespacedRole(r.metadata.namespace)
-    assert res.obj and isinstance(res.obj, Role)
-    res = Role.readNamespacedRole(r.metadata.name, r.metadata.namespace)
-    assert res.obj and isinstance(res.obj, Role)
-    res = Role.deleteNamespacedRole(r.metadata.name, r.metadata.namespace)
-    assert res.obj
+    try:
+        assert res.obj and isinstance(res.obj, Role)
+        res = Role.readNamespacedRole(r.metadata.name, r.metadata.namespace)
+        assert res.obj and isinstance(res.obj, Role)
+    finally:
+        _ = Role.deleteNamespacedRole(r.metadata.name, r.metadata.namespace)
 
 
 def test06():
@@ -183,21 +191,23 @@ def test06():
     # namespace: create and read
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path_ns))[0])
     res = ns.createNamespace()
-    assert res.obj and isinstance(res.obj, Namespace)
-    res = Namespace.readNamespace(ns.metadata.name)
-    assert res.obj and isinstance(res.obj, Namespace)
-    # deployment: create and read
-    dep: Deployment = cast(Deployment, load_full_yaml(path=str(path_dep))[0])
-    res = dep.createNamespacedDeployment(ns.metadata.name)
-    assert res.obj and isinstance(res.obj, Deployment)
-    res = Deployment.readNamespacedDeployment(dep.metadata.name,
-                                              ns.metadata.name)
-    assert res.obj and isinstance(res.obj, Deployment)
-    res = Deployment.deleteNamespacedDeployment(dep.metadata.name,
-                                                dep.metadata.namespace)
-    assert res.obj
-    res = Namespace.deleteNamespace(ns.metadata.name)
-    assert res.obj
+    try:
+        assert res.obj and isinstance(res.obj, Namespace)
+        res = Namespace.readNamespace(ns.metadata.name)
+        assert res.obj and isinstance(res.obj, Namespace)
+        # deployment: create and read
+        dep: Deployment = cast(Deployment, load_full_yaml(path=str(path_dep))[0])
+        res = dep.createNamespacedDeployment(ns.metadata.name)
+        try:
+            assert res.obj and isinstance(res.obj, Deployment)
+            res = Deployment.readNamespacedDeployment(dep.metadata.name,
+                                                      ns.metadata.name)
+            assert res.obj and isinstance(res.obj, Deployment)
+        finally:
+            _ = Deployment.deleteNamespacedDeployment(dep.metadata.name,
+                                                      dep.metadata.namespace)
+    finally:
+        _ = Namespace.deleteNamespace(ns.metadata.name)
 
 
 def test07():
@@ -207,17 +217,18 @@ def test07():
     path = base_path / "api-service.yaml"
     api: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
     res = api.createAPIService()
-    assert res.obj and res.code < 400
-    res = APIService.readAPIService(api.metadata.name)
-    assert res.obj
-    api2: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
     try:
-        _ = api2.createAPIService()
-        assert False, "second registration should have raised an exception"
-    except:
-        pass
-    res = APIService.deleteAPIService(api.metadata.name)
-    assert res.obj
+        assert res.obj and res.code < 400
+        res = APIService.readAPIService(api.metadata.name)
+        assert res.obj
+        api2: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
+        try:
+            _ = api2.createAPIService()
+            assert False, "second registration should have raised an exception"
+        except:
+            pass
+    finally:
+        _ = APIService.deleteAPIService(api.metadata.name)
 
 
 @pytest.mark.xfail
@@ -254,25 +265,26 @@ def test08():
     test_pod = base_pod.dup()
     test_pod.metadata.name = 'integration-test08'
     test_pod.spec.containers[0].args.append("while true;do date;sleep 5; done")
-    res = test_pod.createNamespacedPod(namespace='default')
-    assert res.obj
-    assert test_pod.metadata.name == res.obj.metadata.name
-    assert res.obj.status.phase
-    while True:
-        read_res = Pod.readNamespacedPod(test_pod.metadata.name, 'default')
-        assert read_res.obj
-        assert read_res.obj.metadata.name == test_pod.metadata.name
-        assert read_res.obj.status.phase
-        if read_res.obj.status.phase != 'Pending':
-            break
-        time.sleep(0.5)
-    # skipping the stream() bit for now; have to look into it further
-    np_res = Pod.listPodForAllNamespaces()
-    assert np_res.obj
-    assert isinstance(np_res.obj, PodList)
-    assert len(np_res.obj.items) > 0
-    del_res = Pod.deleteNamespacedPod(test_pod.metadata.name, 'default')
-    assert del_res.obj
+    res = test_pod.createNamespacedPod(namespace=e2e_namespace)
+    try:
+        assert res.obj
+        assert test_pod.metadata.name == res.obj.metadata.name
+        assert res.obj.status.phase
+        while True:
+            read_res = Pod.readNamespacedPod(test_pod.metadata.name, e2e_namespace)
+            assert read_res.obj
+            assert read_res.obj.metadata.name == test_pod.metadata.name
+            assert read_res.obj.status.phase
+            if read_res.obj.status.phase != 'Pending':
+                break
+            time.sleep(0.5)
+        # skipping the stream() bit for now; have to look into it further
+        np_res = Pod.listPodForAllNamespaces()
+        assert np_res.obj
+        assert isinstance(np_res.obj, PodList)
+        assert len(np_res.obj.items) > 0
+    finally:
+        _ = Pod.deleteNamespacedPod(test_pod.metadata.name, e2e_namespace)
 
 
 base_service = Service(metadata=ObjectMeta(labels={'name': ''},
@@ -299,25 +311,26 @@ def test09():
     """
     svcname = 'svc-test09'
     svc: Service = make_svc(svcname)
-    cres = svc.createNamespacedService(namespace='default')
-    assert cres.obj
-    assert cres.obj.metadata.name == svcname
-    rres = Service.readNamespacedService(name=svcname, namespace='default')
-    assert rres.obj
-    assert rres.obj.metadata.name == svcname
-    assert rres.obj.status
-    svc.spec.ports[0].name = 'new'
-    svc.spec.ports[0].port = 8080
-    svc.spec.ports[0].targetPort = 8080
-    # must update our resourceVersion so we show we're changing the right one
-    svc.metadata.resourceVersion = rres.obj.metadata.resourceVersion
+    cres = svc.createNamespacedService(namespace=e2e_namespace)
+    try:
+        assert cres.obj
+        assert cres.obj.metadata.name == svcname
+        rres = Service.readNamespacedService(name=svcname, namespace=e2e_namespace)
+        assert rres.obj
+        assert rres.obj.metadata.name == svcname
+        assert rres.obj.status
+        svc.spec.ports[0].name = 'new'
+        svc.spec.ports[0].port = 8080
+        svc.spec.ports[0].targetPort = 8080
+        # must update our resourceVersion so we show we're changing the right one
+        svc.metadata.resourceVersion = rres.obj.metadata.resourceVersion
 
-    pres = svc.patchNamespacedService(name=svc.metadata.name,
-                                      namespace='default')
-    assert 2 == len(pres.obj.spec.ports)
-    dres = Service.deleteNamespacedService(svc.metadata.name,
-                                           'default')
-    assert dres.obj
+        pres = svc.patchNamespacedService(name=svc.metadata.name,
+                                          namespace=e2e_namespace)
+        assert 2 == len(pres.obj.spec.ports)
+    finally:
+        _ = Service.deleteNamespacedService(svc.metadata.name,
+                                            e2e_namespace)
 
 
 base_rc = ReplicationController(
@@ -356,22 +369,24 @@ def test10():
     """
     name = 'rc-test10'
     rc = make_rc(name)
-    cres = rc.createNamespacedReplicationController('default')
-    assert cres.obj
-    assert name == cres.obj.metadata.name
-    rres = ReplicationController.readNamespacedReplicationController(name,
-                                                                     namespace='default')
-    assert rres.obj
-    assert rres.obj.metadata.name == name
-    assert 2 == rres.obj.spec.replicas
-    drc = rc.dup()
-    drc.spec.replicas = rc.spec.replicas + 1
-    pres = drc.patchNamespacedReplicationController(drc.metadata.name, 'default')
-    assert pres.obj
-    assert isinstance(pres.obj, ReplicationController)
-    assert pres.obj.spec.replicas == rc.spec.replicas + 1
-    _ = ReplicationController.deleteNamespacedReplicationController(name,
-                                                                    namespace='default')
+    cres = rc.createNamespacedReplicationController(e2e_namespace)
+    try:
+        assert cres.obj
+        assert name == cres.obj.metadata.name
+        rres = ReplicationController.readNamespacedReplicationController(name,
+                                                                         namespace=e2e_namespace)
+        assert rres.obj
+        assert rres.obj.metadata.name == name
+        assert 2 == rres.obj.spec.replicas
+        drc = rc.dup()
+        drc.spec.replicas = rc.spec.replicas + 1
+        pres = drc.patchNamespacedReplicationController(drc.metadata.name, e2e_namespace)
+        assert pres.obj
+        assert isinstance(pres.obj, ReplicationController)
+        assert pres.obj.spec.replicas == rc.spec.replicas + 1
+    finally:
+        _ = ReplicationController.deleteNamespacedReplicationController(name,
+                                                                        namespace=e2e_namespace)
 
 
 base_cm = ConfigMap(
@@ -393,23 +408,24 @@ def test11():
     """
     name = 'cm-test11'
     cm: ConfigMap = make_cm(name)
-    cres = cm.createNamespacedConfigMap(namespace='default')
-    assert cres.obj
-    assert name == cres.obj.metadata.name
+    cres = cm.createNamespacedConfigMap(namespace=e2e_namespace)
+    try:
+        assert cres.obj
+        assert name == cres.obj.metadata.name
 
-    rres = ConfigMap.readNamespacedConfigMap(name, namespace='default')
-    assert rres.obj
-    assert name == rres.obj.metadata.name
+        rres = ConfigMap.readNamespacedConfigMap(name, namespace=e2e_namespace)
+        assert rres.obj
+        assert name == rres.obj.metadata.name
 
-    cm.data['config.json'] = '{}'
-    assert isinstance(rres.obj, ConfigMap)
-    cm.metadata.resourceVersion = rres.obj.metadata.resourceVersion
+        cm.data['config.json'] = '{}'
+        assert isinstance(rres.obj, ConfigMap)
+        cm.metadata.resourceVersion = rres.obj.metadata.resourceVersion
 
-    pres = cm.patchNamespacedConfigMap(name=cm.metadata.name,
-                                       namespace='default')
-    assert pres.obj
-    dres = cm.deleteNamespacedConfigMap(name, 'default')
-    assert dres.obj
+        pres = cm.patchNamespacedConfigMap(name=cm.metadata.name,
+                                           namespace=e2e_namespace)
+        assert pres.obj
+    finally:
+        _ = cm.deleteNamespacedConfigMap(name, e2e_namespace)
 
 
 def test12():
@@ -459,13 +475,15 @@ def test13():
     """
     name = 'job-test13'
     job: Job = make_job(name)
-    cres = job.createNamespacedJob('default')
-    assert cres.obj
-    assert name == cres.obj.metadata.name
-    rres = Job.readNamespacedJob(name, 'default')
-    assert rres.obj
-    assert name == rres.obj.metadata.name
-    _ = Job.deleteNamespacedJob(name, 'default')
+    cres = job.createNamespacedJob(e2e_namespace)
+    try:
+        assert cres.obj
+        assert name == cres.obj.metadata.name
+        rres = Job.readNamespacedJob(name, e2e_namespace)
+        assert rres.obj
+        assert name == rres.obj.metadata.name
+    finally:
+        _ = Job.deleteNamespacedJob(name, e2e_namespace)
 
 
 ####################
@@ -500,14 +518,15 @@ def test14():
     """
     name = 'deployment-test14'
     dep = make_deployment(name)
-    cres: Response = dep.createNamespacedDeployment('default')
-    assert cres.obj
-    assert name == cres.obj.metadata.name
-    rres: Response = Deployment.readNamespacedDeployment(name, 'default')
-    assert rres.obj
-    assert name == rres.obj.metadata.name
-    dres = Deployment.deleteNamespacedDeployment(name, 'default')
-    assert dres.obj
+    cres: Response = dep.createNamespacedDeployment(e2e_namespace)
+    try:
+        assert cres.obj
+        assert name == cres.obj.metadata.name
+        rres: Response = Deployment.readNamespacedDeployment(name, e2e_namespace)
+        assert rres.obj
+        assert name == rres.obj.metadata.name
+    finally:
+        _ = Deployment.deleteNamespacedDeployment(name, e2e_namespace)
 
 
 def make_daemonset(name: str) -> DaemonSet:
@@ -544,14 +563,15 @@ def test15():
     """
     name = 'ds-test15'
     ds = make_daemonset(name)
-    cres = ds.createNamespacedDaemonSet(namespace='default')
-    assert cres.obj
-    assert cres.obj.metadata.name == name
-    rres = DaemonSet.readNamespacedDaemonSet(name, 'default')
-    assert rres.obj
-    assert name == rres.obj.metadata.name
-    dres = DaemonSet.deleteNamespacedDaemonSet(name, 'default')
-    assert dres.obj
+    cres = ds.createNamespacedDaemonSet(namespace=e2e_namespace)
+    try:
+        assert cres.obj
+        assert cres.obj.metadata.name == name
+        rres = DaemonSet.readNamespacedDaemonSet(name, e2e_namespace)
+        assert rres.obj
+        assert name == rres.obj.metadata.name
+    finally:
+        _ = DaemonSet.deleteNamespacedDaemonSet(name, e2e_namespace)
 
 
 # others
@@ -668,7 +688,7 @@ def test26():
     """
     test listing events via event list
     """
-    res = EventList.listNamespacedEvent('default')
+    res = EventList.listNamespacedEvent(e2e_namespace)
     assert res.obj
     assert isinstance(res.obj, EventList)
     assert len(res.obj.items) > 0
@@ -716,7 +736,7 @@ def test31():
     """
     test getting a limit range list via LimiteRangeList
     """
-    res = LimitRangeList.listNamespacedLimitRange('default')
+    res = LimitRangeList.listNamespacedLimitRange(e2e_namespace)
     assert res.obj
     assert isinstance(res.obj, LimitRangeList)
     res = LimitRangeList.listLimitRangeForAllNamespaces()
@@ -934,29 +954,30 @@ def test52():
     """
     test crud ops on secrets
     """
-    res = SecretList.listNamespacedSecret('default')
+    res = SecretList.listNamespacedSecret(e2e_namespace)
     before_len = len(res.obj.items)
     secret = Secret(metadata=ObjectMeta(name='seekrit'),
                     data={'pw1': base64.b64encode(b'bibble').decode(),
                           'pw2': base64.b64encode(b'bobble').decode()})
-    res = secret.createNamespacedSecret('default')
-    assert res.obj
-    res = SecretList.listNamespacedSecret('default')
-    assert before_len < len(res.obj.items)
-    rres = Secret.readNamespacedSecret(name=secret.metadata.name,
-                                       namespace='default')
-    assert rres.obj
-    assert secret.metadata.name == rres.obj.metadata.name
-    dres = Secret.deleteNamespacedSecret(secret.metadata.name,
-                                         'default')
-    assert dres.obj
+    res = secret.createNamespacedSecret(e2e_namespace)
+    try:
+        assert res.obj
+        res = SecretList.listNamespacedSecret(e2e_namespace)
+        assert before_len < len(res.obj.items)
+        rres = Secret.readNamespacedSecret(name=secret.metadata.name,
+                                           namespace=e2e_namespace)
+        assert rres.obj
+        assert secret.metadata.name == rres.obj.metadata.name
+    finally:
+        _ = Secret.deleteNamespacedSecret(secret.metadata.name,
+                                          e2e_namespace)
 
 
 def test53():
     """
     test crud ops on pod templates
     """
-    res = PodTemplateList.listNamespacedPodTemplate('default')
+    res = PodTemplateList.listNamespacedPodTemplate(e2e_namespace)
     before_len = len(res.obj.items)
     pt = PodTemplate(
         metadata=ObjectMeta(name='test-53'),
@@ -973,15 +994,16 @@ def test53():
                              ]
              ))
     )
-    res = pt.createNamespacedPodTemplate('default')
-    assert res.obj
-    res = PodTemplateList.listNamespacedPodTemplate('default')
-    assert before_len < len(res.obj.items)
-    rres = PodTemplate.readNamespacedPodTemplate(pt.metadata.name, 'default')
-    assert rres.obj
-    assert rres.obj.metadata.name == pt.metadata.name
-    dres = PodTemplate.deleteNamespacedPodTemplate(pt.metadata.name, 'default')
-    assert dres.obj
+    res = pt.createNamespacedPodTemplate(e2e_namespace)
+    try:
+        assert res.obj
+        res = PodTemplateList.listNamespacedPodTemplate(e2e_namespace)
+        assert before_len < len(res.obj.items)
+        rres = PodTemplate.readNamespacedPodTemplate(pt.metadata.name, e2e_namespace)
+        assert rres.obj
+        assert rres.obj.metadata.name == pt.metadata.name
+    finally:
+        _ = PodTemplate.deleteNamespacedPodTemplate(pt.metadata.name, e2e_namespace)
 
 
 def test54():
@@ -1000,17 +1022,19 @@ def test54():
             )
         )
     )
-    res = pvc.createNamespacedPersistentVolumeClaim('default')
-    assert res.obj
-    assert isinstance(res.obj, PersistentVolumeClaim)
-    assert res.obj.metadata.name == pvc.metadata.name
-    rres = PersistentVolumeClaim.readNamespacedPersistentVolumeClaim(
-        pvc.metadata.name, 'default')
-    assert rres.obj
-    assert isinstance(rres.obj, PersistentVolumeClaim)
-    assert rres.obj.metadata.name == pvc.metadata.name
-    dres = PersistentVolumeClaim.deleteNamespacedPersistentVolumeClaim(pvc.metadata.name,
-                                                                       'default')
+    res = pvc.createNamespacedPersistentVolumeClaim(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, PersistentVolumeClaim)
+        assert res.obj.metadata.name == pvc.metadata.name
+        rres = PersistentVolumeClaim.readNamespacedPersistentVolumeClaim(
+            pvc.metadata.name, e2e_namespace)
+        assert rres.obj
+        assert isinstance(rres.obj, PersistentVolumeClaim)
+        assert rres.obj.metadata.name == pvc.metadata.name
+    finally:
+        _ = PersistentVolumeClaim.deleteNamespacedPersistentVolumeClaim(pvc.metadata.name,
+                                                                        e2e_namespace)
 
 
 def test55():
@@ -1041,13 +1065,14 @@ def test56():
         )
     )
     res = pv.createPersistentVolume()
-    assert res.obj
-    rres = PersistentVolume.readPersistentVolume(pv.metadata.name)
-    assert rres.obj
-    assert isinstance(rres.obj, PersistentVolume)
-    assert rres.obj.metadata.name == pv.metadata.name
-    dres = PersistentVolume.deletePersistentVolume(pv.metadata.name)
-    assert dres.obj
+    try:
+        assert res.obj
+        rres = PersistentVolume.readPersistentVolume(pv.metadata.name)
+        assert rres.obj
+        assert isinstance(rres.obj, PersistentVolume)
+        assert rres.obj.metadata.name == pv.metadata.name
+    finally:
+        _ = PersistentVolume.deletePersistentVolume(pv.metadata.name)
 
 
 def make_sa57() -> ServiceAccount:
@@ -1065,25 +1090,26 @@ def test57():
     test service account crud operations
     """
     sa = make_sa57()
-    res = sa.createNamespacedServiceAccount('default')
-    assert res.obj
-    assert isinstance(res.obj, ServiceAccount)
-    assert res.obj.metadata.name == sa.metadata.name
-    rres = ServiceAccount.readNamespacedServiceAccount(sa.metadata.name,
-                                                       'default')
-    assert rres.obj
-    assert isinstance(rres.obj, ServiceAccount)
-    assert rres.obj.metadata.name == sa.metadata.name
-    dsa = sa.dup()
-    dsa.metadata.labels['extra-label'] = 'value'
-    pres = dsa.patchNamespacedServiceAccount(sa.metadata.name,
-                                             'default')
-    assert pres.obj
-    assert isinstance(pres.obj, ServiceAccount)
-    assert pres.obj.metadata.name == sa.metadata.name
-    dres = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
-                                                         'default')
-    assert dres.obj
+    res = sa.createNamespacedServiceAccount(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, ServiceAccount)
+        assert res.obj.metadata.name == sa.metadata.name
+        rres = ServiceAccount.readNamespacedServiceAccount(sa.metadata.name,
+                                                           e2e_namespace)
+        assert rres.obj
+        assert isinstance(rres.obj, ServiceAccount)
+        assert rres.obj.metadata.name == sa.metadata.name
+        dsa = sa.dup()
+        dsa.metadata.labels['extra-label'] = 'value'
+        pres = dsa.patchNamespacedServiceAccount(sa.metadata.name,
+                                                 e2e_namespace)
+        assert pres.obj
+        assert isinstance(pres.obj, ServiceAccount)
+        assert pres.obj.metadata.name == sa.metadata.name
+    finally:
+        _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
+                                                          e2e_namespace)
 
 
 def make_cr58() -> ClusterRole:
@@ -1116,21 +1142,22 @@ def test58():
     """
     cr = make_cr58()
     res = cr.createClusterRole()
-    assert res.obj
-    assert isinstance(res.obj, ClusterRole)
-    assert cr.metadata.name == res.obj.metadata.name
-    rres = ClusterRole.readClusterRole(cr.metadata.name)
-    assert rres.obj
-    assert isinstance(rres.obj, ClusterRole)
-    assert rres.obj.metadata.name == cr.metadata.name
-    dcr = cr.dup()
-    dcr.metadata.labels['new-label'] = 'new-value'
-    pres = dcr.patchClusterRole(dcr.metadata.name)
-    assert pres.obj
-    assert isinstance(pres.obj, ClusterRole)
-    assert pres.obj.metadata.name == cr.metadata.name
-    dres = ClusterRole.deleteClusterRole(cr.metadata.name)
-    assert dres.obj
+    try:
+        assert res.obj
+        assert isinstance(res.obj, ClusterRole)
+        assert cr.metadata.name == res.obj.metadata.name
+        rres = ClusterRole.readClusterRole(cr.metadata.name)
+        assert rres.obj
+        assert isinstance(rres.obj, ClusterRole)
+        assert rres.obj.metadata.name == cr.metadata.name
+        dcr = cr.dup()
+        dcr.metadata.labels['new-label'] = 'new-value'
+        pres = dcr.patchClusterRole(dcr.metadata.name)
+        assert pres.obj
+        assert isinstance(pres.obj, ClusterRole)
+        assert pres.obj.metadata.name == cr.metadata.name
+    finally:
+        _ = ClusterRole.deleteClusterRole(cr.metadata.name)
 
 
 def test59():
@@ -1146,34 +1173,39 @@ def test59():
         ),
         subjects=[Subject(kind='ServiceAccount',
                           name=sa.metadata.name,
-                          namespace='default')],
+                          namespace=e2e_namespace)],
         roleRef=RoleRef(
             apiGroup='rbac.authorization.k8s.io',
             kind='ClusterRole',
             name=cr.metadata.name
         )
     )
-    sa_res = sa.createNamespacedServiceAccount('default')
-    assert sa_res.obj
-    cr_res = cr.createClusterRole()
-    assert cr_res.obj
-    crb_res = crb.createClusterRoleBinding()
-    assert crb_res.obj
-    assert isinstance(crb_res.obj, ClusterRoleBinding)
-    assert crb_res.obj.metadata.name == crb.metadata.name
-    rres = ClusterRoleBinding.readClusterRoleBinding(crb.metadata.name)
-    assert rres.obj
-    assert isinstance(rres.obj, ClusterRoleBinding)
-    assert rres.obj.metadata.name == crb.metadata.name
-    dcr = cr.dup()
-    dcr.rules[1].verbs.append('watch')
-    pres = dcr.patchClusterRole(dcr.metadata.name)
-    assert pres.obj
-    dres = ClusterRoleBinding.deleteClusterRoleBinding(crb.metadata.name)
-    assert dres.obj
-    _ = ClusterRole.deleteClusterRole(cr.metadata.name)
-    _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
-                                                      'default')
+    sa_res = sa.createNamespacedServiceAccount(e2e_namespace)
+    try:
+        assert sa_res.obj
+        cr_res = cr.createClusterRole()
+        try:
+            assert cr_res.obj
+            crb_res = crb.createClusterRoleBinding()
+            try:
+                assert crb_res.obj
+                assert isinstance(crb_res.obj, ClusterRoleBinding)
+                assert crb_res.obj.metadata.name == crb.metadata.name
+                rres = ClusterRoleBinding.readClusterRoleBinding(crb.metadata.name)
+                assert rres.obj
+                assert isinstance(rres.obj, ClusterRoleBinding)
+                assert rres.obj.metadata.name == crb.metadata.name
+                dcr = cr.dup()
+                dcr.rules[1].verbs.append('watch')
+                pres = dcr.patchClusterRole(dcr.metadata.name)
+                assert pres.obj
+            finally:
+                _ = ClusterRoleBinding.deleteClusterRoleBinding(crb.metadata.name)
+        finally:
+            _ = ClusterRole.deleteClusterRole(cr.metadata.name)
+    finally:
+        _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
+                                                          e2e_namespace)
 
 
 def test60():
@@ -1214,24 +1246,25 @@ def test62():
             targetCPUUtilizationPercentage=75
         )
     )
-    res = hpa.createNamespacedHorizontalPodAutoscaler(namespace='default')
-    assert res.obj
-    assert isinstance(res.obj, HorizontalPodAutoscaler)
-    assert res.obj.metadata.name == hpa.metadata.name
-    rres = HorizontalPodAutoscaler.readNamespacedHorizontalPodAutoscaler(
-        name=hpa.metadata.name, namespace='default'
-    )
-    assert rres.obj
-    assert isinstance(rres.obj, HorizontalPodAutoscaler)
-    assert rres.obj.metadata.name == hpa.metadata.name
-    dhpa = hpa.dup()
-    dhpa.metadata.labels = {'new-label': 'see'}
-    dhpa.patchNamespacedHorizontalPodAutoscaler(dhpa.metadata.name,
-                                                'default')
-    dres = HorizontalPodAutoscaler.deleteNamespacedHorizontalPodAutoscaler(
-        name=hpa.metadata.name, namespace='default'
-    )
-    assert dres.obj
+    res = hpa.createNamespacedHorizontalPodAutoscaler(namespace=e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, HorizontalPodAutoscaler)
+        assert res.obj.metadata.name == hpa.metadata.name
+        rres = HorizontalPodAutoscaler.readNamespacedHorizontalPodAutoscaler(
+            name=hpa.metadata.name, namespace=e2e_namespace
+        )
+        assert rres.obj
+        assert isinstance(rres.obj, HorizontalPodAutoscaler)
+        assert rres.obj.metadata.name == hpa.metadata.name
+        dhpa = hpa.dup()
+        dhpa.metadata.labels = {'new-label': 'see'}
+        dhpa.patchNamespacedHorizontalPodAutoscaler(dhpa.metadata.name,
+                                                    e2e_namespace)
+    finally:
+        _ = HorizontalPodAutoscaler.deleteNamespacedHorizontalPodAutoscaler(
+            name=hpa.metadata.name, namespace=e2e_namespace
+        )
 
 
 def test63():
@@ -1246,26 +1279,27 @@ def test63():
     assert res.obj
     assert isinstance(res.obj, LeaseList)
     before_len = len(res.obj.items)
-    res = l.createNamespacedLease('default')
-    assert res.obj
-    assert isinstance(res.obj, Lease)
-    assert res.obj.metadata.name == l.metadata.name
-    res = Lease.listLeaseForAllNamespaces()
-    assert isinstance(res.obj, LeaseList)
-    assert before_len < len(res.obj.items)
-    rres = Lease.readNamespacedLease(l.metadata.name,
-                                     'default')
-    assert rres.obj
-    assert rres.obj.metadata.name == l.metadata.name
-    dres = Lease.deleteNamespacedLease(l.metadata.name, 'default')
-    assert dres.obj
+    res = l.createNamespacedLease(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, Lease)
+        assert res.obj.metadata.name == l.metadata.name
+        res = Lease.listLeaseForAllNamespaces()
+        assert isinstance(res.obj, LeaseList)
+        assert before_len < len(res.obj.items)
+        rres = Lease.readNamespacedLease(l.metadata.name,
+                                         e2e_namespace)
+        assert rres.obj
+        assert rres.obj.metadata.name == l.metadata.name
+    finally:
+        _ = Lease.deleteNamespacedLease(l.metadata.name, e2e_namespace)
 
 
 def test64():
     """
     test crud ops on LimitRanges
     """
-    res = LimitRangeList.listNamespacedLimitRange('default')
+    res = LimitRangeList.listNamespacedLimitRange(e2e_namespace)
     before_len = len(res.obj.items)
     lr = LimitRange(
         metadata=ObjectMeta(name='test65-limitrange'),
@@ -1273,25 +1307,25 @@ def test64():
             limits=[LimitRangeItem(type="Pod")]
         )
     )
-    res = lr.createNamespacedLimitRange('default')
-    assert res.obj
-    assert isinstance(res.obj, LimitRange)
-    assert res.obj.metadata.name == lr.metadata.name
-    res = LimitRangeList.listNamespacedLimitRange('default')
-    assert before_len < len(res.obj.items)
-    rres = LimitRange.readNamespacedLimitRange(lr.metadata.name,
-                                               'default')
-    assert rres.obj
-    assert rres.obj.metadata.name == lr.metadata.name
-    dlr = lr.dup()
-    dlr.metadata.labels = {'new_label': 'now'}
-    pres = dlr.patchNamespacedLimitRange(dlr.metadata.name,
-                                         'default')
-    assert pres.obj
-    assert pres.obj.metadata.name == dlr.metadata.name
-    dres = LimitRange.deleteNamespacedLimitRange(lr.metadata.name,
-                                                 'default')
-    assert dres.obj
+    res = lr.createNamespacedLimitRange(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, LimitRange)
+        assert res.obj.metadata.name == lr.metadata.name
+        res = LimitRangeList.listNamespacedLimitRange(e2e_namespace)
+        assert before_len < len(res.obj.items)
+        rres = LimitRange.readNamespacedLimitRange(lr.metadata.name,
+                                                   e2e_namespace)
+        assert rres.obj
+        assert rres.obj.metadata.name == lr.metadata.name
+        dlr = lr.dup()
+        dlr.metadata.labels = {'new_label': 'now'}
+        pres = dlr.patchNamespacedLimitRange(dlr.metadata.name,
+                                             e2e_namespace)
+        assert pres.obj
+        assert pres.obj.metadata.name == dlr.metadata.name
+    finally:
+        _ = LimitRange.deleteNamespacedLimitRange(lr.metadata.name, e2e_namespace)
 
 
 def test65():
@@ -1314,25 +1348,26 @@ def test65():
             )]
         )
     )
-    res = np.createNamespacedNetworkPolicy('default')
-    assert res.obj
-    assert isinstance(res.obj, NetworkPolicy)
-    assert res.obj.metadata.name == np.metadata.name
-    rres = NetworkPolicy.readNamespacedNetworkPolicy(np.metadata.name,
-                                                     'default')
-    assert rres.obj
-    assert isinstance(rres.obj, NetworkPolicy)
-    assert np.metadata.name == rres.obj.metadata.name
-    dnp = np.dup()
-    dnp.metadata.labels = {'new_labels': 'are_here'}
-    pres = dnp.patchNamespacedNetworkPolicy(dnp.metadata.name,
-                                            'default')
-    assert pres.obj
-    assert isinstance(pres.obj, NetworkPolicy)
-    assert pres.obj.metadata.name == np.metadata.name
-    dres = NetworkPolicy.deleteNamespacedNetworkPolicy(np.metadata.name,
-                                                       'default')
-    assert dres.obj
+    res = np.createNamespacedNetworkPolicy(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, NetworkPolicy)
+        assert res.obj.metadata.name == np.metadata.name
+        rres = NetworkPolicy.readNamespacedNetworkPolicy(np.metadata.name,
+                                                         e2e_namespace)
+        assert rres.obj
+        assert isinstance(rres.obj, NetworkPolicy)
+        assert np.metadata.name == rres.obj.metadata.name
+        dnp = np.dup()
+        dnp.metadata.labels = {'new_labels': 'are_here'}
+        pres = dnp.patchNamespacedNetworkPolicy(dnp.metadata.name,
+                                                e2e_namespace)
+        assert pres.obj
+        assert isinstance(pres.obj, NetworkPolicy)
+        assert pres.obj.metadata.name == np.metadata.name
+    finally:
+        _ = NetworkPolicy.deleteNamespacedNetworkPolicy(np.metadata.name,
+                                                        e2e_namespace)
 
 
 def test66():
@@ -1346,19 +1381,20 @@ def test66():
         description='test low priority class'
     )
     res = pc.createPriorityClass()
-    assert res.obj
-    assert isinstance(res.obj, PriorityClass)
-    assert res.obj.metadata.name == pc.metadata.name
-    rres = PriorityClass.readPriorityClass(pc.metadata.name)
-    assert rres.obj
-    assert isinstance(rres.obj, PriorityClass)
-    assert rres.obj.metadata.name == pc.metadata.name
-    dpc = pc.dup()
-    dpc.metadata.labels = {'new_labels': 'here'}
-    pres = dpc.patchPriorityClass(dpc.metadata.name)
-    assert pres.obj
-    dres = PriorityClass.deletePriorityClass(pc.metadata.name)
-    assert dres.obj
+    try:
+        assert res.obj
+        assert isinstance(res.obj, PriorityClass)
+        assert res.obj.metadata.name == pc.metadata.name
+        rres = PriorityClass.readPriorityClass(pc.metadata.name)
+        assert rres.obj
+        assert isinstance(rres.obj, PriorityClass)
+        assert rres.obj.metadata.name == pc.metadata.name
+        dpc = pc.dup()
+        dpc.metadata.labels = {'new_labels': 'here'}
+        pres = dpc.patchPriorityClass(dpc.metadata.name)
+        assert pres.obj
+    finally:
+        _ = PriorityClass.deletePriorityClass(pc.metadata.name)
 
 
 def test67():
@@ -1388,19 +1424,20 @@ def test67():
             )
         )
     )
-    res = rs.createNamespacedReplicaSet('default')
-    assert res.obj
-    assert isinstance(res.obj, ReplicaSet)
-    assert res.obj.metadata.name == rs.metadata.name
-    rres = ReplicaSet.readNamespacedReplicaSet(rs.metadata.name, 'default')
-    assert rres.obj
-    drs = rs.dup()
-    drs.metadata.labels = {'newLabel': 'here'}
-    pres = drs.patchNamespacedReplicaSet(drs.metadata.name, 'default')
-    assert pres.obj
-    dres = ReplicaSet.deleteNamespacedReplicaSet(rs.metadata.name,
-                                                 'default')
-    assert dres.obj
+    res = rs.createNamespacedReplicaSet(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, ReplicaSet)
+        assert res.obj.metadata.name == rs.metadata.name
+        rres = ReplicaSet.readNamespacedReplicaSet(rs.metadata.name, e2e_namespace)
+        assert rres.obj
+        drs = rs.dup()
+        drs.metadata.labels = {'newLabel': 'here'}
+        pres = drs.patchNamespacedReplicaSet(drs.metadata.name, e2e_namespace)
+        assert pres.obj
+    finally:
+        _ = ReplicaSet.deleteNamespacedReplicaSet(rs.metadata.name,
+                                                  e2e_namespace)
 
 
 def test68():
@@ -1413,19 +1450,20 @@ def test68():
             hard={'limits.memory': '150Mi'}
         )
     )
-    res = rq.createNamespacedResourceQuota('default')
-    assert res.obj
-    assert isinstance(res.obj, ResourceQuota)
-    assert res.obj.metadata.name == rq.metadata.name
-    rres = ResourceQuota.readNamespacedResourceQuota(rq.metadata.name, 'default')
-    assert rres.obj
-    drq = rq.dup()
-    drq.metadata.labels = {'newLabel': 'here'}
-    pres = drq.patchNamespacedResourceQuota(drq.metadata.name, 'default')
-    assert pres.obj
-    dres = ResourceQuota.deleteNamespacedResourceQuota(rq.metadata.name,
-                                                       'default')
-    assert dres.obj
+    res = rq.createNamespacedResourceQuota(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, ResourceQuota)
+        assert res.obj.metadata.name == rq.metadata.name
+        rres = ResourceQuota.readNamespacedResourceQuota(rq.metadata.name, e2e_namespace)
+        assert rres.obj
+        drq = rq.dup()
+        drq.metadata.labels = {'newLabel': 'here'}
+        pres = drq.patchNamespacedResourceQuota(drq.metadata.name, e2e_namespace)
+        assert pres.obj
+    finally:
+        _ = ResourceQuota.deleteNamespacedResourceQuota(rq.metadata.name,
+                                                        e2e_namespace)
 
 
 def test69():
@@ -1445,17 +1483,19 @@ def test69():
             apiGroup='rbac.authorization.k8s.io'
         )
     )
-    res = rb.createNamespacedRoleBinding('default')
-    assert res.obj
-    assert isinstance(res.obj, RoleBinding)
-    assert res.obj.metadata.name == rb.metadata.name
-    rres = RoleBinding.readNamespacedRoleBinding(rb.metadata.name, 'default')
-    assert rres.obj
-    drb = rb.dup()
-    drb.metadata.labels = {'whowantsalabel': 'me'}
-    pres = drb.patchNamespacedRoleBinding(drb.metadata.name, 'default')
-    assert pres.obj
-    dres = RoleBinding.deleteNamespacedRoleBinding(rb.metadata.name, 'default')
+    res = rb.createNamespacedRoleBinding(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, RoleBinding)
+        assert res.obj.metadata.name == rb.metadata.name
+        rres = RoleBinding.readNamespacedRoleBinding(rb.metadata.name, e2e_namespace)
+        assert rres.obj
+        drb = rb.dup()
+        drb.metadata.labels = {'whowantsalabel': 'me'}
+        pres = drb.patchNamespacedRoleBinding(drb.metadata.name, e2e_namespace)
+        assert pres.obj
+    finally:
+        _ = RoleBinding.deleteNamespacedRoleBinding(rb.metadata.name, e2e_namespace)
 
 
 base_ss = StatefulSet(
@@ -1582,21 +1622,22 @@ def test70():
     test stateful set crud ops
     """
     ss = base_ss.dup()
-    res = ss.createNamespacedStatefulSet('default')
-    assert res.obj
-    assert isinstance(res.obj, StatefulSet)
-    assert res.obj.metadata.name == ss.metadata.name
-    rres = StatefulSet.readNamespacedStatefulSet(ss.metadata.name,
-                                                 'default')
-    assert rres.obj
-    dss = ss.dup()
-    dss.metadata.labels['newkey'] = 'value'
-    pres = dss.patchNamespacedStatefulSet(dss.metadata.name,
-                                          'default')
-    assert pres.obj
-    dres = StatefulSet.deleteNamespacedStatefulSet(dss.metadata.name,
-                                                   'default')
-    assert dres.obj
+    res = ss.createNamespacedStatefulSet(e2e_namespace)
+    try:
+        assert res.obj
+        assert isinstance(res.obj, StatefulSet)
+        assert res.obj.metadata.name == ss.metadata.name
+        rres = StatefulSet.readNamespacedStatefulSet(ss.metadata.name,
+                                                     e2e_namespace)
+        assert rres.obj
+        dss = ss.dup()
+        dss.metadata.labels['newkey'] = 'value'
+        pres = dss.patchNamespacedStatefulSet(dss.metadata.name,
+                                              e2e_namespace)
+        assert pres.obj
+    finally:
+        _ = StatefulSet.deleteNamespacedStatefulSet(ss.metadata.name,
+                                                    e2e_namespace)
 
 
 def test71():
@@ -1611,17 +1652,17 @@ def test71():
             expirationSeconds=60*10
         )
     )
-    res = sa.createNamespacedServiceAccount('default')
-    assert res.obj
+    res = sa.createNamespacedServiceAccount(e2e_namespace)
     try:
+        assert res.obj
         res = tr.createNamespacedServiceAccountToken(sa.metadata.name,
-                                                     'default')
+                                                     e2e_namespace)
         assert res.obj
         assert isinstance(res.obj, TokenRequest)
         assert res.obj.status.token
     finally:
         _ = ServiceAccount.deleteNamespacedServiceAccount(sa.metadata.name,
-                                                          'default')
+                                                          e2e_namespace)
 
 
 def test72():
@@ -1647,17 +1688,17 @@ def test72():
             clientConfig=WebhookClientConfig(
                 service=ServiceReference(
                     name='admission-webhook',
-                    namespace='default',
+                    namespace=e2e_namespace,
                     path="/validate"
                 ),
             )
         )]
     )
     res = vwc.createValidatingWebhookConfiguration()
-    assert res.obj
-    assert isinstance(res.obj, ValidatingWebhookConfiguration)
-    assert res.obj.metadata.name == vwc.metadata.name
     try:
+        assert res.obj
+        assert isinstance(res.obj, ValidatingWebhookConfiguration)
+        assert res.obj.metadata.name == vwc.metadata.name
         rres = ValidatingWebhookConfiguration.readValidatingWebhookConfiguration(name)
         assert rres.obj
         assert isinstance(rres.obj, ValidatingWebhookConfiguration)
@@ -1666,8 +1707,7 @@ def test72():
         pres = vwc.patchValidatingWebhookConfiguration(name)
         assert pres.obj
     finally:
-        dres = ValidatingWebhookConfiguration.deleteValidatingWebhookConfiguration(name)
-        assert dres.obj
+        _ = ValidatingWebhookConfiguration.deleteValidatingWebhookConfiguration(name)
 
 
 if __name__ == "__main__":

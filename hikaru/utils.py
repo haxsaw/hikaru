@@ -54,6 +54,13 @@ class Response(object):
     If .get() or any of the other async supporting calls are made on a Response
     object that was called blocking then they will all return None.
     """
+    # this flag sets the 'translate' argument to from_dict()
+    # when retrieving results from K8s. In normal integration cases
+    # it should be True, but for certain tests it needs to be False.
+    # Testing code that doesn't integrate into Kubernetes can set this
+    # to False to avoid improperly named attributes.
+    set_false_for_internal_tests = True
+
     def __init__(self, k8s_response, codes_with_objects):
         """
         Creates a new response:
@@ -80,7 +87,10 @@ class Response(object):
         self.code = result[1]
         self.headers = result[2]
         if self.code in self.codes_with_objects:
-            self.obj = from_dict(self.obj.to_dict(), translate=True)
+            self.obj = (from_dict(self.obj.to_dict(),
+                                  translate=self.set_false_for_internal_tests)
+                        if self.obj is not None
+                        else self.obj)
 
     def ready(self):
         return self._thread.ready()

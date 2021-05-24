@@ -72,7 +72,7 @@ import warnings
 from black import format_file_contents, FileMode, NothingChanged
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
-from hikaru.meta import HikaruBase, HikaruDocumentBase
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
 
 
 NoneType = type(None)
@@ -218,7 +218,8 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     """
     print(_module_docstring, file=stream)
     print(file=stream)
-    print(f"from hikaru.meta import {HikaruBase.__name__}, {HikaruDocumentBase.__name__}",
+    print(f"from hikaru.meta import {HikaruBase.__name__}, "
+          f"{HikaruDocumentBase.__name__}, {KubernetesException.__name__}",
           file=stream)
     print("from hikaru.generate import get_clean_dict", file=stream)
     print("from hikaru.utils import Response", file=stream)
@@ -525,11 +526,19 @@ class Operation(object):
                 docstring_parts.append(f'   {ds}')
         docstring_parts.append("    :param client: optional; instance of "
                                "kubernetes.client.api_client.ApiClient")
-        docstring_parts.append("    :param async_req: bool; if True, call is "
-                               "async and the caller must invoke ")
-        docstring_parts.append("        .get() on the returned Response object. Default "
-                               "is False,  which ")
-        docstring_parts.append("        makes the call blocking.")
+        docstring_parts.extend(self.get_async_doc())
+        docstring_parts.extend(self.make_return_doc())
+        docstring_parts.append('   """')
+        return docstring_parts
+
+    def get_async_doc(self) -> List[str]:
+        return ["    :param async_req: bool; if True, call is "
+                "async and the caller must invoke ",
+                "        .get() on the returned Response object. Default "
+                "is False,  which makes the call blocking."]
+
+    def make_return_doc(self) -> List[str]:
+        docstring_parts = []
         if self.returns:
             docstring_parts.append("")
             docstring_parts.append("    :return: hikaru.utils.Response instance with "
@@ -542,7 +551,6 @@ class Operation(object):
                            else ret.ref)
                 docstring_parts.append(f"      {ret.code}   {rettype}  "
                                        f"  {ret.description}")
-        docstring_parts.append('   """')
         return docstring_parts
 
     def get_effective_op_id(self) -> str:
@@ -607,11 +615,17 @@ class Operation(object):
                        for p in chain(required, optional)])
         # here, we add any standard parameter(s) that all should have:
         params.append('client: ApiClient = None')
-        params.append('async_req: bool = False')
+        params.extend(self.get_async_param())
         # end standards
         def_parts.append(", ".join(params))
-        def_parts.append(") -> Response:")
+        def_parts.append(f") -> {self.get_meth_return()}:")
         return "".join(def_parts)
+
+    def get_async_param(self) -> List[str]:
+        return ['async_req: bool = False']
+
+    def get_meth_return(self) -> str:
+        return 'Response'
 
     def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
                       cd: Optional['ClassDescriptor'] = None) -> List[str]:
@@ -699,29 +713,52 @@ class SyntheticOperation(Operation):
     def get_effective_op_id(self) -> str:
         return self.base_op.op_id
 
+    def make_return_doc(self) -> List[str]:
+        doc = list()
+        doc.append('    :return: returns self; the state of self may be '
+                   'permuted with a returned')
+        doc.append('        HikaruDocumentBase object, whose values will be '
+                   'merged into self ')
+        doc.append('(if of the same type).')
+        doc.append('    :raises: KubernetesException. Raised only by the CRUD '
+                   'methods to signal ')
+        doc.append('        that a return code of 400 or higher was returned by the '
+                   'underlying ')
+        doc.append('        Kubernetes library.')
+        return doc
 
-@register_crud_class('read')
-class ReadOperation(SyntheticOperation):
-    """
-    A synthetic operation; simple read() method for a more complex class
-    """
-    op_name = 'read'
+    def get_meth_return(self) -> str:
+        return f"'{self.base_op.kind}'"
 
-    def get_meth_decorators(self) -> List[str]:
+    def get_async_param(self) -> List[str]:
         return []
 
-    def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
-        return f'{self.op_name} = {self.base_op.meth_name}'
-
-    def prep_inbound_params(self) -> List['OpParameter']:
+    def get_async_doc(self) -> List[str]:
         return []
 
-    def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
-        return []
 
-    def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
-                      cd: Optional['ClassDescriptor'] = None) -> List[str]:
-        return []
+# @register_crud_class('read')
+# class ReadOperation(SyntheticOperation):
+#     """
+#     A synthetic operation; simple read() method for a more complex class
+#     """
+#     op_name = 'read'
+#
+#     def get_meth_decorators(self) -> List[str]:
+#         return []
+#
+#     def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
+#         return f'{self.op_name} = {self.base_op.meth_name}'
+#
+#     def prep_inbound_params(self) -> List['OpParameter']:
+#         return []
+#
+#     def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
+#         return []
+#
+#     def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
+#                       cd: Optional['ClassDescriptor'] = None) -> List[str]:
+#         return []
 
 
 _create_body_with_namespace = \
@@ -737,7 +774,12 @@ _create_body_with_namespace = \
                            "{classname}'s metadata")
     else:
         effective_namespace = self.metadata.namespace
-    return self.{methname}({paramlist})
+    res = self.{methname}({paramlist})
+    if not 200 <= res.code <= 299:
+        raise KubernetesException("Kubernetes returned error " + str(res.code))
+    if self.__class__.__name__ == res.obj.__class__.__name__:
+        self.merge(res.obj, overwrite=True)
+    return self
 """
 
 _create_body_no_namespace = \
@@ -745,7 +787,12 @@ _create_body_no_namespace = \
     if not self.metadata:
         raise RuntimeError(
             "Your resource must contain metadata to use '{classname}.{op_name}()'")
-    return self.{methname}({paramlist})
+    res = self.{methname}({paramlist})
+    if not 200 <= res.code <= 299:
+        raise KubernetesException("Kubernetes returned error " + str(res.code))
+    if self.__class__.__name__ == res.obj.__class__.__name__:
+        self.merge(res.obj, overwrite=True)
+    return self
 """
 
 
@@ -762,7 +809,7 @@ class CreateOperation(SyntheticOperation):
 
     def prep_inbound_params(self) -> List['OpParameter']:
         params = [p for p in self.prep_outbound_params()
-                  if p.name != 'name']
+                  if p.name not in ('name', 'async_req')]
         return params
 
     def prep_outbound_params(self) -> List['OpParameter']:
@@ -774,6 +821,8 @@ class CreateOperation(SyntheticOperation):
                                 f"namespace from the arguments you *must* have " \
                                 f"filled in the namespace attribute in the metadata " \
                                 f"for the resource!"
+            if p.name == "async_req":
+                continue
             params.append(p)
         return params
 
@@ -808,7 +857,6 @@ class CreateOperation(SyntheticOperation):
                 local_name = param_name = camel_to_pep8(p.name)
             param_assignments.append(f"{param_name}={local_name}")
         param_assignments.append("client=client")
-        param_assignments.append("async_req=async_req")
         body_str = (self._with_namespace_template()
                     if seen_namespace else
                     self._without_namespace_template())
@@ -856,7 +904,12 @@ _delete_body_with_namespace = \
                            "{classname}'s metadata")
     else:
         effective_name = self.metadata.name
-    return self.{methname}({paramlist})
+    res = self.{methname}({paramlist})
+    if not 200 <= res.code <= 299:
+        raise KubernetesException("Kubernetes returned error " + str(res.code))
+    if self.__class__.__name__ == res.obj.__class__.__name__:
+        self.merge(res.obj, overwrite=True)
+    return self
 """
 
 _delete_body_without_namespace = \
@@ -877,7 +930,12 @@ _delete_body_without_namespace = \
                            "{classname}'s metadata")
     else:
         effective_name = self.metadata.name
-    return self.{methname}({paramlist})
+    res = self.{methname}({paramlist})
+    if not 200 <= res.code <= 299:
+        raise KubernetesException("Kubernetes returned error " + str(res.code))
+    if self.__class__.__name__ == res.obj.__class__.__name__:
+        self.merge(res.obj, overwrite=True)
+    return self
 """
 
 
@@ -900,6 +958,8 @@ class DeleteOperation(CreateOperation):
                                 f"{p.name} from the arguments you *must* have " \
                                 f"filled in the {p.name} attribute in the metadata " \
                                 f"for the resource!"
+            if p.name == 'async_req':
+                continue
             params.append(p)
         return params
 
@@ -911,6 +971,14 @@ class DeleteOperation(CreateOperation):
 
     def _without_namespace_template(self):
         return _delete_body_without_namespace
+
+
+@register_crud_class('read')
+class ReadOperation(DeleteOperation):
+    """
+    A synthetic operation; simple read() method for a more complex class
+    """
+    op_name = 'read'
 
 
 # maybe later...
@@ -958,8 +1026,10 @@ class ClassDescriptor(object):
         self.required = []
         self.type = None
         self.is_subclass_of = None
-        self.is_document = False
+        # self.is_document = False
         self.operations: Dict[str, Operation] = {}
+        self.has_gvk_dict = False
+        self.has_doc_markers = False
 
         self.required_props = []
         self.optional_props = []
@@ -993,6 +1063,10 @@ class ClassDescriptor(object):
             # maybe later...
             # create_op = ListCreateOperation(cd)
 
+    @property
+    def is_document(self):
+        return self.has_doc_markers and self.has_gvk_dict
+
     def add_operation(self, op: Operation):
         self.operations[op.op_id] = op
 
@@ -1008,7 +1082,7 @@ class ClassDescriptor(object):
                 self.group = "core"
             self.kind = x_k8s["kind"]
             self.version = x_k8s['version']
-            self.is_document = True
+            self.has_gvk_dict = True
         self.description = d.get("description")
         self.all_properties = d.get("properties", {})
         self.required = d.get("required", [])
@@ -1029,15 +1103,20 @@ class ClassDescriptor(object):
     def process_properties(self):
         self.required_props = []
         self.optional_props = []
+        doc_props = set(self._doc_markers)
         if self.is_subclass_of is None:  # then there are properties
             for k, v in self.all_properties.items():
                 fd = PropertyDescriptor(self, k, v)
                 if fd.name in self._doc_markers:
                     self.adjust_special_props(fd)
+                    doc_props.remove(fd.name)
                 if k in self.required:
                     self.required_props.append(fd)
                 else:
                     self.optional_props.append(fd)
+            if len(doc_props) == 0:
+                # we've found the markers for a document
+                self.has_doc_markers = True
             self.required_props.sort(key=lambda x: x.name)
             self.optional_props.sort(key=lambda x: x.name)
 
@@ -1285,7 +1364,7 @@ class PropertyDescriptor(object):
                     itype = items.get("type")
                     if itype:
                         if itype == "object":
-                            item_ref = "Any"
+                            item_ref = "object"
                         else:
                             item_ref = itype
                     else:

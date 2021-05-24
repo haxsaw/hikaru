@@ -49,6 +49,10 @@ except ImportError:  # pragma: no cover
 NoneType = type(None)
 
 
+class KubernetesException(Exception):
+    pass
+
+
 _not_there = object()
 
 
@@ -479,21 +483,43 @@ class HikaruBase(object):
             f = hints[p.name]
             initial_type = f
             origin = get_origin(initial_type)
+            is_required = True
             if origin is Union:
                 type_args = get_args(f)
                 initial_type = type_args[0]
+                is_required = False
             if ((type(initial_type) == type and issubclass(initial_type, (int, str,
                                                                           bool,
                                                                           float))) or
                     (is_dataclass(initial_type) and
                      issubclass(initial_type, HikaruBase)) or
                     initial_type is object):
-                # this is a type that can default to None
-                kw_args[p.name] = None
+                # this is a type that might default to None
+                # kw_args[p.name] = None
+                if is_required:
+                    if (is_dataclass(initial_type) and
+                            issubclass(initial_type, HikaruBase)):
+                        kw_args[p.name] = initial_type.get_empty_instance()
+                    else:
+                        kw_args[p.name] = ''
+                else:
+                    kw_args[p.name] = None
             else:
                 origin = get_origin(initial_type)
                 if origin in (list, List):
-                    kw_args[p.name] = []
+                    # ok, just stuffing an empty list in here can be a problem,
+                    # as we don't know if this is going to then be put through
+                    # get clean dict; if it's required, a clean dict will remove
+                    # the list. So we need to put something inside this list so it
+                    # doesn't get blown away. But ONLY if it's required
+                    if is_required:
+                        list_of_type = get_args(initial_type)[0]
+                        if issubclass(list_of_type, HikaruBase):
+                            kw_args[p.name] = [list_of_type.get_empty_instance()]
+                        else:
+                            kw_args[p.name] = [None]
+                    else:
+                        kw_args[p.name] = []
                 elif origin in (dict, Dict):
                     kw_args[p.name] = {}
                 else:
@@ -669,9 +695,11 @@ class HikaruBase(object):
             raise TypeError(f'Type name mismatch: trying to merge a '
                             f'{other.__class__.__name__} into a '
                             f'{self.__class__.__name__}')
-        if self.__class__.__name__ == "ObjectMeta":
-            _ = 1
-        for k in get_type_hints(self).keys():
+
+        # for k in get_type_hints(self).keys():
+
+
+        for k in self._get_hints().keys():
             self_val = getattr(self, k)
             other_val = getattr(other, k)
             if other_val is None:
@@ -985,9 +1013,10 @@ class HikaruBase(object):
                 origin = get_origin(initial_type)
                 if origin in (list, List):
                     target_type = get_args(initial_type)[0]
-                    if type(target_type) == type and issubclass(target_type, (int, str,
-                                                                              bool,
-                                                                              float)):
+                    if type(target_type) == type and (issubclass(target_type, (int, str,
+                                                                               bool,
+                                                                               float)) or
+                                                      target_type == object):
                         l = [i for i in val]
                         setattr(self, f.name, l)
                     elif is_dataclass(target_type) and issubclass(target_type,
@@ -1002,7 +1031,9 @@ class HikaruBase(object):
                         raise NotImplementedError(f"Internal error! Processing"
                                                   f" {self.__class__.__name__}.{f.name};"
                                                   f" can only do list of scalars and"
-                                                  f" k8s objs. Please file a"
+                                                  f" k8s objs, "
+                                                  f"not {target_type.__name__}. Please "
+                                                  f"file a"
                                                   f" bug report.")  # pragma: no cover
                 elif origin in (dict, Dict):
                     d = {k: v for k, v in val.items()}
@@ -1011,7 +1042,11 @@ class HikaruBase(object):
                     raise NotImplementedError(f"Internal error! Unknown type inside of"
                                               f" list: {initial_type}. Please file a bug"
                                               f" report.")  # pragma: no cover
-        self._capture_catalog()
+        # the catalog has already been capture once from post_init, but it may
+        # not know the contained items. So clear it out and populate it
+        # from the bottom up
+        self._clear_catalog()
+        self._capture_catalog(catalog_depth_first=True)
 
     def as_python_source(self, assign_to: str = None) -> str:
         """
