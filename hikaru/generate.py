@@ -77,7 +77,6 @@ def _clean_dict(d: dict) -> dict:
     # returns a new dict missing any keys in d that have None for its value
     clean = {}
     for k, v in d.items():
-        assert isinstance(k, str)
         if k.startswith(dprefix):
             k = f'${k.replace(dprefix, "")}'
         k = k.replace('_', '-')
@@ -236,7 +235,6 @@ def from_dict(adict: dict, cls: Optional[type] = None,
         docs = load_full_yaml(yaml=sio.getvalue(), translate=translate)
         doc = docs[0]
     else:
-        assert issubclass(cls, HikaruBase)
         parser = YAML(typ="safe")
         sio.seek(0)
         yaml = parser.load(sio)
@@ -336,7 +334,6 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
                                f" unrecognized api_version ({api_version}) and"
                                f" kind ({kind}) pair; can't determine the class"
                                f" to instantiate")
-        assert issubclass(klass, HikaruDocumentBase)
         inst = klass.from_yaml(doc, translate=translate)
         objs.append(inst)
 

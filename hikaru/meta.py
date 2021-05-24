@@ -132,7 +132,6 @@ class HikaruBase(object):
     def _process_other_catalog(src_cat, dst_cat, idx, name):
         for k, ce_list in src_cat.items():
             for ce in ce_list:
-                assert isinstance(ce, CatalogEntry)
                 new_ce = CatalogEntry(ce.cls, ce.attrname, ce.path[:])
                 if idx is not None:
                     new_ce.path.insert(0, idx)
@@ -158,7 +157,6 @@ class HikaruBase(object):
 
         # now merge in the catalog of other if it has one
         if isinstance(other, HikaruBase):
-            assert isinstance(other, HikaruBase)
             self._process_other_catalog(other._type_catalog, self._type_catalog, idx, name)
             self._process_other_catalog(other._field_catalog, self._field_catalog,
                                         idx, name)
@@ -364,7 +362,6 @@ class HikaruBase(object):
             candidates = result
             result = []
             for ce in candidates:
-                assert isinstance(ce, CatalogEntry)
                 start = 0
                 for sp in signposts:
                     try:

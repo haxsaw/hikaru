@@ -152,10 +152,6 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'SelfSubjectRulesReview.create()'"
-            )
         res = self.createSelfSubjectRulesReview(client=client)
         if not 200 <= res.code <= 299:
             raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -661,13 +657,9 @@ class StatefulSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'StatefulSet.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -819,14 +811,9 @@ class StatefulSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'StatefulSet.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -837,7 +824,7 @@ class StatefulSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -954,14 +941,9 @@ class StatefulSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'StatefulSet.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -972,7 +954,7 @@ class StatefulSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -1103,13 +1085,9 @@ class StatefulSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'StatefulSet.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -1990,13 +1968,9 @@ class Pod(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Pod.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -2148,14 +2122,9 @@ class Pod(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Pod.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -2166,7 +2135,7 @@ class Pod(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -2283,14 +2252,9 @@ class Pod(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Pod.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -2301,7 +2265,7 @@ class Pod(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -2432,13 +2396,9 @@ class Pod(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Pod.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -4403,10 +4363,6 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ValidatingWebhookConfiguration.create()'"
-            )
         res = self.createValidatingWebhookConfiguration(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -4543,15 +4499,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ValidatingWebhookConfiguration.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -4662,15 +4612,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ValidatingWebhookConfiguration.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -4795,10 +4739,6 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ValidatingWebhookConfiguration.update()'"
-            )
         res = self.patchValidatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -5297,10 +5237,6 @@ class StorageClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'StorageClass.create()'"
-            )
         res = self.createStorageClass(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -5435,14 +5371,9 @@ class StorageClass(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'StorageClass.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -5551,14 +5482,9 @@ class StorageClass(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'StorageClass.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -5681,10 +5607,6 @@ class StorageClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'StorageClass.update()'"
-            )
         res = self.patchStorageClass(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -6066,13 +5988,9 @@ class Secret(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Secret.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -6224,14 +6142,9 @@ class Secret(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Secret.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -6242,7 +6155,7 @@ class Secret(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -6359,14 +6272,9 @@ class Secret(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Secret.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -6377,7 +6285,7 @@ class Secret(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -6508,13 +6416,9 @@ class Secret(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Secret.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -7264,13 +7168,9 @@ class ReplicationController(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ReplicationController.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -7424,15 +7324,9 @@ class ReplicationController(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ReplicationController.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -7443,7 +7337,7 @@ class ReplicationController(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -7562,15 +7456,9 @@ class ReplicationController(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ReplicationController.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -7581,7 +7469,7 @@ class ReplicationController(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -7714,13 +7602,9 @@ class ReplicationController(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ReplicationController.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -8642,10 +8526,6 @@ class ClusterRole(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ClusterRole.create()'"
-            )
         res = self.createClusterRole(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -8780,14 +8660,9 @@ class ClusterRole(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ClusterRole.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -8880,14 +8755,9 @@ class ClusterRole(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ClusterRole.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -9004,10 +8874,6 @@ class ClusterRole(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ClusterRole.update()'"
-            )
         res = self.patchClusterRole(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -9401,14 +9267,9 @@ class ComponentStatus(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ComponentStatus.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -10086,13 +9947,9 @@ class RoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'RoleBinding.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -10244,14 +10101,9 @@ class RoleBinding(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'RoleBinding.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -10262,7 +10114,7 @@ class RoleBinding(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -10363,14 +10215,9 @@ class RoleBinding(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'RoleBinding.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -10381,7 +10228,7 @@ class RoleBinding(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -10510,13 +10357,9 @@ class RoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'RoleBinding.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -11458,13 +11301,9 @@ class ResourceQuota(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ResourceQuota.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -11616,14 +11455,9 @@ class ResourceQuota(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ResourceQuota.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -11634,7 +11468,7 @@ class ResourceQuota(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -11751,14 +11585,9 @@ class ResourceQuota(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ResourceQuota.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -11769,7 +11598,7 @@ class ResourceQuota(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -11900,13 +11729,9 @@ class ResourceQuota(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ResourceQuota.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -12371,13 +12196,9 @@ class PersistentVolumeClaim(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PersistentVolumeClaim.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -12531,15 +12352,9 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'PersistentVolumeClaim.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -12550,7 +12365,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -12669,15 +12484,9 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'PersistentVolumeClaim.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -12688,7 +12497,7 @@ class PersistentVolumeClaim(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -12821,13 +12630,9 @@ class PersistentVolumeClaim(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PersistentVolumeClaim.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -13308,10 +13113,6 @@ class APIService(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'APIService.create()'"
-            )
         res = self.createAPIService(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -13446,14 +13247,9 @@ class APIService(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'APIService.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -13562,14 +13358,9 @@ class APIService(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'APIService.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -13692,10 +13483,6 @@ class APIService(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'APIService.update()'"
-            )
         res = self.patchAPIService(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -14601,13 +14388,9 @@ class ConfigMap(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ConfigMap.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -14759,14 +14542,9 @@ class ConfigMap(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ConfigMap.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -14777,7 +14555,7 @@ class ConfigMap(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -14894,14 +14672,9 @@ class ConfigMap(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ConfigMap.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -14912,7 +14685,7 @@ class ConfigMap(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -15043,13 +14816,9 @@ class ConfigMap(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ConfigMap.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -16409,10 +16178,6 @@ class ClusterRoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ClusterRoleBinding.create()'"
-            )
         res = self.createClusterRoleBinding(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -16547,15 +16312,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ClusterRoleBinding.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -16648,15 +16407,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ClusterRoleBinding.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -16775,10 +16528,6 @@ class ClusterRoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ClusterRoleBinding.update()'"
-            )
         res = self.patchClusterRoleBinding(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -16982,13 +16731,9 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'LocalSubjectAccessReview.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -17318,10 +17063,6 @@ class PersistentVolume(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PersistentVolume.create()'"
-            )
         res = self.createPersistentVolume(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -17456,15 +17197,9 @@ class PersistentVolume(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'PersistentVolume.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -17573,15 +17308,9 @@ class PersistentVolume(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'PersistentVolume.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -17704,10 +17433,6 @@ class PersistentVolume(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PersistentVolume.update()'"
-            )
         res = self.patchPersistentVolume(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -18371,13 +18096,9 @@ class Lease(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Lease.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -18529,14 +18250,9 @@ class Lease(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Lease.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -18547,7 +18263,7 @@ class Lease(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -18664,14 +18380,9 @@ class Lease(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Lease.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -18682,7 +18393,7 @@ class Lease(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -18813,13 +18524,9 @@ class Lease(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Lease.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -20203,10 +19910,6 @@ class Namespace(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Namespace.create()'"
-            )
         res = self.createNamespace(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -20341,14 +20044,9 @@ class Namespace(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Namespace.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -20457,14 +20155,9 @@ class Namespace(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Namespace.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -20587,10 +20280,6 @@ class Namespace(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Namespace.update()'"
-            )
         res = self.patchNamespace(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -21335,13 +21024,9 @@ class Endpoints(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Endpoints.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -21493,14 +21178,9 @@ class Endpoints(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Endpoints.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -21511,7 +21191,7 @@ class Endpoints(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -21628,14 +21308,9 @@ class Endpoints(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Endpoints.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -21646,7 +21321,7 @@ class Endpoints(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -21777,13 +21452,9 @@ class Endpoints(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Endpoints.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -22808,13 +22479,9 @@ class LimitRange(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'LimitRange.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -22966,14 +22633,9 @@ class LimitRange(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'LimitRange.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -22984,7 +22646,7 @@ class LimitRange(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -23101,14 +22763,9 @@ class LimitRange(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'LimitRange.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -23119,7 +22776,7 @@ class LimitRange(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -23250,13 +22907,9 @@ class LimitRange(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'LimitRange.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -23919,13 +23572,9 @@ class ReplicaSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ReplicaSet.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -24077,14 +23726,9 @@ class ReplicaSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ReplicaSet.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -24095,7 +23739,7 @@ class ReplicaSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -24212,14 +23856,9 @@ class ReplicaSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ReplicaSet.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -24230,7 +23869,7 @@ class ReplicaSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -24361,13 +24000,9 @@ class ReplicaSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ReplicaSet.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -25115,13 +24750,9 @@ class Service(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Service.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -25273,14 +24904,9 @@ class Service(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Service.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -25291,7 +24917,7 @@ class Service(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -25408,14 +25034,9 @@ class Service(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Service.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -25426,7 +25047,7 @@ class Service(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -25557,13 +25178,9 @@ class Service(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Service.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -27200,10 +26817,6 @@ class CustomResourceDefinition(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'CustomResourceDefinition.create()'"
-            )
         res = self.createCustomResourceDefinition(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -27338,15 +26951,9 @@ class CustomResourceDefinition(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'CustomResourceDefinition.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -27455,15 +27062,9 @@ class CustomResourceDefinition(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'CustomResourceDefinition.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -27586,10 +27187,6 @@ class CustomResourceDefinition(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'CustomResourceDefinition.update()'"
-            )
         res = self.patchCustomResourceDefinition(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -28241,10 +27838,6 @@ class VolumeAttachment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'VolumeAttachment.create()'"
-            )
         res = self.createVolumeAttachment(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -28379,15 +27972,9 @@ class VolumeAttachment(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'VolumeAttachment.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -28496,15 +28083,9 @@ class VolumeAttachment(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'VolumeAttachment.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -28627,10 +28208,6 @@ class VolumeAttachment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'VolumeAttachment.update()'"
-            )
         res = self.patchVolumeAttachment(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -29444,13 +29021,9 @@ class Deployment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Deployment.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -29602,14 +29175,9 @@ class Deployment(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Deployment.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -29620,7 +29188,7 @@ class Deployment(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -29737,14 +29305,9 @@ class Deployment(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Deployment.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -29755,7 +29318,7 @@ class Deployment(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -29886,13 +29449,9 @@ class Deployment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Deployment.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -30170,10 +29729,6 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'SelfSubjectAccessReview.create()'"
-            )
         res = self.createSelfSubjectAccessReview(client=client)
         if not 200 <= res.code <= 299:
             raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -30551,13 +30106,9 @@ class DaemonSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'DaemonSet.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -30709,14 +30260,9 @@ class DaemonSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'DaemonSet.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -30727,7 +30273,7 @@ class DaemonSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -30844,14 +30390,9 @@ class DaemonSet(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'DaemonSet.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -30862,7 +30403,7 @@ class DaemonSet(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -30993,13 +30534,9 @@ class DaemonSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'DaemonSet.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -31590,13 +31127,9 @@ class Event(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Event.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -31748,14 +31281,9 @@ class Event(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Event.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -31766,7 +31294,7 @@ class Event(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -31883,14 +31411,9 @@ class Event(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Event.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -31901,7 +31424,7 @@ class Event(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -32032,13 +31555,9 @@ class Event(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Event.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -33246,13 +32765,9 @@ class TokenRequest(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'TokenRequest.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -33752,13 +33267,9 @@ class ControllerRevision(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ControllerRevision.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -33912,15 +33423,9 @@ class ControllerRevision(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ControllerRevision.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -33931,7 +33436,7 @@ class ControllerRevision(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -34048,15 +33553,9 @@ class ControllerRevision(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ControllerRevision.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -34067,7 +33566,7 @@ class ControllerRevision(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -34200,13 +33699,9 @@ class ControllerRevision(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ControllerRevision.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -35104,10 +34599,6 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'MutatingWebhookConfiguration.create()'"
-            )
         res = self.createMutatingWebhookConfiguration(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -35244,15 +34735,9 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'MutatingWebhookConfiguration.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -35361,15 +34846,9 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'MutatingWebhookConfiguration.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -35494,10 +34973,6 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'MutatingWebhookConfiguration.update()'"
-            )
         res = self.patchMutatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -36106,13 +35581,9 @@ class Job(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Job.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -36264,14 +35735,9 @@ class Job(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Job.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -36282,7 +35748,7 @@ class Job(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -36399,14 +35865,9 @@ class Job(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Job.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -36417,7 +35878,7 @@ class Job(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -36548,13 +36009,9 @@ class Job(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Job.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -36987,13 +36444,9 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'HorizontalPodAutoscaler.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -37147,15 +36600,9 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'HorizontalPodAutoscaler.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -37166,7 +36613,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -37285,15 +36732,9 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'HorizontalPodAutoscaler.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -37304,7 +36745,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -37437,13 +36878,9 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'HorizontalPodAutoscaler.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -38003,13 +37440,9 @@ class Role(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Role.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -38161,14 +37594,9 @@ class Role(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Role.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -38179,7 +37607,7 @@ class Role(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -38280,14 +37708,9 @@ class Role(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Role.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -38298,7 +37721,7 @@ class Role(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -38427,13 +37850,9 @@ class Role(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Role.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -39663,13 +39082,9 @@ class ServiceAccount(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ServiceAccount.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -39821,15 +39236,9 @@ class ServiceAccount(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata "
-                "to use 'ServiceAccount.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -39840,7 +39249,7 @@ class ServiceAccount(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -39957,14 +39366,9 @@ class ServiceAccount(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'ServiceAccount.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -39975,7 +39379,7 @@ class ServiceAccount(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -40106,13 +39510,9 @@ class ServiceAccount(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'ServiceAccount.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -40818,10 +40218,6 @@ class Node(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Node.create()'"
-            )
         res = self.createNode(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -40956,14 +40352,9 @@ class Node(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Node.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -41072,14 +40463,9 @@ class Node(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'Node.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -41202,10 +40588,6 @@ class Node(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Node.update()'"
-            )
         res = self.patchNode(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -41982,10 +41364,6 @@ class TokenReview(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'TokenReview.create()'"
-            )
         res = self.createTokenReview(client=client)
         if not 200 <= res.code <= 299:
             raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -42279,10 +41657,6 @@ class PriorityClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PriorityClass.create()'"
-            )
         res = self.createPriorityClass(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -42417,14 +41791,9 @@ class PriorityClass(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'PriorityClass.delete()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -42533,14 +41902,9 @@ class PriorityClass(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'PriorityClass.read()'"
-            )
-
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -42663,10 +42027,6 @@ class PriorityClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PriorityClass.update()'"
-            )
         res = self.patchPriorityClass(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -43001,13 +42361,9 @@ class NetworkPolicy(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'NetworkPolicy.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -43159,14 +42515,9 @@ class NetworkPolicy(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'NetworkPolicy.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -43177,7 +42528,7 @@ class NetworkPolicy(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -43294,14 +42645,9 @@ class NetworkPolicy(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'NetworkPolicy.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -43312,7 +42658,7 @@ class NetworkPolicy(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -43443,13 +42789,9 @@ class NetworkPolicy(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'NetworkPolicy.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -43796,13 +43138,9 @@ class PodTemplate(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PodTemplate.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -43954,14 +43292,9 @@ class PodTemplate(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'PodTemplate.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -43972,7 +43305,7 @@ class PodTemplate(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -44089,14 +43422,9 @@ class PodTemplate(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'PodTemplate.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -44107,7 +43435,7 @@ class PodTemplate(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -44238,13 +43566,9 @@ class PodTemplate(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'PodTemplate.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
@@ -45010,13 +44334,9 @@ class Binding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'Binding.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -46681,10 +46001,6 @@ class SubjectAccessReview(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'SubjectAccessReview.create()'"
-            )
         res = self.createSubjectAccessReview(client=client)
         if not 200 <= res.code <= 299:
             raise KubernetesException("Kubernetes returned error " + str(res.code))

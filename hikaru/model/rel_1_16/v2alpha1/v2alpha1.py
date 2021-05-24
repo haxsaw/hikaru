@@ -10418,13 +10418,9 @@ class CronJob(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'CronJob.create()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
@@ -10576,14 +10572,9 @@ class CronJob(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'CronJob.delete()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
@@ -10594,7 +10585,7 @@ class CronJob(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
@@ -10711,14 +10702,9 @@ class CronJob(HikaruDocumentBase):
         # noinspection PyDataclass
         client = client or self.client
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata " "to use 'CronJob.read()'"
-            )
-
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
@@ -10729,7 +10715,7 @@ class CronJob(HikaruDocumentBase):
 
         if name is not None:
             effective_name = name
-        elif not self.metadata.name:
+        elif not self.metadata or not self.metadata.name:
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
@@ -10860,13 +10846,9 @@ class CronJob(HikaruDocumentBase):
                 Kubernetes library.
         """
 
-        if not self.metadata:
-            raise RuntimeError(
-                "Your resource must contain metadata to use 'CronJob.update()'"
-            )
         if namespace is not None:
             effective_namespace = namespace
-        elif not self.metadata.namespace:
+        elif not self.metadata or not self.metadata.namespace:
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "

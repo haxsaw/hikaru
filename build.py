@@ -737,38 +737,11 @@ class SyntheticOperation(Operation):
         return []
 
 
-# @register_crud_class('read')
-# class ReadOperation(SyntheticOperation):
-#     """
-#     A synthetic operation; simple read() method for a more complex class
-#     """
-#     op_name = 'read'
-#
-#     def get_meth_decorators(self) -> List[str]:
-#         return []
-#
-#     def get_meth_defline(self, parameters: Optional[List['OpParameter']] = None) -> str:
-#         return f'{self.op_name} = {self.base_op.meth_name}'
-#
-#     def prep_inbound_params(self) -> List['OpParameter']:
-#         return []
-#
-#     def make_docstring(self, parameters: List['OpParameter']) -> List[str]:
-#         return []
-#
-#     def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
-#                       cd: Optional['ClassDescriptor'] = None) -> List[str]:
-#         return []
-
-
 _create_body_with_namespace = \
 """
-    if not self.metadata:
-        raise RuntimeError(
-            "Your resource must contain metadata to use '{classname}.{op_name}()'")
     if namespace is not None:
         effective_namespace = namespace
-    elif not self.metadata.namespace:
+    elif not self.metadata or not self.metadata.namespace:
         raise RuntimeError("There must be a namespace supplied in either "
                            "the arguments to {op_name}() or in a "
                            "{classname}'s metadata")
@@ -784,9 +757,6 @@ _create_body_with_namespace = \
 
 _create_body_no_namespace = \
 """
-    if not self.metadata:
-        raise RuntimeError(
-            "Your resource must contain metadata to use '{classname}.{op_name}()'")
     res = self.{methname}({paramlist})
     if not 200 <= res.code <= 299:
         raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -882,14 +852,9 @@ _delete_body_with_namespace = \
     # noinspection PyDataclass
     client = client or self.client
         
-    if not self.metadata:
-        raise RuntimeError(
-            "Your resource must contain metadata "
-            "to use '{classname}.{op_name}()'")
-            
     if namespace is not None:
         effective_namespace = namespace
-    elif not self.metadata.namespace:
+    elif not self.metadata or not self.metadata.namespace:
         raise RuntimeError("There must be a namespace supplied in either "
                            "the arguments to {op_name}() or in a "
                            "{classname}'s metadata")
@@ -898,7 +863,7 @@ _delete_body_with_namespace = \
 
     if name is not None:
         effective_name = name
-    elif not self.metadata.name:
+    elif not self.metadata or not self.metadata.name:
         raise RuntimeError("There must be a name supplied in either "
                            "the arguments to {op_name}() or in a "
                            "{classname}'s metadata")
@@ -917,14 +882,9 @@ _delete_body_without_namespace = \
     # noinspection PyDataclass
     client = client or self.client
 
-    if not self.metadata:
-        raise RuntimeError(
-            "Your resource must contain metadata "
-            "to use '{classname}.{op_name}()'")
-
     if name is not None:
         effective_name = name
-    elif not self.metadata.name:
+    elif not self.metadata or not self.metadata.name:
         raise RuntimeError("There must be a name supplied in either "
                            "the arguments to {op_name}() or in a "
                            "{classname}'s metadata")
