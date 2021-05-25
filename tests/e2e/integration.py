@@ -113,6 +113,7 @@ def test01a():
     try:
         assert rd
         rd = Deployment.readNamespacedDeployment(name, e2e_namespace).obj
+        rd = Deployment.readNamespacedDeployment(name, e2e_namespace).obj
         rd.spec.replicas += 1
         res = rd.patchNamespacedDeployment(name, e2e_namespace)
         assert res.obj
