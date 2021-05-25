@@ -961,6 +961,7 @@ class HikaruBase(object):
         # do is the following: if the type of the 'yaml' parameter is an str, then
         # we'll eval it to hopefully get a dict, and raise a useful message if
         # we don't
+        from hikaru.version_kind import get_version_kind_class
         if type(yaml) == str:
             new = literal_eval(yaml)
             if type(new) != dict:
@@ -1003,7 +1004,12 @@ class HikaruBase(object):
                     val = val.isoformat() + "Z"
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
-                obj = initial_type.get_empty_instance()
+                if issubclass(initial_type, HikaruDocumentBase):
+                    use_type = get_version_kind_class(initial_type.apiVersion,
+                                                      initial_type.kind)
+                else:
+                    use_type = initial_type
+                obj = use_type.get_empty_instance()
                 obj.process(val, translate=translate)
                 setattr(self, f.name, obj)
             else:
@@ -1018,9 +1024,14 @@ class HikaruBase(object):
                         setattr(self, f.name, l)
                     elif is_dataclass(target_type) and issubclass(target_type,
                                                                   HikaruBase):
+                        if issubclass(target_type, HikaruDocumentBase):
+                            use_type = get_version_kind_class(target_type.apiVersion,
+                                                              target_type.kind)
+                        else:
+                            use_type = target_type
                         l = []
                         for o in val:
-                            obj = target_type.get_empty_instance()
+                            obj = use_type.get_empty_instance()
                             obj.process(o, translate=translate)
                             l.append(obj)
                         setattr(self, f.name, l)

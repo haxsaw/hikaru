@@ -1579,6 +1579,61 @@ def test137():
         pass
 
 
+def test138():
+    """
+    Ensure that if we have a registered subclass it can appear in a list
+    """
+    class MyPod(Pod):
+        pass
+
+    old_pod = register_version_kind_class(MyPod, MyPod.apiVersion, MyPod.kind)
+    p0: Pod = setup_pod()
+    p0.metadata.name = 'p0'
+    p1: Pod = setup_pod()
+    p1.metadata.name = 'p1'
+    pl: PodList = PodList(items=[p0, p1])
+    plyaml = get_yaml(pl)
+    new_pl: PodList = load_full_yaml(yaml=plyaml)[0]
+    assert all(isinstance(pod, MyPod) for pod in new_pl.items)
+    assert new_pl.items[0].metadata.name == 'p0'
+    assert new_pl.items[1].metadata.name == 'p1'
+    d = get_clean_dict(pl)
+    new_pl = from_dict(d)
+    assert all(isinstance(pod, MyPod) for pod in new_pl.items)
+    assert new_pl.items[0].metadata.name == 'p0'
+    assert new_pl.items[1].metadata.name == 'p1'
+    json = get_json(pl)
+    new_pl = from_json(json)
+    assert all(isinstance(pod, MyPod) for pod in new_pl.items)
+    assert new_pl.items[0].metadata.name == 'p0'
+    assert new_pl.items[1].metadata.name == 'p1'
+    plyaml = get_yaml(new_pl)
+    pl = load_full_yaml(yaml=plyaml)[0]
+    assert all(isinstance(pod, MyPod) for pod in pl.items)
+    register_version_kind_class(old_pod, old_pod.apiVersion, old_pod.kind)
+
+
+def test139():
+    """
+    Ensure that a HikaruDocumentBase subclass with version/group apiVersion can register
+    """
+    class MyJob(Job):
+        pass
+
+    old_job = register_version_kind_class(MyJob, Job.apiVersion, Job.kind)
+    job = Job(metadata=ObjectMeta(name='test139'))
+    yaml = get_yaml(job)
+    new_job: Job = load_full_yaml(yaml=yaml)[0]
+    assert isinstance(new_job, MyJob)
+    d = get_clean_dict(job)
+    new_job = from_dict(d)
+    assert isinstance(new_job, MyJob)
+    json = get_json(job)
+    new_job = from_json(json)
+    assert isinstance(new_job, MyJob)
+    register_version_kind_class(Job, Job.apiVersion, Job.kind)
+
+
 if __name__ == "__main__":
     setup()
     test036()

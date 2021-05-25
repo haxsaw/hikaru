@@ -22,7 +22,7 @@ import importlib
 from dataclasses import fields
 from typing import Dict, Optional
 from hikaru.meta import HikaruDocumentBase
-from hikaru.naming import get_default_release
+from hikaru.naming import get_default_release, process_api_version
 
 _release_version_kind_class_cache: Dict[str, Dict[str, Dict[str, type]]] = {}
 
@@ -215,13 +215,15 @@ def register_version_kind_class(cls: type, version: str, kind: str,
     if 'apiVersion' not in fset or 'kind' not in fset:
         raise TypeError("The class must have both apiVersion and kind "
                         "attributes")
-    old_cls = get_version_kind_class(version, kind, release=release)
-    kind_dict = _get_vk_dict(version, kind, release=release)
+    _, use_version = process_api_version(version)
+    old_cls = get_version_kind_class(use_version, kind, release=release)
+    kind_dict = _get_vk_dict(use_version, kind, release=release)
     kind_dict[kind] = cls
     return old_cls
 
 
 def _get_vk_dict(version: str, kind: str, release: str = None) -> Dict[str, type]:
+    # this function expects a version that has the group already peeled off
     use_release = release if release is not None else get_default_release()
     version_kind = _release_version_kind_class_cache.get(use_release)
     if version_kind is None:
@@ -254,12 +256,13 @@ def get_version_kind_class(version: str, kind: str,
         requested from a version the function may run a bit longer as it loads
         up the needed modules and processes its symbols
     """
-    kind_dict = _get_vk_dict(version, kind, release=release)
+    _, use_version = process_api_version(version)
+    kind_dict = _get_vk_dict(use_version, kind, release=release)
     use_release = release if release is not None else get_default_release()
     if len(kind_dict) == 0:
         try:
-            mod = importlib.import_module(f".{version}",
-                                          f"hikaru.model.{use_release}.{version}")
+            mod = importlib.import_module(f".{use_version}",
+                                          f"hikaru.model.{use_release}.{use_version}")
         except ImportError:
             pass
         else:
