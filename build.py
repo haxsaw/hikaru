@@ -68,8 +68,7 @@ import sys
 from typing import List, Dict, Optional, Union, Tuple, Any, Set
 import json
 import re
-import warnings
-from black import format_file_contents, FileMode, NothingChanged
+from black import NothingChanged, format_str, Mode
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
 from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
@@ -1161,7 +1160,7 @@ class ClassDescriptor(object):
 
         code = "\n".join(lines)
         try:
-            code = format_file_contents(code, fast=False, mode=FileMode())
+            code = format_str(code, mode=Mode())
         except NothingChanged:
             pass
         return code

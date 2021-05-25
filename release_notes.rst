@@ -21,6 +21,12 @@ v0.5b
   properly (this was mostly an issue in testing).
 - Fixed a bug in building Hikaru model modules from the swagger spec file where certain
   objects were being incorrectly created as subclasses of HikaruDocumentBase.
+- Fixed a bug in class registration where subclasses weren't being created when nested
+  inside of other document classes (for instance, a MyPod subclass of Pod not being used
+  when reading a PodList), and to properly support existing classes that have apiVersion
+  values that are actually both a group and version.
+- Pinned Hikaru to a specific version of black since we're currently using some internal
+  interface and black's public API isn't available yet.
 
 v0.4b
 -----

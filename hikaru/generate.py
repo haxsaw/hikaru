@@ -24,7 +24,7 @@ from io import StringIO
 from typing import List, TextIO, Optional
 
 from autopep8 import fix_code
-from black import format_file_contents, FileMode
+from black import format_str, Mode, NothingChanged
 from ruamel.yaml import YAML
 
 # from hikaru.model import *
@@ -68,8 +68,10 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
         result = fix_code(code, options={"max_line_length": 88,
                                          "experimental": 1})
     else:  # then it's black
-        mode = FileMode()
-        result = format_file_contents(code, fast=False, mode=mode)
+        try:
+            result = format_str(code, mode=Mode())
+        except NothingChanged:
+            result = code
     return result
 
 
