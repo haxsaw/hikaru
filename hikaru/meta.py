@@ -693,10 +693,10 @@ class HikaruBase(object):
                             f'{other.__class__.__name__} into a '
                             f'{self.__class__.__name__}')
 
-        # for k in get_type_hints(self).keys():
-
-
         for k in self._get_hints().keys():
+            # never merge the client!
+            if k == 'client':
+                continue
             self_val = getattr(self, k)
             other_val = getattr(other, k)
             if other_val is None:

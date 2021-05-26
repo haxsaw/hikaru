@@ -103,7 +103,8 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectrulesreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -150,6 +151,9 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         res = self.createSelfSubjectRulesReview(client=client)
         if not 200 <= res.code <= 299:
@@ -528,7 +532,8 @@ class StatefulSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -560,6 +565,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -590,7 +596,8 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -657,6 +664,9 @@ class StatefulSet(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -725,7 +735,8 @@ class StatefulSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -751,6 +762,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -874,7 +886,8 @@ class StatefulSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1011,7 +1024,8 @@ class StatefulSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1086,6 +1100,9 @@ class StatefulSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -1109,6 +1126,19 @@ class StatefulSet(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedStatefulSet(
         self,
@@ -1137,7 +1167,8 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1199,7 +1230,8 @@ class StatefulSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1945,7 +1977,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -1976,6 +2009,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -2004,7 +2038,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2069,6 +2104,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createValidatingWebhookConfiguration(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -2121,7 +2159,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2148,6 +2187,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -2253,7 +2293,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2373,7 +2414,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2445,6 +2487,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchValidatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -2457,6 +2502,19 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceValidatingWebhookConfiguration(
         self,
@@ -2483,7 +2541,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2823,7 +2882,8 @@ class StorageClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2852,6 +2912,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -2880,7 +2941,8 @@ class StorageClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -2943,6 +3005,9 @@ class StorageClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createStorageClass(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -2995,7 +3060,8 @@ class StorageClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3020,6 +3086,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -3125,7 +3192,8 @@ class StorageClass(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3243,7 +3311,8 @@ class StorageClass(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -3313,6 +3382,9 @@ class StorageClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchStorageClass(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -3325,6 +3397,19 @@ class StorageClass(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceStorageClass(
         self,
@@ -3351,7 +3436,8 @@ class StorageClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4101,7 +4187,8 @@ class ClusterRole(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4130,6 +4217,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -4158,7 +4246,8 @@ class ClusterRole(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4221,6 +4310,9 @@ class ClusterRole(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createClusterRole(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -4273,7 +4365,8 @@ class ClusterRole(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4298,6 +4391,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -4396,7 +4490,8 @@ class ClusterRole(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4499,7 +4594,8 @@ class ClusterRole(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4569,6 +4665,9 @@ class ClusterRole(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchClusterRole(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -4581,6 +4680,19 @@ class ClusterRole(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceClusterRole(
         self,
@@ -4607,7 +4719,8 @@ class ClusterRole(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -4757,7 +4870,8 @@ class ClusterRoleList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5303,7 +5417,8 @@ class RoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5335,6 +5450,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -5365,7 +5481,8 @@ class RoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5432,6 +5549,9 @@ class RoleBinding(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -5500,7 +5620,8 @@ class RoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5526,6 +5647,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -5642,7 +5764,8 @@ class RoleBinding(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5768,7 +5891,8 @@ class RoleBinding(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -5843,6 +5967,9 @@ class RoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -5866,6 +5993,19 @@ class RoleBinding(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedRoleBinding(
         self,
@@ -5894,7 +6034,8 @@ class RoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6047,7 +6188,8 @@ class RoleBindingList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6850,7 +6992,8 @@ class APIService(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6879,6 +7022,7 @@ class APIService(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -6907,7 +7051,8 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -6970,6 +7115,9 @@ class APIService(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createAPIService(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -7022,7 +7170,8 @@ class APIService(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7047,6 +7196,7 @@ class APIService(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -7152,7 +7302,8 @@ class APIService(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7270,7 +7421,8 @@ class APIService(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7340,6 +7492,9 @@ class APIService(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchAPIService(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -7352,6 +7507,19 @@ class APIService(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceAPIService(
         self,
@@ -7378,7 +7546,8 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7437,7 +7606,8 @@ class APIService(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -7587,7 +7757,8 @@ class APIServiceList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8797,7 +8968,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8828,6 +9000,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -8856,7 +9029,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8919,6 +9093,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createClusterRoleBinding(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -8971,7 +9148,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -8996,6 +9174,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -9094,7 +9273,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9199,7 +9379,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9269,6 +9450,9 @@ class ClusterRoleBinding(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchClusterRoleBinding(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -9281,6 +9465,19 @@ class ClusterRoleBinding(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceClusterRoleBinding(
         self,
@@ -9307,7 +9504,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9416,7 +9614,8 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9471,6 +9670,9 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -9733,7 +9935,8 @@ class Lease(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9868,7 +10071,8 @@ class Lease(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9898,6 +10102,7 @@ class Lease(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -9928,7 +10133,8 @@ class Lease(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -9995,6 +10201,9 @@ class Lease(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -10063,7 +10272,8 @@ class Lease(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10089,6 +10299,7 @@ class Lease(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -10212,7 +10423,8 @@ class Lease(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10349,7 +10561,8 @@ class Lease(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10424,6 +10637,9 @@ class Lease(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -10447,6 +10663,19 @@ class Lease(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedLease(
         self,
@@ -10475,7 +10704,8 @@ class Lease(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -10629,7 +10859,8 @@ class LeaseList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12354,7 +12585,8 @@ class Status(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12383,6 +12615,7 @@ class Status(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12431,7 +12664,8 @@ class Status(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12456,6 +12690,7 @@ class Status(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -12637,7 +12872,8 @@ class Status(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12666,6 +12902,7 @@ class Status(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -12714,7 +12951,8 @@ class Status(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -12739,6 +12977,7 @@ class Status(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -13108,7 +13347,8 @@ class ReplicaSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13140,6 +13380,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -13170,7 +13411,8 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13237,6 +13479,9 @@ class ReplicaSet(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -13305,7 +13550,8 @@ class ReplicaSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13331,6 +13577,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -13454,7 +13701,8 @@ class ReplicaSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13591,7 +13839,8 @@ class ReplicaSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13666,6 +13915,9 @@ class ReplicaSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -13689,6 +13941,19 @@ class ReplicaSet(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedReplicaSet(
         self,
@@ -13717,7 +13982,8 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13779,7 +14045,8 @@ class ReplicaSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -13936,7 +14203,8 @@ class ReplicaSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14057,7 +14325,8 @@ class ReplicaSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14815,7 +15084,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14846,6 +15116,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -14874,7 +15145,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -14937,6 +15209,9 @@ class CustomResourceDefinition(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createCustomResourceDefinition(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -14989,7 +15264,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15014,6 +15290,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -15119,7 +15396,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15237,7 +15515,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15307,6 +15586,9 @@ class CustomResourceDefinition(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchCustomResourceDefinition(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -15319,6 +15601,19 @@ class CustomResourceDefinition(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceCustomResourceDefinition(
         self,
@@ -15345,7 +15640,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15404,7 +15700,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15839,7 +16136,8 @@ class VolumeAttachment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15868,6 +16166,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -15896,7 +16195,8 @@ class VolumeAttachment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -15959,6 +16259,9 @@ class VolumeAttachment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createVolumeAttachment(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -16011,7 +16314,8 @@ class VolumeAttachment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16036,6 +16340,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -16141,7 +16446,8 @@ class VolumeAttachment(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16259,7 +16565,8 @@ class VolumeAttachment(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16329,6 +16636,9 @@ class VolumeAttachment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchVolumeAttachment(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -16341,6 +16651,19 @@ class VolumeAttachment(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceVolumeAttachment(
         self,
@@ -16367,7 +16690,8 @@ class VolumeAttachment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16555,7 +16879,8 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16820,7 +17145,8 @@ class Deployment(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16955,7 +17281,8 @@ class Deployment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -16987,6 +17314,7 @@ class Deployment(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -17017,7 +17345,8 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17084,6 +17413,9 @@ class Deployment(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -17152,7 +17484,8 @@ class Deployment(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17178,6 +17511,7 @@ class Deployment(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -17301,7 +17635,8 @@ class Deployment(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17438,7 +17773,8 @@ class Deployment(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17513,6 +17849,9 @@ class Deployment(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -17536,6 +17875,19 @@ class Deployment(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedDeployment(
         self,
@@ -17564,7 +17916,8 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17626,7 +17979,8 @@ class Deployment(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17745,7 +18099,8 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1beta1/selfsubjectaccessreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -17792,6 +18147,9 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         res = self.createSelfSubjectAccessReview(client=client)
         if not 200 <= res.code <= 299:
@@ -18042,7 +18400,8 @@ class DaemonSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18074,6 +18433,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -18104,7 +18464,8 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18171,6 +18532,9 @@ class DaemonSet(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -18239,7 +18603,8 @@ class DaemonSet(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18265,6 +18630,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -18388,7 +18754,8 @@ class DaemonSet(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18525,7 +18892,8 @@ class DaemonSet(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18600,6 +18968,9 @@ class DaemonSet(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -18623,6 +18994,19 @@ class DaemonSet(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedDaemonSet(
         self,
@@ -18651,7 +19035,8 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18713,7 +19098,8 @@ class DaemonSet(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -18938,7 +19324,8 @@ class Event(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19073,7 +19460,8 @@ class Event(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19103,6 +19491,7 @@ class Event(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -19133,7 +19522,8 @@ class Event(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19200,6 +19590,9 @@ class Event(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -19268,7 +19661,8 @@ class Event(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19294,6 +19688,7 @@ class Event(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -19417,7 +19812,8 @@ class Event(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19554,7 +19950,8 @@ class Event(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19629,6 +20026,9 @@ class Event(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -19652,6 +20052,19 @@ class Event(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedEvent(
         self,
@@ -19680,7 +20093,8 @@ class Event(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19936,7 +20350,8 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -19997,7 +20412,8 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20059,7 +20475,8 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20113,7 +20530,8 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20174,7 +20592,8 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20236,7 +20655,8 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20292,7 +20712,8 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20353,7 +20774,8 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20415,7 +20837,8 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20471,7 +20894,8 @@ class Scale(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20534,7 +20958,8 @@ class Scale(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -20598,7 +21023,8 @@ class Scale(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21122,7 +21548,8 @@ class ControllerRevision(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21154,6 +21581,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -21184,7 +21612,8 @@ class ControllerRevision(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21254,6 +21683,9 @@ class ControllerRevision(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -21321,7 +21753,8 @@ class ControllerRevision(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21349,6 +21782,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -21472,7 +21906,8 @@ class ControllerRevision(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21609,7 +22044,8 @@ class ControllerRevision(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21686,6 +22122,9 @@ class ControllerRevision(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -21709,6 +22148,19 @@ class ControllerRevision(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedControllerRevision(
         self,
@@ -21737,7 +22189,8 @@ class ControllerRevision(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -21912,7 +22365,8 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22463,7 +22917,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22494,6 +22949,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -22522,7 +22978,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22587,6 +23044,9 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createMutatingWebhookConfiguration(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -22639,7 +23099,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22666,6 +23127,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -22771,7 +23233,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22889,7 +23352,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -22961,6 +23425,9 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchMutatingWebhookConfiguration(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -22973,6 +23440,19 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceMutatingWebhookConfiguration(
         self,
@@ -22999,7 +23479,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23152,7 +23633,8 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23388,7 +23870,8 @@ class StorageClassList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23553,7 +24036,8 @@ class Role(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23583,6 +24067,7 @@ class Role(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -23613,7 +24098,8 @@ class Role(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23680,6 +24166,9 @@ class Role(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -23748,7 +24237,8 @@ class Role(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -23774,6 +24264,7 @@ class Role(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -23890,7 +24381,8 @@ class Role(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24016,7 +24508,8 @@ class Role(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24091,6 +24584,9 @@ class Role(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -24114,6 +24610,19 @@ class Role(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedRole(
         self,
@@ -24142,7 +24651,8 @@ class Role(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24264,7 +24774,8 @@ class Role(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24386,7 +24897,8 @@ class Role(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24567,7 +25079,8 @@ class RoleList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24718,7 +25231,8 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24871,7 +25385,8 @@ class StatefulSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -24992,7 +25507,8 @@ class StatefulSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25262,7 +25778,8 @@ class EventList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25413,7 +25930,8 @@ class TokenReview(HikaruDocumentBase):
         path: /apis/authentication.k8s.io/v1beta1/tokenreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25460,6 +25978,9 @@ class TokenReview(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         res = self.createTokenReview(client=client)
         if not 200 <= res.code <= 299:
@@ -25635,7 +26156,8 @@ class PriorityClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25664,6 +26186,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -25692,7 +26215,8 @@ class PriorityClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25755,6 +26279,9 @@ class PriorityClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createPriorityClass(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -25807,7 +26334,8 @@ class PriorityClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -25832,6 +26360,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -25937,7 +26466,8 @@ class PriorityClass(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26055,7 +26585,8 @@ class PriorityClass(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26125,6 +26656,9 @@ class PriorityClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchPriorityClass(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -26137,6 +26671,19 @@ class PriorityClass(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replacePriorityClass(
         self,
@@ -26163,7 +26710,8 @@ class PriorityClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26331,7 +26879,8 @@ class NetworkPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26363,6 +26912,7 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -26393,7 +26943,8 @@ class NetworkPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26460,6 +27011,9 @@ class NetworkPolicy(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -26528,7 +27082,8 @@ class NetworkPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26554,6 +27109,7 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -26677,7 +27233,8 @@ class NetworkPolicy(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26814,7 +27371,8 @@ class NetworkPolicy(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -26889,6 +27447,9 @@ class NetworkPolicy(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -26912,6 +27473,19 @@ class NetworkPolicy(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedNetworkPolicy(
         self,
@@ -26940,7 +27514,8 @@ class NetworkPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27137,7 +27712,8 @@ class APIResourceList(HikaruDocumentBase):
         path: /apis/storage.k8s.io/v1beta1/
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27457,7 +28033,8 @@ class DeploymentList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27766,7 +28343,8 @@ class NetworkPolicyList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -27887,7 +28465,8 @@ class NetworkPolicyList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28068,7 +28647,8 @@ class ControllerRevisionList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28192,7 +28772,8 @@ class ControllerRevisionList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28351,7 +28932,8 @@ class SubjectAccessReview(HikaruDocumentBase):
         path: /apis/authorization.k8s.io/v1beta1/subjectaccessreviews
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28398,6 +28980,9 @@ class SubjectAccessReview(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         res = self.createSubjectAccessReview(client=client)
         if not 200 <= res.code <= 299:
@@ -28547,7 +29132,8 @@ class PriorityClassList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28778,7 +29364,8 @@ class DaemonSetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -28900,7 +29487,8 @@ class DaemonSetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29051,7 +29639,8 @@ class VolumeAttachmentList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29232,7 +29821,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29264,6 +29854,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -29294,7 +29885,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29364,6 +29956,9 @@ class PodDisruptionBudget(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -29431,7 +30026,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29459,6 +30055,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -29582,7 +30179,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29721,7 +30319,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29798,6 +30397,9 @@ class PodDisruptionBudget(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -29821,6 +30423,19 @@ class PodDisruptionBudget(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedPodDisruptionBudget(
         self,
@@ -29849,7 +30464,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -29913,7 +30529,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30060,7 +30677,8 @@ class DeploymentRollback(HikaruDocumentBase):
         :param namespace: namespace for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30116,6 +30734,9 @@ class DeploymentRollback(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -30392,7 +31013,8 @@ class RuntimeClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30421,6 +31043,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -30449,7 +31072,8 @@ class RuntimeClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30512,6 +31136,9 @@ class RuntimeClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createRuntimeClass(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -30564,7 +31191,8 @@ class RuntimeClass(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30589,6 +31217,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -30694,7 +31323,8 @@ class RuntimeClass(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30812,7 +31442,8 @@ class RuntimeClass(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -30882,6 +31513,9 @@ class RuntimeClass(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchRuntimeClass(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -30894,6 +31528,19 @@ class RuntimeClass(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceRuntimeClass(
         self,
@@ -30920,7 +31567,8 @@ class RuntimeClass(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31071,7 +31719,8 @@ class RuntimeClassList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31275,7 +31924,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31306,6 +31956,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -31334,7 +31985,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31397,6 +32049,9 @@ class PodSecurityPolicy(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createPodSecurityPolicy(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -31449,7 +32104,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31474,6 +32130,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -31579,7 +32236,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31697,7 +32355,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -31767,6 +32426,9 @@ class PodSecurityPolicy(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchPodSecurityPolicy(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -31779,6 +32441,19 @@ class PodSecurityPolicy(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replacePodSecurityPolicy(
         self,
@@ -31805,7 +32480,8 @@ class PodSecurityPolicy(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32067,7 +32743,8 @@ class Ingress(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32202,7 +32879,8 @@ class Ingress(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32234,6 +32912,7 @@ class Ingress(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -32264,7 +32943,8 @@ class Ingress(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32331,6 +33011,9 @@ class Ingress(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -32399,7 +33082,8 @@ class Ingress(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32425,6 +33109,7 @@ class Ingress(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -32548,7 +33233,8 @@ class Ingress(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32685,7 +33371,8 @@ class Ingress(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32760,6 +33447,9 @@ class Ingress(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -32783,6 +33473,19 @@ class Ingress(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedIngress(
         self,
@@ -32811,7 +33514,8 @@ class Ingress(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -32873,7 +33577,8 @@ class Ingress(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33166,7 +33871,8 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33289,7 +33995,8 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33589,7 +34296,8 @@ class CSINode(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33652,6 +34360,9 @@ class CSINode(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createCSINode(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -33685,7 +34396,8 @@ class CSINode(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33796,7 +34508,8 @@ class CSINode(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33911,7 +34624,8 @@ class CSIDriver(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -33974,6 +34688,9 @@ class CSIDriver(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createCSIDriver(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -34007,7 +34724,8 @@ class CSIDriver(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34118,7 +34836,8 @@ class CSIDriver(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34306,7 +35025,8 @@ class CronJob(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34338,6 +35058,7 @@ class CronJob(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -34368,7 +35089,8 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34435,6 +35157,9 @@ class CronJob(HikaruDocumentBase):
                 that a return code of 400 or higher was returned by the underlying
                 Kubernetes library.
         """
+
+        # noinspection PyDataclass
+        client = client or self.client
 
         if namespace is not None:
             effective_namespace = namespace
@@ -34503,7 +35228,8 @@ class CronJob(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34529,6 +35255,7 @@ class CronJob(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -34652,7 +35379,8 @@ class CronJob(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34789,7 +35517,8 @@ class CronJob(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34864,6 +35593,9 @@ class CronJob(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         if namespace is not None:
             effective_namespace = namespace
         elif not self.metadata or not self.metadata.namespace:
@@ -34887,6 +35619,19 @@ class CronJob(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceNamespacedCronJob(
         self,
@@ -34915,7 +35660,8 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -34977,7 +35723,8 @@ class CronJob(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35209,7 +35956,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35240,6 +35988,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["propagation_policy"] = propagation_policy
         all_args["resource_version"] = resource_version
         all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
@@ -35268,7 +36017,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35331,6 +36081,9 @@ class CertificateSigningRequest(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.createCertificateSigningRequest(
             dry_run=dry_run, field_manager=field_manager, client=client
         )
@@ -35383,7 +36136,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
         :param body:
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35408,6 +36162,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["grace_period_seconds"] = grace_period_seconds
         all_args["orphan_dependents"] = orphan_dependents
         all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
@@ -35513,7 +36268,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35631,7 +36387,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             be unset for non-apply patch requests.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35701,6 +36458,9 @@ class CertificateSigningRequest(HikaruDocumentBase):
                 Kubernetes library.
         """
 
+        # noinspection PyDataclass
+        client = client or self.client
+
         res = self.patchCertificateSigningRequest(
             name=self.metadata.name,
             dry_run=dry_run,
@@ -35713,6 +36473,19 @@ class CertificateSigningRequest(HikaruDocumentBase):
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
         return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        if passed:
+            self.update()
+        if hasattr(self, "__rollback"):
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
 
     def replaceCertificateSigningRequest(
         self,
@@ -35739,7 +36512,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35785,7 +36559,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
         :param name: name for the resource
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -35844,7 +36619,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             defined by https://golang.org/pkg/unicode/#IsPrint.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36047,7 +36823,8 @@ class IngressList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36217,7 +36994,8 @@ class CSIDriverList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36367,7 +37145,8 @@ class CSINodeList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36517,7 +37296,8 @@ class CronJobList(HikaruDocumentBase):
             resourceVersion.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36639,7 +37419,8 @@ class CronJobList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36791,7 +37572,8 @@ class PodSecurityPolicyList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:
@@ -36958,7 +37740,8 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         :param pretty: If 'true', then the output is pretty printed.
         :param client: optional; instance of kubernetes.client.api_client.ApiClient
         :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False,  which makes the call blocking.
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
 
         :return: hikaru.utils.Response instance with the following codes and
             obj value types:

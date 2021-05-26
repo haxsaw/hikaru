@@ -1610,6 +1610,8 @@ def test138():
     plyaml = get_yaml(new_pl)
     pl = load_full_yaml(yaml=plyaml)[0]
     assert all(isinstance(pod, MyPod) for pod in pl.items)
+    copy = pl.dup()
+    assert all(isinstance(pod, MyPod) for pod in copy.items)
     register_version_kind_class(old_pod, old_pod.apiVersion, old_pod.kind)
 
 
@@ -1632,6 +1634,27 @@ def test139():
     new_job = from_json(json)
     assert isinstance(new_job, MyJob)
     register_version_kind_class(Job, Job.apiVersion, Job.kind)
+
+
+def test140():
+    """
+    Ensure the context manager rollbacks work
+    """
+    class Test140Exception(Exception):
+        pass
+
+    p: Pod = setup_pod()
+    orig: Pod = p.dup()
+    assert p == orig
+    try:
+        with rollback_cm(p) as pod:
+            assert pod == orig
+            pod.metadata.labels['extra'] = 'one'
+            assert pod != orig
+            raise Test140Exception()
+    except Test140Exception:
+        assert pod is p
+        assert pod == orig
 
 
 if __name__ == "__main__":

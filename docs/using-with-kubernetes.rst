@@ -8,6 +8,133 @@ interaction method, it can be possible to not use a single Kubernetes Python cal
 entirely in Hikaru objects. Hikaru also provides a way for the user to explicitly set the
 ``kubernetes.client.ApiClient`` instance to use when interacting with Kubernetes.
 
+Hikaru provides two levels of interface to the underlying Kubernetes client:
+
+- A higher-level `CRUD`-style set of instance methods that have consistent names and
+  behaviours across all top-level Hikaru objects (that is, subclasses of
+  ``HikaruDocumentBase``) but which hide some of the details of the underlying operations, and
+- A lower-level (but not much lower) set of instance and class methods that are direct
+  analogs of the operations defined in the K8s swagger file; the names of these methods
+  follow the operationIDs in the swagger file, and expose return codes, headers, and allow
+  for async operation.
+
+The CRUD operations are simply veneers over the lower-level methods exposed by Hikaru, and
+should provide the user a simplified API to work with.
+
+Hikaru CRUD methods
+********************
+
+Hikaru implements a CRUD method when there is a suitable matching lower-level method to
+base it on. If no such method exists, then a CRUD method won't be generated. For example,
+the ``ComponentStatus`` object only has a ``read()`` method defined for it.
+
+All Hikaru CRUD methods work on single objects with the exception of objects that are
+inherently containers for collections of objects such as ``PodList``. Outside of these
+objects, there is no CRUD support for getting lists of objects-- consult the lower-level
+API for methods that support fetching lists.
+
+All Hikaru CRUD methods share share the following characteristics:
+
+- they are all instance methods (lower-level methods are a mix of instance and static
+  methods),
+- they all have ``self`` as their return value,
+- they also all modify ``self`` in place if the underlying method returns an object of the
+  same type as ``self``; the return's values are merged into self using the ``merge()``
+  method of ``HikaruBase``,
+- they can only be run in blocking mode,
+- they support the other optional parameters of the underlying call,
+- they duplicate the docstring of the underlying low-level call so you review the doc
+  for each method.
+
+Each of the methods are discussed below.
+
+create()
+--------
+
+The ``create()`` method provides a way to create a resource in Kubernetes. This is an independent
+action from creating the Hikaru object; you must first create the Hikaru object, and then call
+``create()`` on it to create it within Kubernetes.
+
+Typically, you create the Hikaru object either using the Python model objects or by creating the
+object by loading YAML, JSON, or a Python dict. You may tailor the object at any point, and then
+instruct Kubernetes to create it with ``create()``. For example, if you had a ``Pod`` Hikaru
+object, you can ask Kubernetes to create it with:
+
+.. code:: python
+
+    pod.create()
+
+For namespaced resources, you can leave the namespace out of the object's metadata
+(ObjectMeta) and instead supply it as a keyword argument to ``create()``:
+
+.. code:: python
+
+    pod.create(namespace='some-name')
+
+Bear in mind that the same restrictions apply as in the underlying Kubernetes client, namely
+that if you supply a namespace as an argument, the metadata for the object either must not have
+a namespace value or else it must have the same value as the argument.
+
+If Kubernetes returns the same type of resource as was used in the ``create()`` call, then the
+values of those fields are merged into the original object. Note that this frequently isn't the
+final state-- trying to modify the object now and then issuing an ``update()`` will often result
+in an error as the returned value from ``create()`` may not be referring to the most recent state
+of the object. Typically you'll need to call ``read()`` first.
+
+read()
+******
+
+The ``read()`` method provides you a way to acquire the details of an existing resource.
+You typically have a couple of ways to read: either by supplying an object that contains a
+name and/or namespace (as appropriate), or by supplying these as keyword arguments. So these
+two calls to read the details of a Pod are equivalent:
+
+.. code:: python
+
+    p = Pod(metadata=ObjectMeta(name='theName', namespace='the-namespace')).read()
+    # and:
+    p = Pod().read(name='theName', namespace='the-namespace')
+    # or, for a Pod that already has the name/namespace in its metadata:
+    p = Pod().read()
+
+Or, you could have the name in the Pod and supply the namespace in the read line, as long as the
+namespace in the Pod is None or the same value as provided in the arguments.
+
+As mentioned above in the section on ``create()``, you generally are advised to invoke read prior
+to any update operations to ensure you are only trying to make changes on the latest version of
+the pod.
+
+update()
+********
+
+Calls to ``update()`` generally behave like calls to ``create()`` , although you generally
+don't need to specify a ``namespace`` parameter since you are usually updating with an object
+in which the namespace was previously specified, but you can supply the value if needed using
+the ``namespace`` keyword argument to ``update()``:
+
+.. code:: python
+
+    pod.update(namespace='whatever')
+
+patch vs replace
+----------------
+
+The Kubernetes spec identifies two different operations that could be thought of as implementing
+`update` semantics, **patch** and **replace**. Since **replace** is meant to fully replace an
+existing resource with another one, it was decided that the ``update()`` method would be a
+wrapper around the the **patch** operation, since patching an existing resource more closely
+matches the semantics of ``update()``. You can still access the replace method for the resource
+by using the lower-level API.
+
+delete()
+********
+
+
+
+
+Hikaru swagger methods
+******************
+
 All methods return a :ref:`Response<Response doc>` object. These objects contain
 references to the returned result code, HTTP headers, and any object returned by
 Kubernetes (as a Hikaru object).

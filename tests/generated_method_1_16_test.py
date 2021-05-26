@@ -21,9 +21,13 @@ import importlib
 from types import MethodType, FunctionType
 from inspect import signature
 import pytest
-from hikaru import HikaruDocumentBase, Response
+from hikaru import HikaruDocumentBase, Response, rollback_cm
 from hikaru.model.rel_1_16.versions import versions
 from hikaru import set_default_release, from_dict
+
+
+class CMTestException(Exception):
+    pass
 
 
 set_default_release('rel_1_16')
@@ -83,13 +87,16 @@ class MockApiClient(object):
 
     def call_api(self, path, verb, path_params, query_params, header_params,
                  body=None, **kwargs):
-        if isinstance(body, dict):
+        if isinstance(body, dict) and body:
             body = from_dict(body)
         self.body = body
         return self.body, 400 if self.gen_failure else 200, {}
 
 
 all_params = []
+
+cms_to_check = []
+
 for version in versions:
     test_classes = []
     mod = importlib.import_module(f".{version}", f'hikaru.model.rel_1_16.{version}')
@@ -217,6 +224,15 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((attr, True, params))
+                    if name != 'update':
+                        continue
+                    # ok, from here we're just putting in instances that
+                    # are to be tested for context manager behaviour.
+                    # first, a plain cm use that succeeds
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default', name='the_name')
+                    inst.client = MockApiClient(gen_failure=False)
+                    cms_to_check.append(inst)
                 elif isinstance(attr, staticmethod):
                     # process static methods here
                     smeth = getattr(cls, name)
@@ -280,11 +296,52 @@ def test_methods(func, should_raise, kwargs):
         func(**kwargs)
 
 
+@pytest.mark.parametrize('inst', cms_to_check)
+def test_plain_cm_succeeds(inst):
+    with inst as i:
+        pass
+
+
+@pytest.mark.parametrize('inst', cms_to_check)
+def test_plain_cm_fails(inst):
+    try:
+        with inst as i:
+            raise CMTestException()
+    except CMTestException:
+        pass
+
+
+@pytest.mark.parametrize('inst', cms_to_check)
+def test_rollback_cm_succeeds(inst):
+    with rollback_cm(inst) as i:
+        pass
+
+
+@pytest.mark.parametrize('inst', cms_to_check)
+def test_rollback_cm_fails(inst):
+    try:
+        with rollback_cm(inst) as i:
+            raise CMTestException()
+    except CMTestException:
+        pass
+
+
 if __name__ == "__main__":
     beginning()
-    for func, should_raise, params in all_params:
-        test_methods(func, should_raise, params)
-        print('.', end="")
-    ending()
+    try:
+        for func, should_raise, params in all_params:
+            test_methods(func, should_raise, params)
+            print('.', end="")
+        for inst in cms_to_check:
+            test_plain_cm_succeeds(inst)
+            print('.', end="")
+            test_plain_cm_fails(inst)
+            print('.', end="")
+            test_rollback_cm_fails(inst)
+            print('.', end="")
+            test_rollback_cm_succeeds(inst)
+            print('.', end="")
+    finally:
+        ending()
     print()
 

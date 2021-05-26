@@ -534,7 +534,8 @@ class Operation(object):
         return ["    :param async_req: bool; if True, call is "
                 "async and the caller must invoke ",
                 "        .get() on the returned Response object. Default "
-                "is False,  which makes the call blocking."]
+                "is False, which makes ",
+                "        the call blocking."]
 
     def make_return_doc(self) -> List[str]:
         docstring_parts = []
@@ -643,6 +644,13 @@ class Operation(object):
             else:
                 assignment_list.append(f"all_args['{camel_to_pep8(p.name)}'] = "
                                        f"{camel_to_pep8(p.name)}")
+        # ok, now cover a weird case where if we have a body param that
+        # is not the same type as the current class we're building, and the
+        # method is static, we need to include this in the set of params we
+        # set
+        if (self.self_param and self.self_param.name == 'body' and
+                self.self_param.ptype != cd and self.op_id.startswith('delete')):
+            assignment_list.append(f"all_args['body'] = body")
         if (cd and cd.short_name == "DeleteOptions"
                 and _release_in_process == 'rel_1_15' and
                 self.k8s_access_tuple[3].startswith(self.del_collection_prefix)):
@@ -735,9 +743,20 @@ class SyntheticOperation(Operation):
     def get_async_doc(self) -> List[str]:
         return []
 
+    def as_python_method(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        code = super(SyntheticOperation, self).as_python_method(cd=cd)
+        code.extend(self.post_method_code(cd=cd))
+        return code
+
+    def post_method_code(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        return []
+
 
 _create_body_with_namespace = \
 """
+    # noinspection PyDataclass
+    client = client or self.client
+
     if namespace is not None:
         effective_namespace = namespace
     elif not self.metadata or not self.metadata.namespace:
@@ -756,6 +775,9 @@ _create_body_with_namespace = \
 
 _create_body_no_namespace = \
 """
+    # noinspection PyDataclass
+    client = client or self.client
+
     res = self.{methname}({paramlist})
     if not 200 <= res.code <= 299:
         raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -837,6 +859,23 @@ class CreateOperation(SyntheticOperation):
         return body.split("\n")
 
 
+_update_context_manager = \
+"""
+
+def __enter__(self):
+    return self
+    
+def __exit__(self, ex_type, ex_value, ex_traceback):
+    passed = ex_type is None and ex_value is None and ex_traceback is None
+    if passed:
+        self.update()
+    if hasattr(self, "__rollback"):
+        if not passed:
+            self.merge(getattr(self, "__rollback"), overwrite=True)
+        delattr(self, "__rollback")
+    return False
+    """
+
 @register_crud_class('update')
 class UpdateOperation(CreateOperation):
     """
@@ -844,6 +883,9 @@ class UpdateOperation(CreateOperation):
     to the patch method
     """
     op_name = 'update'
+
+    def post_method_code(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
+        return _update_context_manager.split("\n")
 
 
 _delete_body_with_namespace = \

@@ -42,7 +42,10 @@ def ending():
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if pod.metadata.namespace == tests_namespace:
-            Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
+            try:
+                Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
+            except:
+                pass
 
 
 @pytest.fixture(scope='module', autouse=True)

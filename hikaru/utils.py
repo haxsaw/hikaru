@@ -89,7 +89,7 @@ class Response(object):
         if self.code in self.codes_with_objects:
             self.obj = (from_dict(self.obj.to_dict(),
                                   translate=self.set_false_for_internal_tests)
-                        if self.obj is not None
+                        if self.obj is not None and hasattr(self.obj, 'to_dict')
                         else self.obj)
 
     def ready(self):
@@ -131,3 +131,39 @@ class Response(object):
             raise RuntimeError(f"Received an unknown type of response from K8s: "
                                f"type={type(result)}, value={result}")  # pragma: no cover
         return self.obj, self.code, self.headers
+
+
+def rollback_cm(obj):
+    """
+    Rollback a HikaruDocumentBase instance if there's an error in a ``with`` block
+
+    This function allows you to mark a H``ikaruDocumentBase`` subclass instance as being
+    subject to a rollback if there's an error in processing the instance inside a
+    ``with`` block for which the instance is the context manager. So instead of
+    doing something like this:
+
+    .. code:: python
+
+        with Pod().read(name='something', namespace='something') as p:
+            # and so forth
+
+    ...where you'd need to recover the initial state of p if there was an error,
+    you can instead do this:
+
+    .. code:: python
+
+        with rollback_cm(Pod().read(name='summat', namespace='summat')) as p:
+            # and so forth
+
+    If an error occurs inside the with block, then p will have the same state after
+    the with block as it did at the start.
+
+    If there is no error, the ``update()`` method is invoked on p as usual.
+
+    :param obj: an instance of a subclass of HikaruDocumentBase
+    :return: returns the input object which is a context manager.
+    """
+    # the __exit__ method looks for this attribute
+    setattr(obj, "__rollback", obj.dup())
+    return obj
+    getattr
