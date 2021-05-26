@@ -1131,9 +1131,16 @@ class StatefulSet(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -2470,9 +2477,16 @@ class Pod(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -4855,9 +4869,16 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -5750,9 +5771,16 @@ class StorageClass(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -6597,9 +6625,16 @@ class Secret(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -7812,9 +7847,16 @@ class ReplicationController(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -9103,9 +9145,16 @@ class ClusterRole(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -10627,9 +10676,16 @@ class RoleBinding(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -12027,9 +12083,16 @@ class ResourceQuota(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -12956,9 +13019,16 @@ class PersistentVolumeClaim(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -13826,9 +13896,16 @@ class APIService(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -15201,9 +15278,16 @@ class ConfigMap(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -16930,9 +17014,16 @@ class ClusterRoleBinding(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -17866,9 +17957,16 @@ class PersistentVolume(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -18998,9 +19096,16 @@ class Lease(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -20769,9 +20874,16 @@ class Namespace(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -21983,9 +22095,16 @@ class Endpoints(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -23466,9 +23585,16 @@ class LimitRange(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -24588,9 +24714,16 @@ class ReplicaSet(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -25794,9 +25927,16 @@ class Service(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -27836,9 +27976,16 @@ class CustomResourceDefinition(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -28885,9 +29032,16 @@ class VolumeAttachment(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -30167,9 +30321,16 @@ class Deployment(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -31284,9 +31445,16 @@ class DaemonSet(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -32334,9 +32502,16 @@ class Event(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -34521,9 +34696,16 @@ class ControllerRevision(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -35812,9 +35994,16 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -36888,9 +37077,16 @@ class Job(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -37785,9 +37981,16 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -38786,9 +38989,16 @@ class Role(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -40479,9 +40689,16 @@ class ServiceAccount(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -41575,9 +41792,16 @@ class Node(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -43060,9 +43284,16 @@ class PriorityClass(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -43860,9 +44091,16 @@ class NetworkPolicy(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")
@@ -44664,9 +44902,16 @@ class PodTemplate(HikaruDocumentBase):
 
     def __exit__(self, ex_type, ex_value, ex_traceback):
         passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
         if passed:
-            self.update()
-        if hasattr(self, "__rollback"):
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
             if not passed:
                 self.merge(getattr(self, "__rollback"), overwrite=True)
             delattr(self, "__rollback")

@@ -21,7 +21,7 @@ import importlib
 from types import MethodType, FunctionType
 from inspect import signature
 import pytest
-from hikaru import HikaruDocumentBase, Response, rollback_cm
+from hikaru import HikaruDocumentBase, Response, rollback_cm, KubernetesException
 from hikaru.model.rel_1_16.versions import versions
 from hikaru import set_default_release, from_dict
 
@@ -96,6 +96,8 @@ class MockApiClient(object):
 all_params = []
 
 cms_to_check = []
+
+cms_update_failed_rollback = []
 
 for version in versions:
     test_classes = []
@@ -224,15 +226,26 @@ for version in versions:
                         else:
                             params[p.name] = None
                     all_params.append((attr, True, params))
-                    if name != 'update':
-                        continue
+                    #
+                    # WARNING!
                     # ok, from here we're just putting in instances that
                     # are to be tested for context manager behaviour.
+                    # if you want to add tests for other things besided 'update'
+                    # insert them before here!
+                    #
+                    if name != 'update':
+                        continue
                     # first, a plain cm use that succeeds
                     inst = cls.get_empty_instance()
                     inst.metadata = om_class(namespace='default', name='the_name')
                     inst.client = MockApiClient(gen_failure=False)
                     cms_to_check.append(inst)
+                    # do the same except now make the update at the end of
+                    # the CM fail
+                    inst = cls.get_empty_instance()
+                    inst.metadata = om_class(namespace='default', name='the_name')
+                    inst.client = MockApiClient(gen_failure=True)
+                    cms_update_failed_rollback.append(inst)
                 elif isinstance(attr, staticmethod):
                     # process static methods here
                     smeth = getattr(cls, name)
@@ -313,17 +326,41 @@ def test_plain_cm_fails(inst):
 
 @pytest.mark.parametrize('inst', cms_to_check)
 def test_rollback_cm_succeeds(inst):
+    dup = inst.dup()
     with rollback_cm(inst) as i:
-        pass
+        i.metadata.labels['wow'] = 'wee'
+    assert inst != dup
 
 
 @pytest.mark.parametrize('inst', cms_to_check)
 def test_rollback_cm_fails(inst):
+    dup = inst.dup()
     try:
         with rollback_cm(inst) as i:
+            i.metadata.labels['wow'] = 'wee'
             raise CMTestException()
     except CMTestException:
-        pass
+        assert inst == dup
+
+
+@pytest.mark.parametrize('inst', cms_update_failed_rollback)
+def test_update_fails_no_rollback(inst):
+    dup = inst.dup()
+    try:
+        with inst as i:
+            i.metadata.labels['wow'] = 'wee'
+    except KubernetesException:
+        assert dup != inst
+
+
+@pytest.mark.parametrize('inst', cms_update_failed_rollback)
+def test_update_fails_no_rollback(inst):
+    dup = inst.dup()
+    try:
+        with rollback_cm(inst) as i:
+            i.metadata.labels['wow'] = 'wee'
+    except KubernetesException:
+        assert dup == inst
 
 
 if __name__ == "__main__":
