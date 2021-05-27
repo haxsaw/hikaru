@@ -1657,6 +1657,24 @@ def test140():
         assert pod == orig
 
 
+def test141():
+    """
+    Check that object_at_path() follows dictionary keys diffs from diff()
+    """
+    pod = Pod(
+        spec=PodSpec(
+            containers=[
+                Container(name="a", resources=ResourceRequirements(limits={"foo": "bar"}))
+            ]
+        )
+    )
+    pod2 = pod.dup()
+    pod2.spec.containers[0].resources.limits['foo'] = 'blah'
+    diff = pod.diff(pod2)
+    assert 'blah' == pod2.object_at_path(diff[0].path)
+    assert 'bar' == pod.object_at_path(diff[0].path)
+
+
 if __name__ == "__main__":
     setup()
     test036()

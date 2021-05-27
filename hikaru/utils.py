@@ -137,7 +137,7 @@ def rollback_cm(obj):
     """
     Rollback a HikaruDocumentBase instance if there's an error in a ``with`` block
 
-    This function allows you to mark a H``ikaruDocumentBase`` subclass instance as being
+    This function allows you to mark a ``HikaruDocumentBase`` subclass instance as being
     subject to a rollback if there's an error in processing the instance inside a
     ``with`` block for which the instance is the context manager. So instead of
     doing something like this:
@@ -166,4 +166,3 @@ def rollback_cm(obj):
     # the __exit__ method looks for this attribute
     setattr(obj, "__rollback", obj.dup())
     return obj
-    getattr

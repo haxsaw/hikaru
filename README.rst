@@ -60,12 +60,13 @@ Hikaru can output a Python Kubernetes object as Python source code,
 YAML, JSON, or a Python dict, and go back to any of these representations, allowing you
 to shift easily between representational formats for various purposes.
 
-Talk to Kubernetes
-~~~~~~~~~~~~~~~~~~
+Direct Kubernetes via CRUD or low-level methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use Hikaru objects to interact with a Kubernetes system. Hikaru wraps the Kubernetes
 Python client and maps API operations on to the Hikaru model they involve. For example, you
-can now create a Pod directly from a Pod object.
+can now create a Pod directly from a Pod object. Hikaru supports a higher-level CRUD-style
+set of methods as well as all the operations defined in the Swagger API specification.
 
 Hikaru can work with any Kubernetes-compliant system such as `K3s <https://k3s.io/>`_
 and `minikube <https://minikube.sigs.k8s.io/docs/>`_.
@@ -93,8 +94,8 @@ You can use Hikaru in the process of issuing instructions to Kubernetes,
 but the same Hikaru models can be used as high-fidelity replicas of the
 YAML for other processes as well.
 
-Type checking, diffing, and inspection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Type checking, diffing, merging, and inspection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Hikaru supports a number of other operations on the Python objects it defines. For
 example, you can check the types of all attributes in a config against the defined
@@ -106,13 +107,13 @@ API coverage
 
 Hikaru supports all objects in the OpenAPI swagger spec for
 the Kubernetes API **v 1.16**, and has initial support for methods on those objects
-from the same swagger spec.
+from the same swagger spec. Additionally, it defines some higher-level CRUD-style
+methods on top of these foundation methods.
 
 Usage examples
 ~~~~~~~~~~~~~~
 
-To create Python objects from a Kubernetes YAML source, use
-``load_full_yaml()``:
+To create Python objects from a Kubernetes YAML source, use ``load_full_yaml()``:
 
 .. code:: python
 
@@ -137,7 +138,7 @@ navigation:
        print(f"key:{k} value:{v}")
        
 
-You can create Kubernetes objects in Python:
+You can create Hikaru representations of Kubernetes objects in Python:
 
 .. code:: python
 
@@ -191,6 +192,28 @@ providing a migration path):
         metadata=ObjectMeta(name="hello-kiamol-3"),
         spec=PodSpec(containers=[Container(name="web", image="kiamol/ch02-hello-kiamol")]),
     )
+    
+...and then turn it into real Kubernetes resources using the CRUD methods:
+
+.. code:: python
+
+	x.create(namespace='my-namespace')
+	
+...or read an existing object back in:
+
+.. code:: python
+
+	p = Pod().read(name='hello-kiamol-3', namespace='my-namespace')
+	
+...or use a Hikaru object as a context manager to automatically perform updates:
+
+.. code:: python
+
+	with Pod().read(name='hello-kiamol-3', namespace='my-namespace') as p:
+		p.metadata.labels["new-label"] = 'some-value'
+		# and other changes
+		
+	# when the 'with' ends, the context manager sends an update()
 
 It is entirely possible to load YAML into Python, tailor it, and then
 send it back to YAML; Hikaru can round-trip YAML through Python and
@@ -286,12 +309,9 @@ automated control.
 Future work
 ~~~~~~~~~~~
 
-The current expression of operations on Hikaru methods follows the
-naming conventions of the swagger spec's ``operationId``. Mapping these
-into consistently-named CRUD methods with appropriate arguments is the
-main focus of the coming release. So for example, you will be able to
-perform the opertation ``createNamespacedReplicationController()`` with
-a new method ``create()`` with similar arugments.
+With basic support of managing Kubernetes resources in place, other directions
+are being considered such as event/watch support and bringing in support for
+additional releases of Kubernetes.
 
 About
 ~~~~~

@@ -417,6 +417,8 @@ class HikaruBase(object):
                     else:
                         if obj is None:
                             raise RuntimeError(f"Path {path} leads to None at {p}")
+            elif isinstance(obj, dict):
+                obj = obj.get(p)
             else:
                 try:
                     obj = getattr(obj, p, _not_there)

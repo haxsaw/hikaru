@@ -10,6 +10,12 @@ v0.5b
   async), they also
   have consistent names and more uniform arguments. For the full capability of the API
   you can continue to use the existing more verbosely-named methods.
+- CRUD-supporting classes that implement an ``update()`` method are also now context
+  managers; you can use an instance in a ``with`` statement block and at the end of the
+  block the object's ``update()`` method will be called if there were no exceptions
+  in the block. You can also optionally apply a wrapper, **rollback_cm()**, that
+  will cause of the previous state of the context object to be restored if an
+  exception occurs during the ``with`` statement.
 - Added a **merge()** method to HikaruBase the can merge the contents of one object
   into another. Merges can either only merge new values or else overwrite all values
   of the target object.
@@ -25,6 +31,8 @@ v0.5b
   inside of other document classes (for instance, a MyPod subclass of Pod not being used
   when reading a PodList), and to properly support existing classes that have apiVersion
   values that are actually both a group and version.
+- Fixed the bug where the ``body`` argument wasn't being passed on to the Kubernetes
+  Python client for certain ``delete*()`` methods.
 - Pinned Hikaru to a specific version of black since we're currently using some internal
   interface and black's public API isn't available yet.
 

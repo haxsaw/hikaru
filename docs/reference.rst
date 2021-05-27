@@ -2,6 +2,9 @@
 Reference
 *********
 
+Objects returned when querying Hikaru itself
+********************************************
+
 .. _CatalogEntry doc:
 
 .. autoclass:: hikaru.CatalogEntry
@@ -27,6 +30,10 @@ TypeWarning is a dataclass that is returned as list elements from the
 
 .. autoclass:: hikaru.DiffType
 
+
+
+Hikaru modelling base classes
+*****************************
 .. _HikaruBase doc:
 
 .. autoclass:: hikaru.HikaruBase
@@ -41,6 +48,9 @@ TypeWarning is a dataclass that is returned as list elements from the
 
 .. autoclass:: hikaru.Response
    :members:
+   
+Hikaru functions
+****************
 
 .. _from_dict doc:
 
@@ -97,3 +107,8 @@ TypeWarning is a dataclass that is returned as list elements from the
 .. _register_version_kind_class doc:
 
 .. autofunction:: hikaru.register_version_kind_class
+
+.. _rollback_cm doc:
+
+.. autofunction:: hikaru.rollback_cm
+

@@ -12,7 +12,7 @@ Hikaru provides two levels of interface to the underlying Kubernetes client:
 
 - A higher-level `CRUD`-style set of instance methods that have consistent names and
   behaviours across all top-level Hikaru objects (that is, subclasses of
-  ``HikaruDocumentBase``) but which hide some of the details of the underlying operations, and
+  :ref:`HikaruDocumentBase<HikaruDocumentBase doc>`) but which hide some of the details of the underlying operations, and
 - A lower-level (but not much lower) set of instance and class methods that are direct
   analogs of the operations defined in the K8s swagger file; the names of these methods
   follow the operationIDs in the swagger file, and expose return codes, headers, and allow
@@ -49,7 +49,7 @@ All Hikaru CRUD methods share share the following characteristics:
 Each of the methods are discussed below.
 
 create()
---------
+********
 
 The ``create()`` method provides a way to create a resource in Kubernetes. This is an independent
 action from creating the Hikaru object; you must first create the Hikaru object, and then call
@@ -95,7 +95,7 @@ two calls to read the details of a Pod are equivalent:
     # and:
     p = Pod().read(name='theName', namespace='the-namespace')
     # or, for a Pod that already has the name/namespace in its metadata:
-    p = Pod().read()
+    p.read()
 
 Or, you could have the name in the Pod and supply the namespace in the read line, as long as the
 namespace in the Pod is None or the same value as provided in the arguments.
@@ -107,9 +107,9 @@ the pod.
 update()
 ********
 
-Calls to ``update()`` generally behave like calls to ``create()`` , although you generally
+Calls to ``update()`` behave like calls to ``create()`` , although you generally
 don't need to specify a ``namespace`` parameter since you are usually updating with an object
-in which the namespace was previously specified, but you can supply the value if needed using
+in which the namespace was previously specified. However, you can supply the value if needed using
 the ``namespace`` keyword argument to ``update()``:
 
 .. code:: python
@@ -126,20 +126,93 @@ wrapper around the the **patch** operation, since patching an existing resource 
 matches the semantics of ``update()``. You can still access the replace method for the resource
 by using the lower-level API.
 
+update() and Context Managers
+------------------------------
+
+Any ``HikaruDocumentBase`` subclass that has an ``update()`` method is also a context manager.
+When the ``with`` block that the object manages closes, the object automatically calls the
+``update()`` method on the object. So constructions like the following can be created:
+
+.. code:: python
+
+	with Pod().read(name='thename', namespace='the-namespace') as p:
+		p.labels['new-label'] = 'value'
+		# and other actions that change the content of the Pod p
+		
+	# once here, the Pod p has automatically invoked update()
+	
+The instance that serves as the context manager can come from any usual source. So if a
+previously created Pod was stored as YAML, you can load it and use that to manage the
+context:
+
+.. code:: python
+
+	p = load_full_yaml(path="/some/path")[0]
+	with p.read() as pod:  # always read before update to make sure you have the latest rev!
+		# and carry on modifying pod here...
+		
+There is also a helper function, :ref:`rollback_cm()<rollback_cm doc>`, which sets up the context manager to roll
+back to the original state of the object if an exception is raised inside the ``with`` block.
+This allows you to restore your object to the original condition from when the with block
+started in the case of an error. Applying this function to the example from above, we'd then
+have:
+
+.. code:: python
+
+	p = load_full_yaml(path="/some/path")[0]
+	try:
+		with rollback_cm(p.read()) as pod:
+			# and carry on modifying pod here...
+	except:
+		# pod (p) will have the same content as at the start of the with block
+
 delete()
 ********
 
+The ``delete()`` method allows you to delete the modelled resource in Kubernetes. This does
+not delete the Hikaru object; it simply gets rid of the underlying Kubernetes resource.
+
+Unlike ``update()``, ``delete()`` doesn't need the lastest version of the object to perform
+its actions; in general, all is necessary are the name and namespace (if applicable) for the
+resource in question. That allows issuing a ``delete()`` from an anonymous object:
+
+.. code:: python
+
+	Pod().delete(name='podname', namespace='podnamespace')
+	
+...as well as deleting from a resource that has metadata with both name and namespace filled in:
+
+.. code:: python
+
+	# let's assume we previously persisted a Pod that we had created with its name
+	# and namespace we can then load and delete it
+	p = load_full_yaml(path='/path/to/saved/pod')[0]
+	p.delete()
+	
+...or the uselessly verbose:
+
+.. code:: python
+
+	p = Pod(metadata=ObjectMeta(name='podname', namespace='podnamespace'))
+	p.delete()
+	
 
 
 
-Hikaru swagger methods
-******************
+Hikaru low-level methods
+*************************
+
+The lower-level Hikaru methods are all direct analogs of the operations defined in the 
+Kubernetes swagger API specification file. The names of the methods are taken from the
+``operationID`` property of each operation in that file, although in some cases version
+information has been scrubbed out of the name. Each method supports all of the parameters
+documented in that file, including the flag to indicate asynchronous operation.
 
 All methods return a :ref:`Response<Response doc>` object. These objects contain
 references to the returned result code, HTTP headers, and any object returned by
 Kubernetes (as a Hikaru object).
 
-If you requested an operation to be done asynchronously using the async_req=True
+If you requested an operation to be done asynchronously using the ``async_req=True``
 argument,
 then the above three attributes aren't filled out when the method returns and instead the
 Response can be used
