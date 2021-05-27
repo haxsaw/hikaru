@@ -15,16 +15,23 @@
 Hikaru
 ======
 
+Version 0.5b
+
 |travis|   |license|   |versions|   |coverage|
 
-**Full documentation at: https://hikaru.readthedocs.io/en/latest/index.html**
+`Release notes <https://github.com/haxsaw/hikaru/blob/main/release_notes.rst>`_
+
+`Full documentation at Read the Docs <https://hikaru.readthedocs.io/en/latest/index.html>`_
 
 Hikaru is a tool that provides you the ability to easily shift between
 YAML, Python objects/source, and JSON representations of your Kubernetes config
 files, provides assistance in authoring these files in Python,
-opens up options in how you can assemble and customise the files, and even
+opens up options in how you can assemble and customise the files, and 
 provides some programmatic tools for inspecting large, complex files to
 enable automation of policy and security compliance.
+
+Additionally, Hikaru allows you to use its K8s model objects to interact with Kubernetes,
+directing it to create, modify, and delete resources.
 
 From Python
 ~~~~~~~~~~~

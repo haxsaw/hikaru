@@ -236,3 +236,12 @@ register_version_kind_class()
 Registered the class to create when Hikaru encounters the specified version and kind values.
 Use of this function is part of advanced Hikaru usage, which is documented
 :ref:`here<Advanced Hikaru: Defining Your Own Classes>`.
+
+rollback_cm()
+*************
+
+:ref:`Documentation<rollback_cm doc>`
+
+When using an instance of a HikaruDocumentBase subclass as a context manager,
+wrapping it with this function in the ``with`` statement sets the object so that it
+can roll back to its original state if an error occurs in the ``with`` block.

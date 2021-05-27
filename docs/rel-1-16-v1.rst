@@ -1,0 +1,20 @@
+*********************************************
+Autodoc for K8s Rel 1.6 v1 document classes
+*********************************************
+
+This page contains the docstrings for the top-level classes
+(HikaruDocumentBase subclasses)
+in ``hikaru.model.rel_1_16.v1.documents``. Instances of these classes are used
+directly with K8s (other objects are embedded within these), and methods are
+only defined on these classes.
+
+If you need to access doc for all objects, refer to the docstrings for the full
+set of classes in ``hikaru.model.rel_1_16.v1.v1``.
+
+The doc starts with the standard module-level warning not to edit the file.
+
+HikaruDocumentBase and subclasses
+----------------------------------
+
+.. automodule:: hikaru.model.rel_1_16.v1.documents
+   :members:

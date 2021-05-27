@@ -24,6 +24,15 @@ Release: |release|
    issues
    reference
    about
+   
+K8s V1.16 v1 Documents Doc
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: 1.16v1 docs ref
+   
+   rel-1-16-v1
 
 
 Indices and tables

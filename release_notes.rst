@@ -5,12 +5,12 @@ Release Notes
 v0.5b
 -----
 
-- Hikaru has grown a set of higher-level *CRUD*-style methods on HikaruDocumentBase
+- Hikaru has acquired a set of higher-level *CRUD*-style methods on HikaruDocumentBase
   subclasses. These have a simpler interface and while they can do a bit less (no
   async), they also
   have consistent names and more uniform arguments. For the full capability of the API
   you can continue to use the existing more verbosely-named methods.
-- CRUD-supporting classes that implement an ``update()`` method are also now context
+- CRUD-supporting classes that implement an **update()** method are also now context
   managers; you can use an instance in a ``with`` statement block and at the end of the
   block the object's ``update()`` method will be called if there were no exceptions
   in the block. You can also optionally apply a wrapper, **rollback_cm()**, that
@@ -35,6 +35,8 @@ v0.5b
   Python client for certain ``delete*()`` methods.
 - Pinned Hikaru to a specific version of black since we're currently using some internal
   interface and black's public API isn't available yet.
+- The ``object_at_path()`` method now can properly navigate to specific dictionary
+  entries from the results of a ``diff()`` that finds differences in two dicts.
 
 v0.4b
 -----
