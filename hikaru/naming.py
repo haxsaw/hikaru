@@ -151,6 +151,11 @@ def camel_to_pep8(name: str) -> str:
     letters = [a if a.islower() else f"_{a.lower()}"
                for a in name]
     result = ''.join(letters)
+    # ok, there are rare names that start with an uppercase letter, which
+    # the above will turn into '_<lower version>'. We need to spot these and
+    # turn them back into the upper case version without the leading '_'
+    if result[0] == "_":
+        result = result[1].upper() + result[2:]
     # icky patch for when we've split apart 'API', 'CSI', or 'V<number>'
     return (result.replace("a_p_i", "api").replace("c_s_i", "csi").
             replace('v_1', 'v1').replace('v_2', 'v2').replace('beta_1', 'beta1').

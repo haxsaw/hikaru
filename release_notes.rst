@@ -2,6 +2,21 @@
 Release Notes
 *************
 
+v0.5.1b
+-------
+
+A bug fix and requirements update release.
+
+- Fixed a bug in the handling of sub-objects of NodeStatus. An attribute in DaemonEndpoint
+  has a name that is capitalized and had been lower-cased previously to match the case
+  usage in the K8s Python client, however properly formatted dicts that use the proper
+  case for the attribute (Port) encounter a failure when using the from_yaml() method
+  on Node. A fix for this bug and others like it that might creep in has been added.
+- As the 'black' code formatter has been released, the requirements.txt file has been
+  updated to reflect the range of releases of this package that Hikaru has validated
+  work as expected.
+- Corrected a typo regarding the supported release of the K8s Python client in the doc.
+
 v0.5b
 -----
 

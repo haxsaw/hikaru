@@ -1334,11 +1334,6 @@ class PropertyDescriptor(object):
         :param containing_class:
         :param d:
         """
-        # another odd-man-out issue with the swagger spec; the only
-        # property that starts with an upper case letter,
-        # Port of DaemonEndpoint. Force it lower...
-        if containing_class.short_name == 'DaemonEndpoint' and name == 'Port':
-            name = 'port'
         name = name.replace('-', '_')
         if name in python_reserved:
             python_name = f'{name}_'

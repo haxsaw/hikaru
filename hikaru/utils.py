@@ -19,7 +19,6 @@
 # SOFTWARE.
 from typing import Any, Optional
 from multiprocessing.pool import ApplyResult
-from hikaru.generate import from_dict
 
 
 class Response(object):
@@ -83,6 +82,7 @@ class Response(object):
             self._thread = k8s_response
 
     def _process_result(self, result: tuple):
+        from hikaru.generate import from_dict
         self.obj = result[0]
         self.code = result[1]
         self.headers = result[2]

@@ -36,6 +36,7 @@ from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 from hikaru.naming import camel_to_pep8
+from hikaru.tweaks import h2kc_translate
 
 try:
     from typing import get_args, get_origin
@@ -973,7 +974,9 @@ class HikaruBase(object):
         hints = self._get_hints()
         for f in fields(self.__class__):
             k8s_name = f.name.strip("_")
-            k8s_name = camel_to_pep8(k8s_name) if translate else k8s_name
+            k8s_name = (h2kc_translate(self.__class__, k8s_name)
+                        if translate
+                        else k8s_name)
             is_required = True
             ftype = hints[f.name]
             initial_type = ftype

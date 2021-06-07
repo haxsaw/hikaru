@@ -1,5 +1,5 @@
 *********************************************
-Autodoc for K8s Rel 1.6 v1 document classes
+Autodoc for K8s Rel 1.16 v1 document classes
 *********************************************
 
 This page contains the docstrings for the top-level classes

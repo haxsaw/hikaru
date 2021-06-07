@@ -1675,9 +1675,26 @@ def test141():
     assert 'bar' == pod.object_at_path(diff[0].path)
 
 
+def test142():
+    """
+    Check that the Port attr within Node goes properly back and forth
+    """
+    n: Node = Node(status=NodeStatus(daemonEndpoints=NodeDaemonEndpoints(
+        kubeletEndpoint=DaemonEndpoint(Port=44)
+    )))
+    yaml = get_yaml(n)
+    n1: Node = load_full_yaml(yaml=yaml)[0]
+    assert n1.status.daemonEndpoints.kubeletEndpoint.Port == 44
+    # now make a dict that looks like it came from the K8s client
+    d = get_clean_dict(n1)
+    d['status']['daemon_endpoints'] = {'kubelet_endpoint': {'port': 44}}
+    del d['status']['daemonEndpoints']
+    n2: Node = Node.from_yaml(d, translate=True)
+    assert n2.status.daemonEndpoints.kubeletEndpoint.Port == 44
+
+
 if __name__ == "__main__":
     setup()
-    test036()
     the_tests = {k: v for k, v in globals().items()
                  if k.startswith('test') and callable(v)}
     for k, v in the_tests.items():
