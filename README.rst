@@ -15,7 +15,7 @@
 Hikaru
 ======
 
-Version 0.5b
+Version 0.5.1b
 
 |travis|   |license|   |versions|   |coverage|
 
