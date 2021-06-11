@@ -10,10 +10,12 @@
 
 .. |coverage| image:: https://codecov.io/gh/haxsaw/hikaru/branch/dev/graph/badge.svg?token=QOFGNVHGNP
    :target: https://codecov.io/gh/haxsaw/hikaru
+   
+.. |logo| image:: hikaru-logo.svg
+	:alt: Hikaru
 
-======
-Hikaru
-======
+|logo|
+
 
 Version 0.5.1b
 
@@ -25,7 +27,7 @@ Version 0.5.1b
 
 Hikaru is a tool that provides you the ability to easily shift between
 YAML, Python objects/source, and JSON representations of your Kubernetes config
-files, provides assistance in authoring these files in Python,
+files. It provides assistance in authoring these files in Python,
 opens up options in how you can assemble and customise the files, and 
 provides some programmatic tools for inspecting large, complex files to
 enable automation of policy and security compliance.

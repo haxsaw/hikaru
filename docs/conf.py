@@ -65,4 +65,6 @@ html_static_path = ['_static']
 # Alabaster theme options
 html_theme_options = {
     "fixed_sidebar": True,
+    "logo": "hikaru-logo.svg",
+    "logo_name": False
 }
