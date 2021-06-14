@@ -21,6 +21,8 @@ Version 0.5.1b
 
 |travis|   |license|   |versions|   |coverage|
 
+`Try it: see Hikaru's convert your K8s YAML <http://www.incisivetech.co.uk/try-hikaru.html>`_
+
 `Release notes <https://github.com/haxsaw/hikaru/blob/main/release_notes.rst>`_
 
 `Full documentation at Read the Docs <https://hikaru.readthedocs.io/en/latest/index.html>`_
