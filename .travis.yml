@@ -7,6 +7,8 @@ install:
   - pip install -r requirements.txt
   - pip install -r maintainers_requirements.txt
 script:
-  - export PYTHONPATH=`pwd`; cd tests; pytest --cov=hikaru --cov-report=term-missing *.py
+  - export PYTHONPATH=`pwd`; cd tests; bash ./rununit.bsh
 after_success:
-  - cd tests; curl -s https://codecov.io/bash | bash
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
+  - ./codecov -t ${CODECOV_TOKEN}

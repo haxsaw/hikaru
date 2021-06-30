@@ -32,6 +32,7 @@ from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, InitVar
 from kubernetes.client import CoreV1Api
+from ..unversioned import *
 
 from kubernetes.client import ApiClient
 from kubernetes.client import AutoscalingV2beta1Api

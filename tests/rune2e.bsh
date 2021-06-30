@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# this needs to run within a properly configured environment as it will be
+# installing/removing packages
+#
+chmod 755 run_all_*.bsh
+/bin/bash ./run_e2e_1_16.bsh
+/bin/bash ./run_e2e_1_17.bsh a

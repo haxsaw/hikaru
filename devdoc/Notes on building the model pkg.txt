@@ -5,7 +5,7 @@ Intro
 -----
 
 The model package (hikaru.model) is constructed by processing the OpenAPI
-Swagger JSON file that describes the Kubernetes API and outputting all of
+Swagger JSON files that describes the Kubernetes API and outputting all of
 the model modules in the package. Most users of hikaru won't need to mess
 with the build system, so this is really a note for maintainers.
 
@@ -27,12 +27,43 @@ process will result in no more weirdness.
 Requirements
 ------------
 
+=General=
+
 There are extra requirements for building the model than from just using the
 package. Do a
 
     pip install -r maintainers_requirements.txt
 
 ...to add these to your environment.
+
+=Release Specific: IMPORTANT=
+
+Since Hikaru is designed to work with different releases of the Kubernetes
+Python client and needs to reference that client during the build in order
+to locate various methods on objects for connecting Hikaru methods to, you
+have to have the proper version of the Kubernetes client installed in order
+to build out that release of the model for Hikaru. This generally involves
+uninstalling the current release and then installing the matching release
+for the swagger spec. This means you can only issue a command to build
+one release's model files per invocation of build.py. The standard dance
+looks like this:
+
+    pip uninstall -y kubernetes
+    pip install kubernetes==<python-client-release-number>
+    python build.py <matching-release-swagger-file>
+
+The following table illustrates how to match up the release of Kubernetes,
+the Python client, and the swagger file:
+
+K8s release             Swagger release         K8s Python release
+-----------             ---------------         ------------------
+1.15                    1-15                    11.0.0
+1.16                    1-16                    12.0.1
+1.17                    1-17                    17.17.0
+
+Note that starting with K8s 1.17 the Python client's release numbering scheme
+has been changed to match the release number of Kubernetes. The swagger files
+can be found in the openapi directory of this project.
 
 
 The build process
@@ -44,25 +75,29 @@ Pretty simple, actually:
 2. 'cd' into the directory above the package root where build.py is
 3. Run the following:
 
-    python build.py <relname> <swagger-file-name>+
+    pip uninstall -y kubernetes
+    pip install kubernetes=<appropriate-release-number>
+    python build.py <matching-swagger-file-name> {flagchar}
 
-...where <relname> is the name of the generated release that will be the default
-when someone does 'from hikaru.model import *', and is then followed by one or more
-swagger JSON files, <swagger-file-name>, which will be processed and saved to a
-sub-package under model with the name 'rel_<relnumber>'.
+The final 'flagchar' optional parameter is to indicate if this release
+should be treated as the default; it can be any character/word. Being the
+default simply sets the variable name that holds the name of
+
+You can only process one swagger file per invocation of build.py. Previously,
+there was a default release you could specify, but that no longer will work
+in a world where multiple releases are supported (symbols may move or change
+names in the alpha/beta versions of the model, so imports can fail).
 
 This will result in:
 
 - The 'model' directory being created if it doesn't already exist
-- All files in the 'model' directory being deleted.
-- An __init__.py file will be generated in model which will import all the
-  symbols from the specified main release (relname)
-
-Then, for each of the swagger files:
-- A subpackage with name 'rel_<relname>' is created. In it will be created:
-- An __init__.py that will import the default model version will be created.
+- A 'rel_x_y' subdirectory being created in the model directory.
+- All files in the 'rel_x_y' directory being deleted.
 - Any non-version-specific module of object classes will be created in
-  the unversioned.py module.
+  the unversioned.py module at the top level in hikaru.model.
+
+Then, in the rel_x_y directory:
+- An __init__.py that will import the default model version will be created.
 - A series of modules whose names match the version of the objects they
   encompass will be created, each containing either the specific objects
   for that version, or else imports of other modules where an object
@@ -71,6 +106,8 @@ Then, for each of the swagger files:
   a list of strings of the names of the version modules created.
 - An update to the __init__.py file to import all symbols from 'v1' to
   make it easier access all v1 Kubernetes classes (__all__ is populated).
+- A 'documents' module will be created that imports the symbols from the main
+  version module but only keeps those that are derived from HikaruDocumentBase.
 
 If run repeatedly with no change to the other code or input JSON file,
 identical model files will be generated, so it is safe to run again and
@@ -79,11 +116,9 @@ again with no fear of git thinking there are new versions.
 The openapi directory is meant to hold different vintages of swagger file
 so you can re-create older models if desired. These have been downloaded
 from the official github repo and stored here. The build program requires
-you to provide the path to one of these files. The current version was
-acquired from here:
-
-https://github.com/kubernetes-client/python/blob/master/kubernetes/swagger.json.unprocessed
-
+you to provide the path to one of these files. These are acquired from the
+github repo for the Python client in the 'scripts' directory; the proper one
+tagged for each release of the client is used.
 
 If it goes wrong
 ----------------

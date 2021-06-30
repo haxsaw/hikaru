@@ -122,7 +122,6 @@ def make_root_init(directory: str, default_rel: str):
         init.unlink()
     f = init.open('w')
     f.write(_module_docstring)
-    f.write(f"from .{default_rel} import *\n")
     f.write(f"default_release = '{default_rel}'\n")
     f.close()
 
@@ -288,7 +287,7 @@ def write_modules(pkgpath: str):
         unversioned = pkg / f'{unversioned_module_name}.py'
         assert isinstance(base, ModuleDef)
         f = unversioned.open('w')
-        base.as_python_module(stream=f)
+        base.as_python_module(stream=f, import_unversioned=False)
         f.close()
 
     # next, write out all the version-specific object defs
@@ -651,6 +650,7 @@ class Operation(object):
         if (self.self_param and self.self_param.name == 'body' and
                 self.self_param.ptype != cd and self.op_id.startswith('delete')):
             assignment_list.append(f"all_args['body'] = body")
+
         if (cd and cd.short_name == "DeleteOptions"
                 and _release_in_process == 'rel_1_15' and
                 self.k8s_access_tuple[3].startswith(self.del_collection_prefix)):
@@ -1280,11 +1280,12 @@ class ModuleDef(object):
                     ext_ver.add(dep.version)
         return list(ext_ver)
 
-    def as_python_module(self, stream=sys.stdout):
+    def as_python_module(self, stream=sys.stdout, import_unversioned=True):
         externals = self.external_versions_used()
         other_imports = []
-        if None in externals:
+        if import_unversioned:
             other_imports.append(f'from ..{unversioned_module_name} import *')
+        if None in externals:
             try:
                 externals.remove(None)
             except ValueError:
@@ -1926,7 +1927,7 @@ def reset_all():
 _release_in_process = None
 
 
-def build_it(swagger_file: str, main_rel: str):
+def build_it(swagger_file: str, main_rel: bool):
     """
     Initiate the swagger-file-driven model package build
 
@@ -1942,18 +1943,17 @@ def build_it(swagger_file: str, main_rel: str):
     relpath = path / relname
     prep_rel_package(str(relpath))
     write_modules(str(relpath))
-    if main_rel == relname:
+    if main_rel:
         # this is the main release; make the root package default to it
-        make_root_init(model_package, main_rel)
+        make_root_init(model_package, relname)
     _release_in_process = None
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"usage: {sys.argv[0]} <main-rel-name> <swagger-json-file>+")
+        print(f"usage: {sys.argv[0]} <swagger-json-file> {{<main-rel-flag>}}")
         sys.exit(1)
-    main_rel = sys.argv[1]
-    for swagger_file in sys.argv[2:]:
-        print(f">>>Processing {swagger_file}")
-        build_it(swagger_file, main_rel)
+    main_rel = True if len(sys.argv) == 3 else False
+    print(f">>>Processing {sys.argv[1]}")
+    build_it(sys.argv[1], main_rel)
     sys.exit(0)
