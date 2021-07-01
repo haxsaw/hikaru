@@ -2,6 +2,28 @@
 Release Notes
 *************
 
+v0.6.0b
+-------
+
+New models for the 1.17 K8s client
+
+- **Import change**: the most impactful change in this release is that you can no longer
+  use the ``from hikaru.model import *`` construct since Hikaru now supports both K8s clients
+  1.16 and 1.17. This is because there *can* be incompatibilities with the new version of
+  Hikaru and an older version of the K8s client for certain symboles in certain versions.
+  This can cause some user's installations to break. I decided that it would be better to
+  cause everyone a small bit of pain rather than utterly break some subset of users. I did
+  try a variety of approaches to work around this, but everything else had other effects that
+  impacted some aspect of Hikaru's value proposition. So sorry for the imposition, but you
+  now have to import from a specific release such as ``from hikaru.model.rel_1_16 import *``.
+  Hopefully such a change won't be needed again.
+- Hikaru now supports both the 1.16 and 1.17 versions of the Kubernetes Python client. These
+  are in packages ``rel_1_16`` and ``rel_1_17`` in the ``model`` package, respectively. It's
+  a good idea to stick with importing the package that matches your version of the K8s client
+  package, although in general things don't break if you stay in the v1 version.
+- Have blessed support for the newest version of the ``black`` code formatter, so you can now
+  upgrade that package and still have things work properly.
+
 v0.5.1b
 -------
 

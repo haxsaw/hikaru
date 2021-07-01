@@ -24,10 +24,6 @@ for your classes to work properly within Hikaru:
 
     ``from hikaru.model.rel_1_16.v1 import *``
 
-   Or, if you're happy using the default release and version, you can simply have:
-
-    ``from hikaru.model import *``
-
 2. All of your custom classes must be defined at the top-level within your module, otherwise
    Hikaru won't be able to find them when needed.
 
@@ -78,7 +74,7 @@ Pod class, and hides the actual create method name:
 .. code:: python
 
     from hikaru import register_version_kind_class
-    from hikaru.model import *
+    from hikaru.model.rel_1_16 import *
 
     class CRUDPod(Pod):
         def create(self):
@@ -108,7 +104,7 @@ a ``__post_init__()`` method like the following:
 
     from typing import Any
     from hikaru import register_version_kind_class
-    from hikaru.model import *
+    from hikaru.model.rel_1_16 import *
 
     class DictPod(Pod):
         def __post_init__(self, client: Any = None):  # NOTE THE PARAMETERS!
@@ -160,7 +156,7 @@ can create a new dataclass that makes provision for passing in this data like so
 
 .. code:: python
 
-    from hikaru.model import *
+    from hikaru.model.rel_1_17 import *
     from dataclasses import dataclass, InitVar
     from typing import Any, Optional, Dict
     from hikaru import register_version_kind_class
@@ -232,7 +228,7 @@ Here is an example implementation of the classes that can consume this YAML:
     from typing import Optional
     from dataclasses import dataclass
     from hikaru import HikaruBase, HikaruDocumentBase
-    from hikaru.model import *
+    from hikaru.model.rel_1_16 import *
 
     @dataclass
     class Inner(HikaruBase):

@@ -25,8 +25,15 @@ Release: |release|
    reference
    about
    
+Indices and tables
+------------------
+
+* :ref:`search`
+* :ref:`genindex`
+* :ref:`modindex`
+
 K8s V1.16 v1 Documents Doc
-==========================
+--------------------------
 
 .. toctree::
    :maxdepth: 1
@@ -34,10 +41,13 @@ K8s V1.16 v1 Documents Doc
    
    rel-1-16-v1
 
+K8s V1.17 v1 Documents Doc
+--------------------------
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 1
+   :caption: 1.17v1 docs ref
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   rel-1-17-v1
+
+

@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 0.5.1b
+Version 0.6.0b
 
 |travis|   |license|   |versions|   |coverage|
 
@@ -70,6 +70,13 @@ To YAML, Python, or JSON
 Hikaru can output a Python Kubernetes object as Python source code,
 YAML, JSON, or a Python dict, and go back to any of these representations, allowing you
 to shift easily between representational formats for various purposes.
+
+Supports multiple versions of Kubernetes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hikaru allows you to use multiple releases of the Kubernetes client, providing
+appropriate bindings/methods/attributes for every object in each version of a
+release.
 
 Direct Kubernetes via CRUD or low-level methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,7 +148,7 @@ navigation:
 
 .. code:: python
 
-   from hikaru import Pod
+   from hikaru.model.rel_1_16 import Pod
    assert isinstance(p, Pod)
    print(p.metadata.labels["lab2"])
    print(p.spec.containers[0].ports[0].containerPort)
@@ -153,7 +160,7 @@ You can create Hikaru representations of Kubernetes objects in Python:
 
 .. code:: python
 
-   from hikaru import Pod, PodSpec, Container, ObjectMeta
+   from hikaru.model.rel_1_16 import Pod, PodSpec, Container, ObjectMeta
    x = Pod(apiVersion='v1', kind='Pod',
            metadata=ObjectMeta(name='hello-kiamol-3'),
            spec=PodSpec(
@@ -238,7 +245,7 @@ text files together:
 .. code:: python
 
    from component_lib import web_container, lb_container
-   from hikaru.model import Pod, ObjectMeta, PodSpec
+   from hikaru.model.rel_1_16 import Pod, ObjectMeta, PodSpec
    # make an ObjectMeta instance here called "om"
    p = Pod(apiVersion="v1", kind="Pod",
            metadata=om,

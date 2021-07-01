@@ -76,10 +76,6 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
        ``from hikaru.model.rel_1_16.v1 import *``
 
-       Or, if using the default release and version packages:
-
-       ``from hikaru.model import *``
-
     2. The classes must be defined at the top-level within the module.
 
     Further conditions may apply depending on the nature of the subclass you are
@@ -99,7 +95,7 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
     .. code:: python
 
-        from hikaru.model import *
+        from hikaru.model.rel_1_17 import *
         from typing import Any
 
         class MyPod(Pod):
@@ -122,7 +118,7 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
     .. code:: python
 
-        from hikaru.model import *
+        from hikaru.model.rel_1_16 import *
         from dataclasses import dataclass, InitVar
         from typing import Any
 
@@ -162,7 +158,7 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
     .. code:: python
 
-        from hikaru.model import *
+        from hikaru.model.rel_1_16 import *
         from dataclasses import dataclass, InitVar
         from typing import Any
 

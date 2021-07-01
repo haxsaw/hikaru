@@ -13,8 +13,8 @@ release of the Python client then you may need to specify what release and/or ve
 Releases
 ========
 
-At the time of this writing, Kubernetes is at release 1.16, and 1.17 is in alpha. The Python
-Kubernetes client works on slightly different release numbers:
+Kubernetes release nubmers the the corresponding Python client release numbers used to not
+match up, but it appears this has been fixed with release 1.17:
 
 +-------+-------------+
 |K8s Rel|Py Client Rel|
@@ -23,38 +23,35 @@ Kubernetes client works on slightly different release numbers:
 +-------+-------------+
 |1.16   |1.12         |
 +-------+-------------+
-|1.17   |???          |
+|1.17   |1.17         |
 +-------+-------------+
 
-In Hikaru, the differences in releases are reflected in the subpackages of the ``model`` package.
+In Hikaru, the differences in releases are reflected in the subpackages of the ``model`` package, which follows the naming for the actual underlying K8s release, not the number
+of the corresponding Python client release.
 Each K8s release has its own subpackage under ``model`` with names such as ``rel_1_16``. Beneath
 this there is a standardized structure reflecting the supported verions of the K8s API for
-that particular release (more on this later). Each release of Hikaru has a default release
-that it works with out of the box (currently 1.16), so if you don't need anything different
-than the default release then you don't need to do anything more.
+that particular release (more on this later).
 
-Every default release has a default version, currently ``v1``; the objects from the v1 version
-are automatically imported into the default release, and the default release's model
-objects are automatically imported into the `hikaru.model` module. That means that if you wish
-to use v1 objects for the default (rel_1_16) release, the following statements result in the
+Each release of Hikaru has a default release
+that it will use when it needs to create objects from processing YAML, but this can be changed
+depending on what you need. When creating your own objects, they must be done with respect
+to a particular release.
+
+Every release has a default version, currently ``v1``; the objects from the v1 version
+are automatically imported into the default release. That means that if you wish
+to use v1 objects for the rel_1_16 release, the following statements result in the
 importing of the exact same set of Hikaru objects:
 
 .. code:: python
 
-    from hikaru.model import *  # pulls in the default release's objects
     from hikaru.model.rel_1_16 import *  # pulls in the default version's objects
     from hikaru.model.rel_1_16.v1 import *  # pulls in the v1 objects
     from hikaru.model.rel_1_16.v1.v1 import * # same as above
 
-In the future, once Hikaru ships with support for additional releases, you will be able to 
-access objects from other releases by naming the release when you import:
+Hikaru current supports the following releases of the Kubernetes Python client and API:
 
-.. code:: python
-
-    from hikaru.model.rel_1_17 import Pod  # from the default v1 version
-    from hikaru.model.rel_1_15.v2beta1 import PodSpec  # from a specific version
-
-...and so forth.
+- 1.16 (package name rel_1_16)
+- 1.17 (package name rel_1_17)
 
 Switching Releases in Code
 --------------------------
@@ -63,7 +60,12 @@ Using imports to specify which release to use works when you're creating objects
 what about when Hikaru is creating the objects for you, for example as as a result of calling
 ``load_full_yaml()``? 
 
-Hikaru maintains two notions of a **default** release; one globally for a program, and one on
+Each Hikaru release has a notion of a global **default** K8s release it will use when creating
+objects from YAML, JSON, or Python dicts; this is generally the highest numbered release
+of K8s that the release of Hikaru supports. So if Hikaru supports both 1.16 and 1.17 K8s,
+then it will default to creating rel_1_17 model objects from parsed YAML.
+
+Hikaru maintains two notions of a *default* release; one globally for a program, and one on
 a per-thread basis. If a per-thread release isn't set then the global default release is used.
 Hikaru supplies some functions to view and alter these values:
 
@@ -77,6 +79,18 @@ Hikaru supplies some functions to view and alter these values:
 - The :ref:`set_global_default_release()<set_global_default_release doc>` function sets the the string name of the
   global default release to use in the entire program; so if a thread doesn't have its
   own default then it will fall back to the value supplied with this call.
+
+.. note::
+
+    While Hikaru supports the use of multiple K8s releases from a single program, in practice
+    it can be tricky making this work. That's because while Hikaru allows you to use model
+    objects from any release that it supports, there is generally only one actual Python K8s
+    client package installed, and there are cases where the symbol names don't line up between
+    releases. So if you have the 1.17 K8s client installed and try using model objects from
+    rel_1_16, you might find that there are symbols needed by these objects that aren't
+    available in the K8s 1.17 client. This effect is most pronounced when using alpha or 
+    beta objects. Be sure to test your code thoroughly to ensure that the use of multiple
+    releases works as you intend.
 
 =========
 Versions

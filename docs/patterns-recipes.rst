@@ -7,7 +7,7 @@ Tweaking an existing Kubernetes config
 
 One of the use cases for Hikaru is to provide a way to tweak some values in YAML
 based on criteria such as environment (dev, test, prod, dr). Hikaru provides the
-tooling for a broad set of such approaches, so we'll just look at one such approach
+tooling for a broad set of such use cases, so we'll just look at one such use
 here.
 
 The metadata object's `labels` are used in a variety of different ways, from matching
@@ -28,9 +28,17 @@ used with Hikaru to segregate management concerns over the label space.
 First, let's suppose we segregate the label space into three domains: application, environment,
 and business unit:
 
-  - The application domain is used to indicate how the components of the application find and interact with each other. These would be managed by the dev or devops teams.
-  - The environment domain is used to indicate where the application is running, such as dev, test, prod, etc. This may entail different monitoring labels or provide different names for finding common services used by the application. These would be managed by the infrastructure teams.
-  - The business unit domain is used to identify components of a business unit function. There may be a number of applications that go into a function, and hence this is an additional dimension to provide a function-centric view of resources, one that show what functions are impacted if specific components fail. These would be managed by business-aligned operations teams.
+  - The application domain is used to indicate how the components of the application find
+    and interact with each other. These would be managed by the dev or devops teams.
+  - The environment domain is used to indicate where the application is running, such as
+    dev, test, prod, etc. This may entail different monitoring labels or provide different
+    names for finding common services used by the application. These would be managed by
+    the infrastructure teams.
+  - The business unit domain is used to identify components of a business unit function.
+    There may be a number of applications that go into a function, and hence this is an
+    additional dimension to provide a function-centric view of resources, one that show
+    what functions are impacted if specific components fail. These would be managed by
+    business-aligned operations teams.
 
 Each team that manages these domains creates separate YAML labels files that contain the
 appropriate labels for the different aspects of their domain; these are kept in a directory
@@ -127,6 +135,35 @@ version string:
 
 Finding the version can be important in some of the other patterns discussed below.
 
+Shutting up the linter
+----------------------
+
+Your IDE or linter may complain about the types of objects coming from ``load_full_yaml()``
+when you assign them to a variable, especially if you use type annotations on the variable
+so that you get the benefits of Hikaru's dataclasses. If you have a some code like the
+following:
+
+.. code:: python
+
+    from hikaru import load_full_yaml
+    from hikaru.model.rel_1_16 import Pod
+    p: Pod = load_full_yaml(path='file-with-a-pod.yaml')[0]
+
+You can get complaints for the last line as the types in the list returned by
+``load_full_yaml()`` don't match the type annotation on ``p``.
+
+To silence these complaints, you can use the ``cast()`` function from the ``typing`` module
+to assure the type checker that these types are to match:
+
+.. code:: python
+
+    from typing import cast
+    from hikaru import load_full_yaml
+    from hikaru.model.rel_1_16 import Pod
+    p: Pod = cast(Pod, load_full_yaml(path='file-with-a-pod.yaml')[0])
+
+This will silence such complaints so that you are left with only meaningful type warnings.
+
 Avoiding the version change trap
 --------------------------------
 
@@ -219,7 +256,7 @@ the proper import statement; in this case it would be:
 
 .. code:: python
 
-    from hikaru.v1beta1 import *
+    from hikaru.model.rel_1_16.v1beta1 import *
     # and don't do an 'from hikaru import *' here; if you want other
     # names import them specifically
     # ...and then the generated code goes here
@@ -232,8 +269,8 @@ way to provide the local namespace. So first you import all the model modules
 .. code:: python
 
     from hikaru import load_full_yaml, process_api_version, get_python_source
-    from hikaru.model import v1
-    from hikaru.model import v1beta1
+    from hikaru.model.rel_1_16 import v1
+    from hikaru.model.rel_1_16 import v1beta1
     # and the same for the rest of the model version modules
 
 Then make a mapping of version numbers to modules:

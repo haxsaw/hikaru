@@ -24,12 +24,12 @@ Normally, you would begin with:
 
     from hikaru import *
 
-...to load in all the functions and class you need, except any Hikaru K8s objects; if you
-need to use the default release's default version's object, you'd add the following line:
+...to load in all the functions and classes you need, except any Hikaru K8s objects. If you
+need to use the default version's object in a specific release, you'd add the following line:
 
 .. code:: python
 
-    from hikaru.model import *
+    from hikaru.model.rel_1_16 import *
 
 You can of
 course load in just the bits you want to work with, as shown below. The following are
@@ -43,7 +43,8 @@ For loading Kubernetes YAML documents into live Hikaru Python objects, use the
 
 .. code:: python
 
-    from hikaru import load_full_yaml
+    from hikaru import load_full_yaml, set_default_release
+    set_default_release('rel_1_16')   # loaded objects will be from the 1.16 release
     docs = load_full_yaml(path="<path to yaml file>")
     # 'docs' is a list of different doc 'kinds' such
     # as Pod, Deployment, etc
@@ -76,7 +77,8 @@ the :ref:`get_python_source()` function:
 
 .. code:: python
 
-    from hikaru import get_python_source, load_full_yaml
+    from hikaru import get_python_source, load_full_yaml, set_default_release
+    set_default_release('rel_1_17')  # create objects from the 1.17 release
     docs = load_full_yaml(path="<path to yaml>")
     p = docs[0]
     # when rendering the Python source, you can indicate a

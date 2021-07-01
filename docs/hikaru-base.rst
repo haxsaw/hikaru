@@ -40,7 +40,7 @@ allow you to load it:
 .. code:: python
 
     from ruamel.yaml import YAML
-    from hikaru import Container
+    from hikaru.model.rel_1_16 import Container
     yaml = YAML()
     f = open("<path to yaml ficontaining a container>", "r")
     doc = yaml.load(f)
@@ -55,7 +55,8 @@ to pass into ``from_yaml()``:
 
 .. code:: python
 
-    from hikaru import Container, get_processors
+    from hikaru import get_processors
+    from hikaru.model.rel_1_16 import Container
     docs = get_processors(path="<path to Container yaml file>")
     c = Container.from_yaml(docs[0])
     assert isinstance(c, Container)
