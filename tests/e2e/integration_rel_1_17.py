@@ -44,7 +44,7 @@ else:
     # assume we're running in the parent directory
     base_path = Path('test_yaml')
 del cwd
-e2e_namespace = 'e2e-tests-v1'
+e2e_namespace = 'e2e-tests-v1-rel1-17'
 
 
 setup_calls = 0
@@ -170,7 +170,7 @@ def test05():
     """
     Create, read, and delete an RBAC role
     """
-    path = base_path / "rbac-role.yaml"
+    path = base_path / "rbac-role-rel-1-17.yaml"
     r: Role = cast(Role, load_full_yaml(path=str(path))[0])
     # this has its own namespace specified in the request so we need
     # to make sure they agree

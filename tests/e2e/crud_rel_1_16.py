@@ -121,6 +121,7 @@ def test03():
     s.create()
     try:
         s.read()
+        s.read()
         s.metadata.labels['test'] = 'test03'
         s.update()
     finally:
@@ -136,6 +137,7 @@ def test04():
     ns.metadata.name = f"{crud_namespace}test04"
     ns.create()
     try:
+        ns.read()
         ns.read()
         ns.metadata.labels['test'] = 'test04'
         ns.update()
@@ -153,6 +155,7 @@ def test05():
     r.create()
     try:
         r.read()
+        r.read()
         r.metadata.labels['test'] = 'test05'
         r.update()
     finally:
@@ -169,6 +172,7 @@ def test06():
     p.metadata.name = f"{p.metadata.name}06"
     p.create()
     try:
+        p.read()
         p.read()
         np: Pod = Pod()
         np.read(name=p.metadata.name, namespace=p.metadata.namespace)
@@ -188,6 +192,7 @@ def test07():
     r.create()
     try:
         r.read()
+        r.read()
         r.metadata.labels['test'] = 'test07'
         r.update()
     finally:
@@ -203,6 +208,7 @@ def test08():
     api.metadata.namespace = crud_namespace
     api.create()
     try:
+        api.read()
         api.read()
         api.metadata.labels['test'] = 'test08'
         api.update()
@@ -237,6 +243,7 @@ def test09():
     svc.metadata.namespace = crud_namespace
     svc.create()
     try:
+        svc.read()
         svc.read()
         svc.metadata.labels['test'] = 'test09'
         svc.update()
@@ -284,6 +291,7 @@ def test10():
     rc.create()
     try:
         rc.read()
+        rc.read()
         rc.metadata.labels['test'] = 'test10'
         rc.update()
     finally:
@@ -312,6 +320,7 @@ def test11():
     cm.metadata.namespace = crud_namespace
     cm.create()
     try:
+        cm.read()
         cm.read()
         cm.metadata.labels['testt'] = 'test11'
         cm.update()
@@ -351,6 +360,7 @@ def test12():
     job.metadata.namespace = crud_namespace
     job.create()
     try:
+        job.read()
         job.read()
         job.metadata.labels['test'] = 'test12'
         job.update()
@@ -396,6 +406,7 @@ def test13():
     ds.create()
     try:
         ds.read()
+        ds.read()
         ds.metadata.labels['test'] = 'test13'
         ds.update()
     finally:
@@ -421,6 +432,7 @@ def test14():
     )
     pvc.create()
     try:
+        pvc.read()
         pvc.read()
         pvc.metadata.labels['test'] = 'test14'
         pvc.update()
@@ -477,6 +489,7 @@ def test16():
     cr.create()
     try:
         cr.read()
+        cr.read()
         cr.metadata.labels['test'] = 'test116'
         cr.update()
     finally:
@@ -514,6 +527,7 @@ def test18():
     hpa.create()
     try:
         hpa.read()
+        hpa.read()
         hpa.metadata.labels['test'] = 'test18'
         hpa.update()
     finally:
@@ -544,6 +558,7 @@ def test19():
     np.create()
     try:
         np.read()
+        np.read()
         np.metadata.labels['test'] = 'test19'
         np.update()
     finally:
@@ -562,6 +577,7 @@ def test20():
     )
     pc.create()
     try:
+        pc.read()
         pc.read()
         pc.metadata.labels['test'] = 'test20'
         pc.update()
@@ -600,6 +616,7 @@ def test21():
     rs.create()
     try:
         rs.read()
+        rs.read()
         rs.metadata.labels['test'] = 'test21'
         rs.update()
     finally:
@@ -619,6 +636,7 @@ def test22():
     )
     rq.create()
     try:
+        rq.read()
         rq.read()
         rq.metadata.labels['test'] = 'test22'
         rq.update()
@@ -646,6 +664,7 @@ def test23():
     )
     rb.create()
     try:
+        rb.read()
         rb.read()
         rb.metadata.labels['test'] = 'test23'
         rb.update()
