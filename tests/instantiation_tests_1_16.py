@@ -19,9 +19,13 @@
 # SOFTWARE.
 import importlib
 import pytest
-from hikaru import HikaruBase, HikaruDocumentBase, get_clean_dict, from_dict
+from hikaru import (HikaruBase, HikaruDocumentBase, get_clean_dict, from_dict,
+                    set_default_release)
 from hikaru.model.rel_1_16.versions import versions
 from hikaru.model.rel_1_16 import NamespaceList
+
+
+set_default_release('rel_1_16')
 
 
 all_classes = []

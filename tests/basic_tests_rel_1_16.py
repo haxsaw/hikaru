@@ -30,6 +30,9 @@ from hikaru.meta import DiffDetail, DiffType
 from hikaru.naming import make_swagger_name, process_swagger_name
 from hikaru.version_kind import get_version_kind_class
 
+
+set_default_release('rel_1_16')
+
 p = None
 
 
