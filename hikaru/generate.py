@@ -27,7 +27,6 @@ from autopep8 import fix_code
 from black import format_str, Mode, NothingChanged
 from ruamel.yaml import YAML
 
-# from hikaru.model import *
 from hikaru.meta import HikaruBase, HikaruDocumentBase
 from hikaru.naming import process_api_version, dprefix
 from hikaru.version_kind import get_version_kind_class

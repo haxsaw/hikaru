@@ -22,7 +22,7 @@ load a specific Hikaru class:
 .. code:: python
 
     from ruamel.yaml import YAML
-    from hikaru import Pod
+    from hikaru.model.rel_1_16 import Pod
     yaml = YAML()
     f = open("<path to yaml file containing a pod>", "r")
     doc = yaml.load(f)

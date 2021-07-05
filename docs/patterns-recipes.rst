@@ -189,6 +189,7 @@ to get your hands on it in Python, and so you load its file,
 .. code:: python
 
     from hikaru import *
+    from hikaru.model.rel_1_16 import *
     doc = load_full_yaml(path="deployment.yaml")[0]
 
 ...and you want to get the equivalent Python source for this. So you use
@@ -244,7 +245,7 @@ happening?
 
 When you use `load_full_yaml()`, it looks at the kind/apiVersion information in the document and
 loads the proper module and class from what it finds in those properties. However, the import
-statement `from hikaru import *` loads the v1 model objects *by default* into whatever
+statement `from hikaru.model.rel_1_16 import *` loads the v1 model objects *by default* into whatever
 scope the statement is in, in this case the global scope. So when you use `eval()` to execute
 the Python, it looks first to the local and then the global scope for the definition of
 `Deployment`, and what it finds is the one from the wild import, **not** the one named in the
@@ -257,7 +258,7 @@ the proper import statement; in this case it would be:
 .. code:: python
 
     from hikaru.model.rel_1_16.v1beta1 import *
-    # and don't do an 'from hikaru import *' here; if you want other
+    # and don't do an 'from hikaru.rel_1_16 import *' here; if you want other
     # names import them specifically
     # ...and then the generated code goes here
 
@@ -300,7 +301,7 @@ fragments, you'll already be using the specific class's `from_yaml()` method, so
 just need to be sure of which version of that class to use.
 
 Regardless of the approach, the important point to remember here is that
-if you use the `from hikaru import *` form, you will default to all `v1` objects,
+if you use the `from hikaru.model.rel_1_16 import *` form, you will default to all `v1` objects,
 so you should be mindful of when you might actually want to make instances of 
 a different version.
 
@@ -325,7 +326,7 @@ Python's pathlib to iterate over a directory of YAML and turn it into Hikaru Pyt
         name = f"{p.parts[-1].split('.')[:-1][0]}.py"
         fname = Path(yaml_dir_path) / name
         f = fname.open('w')
-        print("from hikaru import *\n\n", file=f)
+        print("from hikaru.model.rel_1_16 import *\n\n", file=f)
         for j, doc in enumerate(docs):
             s = get_python_source(doc, assign_to=f"obj{j}",
                                   style="black")

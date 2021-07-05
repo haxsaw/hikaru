@@ -156,11 +156,19 @@ recreate the original object.
 
 **NOTE:** There are no import statements output as part of the generated code; you have
 to supply these yourself. This is because it's not clear if this will be added to another
-string of generated code. You can satisfy all import requirements by prepending the line:
+string of generated code. You can satisfy all function import requirements by
+prepending the line:
 
 .. code:: python
 
     from hikaru import *
+
+...and the release model classes by prepending a line that imports everything from your
+desired release:
+
+.. code:: python
+
+    from hikaru.model.release_1_16 import *
 
 ...before the generated code as appropriate.
 
