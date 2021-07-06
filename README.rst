@@ -11,8 +11,8 @@
 .. |coverage| image:: https://codecov.io/gh/haxsaw/hikaru/branch/dev/graph/badge.svg?token=QOFGNVHGNP
    :target: https://codecov.io/gh/haxsaw/hikaru
    
-.. |logo| image:: hikaru-logo.svg
-	:alt: Hikaru
+.. |logo| image:: hikaru-logo.png
+   :alt: Hikaru
 
 |logo|
 
