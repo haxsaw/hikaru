@@ -61,7 +61,7 @@ def beginning():
 
 def ending():
     Namespace.deleteNamespace(name=e2e_namespace)
-    res: Response = Pod.listPodForAllNamespaces()
+    res: Response = PodList.listPodForAllNamespaces()
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if (pod.metadata.namespace in ('default', e2e_namespace) and
@@ -280,7 +280,7 @@ def test08():
                 break
             time.sleep(0.5)
         # skipping the stream() bit for now; have to look into it further
-        np_res = Pod.listPodForAllNamespaces()
+        np_res = PodList.listPodForAllNamespaces()
         assert np_res.obj
         assert isinstance(np_res.obj, PodList)
         assert len(np_res.obj.items) > 0
@@ -659,7 +659,7 @@ def test23():
     """
     test listing endpoints
     """
-    res = Endpoints.listEndpointsForAllNamespaces()
+    res = EndpointsList.listEndpointsForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, EndpointsList)
     assert len(res.obj.items) > 0
@@ -679,7 +679,7 @@ def test25():
     """
     test listing events via event
     """
-    res = Event.listEventForAllNamespaces()
+    res = EventList.listEventForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, EventList)
     assert len(res.obj.items) > 0
@@ -717,7 +717,7 @@ def test29():
     """
     test getting the list of Leases via Lease
     """
-    res = Lease.listLeaseForAllNamespaces()
+    res = LeaseList.listLeaseForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, LeaseList)
     assert len(res.obj.items) > 0
@@ -1224,7 +1224,7 @@ def test61():
     """
     test listing endpoints
     """
-    res = Endpoints.listEndpointsForAllNamespaces()
+    res = EndpointsList.listEndpointsForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, EndpointsList)
     assert len(res.obj.items) > 0
@@ -1276,7 +1276,7 @@ def test63():
         metadata=ObjectMeta(name='test63-lease'),
         spec=LeaseSpec()
     )
-    res = Lease.listLeaseForAllNamespaces()
+    res = LeaseList.listLeaseForAllNamespaces()
     assert res.obj
     assert isinstance(res.obj, LeaseList)
     before_len = len(res.obj.items)
@@ -1285,7 +1285,7 @@ def test63():
         assert res.obj
         assert isinstance(res.obj, Lease)
         assert res.obj.metadata.name == l.metadata.name
-        res = Lease.listLeaseForAllNamespaces()
+        res = LeaseList.listLeaseForAllNamespaces()
         assert isinstance(res.obj, LeaseList)
         assert before_len < len(res.obj.items)
         rres = Lease.readNamespacedLease(l.metadata.name,

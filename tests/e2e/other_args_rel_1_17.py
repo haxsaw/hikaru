@@ -38,7 +38,7 @@ def beginning():
 
 def ending():
     Namespace.deleteNamespace(name=tests_namespace)
-    res: Response = Pod.listPodForAllNamespaces()
+    res: Response = PodList.listPodForAllNamespaces()
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if pod.metadata.namespace == tests_namespace:

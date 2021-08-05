@@ -1715,7 +1715,8 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         guess = _best_guess(new_op)
         if (guess and whose_method is cd_in_responses and
                 whose_method is not cd_in_params and
-                whose_method.short_name != guess.short_name):
+                whose_method.short_name != guess.short_name and
+                not new_op.op_id.startswith('list')):
             guess.add_operation(new_op)
         else:
             whose_method.add_operation(new_op)
