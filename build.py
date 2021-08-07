@@ -71,13 +71,11 @@ import re
 from black import NothingChanged, format_str, Mode
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
-from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
+from hikaru.meta import (HikaruBase, HikaruDocumentBase, KubernetesException,
+                         WatcherDescriptor)
 
 
 NoneType = type(None)
-
-
-remaining_ops_module = "misc.py"
 
 
 def _clean_directory(dirpath: str, including_dirpath=False):
@@ -217,7 +215,8 @@ def output_boilerplate(stream=sys.stdout, other_imports=None):
     print(_module_docstring, file=stream)
     print(file=stream)
     print(f"from hikaru.meta import {HikaruBase.__name__}, "
-          f"{HikaruDocumentBase.__name__}, {KubernetesException.__name__}",
+          f"{HikaruDocumentBase.__name__}, {KubernetesException.__name__}, "
+          f"{WatcherDescriptor.__name__}",
           file=stream)
     print("from hikaru.generate import get_clean_dict", file=stream)
     print("from hikaru.utils import Response", file=stream)
@@ -303,8 +302,6 @@ def write_modules(pkgpath: str):
             f.close()
             documents_path = version_path / "documents.py"
             write_documents_module(documents_path, md.version)
-            # misc_path = version_path / remaining_ops_module
-            # misc_path.touch()
 
     # finally, capture the names of all the version modules in version module
     versions = pkg / 'versions.py'
@@ -399,6 +396,8 @@ class Operation(object):
         self.op_id = op_id
         self.description = description
         self.is_staticmethod = False
+        # flag if this can be 'watched'
+        self.supports_watch = False
         # support for 1.16; some 'body' inputs don't have a type beside
         # 'object' which we treat as Any,
         # but in every case it appears they should be 'self' and treated
@@ -441,6 +440,8 @@ class Operation(object):
 
     def add_parameter(self, name: str, ptype: Any, description: str,
                       required: bool = False) -> 'OpParameter':
+        if name == 'watch':
+            self.supports_watch = True
         ptype = types_map.get(ptype, ptype)
         new_param = OpParameter(name, ptype, description, required)
         if self.self_param is None and (isinstance(ptype, ClassDescriptor) or
@@ -1034,7 +1035,6 @@ class ClassDescriptor(object):
         self.required = []
         self.type = None
         self.is_subclass_of = None
-        # self.is_document = False
         self.operations: Dict[str, Operation] = {}
         self.has_gvk_dict = False
         self.has_doc_markers = False
@@ -1047,6 +1047,8 @@ class ClassDescriptor(object):
         # of this set is managed by the Operation instances so it can
         # see when an operation has already be generated for this object
         self.crud_ops_created = set()
+        # flag re: if watch operations should be supported
+        self.watchable = False
         # OK, now a hack for Kubernetes:
         # Although K8s defines top-level objects that are collections
         # of other objects, and there are API calls that fetch these collection
@@ -1076,6 +1078,8 @@ class ClassDescriptor(object):
         return self.has_doc_markers and self.has_gvk_dict
 
     def add_operation(self, op: Operation):
+        if op.supports_watch:
+            self.watchable = True
         self.operations[op.op_id] = op
 
     def has_properties(self) -> bool:
@@ -1206,6 +1210,17 @@ class ClassDescriptor(object):
                             if op.should_render]
             method_lines.append("")
             lines.extend(method_lines)
+            if op.supports_watch:
+                if 'Namespaced' in op.meth_name:
+                    target = '_namespaced_watcher'
+                else:
+                    target = '_watcher'
+                pkgname, modname, clsname, methname = \
+                    determine_k8s_mod_class(self, op)
+                lines.append(f"    {target} = WatcherDescriptor('{pkgname}', "
+                             f"'{modname}', '{clsname}', "
+                             f"'{methname}')")
+                lines.append("")
 
         code = "\n".join(lines)
         try:
@@ -1297,6 +1312,16 @@ class ModuleDef(object):
             assert isinstance(emod, ModuleDef)
             all_classes.update(emod.all_classes)
         all_classes.update(self.all_classes)
+        # compute all pairs of objects involved in implementing 'watch' semantics
+        watcher_pairs = {}
+        for v in all_classes.values():
+            assert isinstance(v, ClassDescriptor)
+            if v.short_name.endswith('List') and v.watchable:
+                item_name = v.short_name.replace('List', '')
+                if item_name in all_classes:
+                    watcher_pairs[item_name] = v.short_name
+                else:
+                    print(f"!!!!Can't find an item class for {v.short_name}")
         # compute & output all the imports needed from Kubernetes
         k8s_imports = {"ApiClient"}
         for cd in self.all_classes.values():
@@ -1312,6 +1337,10 @@ class ModuleDef(object):
             print(f"from kubernetes.client import {k8s_class}", file=stream)
         print("\n", file=stream)
         write_classes(list(all_classes.values()), self.version, stream=stream)
+        if watcher_pairs:
+            for k, v in watcher_pairs.items():
+                print(f"{k}._watcher_cls = {v}", file=stream)
+            print("\n", file=stream)
         output_footer(stream=stream)
 
 
@@ -1957,4 +1986,3 @@ if __name__ == "__main__":
     main_rel = True if len(sys.argv) == 3 else False
     print(f">>>Processing {sys.argv[1]}")
     build_it(sys.argv[1], main_rel)
-    sys.exit(0)

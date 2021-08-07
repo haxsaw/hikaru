@@ -26,7 +26,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
 
-from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException, WatcherDescriptor
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
@@ -10589,6 +10589,13 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".autoscaling_v2beta2_api",
+        "AutoscalingV2beta2Api",
+        "list_horizontal_pod_autoscaler_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedHorizontalPodAutoscaler(
         namespace: str,
@@ -10714,6 +10721,13 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".autoscaling_v2beta2_api",
+        "AutoscalingV2beta2Api",
+        "list_namespaced_horizontal_pod_autoscaler",
+    )
 
 
 @dataclass
@@ -11749,6 +11763,45 @@ class ResourceMetricStatus(HikaruBase):
 
     current: "MetricValueStatus"
     name: str
+
+
+Pod._watcher_cls = PodList
+Secret._watcher_cls = SecretList
+ReplicationController._watcher_cls = ReplicationControllerList
+ClusterRole._watcher_cls = ClusterRoleList
+ComponentStatus._watcher_cls = ComponentStatusList
+RoleBinding._watcher_cls = RoleBindingList
+APIService._watcher_cls = APIServiceList
+ResourceQuota._watcher_cls = ResourceQuotaList
+PersistentVolumeClaim._watcher_cls = PersistentVolumeClaimList
+PersistentVolume._watcher_cls = PersistentVolumeList
+Lease._watcher_cls = LeaseList
+Namespace._watcher_cls = NamespaceList
+Endpoints._watcher_cls = EndpointsList
+LimitRange._watcher_cls = LimitRangeList
+ReplicaSet._watcher_cls = ReplicaSetList
+Node._watcher_cls = NodeList
+CustomResourceDefinition._watcher_cls = CustomResourceDefinitionList
+ClusterRoleBinding._watcher_cls = ClusterRoleBindingList
+MutatingWebhookConfiguration._watcher_cls = MutatingWebhookConfigurationList
+StorageClass._watcher_cls = StorageClassList
+Service._watcher_cls = ServiceList
+Role._watcher_cls = RoleList
+ValidatingWebhookConfiguration._watcher_cls = ValidatingWebhookConfigurationList
+StatefulSet._watcher_cls = StatefulSetList
+ServiceAccount._watcher_cls = ServiceAccountList
+Event._watcher_cls = EventList
+Job._watcher_cls = JobList
+PodTemplate._watcher_cls = PodTemplateList
+HorizontalPodAutoscaler._watcher_cls = HorizontalPodAutoscalerList
+Deployment._watcher_cls = DeploymentList
+NetworkPolicy._watcher_cls = NetworkPolicyList
+VolumeAttachment._watcher_cls = VolumeAttachmentList
+ControllerRevision._watcher_cls = ControllerRevisionList
+ConfigMap._watcher_cls = ConfigMapList
+CSINode._watcher_cls = CSINodeList
+PriorityClass._watcher_cls = PriorityClassList
+DaemonSet._watcher_cls = DaemonSetList
 
 
 globs = dict(globals())

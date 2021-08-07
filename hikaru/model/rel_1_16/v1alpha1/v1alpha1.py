@@ -26,7 +26,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
 
-from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException, WatcherDescriptor
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
@@ -2557,6 +2557,13 @@ class ClusterRoleList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_cluster_role",
+    )
+
 
 @dataclass
 class GroupVersionForDiscovery(HikaruBase):
@@ -3883,6 +3890,13 @@ class RoleBindingList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_namespaced_role_binding",
+    )
+
     @staticmethod
     def listRoleBindingForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -4005,6 +4019,13 @@ class RoleBindingList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_role_binding_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -11469,6 +11490,13 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_cluster_role_binding",
+    )
+
 
 @dataclass
 class DaemonEndpoint(HikaruBase):
@@ -13005,6 +13033,13 @@ class RoleList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_namespaced_role",
+    )
+
     @staticmethod
     def listRoleForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -13125,6 +13160,13 @@ class RoleList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1alpha1_api",
+        "RbacAuthorizationV1alpha1Api",
+        "list_role_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -15125,6 +15167,13 @@ class PriorityClassList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".scheduling_v1alpha1_api",
+        "SchedulingV1alpha1Api",
+        "list_priority_class",
+    )
+
 
 @dataclass
 class PodSecurityContext(HikaruBase):
@@ -15386,6 +15435,13 @@ class VolumeAttachmentList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".storage_v1alpha1_api",
+        "StorageV1alpha1Api",
+        "list_volume_attachment",
+    )
 
 
 @dataclass
@@ -17169,6 +17225,13 @@ class PodPresetList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".settings_v1alpha1_api",
+        "SettingsV1alpha1Api",
+        "list_namespaced_pod_preset",
+    )
+
     @staticmethod
     def listPodPresetForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -17289,6 +17352,13 @@ class PodPresetList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".settings_v1alpha1_api",
+        "SettingsV1alpha1Api",
+        "list_pod_preset_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -17456,6 +17526,13 @@ class AuditSinkList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".auditregistration_v1alpha1_api",
+        "AuditregistrationV1alpha1Api",
+        "list_audit_sink",
+    )
 
 
 @dataclass
@@ -18535,6 +18612,13 @@ class EndpointSliceList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".discovery_v1alpha1_api",
+        "DiscoveryV1alpha1Api",
+        "list_endpoint_slice_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedEndpointSlice(
         namespace: str,
@@ -18658,6 +18742,13 @@ class EndpointSliceList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".discovery_v1alpha1_api",
+        "DiscoveryV1alpha1Api",
+        "list_namespaced_endpoint_slice",
+    )
 
 
 @dataclass
@@ -19541,6 +19632,55 @@ class RuntimeClassList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".node_v1alpha1_api",
+        "NodeV1alpha1Api",
+        "list_runtime_class",
+    )
+
+
+Pod._watcher_cls = PodList
+Secret._watcher_cls = SecretList
+ReplicationController._watcher_cls = ReplicationControllerList
+ClusterRole._watcher_cls = ClusterRoleList
+ComponentStatus._watcher_cls = ComponentStatusList
+RoleBinding._watcher_cls = RoleBindingList
+APIService._watcher_cls = APIServiceList
+ResourceQuota._watcher_cls = ResourceQuotaList
+PersistentVolumeClaim._watcher_cls = PersistentVolumeClaimList
+PersistentVolume._watcher_cls = PersistentVolumeList
+Lease._watcher_cls = LeaseList
+Namespace._watcher_cls = NamespaceList
+Endpoints._watcher_cls = EndpointsList
+LimitRange._watcher_cls = LimitRangeList
+ReplicaSet._watcher_cls = ReplicaSetList
+CustomResourceDefinition._watcher_cls = CustomResourceDefinitionList
+ClusterRoleBinding._watcher_cls = ClusterRoleBindingList
+MutatingWebhookConfiguration._watcher_cls = MutatingWebhookConfigurationList
+StorageClass._watcher_cls = StorageClassList
+Service._watcher_cls = ServiceList
+Role._watcher_cls = RoleList
+ValidatingWebhookConfiguration._watcher_cls = ValidatingWebhookConfigurationList
+StatefulSet._watcher_cls = StatefulSetList
+ServiceAccount._watcher_cls = ServiceAccountList
+Event._watcher_cls = EventList
+Job._watcher_cls = JobList
+PodTemplate._watcher_cls = PodTemplateList
+HorizontalPodAutoscaler._watcher_cls = HorizontalPodAutoscalerList
+Node._watcher_cls = NodeList
+Deployment._watcher_cls = DeploymentList
+NetworkPolicy._watcher_cls = NetworkPolicyList
+ControllerRevision._watcher_cls = ControllerRevisionList
+ConfigMap._watcher_cls = ConfigMapList
+PriorityClass._watcher_cls = PriorityClassList
+DaemonSet._watcher_cls = DaemonSetList
+VolumeAttachment._watcher_cls = VolumeAttachmentList
+PodPreset._watcher_cls = PodPresetList
+AuditSink._watcher_cls = AuditSinkList
+EndpointSlice._watcher_cls = EndpointSliceList
+RuntimeClass._watcher_cls = RuntimeClassList
 
 
 globs = dict(globals())

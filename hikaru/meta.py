@@ -1148,9 +1148,68 @@ class HikaruBase(object):
         return " ".join(code)
 
 
+class WatcherDescriptor(object):
+    def __init__(self, pkgname: str, modname: str, clsname: str, methname: str):
+        self.pkgname = pkgname
+        self.modname = modname
+        self.clsname = clsname
+        self.methname = methname
+
+
 @dataclass
 class HikaruDocumentBase(HikaruBase):
     _version = 'UNKNOWN'
+    # OK, it's worth leaving some comment here about these three following
+    # class attributes.
+    #
+    # it turns out that the swagger file defines the 'list' operations
+    # on REST calls that return an object that contains a list of other objects.
+    # So for example, the listJobForAllNamespaces operation returns a JobList
+    # object which contains Job objects. However, these list operations also
+    # form the backbone of thw 'watch' functionality of the underlying K8s
+    # client. These watch operations do not return the list object (from above,
+    # not JobList), but instead return just the contained objects as they
+    # occur (just Jobs). So what we want to have happen is that if users want
+    # the list object they call a static method on the relevant class, but if they
+    # want to watch the contents of one of those objects using the watch facility
+    # we want them to do that via the object contained in the list. So for example,
+    # use JobList to get lists of Jobs, but use Job for a Job watcher.
+    #
+    # so here's how this will get done:
+    # 1) invoking operations directly
+    # Since in the swagger the list operations return list objects, we'll keep
+    # these together and make these static methods on this list classes. So
+    # if the user wants to get list objects they will simply invoke the relevant
+    # method on the list class.
+    #
+    # 2) performing watch operations:
+    # Watch operations result in individual objects coming from an iterator, and
+    # we'd like to reference the actual objects that the watch will yield instead
+    # of the list object that contains the method that implements the watch
+    # semantics. further, we want to hide from the user what API object and
+    # method that needs to be used to make the watch happen. We'll achieve this
+    # in the following way: in the list class, we will store one or two references
+    # to WatchDescriptor objects that contain the information needed to
+    # execute either a namespace-bound watch or a namespace-agnostic watch.
+    # The attributes involved here will be _namespaced_watcher and _watcher,
+    # respectively. However, since we want watches to be initiated from the
+    # perspective of the class that the watch will emit, a third attribute,
+    # _watcher_cls, will contain a reference to to the associated list class
+    # that contains the previous two attributes. To reuse the example from above,
+    # JobList will have references for WatchDescriptor objects for the relevant
+    # methods in the _namespaced_watcher and _watcher attributes, and then the
+    # Job class will have a reference to the JobList class in the _watcher_cls
+    # attribute. A value for 'None' in any of these attributes will mean that
+    # the associated operation isn't supported.
+    #
+    # These references will be used by the code in the 'watch' module to ensure
+    # that the proper underlying K8s methods are used.
+    #
+    # The build system will ensure that all these attributes are assigned properly
+    # when the models get built from the swagger files.
+    _namespaced_watcher = None
+    _watcher = None
+    _watcher_cls = None
 
     # noinspection PyDataclass
     def __post_init__(self, client: Any = None):

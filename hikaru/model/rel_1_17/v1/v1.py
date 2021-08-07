@@ -26,7 +26,7 @@ a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
 
-from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException
+from hikaru.meta import HikaruBase, HikaruDocumentBase, KubernetesException, WatcherDescriptor
 from hikaru.generate import get_clean_dict
 from hikaru.utils import Response
 from typing import Dict, List, Optional, Any
@@ -3818,6 +3818,10 @@ class PodList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_pod"
+    )
+
     @staticmethod
     def listPodForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -3938,6 +3942,13 @@ class PodList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_pod_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -6668,6 +6679,10 @@ class SecretList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_secret"
+    )
+
     @staticmethod
     def listSecretForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -6788,6 +6803,13 @@ class SecretList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_secret_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -7959,6 +7981,13 @@ class ReplicationControllerList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_replication_controller",
+    )
+
     @staticmethod
     def listReplicationControllerForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -8081,6 +8110,13 @@ class ReplicationControllerList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_replication_controller_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -9143,6 +9179,13 @@ class ClusterRoleList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_cluster_role",
+    )
+
 
 @dataclass
 class GroupVersionForDiscovery(HikaruBase):
@@ -9485,6 +9528,10 @@ class ComponentStatusList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_component_status"
+    )
 
 
 @dataclass
@@ -10680,6 +10727,13 @@ class RoleBindingList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_namespaced_role_binding",
+    )
+
     @staticmethod
     def listRoleBindingForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -10802,6 +10856,13 @@ class RoleBindingList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_role_binding_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -13402,6 +13463,13 @@ class APIServiceList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apiregistration_v1_api",
+        "ApiregistrationV1Api",
+        "list_api_service",
+    )
+
 
 @dataclass
 class PersistentVolumeClaim(HikaruDocumentBase):
@@ -14658,6 +14726,13 @@ class ResourceQuotaList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_resource_quota",
+    )
+
     @staticmethod
     def listResourceQuotaForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -14780,6 +14855,13 @@ class ResourceQuotaList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_resource_quota_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -15854,6 +15936,13 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_persistent_volume_claim",
+    )
+
     @staticmethod
     def listPersistentVolumeClaimForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -15976,6 +16065,13 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_persistent_volume_claim_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -18576,6 +18672,10 @@ class PersistentVolumeList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_persistent_volume"
+    )
+
 
 @dataclass
 class NamespaceSpec(HikaruBase):
@@ -19552,6 +19652,13 @@ class LeaseList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".coordination_v1_api",
+        "CoordinationV1Api",
+        "list_lease_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedLease(
         namespace: str,
@@ -19675,6 +19782,13 @@ class LeaseList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".coordination_v1_api",
+        "CoordinationV1Api",
+        "list_namespaced_lease",
+    )
 
 
 @dataclass
@@ -21405,6 +21519,10 @@ class NamespaceList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespace"
+    )
+
 
 @dataclass
 class LeaseSpec(HikaruBase):
@@ -22402,6 +22520,13 @@ class EndpointsList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_endpoints_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedEndpoints(
         namespace: str,
@@ -22525,6 +22650,13 @@ class EndpointsList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_endpoints",
+    )
 
 
 @dataclass
@@ -23947,6 +24079,13 @@ class LimitRangeList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_limit_range_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedLimitRange(
         namespace: str,
@@ -24070,6 +24209,13 @@ class LimitRangeList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_limit_range",
+    )
 
 
 @dataclass
@@ -25144,6 +25290,13 @@ class ReplicaSetList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_namespaced_replica_set",
+    )
+
     @staticmethod
     def listReplicaSetForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -25264,6 +25417,13 @@ class ReplicaSetList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_replica_set_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -34063,6 +34223,10 @@ class NodeList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_node"
+    )
+
 
 @dataclass
 class WatchEvent(HikaruBase):
@@ -34443,6 +34607,13 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apiextensions_v1_api",
+        "ApiextensionsV1Api",
+        "list_custom_resource_definition",
+    )
 
 
 @dataclass
@@ -35621,6 +35792,13 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_cluster_role_binding",
+    )
 
 
 @dataclass
@@ -36894,6 +37072,13 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".admissionregistration_v1_api",
+        "AdmissionregistrationV1Api",
+        "list_mutating_webhook_configuration",
+    )
 
 
 @dataclass
@@ -38858,6 +39043,10 @@ class StorageClassList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".storage_v1_api", "StorageV1Api", "list_storage_class"
+    )
+
 
 @dataclass
 class Role(HikaruDocumentBase):
@@ -39802,6 +39991,10 @@ class ServiceList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_service"
+    )
+
     @staticmethod
     def listServiceForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -39922,6 +40115,13 @@ class ServiceList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_service_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -40076,6 +40276,13 @@ class RoleList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_namespaced_role",
+    )
+
     @staticmethod
     def listRoleForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -40196,6 +40403,13 @@ class RoleList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".rbac_authorization_v1_api",
+        "RbacAuthorizationV1Api",
+        "list_role_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -40350,6 +40564,13 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".admissionregistration_v1_api",
+        "AdmissionregistrationV1Api",
+        "list_validating_webhook_configuration",
+    )
+
 
 @dataclass
 class StatefulSetList(HikaruDocumentBase):
@@ -40503,6 +40724,13 @@ class StatefulSetList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_namespaced_stateful_set",
+    )
+
     @staticmethod
     def listStatefulSetForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -40625,6 +40853,13 @@ class StatefulSetList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_stateful_set_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -41608,6 +41843,13 @@ class ServiceAccountList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_service_account",
+    )
+
     @staticmethod
     def listServiceAccountForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -41730,6 +41972,13 @@ class ServiceAccountList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_service_account_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -41904,6 +42153,13 @@ class EventList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_event_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedEvent(
         namespace: str,
@@ -42027,6 +42283,10 @@ class EventList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_event"
+    )
 
 
 @dataclass
@@ -44727,6 +44987,13 @@ class JobList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".batch_v1_api",
+        "BatchV1Api",
+        "list_job_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedJob(
         namespace: str,
@@ -44850,6 +45117,10 @@ class JobList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".batch_v1_api", "BatchV1Api", "list_namespaced_job"
+    )
 
 
 @dataclass
@@ -45097,6 +45368,13 @@ class PodTemplateList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_pod_template",
+    )
+
     @staticmethod
     def listPodTemplateForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -45219,6 +45497,13 @@ class PodTemplateList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_pod_template_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -45433,6 +45718,13 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".autoscaling_v1_api",
+        "AutoscalingV1Api",
+        "list_horizontal_pod_autoscaler_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedHorizontalPodAutoscaler(
         namespace: str,
@@ -45558,6 +45850,13 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".autoscaling_v1_api",
+        "AutoscalingV1Api",
+        "list_namespaced_horizontal_pod_autoscaler",
+    )
 
 
 @dataclass
@@ -45903,6 +46202,13 @@ class DeploymentList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_deployment_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedDeployment(
         namespace: str,
@@ -46026,6 +46332,13 @@ class DeploymentList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_namespaced_deployment",
+    )
 
 
 @dataclass
@@ -46335,6 +46648,13 @@ class NetworkPolicyList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".networking_v1_api",
+        "NetworkingV1Api",
+        "list_namespaced_network_policy",
+    )
+
     @staticmethod
     def listNetworkPolicyForAllNamespaces(
         allow_watch_bookmarks: Optional[bool] = None,
@@ -46457,6 +46777,13 @@ class NetworkPolicyList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".networking_v1_api",
+        "NetworkingV1Api",
+        "list_network_policy_for_all_namespaces",
+    )
 
 
 @dataclass
@@ -46833,6 +47160,13 @@ class VolumeAttachmentList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".storage_v1_api",
+        "StorageV1Api",
+        "list_volume_attachment",
+    )
+
 
 @dataclass
 class ControllerRevisionList(HikaruDocumentBase):
@@ -46986,6 +47320,13 @@ class ControllerRevisionList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_controller_revision_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedControllerRevision(
         namespace: str,
@@ -47109,6 +47450,13 @@ class ControllerRevisionList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_namespaced_controller_revision",
+    )
 
 
 @dataclass
@@ -47301,6 +47649,13 @@ class ConfigMapList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_config_map_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedConfigMap(
         namespace: str,
@@ -47424,6 +47779,13 @@ class ConfigMapList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".core_v1_api",
+        "CoreV1Api",
+        "list_namespaced_config_map",
+    )
 
 
 @dataclass
@@ -48495,6 +48857,10 @@ class CSINodeList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api", ".storage_v1_api", "StorageV1Api", "list_csi_node"
+    )
+
 
 @dataclass
 class PriorityClassList(HikaruDocumentBase):
@@ -48645,6 +49011,13 @@ class PriorityClassList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".scheduling_v1_api",
+        "SchedulingV1Api",
+        "list_priority_class",
+    )
 
 
 @dataclass
@@ -48853,6 +49226,13 @@ class DaemonSetList(HikaruDocumentBase):
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
 
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_daemon_set_for_all_namespaces",
+    )
+
     @staticmethod
     def listNamespacedDaemonSet(
         namespace: str,
@@ -48976,6 +49356,52 @@ class DaemonSetList(HikaruDocumentBase):
         result = the_method(**all_args)
         codes_returning_objects = (200,)
         return Response(result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".apps_v1_api",
+        "AppsV1Api",
+        "list_namespaced_daemon_set",
+    )
+
+
+Pod._watcher_cls = PodList
+Secret._watcher_cls = SecretList
+ReplicationController._watcher_cls = ReplicationControllerList
+ClusterRole._watcher_cls = ClusterRoleList
+ComponentStatus._watcher_cls = ComponentStatusList
+RoleBinding._watcher_cls = RoleBindingList
+APIService._watcher_cls = APIServiceList
+ResourceQuota._watcher_cls = ResourceQuotaList
+PersistentVolumeClaim._watcher_cls = PersistentVolumeClaimList
+PersistentVolume._watcher_cls = PersistentVolumeList
+Lease._watcher_cls = LeaseList
+Namespace._watcher_cls = NamespaceList
+Endpoints._watcher_cls = EndpointsList
+LimitRange._watcher_cls = LimitRangeList
+ReplicaSet._watcher_cls = ReplicaSetList
+Node._watcher_cls = NodeList
+CustomResourceDefinition._watcher_cls = CustomResourceDefinitionList
+ClusterRoleBinding._watcher_cls = ClusterRoleBindingList
+MutatingWebhookConfiguration._watcher_cls = MutatingWebhookConfigurationList
+StorageClass._watcher_cls = StorageClassList
+Service._watcher_cls = ServiceList
+Role._watcher_cls = RoleList
+ValidatingWebhookConfiguration._watcher_cls = ValidatingWebhookConfigurationList
+StatefulSet._watcher_cls = StatefulSetList
+ServiceAccount._watcher_cls = ServiceAccountList
+Event._watcher_cls = EventList
+Job._watcher_cls = JobList
+PodTemplate._watcher_cls = PodTemplateList
+HorizontalPodAutoscaler._watcher_cls = HorizontalPodAutoscalerList
+Deployment._watcher_cls = DeploymentList
+NetworkPolicy._watcher_cls = NetworkPolicyList
+VolumeAttachment._watcher_cls = VolumeAttachmentList
+ControllerRevision._watcher_cls = ControllerRevisionList
+ConfigMap._watcher_cls = ConfigMapList
+CSINode._watcher_cls = CSINodeList
+PriorityClass._watcher_cls = PriorityClassList
+DaemonSet._watcher_cls = DaemonSetList
 
 
 globs = dict(globals())
