@@ -20,11 +20,11 @@
 
 import time
 from kubernetes.client import ApiException
-from hikaru import watch, set_default_release
-set_default_release('rel_1_17')
+from hikaru import watch, set_global_default_release
+set_global_default_release('rel_1_16')
 from hikaru.meta import WatcherDescriptor
-from hikaru.model.rel_1_17.v1 import (Pod, Namespace, ObjectMeta, PodList,
-                                      SelfSubjectRulesReview)
+from hikaru.model.rel_1_16 import (Pod, Namespace, ObjectMeta, PodList,
+                                   SelfSubjectRulesReview)
 
 saved_get_api_class = watch._get_api_class
 saved_k8s_watch_factory = watch._k8s_watch_factory
@@ -680,6 +680,7 @@ def test21():
 
 if __name__ == "__main__":
     setup()
+    test15()
     for k, v in dict(globals()).items():
         if callable(v) and k.startswith('test'):
             print(f'running {k}')
