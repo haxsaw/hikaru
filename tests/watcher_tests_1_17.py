@@ -453,16 +453,234 @@ def test15():
 
     old_watch_factory = watch_to_vend
     watch_to_vend = Test15Watch
-    watcher = Watcher(Pod)
     mux = MultiplexingWatcher()
     w = Watcher(Pod, timeout_seconds=1)
-    # for mux.stream(quit_on_timeout=True):
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=True):
+            assert isinstance(we.obj, Pod)
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test16():
+    """
+    test16: test exception callback; return to end the watcher
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test16API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test16API
+
+    class Test16Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            if resource_version == '1':
+                raise ApiException(500, 'uh oh')
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    class Callback(object):
+        def __init__(self):
+            self.called = False
+
+        def callback(self, mux: MultiplexingWatcher, w: Watcher, e: Exception):
+            self.called = True
+            return None
+
+    cb = Callback()
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test16Watch
+    mux = MultiplexingWatcher(exception_callback=cb.callback)
+    w = Watcher(Pod, resource_version=1)
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=True):
+            pass
+        assert cb.called, "callback didn't get called"
+        assert not mux.watchers, "still have watchers"
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test17():
+    """
+    test17; botch the exception callback
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test17API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test17API
+
+    class Test17Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            if resource_version == '1':
+                raise ApiException(500, 'uh oh')
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    class Callback(object):
+        def __init__(self):
+            self.called = False
+
+        def callback(self, mux: MultiplexingWatcher, w: Watcher, e: Exception):
+            self.called = True
+            x = 1 / 0
+            return None
+
+    cb = Callback()
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test17Watch
+    mux = MultiplexingWatcher(exception_callback=cb.callback)
+    w = Watcher(Pod, resource_version=1)
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=True):
+            pass
+        assert cb.called, "callback didn't get called"
+        assert not mux.watchers, "still have watchers"
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test18():
+    """
+    test18: exception in watcher, but no callback
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test18API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test18API
+
+    class Test18Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            if resource_version == '1':
+                raise ApiException(500, 'uh oh')
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test18Watch
+    mux = MultiplexingWatcher()
+    w = Watcher(Pod, resource_version=1)
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=True):
+            pass
+        assert not mux.watchers, "still have watchers"
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test19():
+    """
+    test19: delete a watcher the mux knows nothing about
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test19API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test19API
+
+    class Test19Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test19Watch
+    mux = MultiplexingWatcher()
+    w = Watcher(Pod, resource_version=1)
+    mux.add_watcher(w)
+    mux.add_watcher(w)
+    mux.del_watcher(w)
+    try:
+        mux.del_watcher(w)
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test20():
+    """
+    test20: stop the mux and all watchers
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test20API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test20API
+
+    class Test20Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test20Watch
+    mux = MultiplexingWatcher()
+    w = Watcher(Pod)
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=False):
+            mux.stop()
+    finally:
+        watch_to_vend = old_watch_factory
+
+
+def test21():
+    """
+    test21: force a delay in the yield of an event so that the queue get times out
+    """
+    global class_to_vend, watch_to_vend
+
+    class Test21API(MockAPIClass):
+        class_watched = Pod
+
+    class_to_vend = Test21API
+
+    class Test21Watch(MockK8sWatch):
+        def stream(self, meth, resource_version=None, **kwargs):
+            time.sleep(0.5)
+            obj = class_to_vend.class_watched.get_empty_instance()
+            obj.metadata = ObjectMeta(resourceVersion='6')
+            yield {'object': obj,
+                   'type': 'ADDED'}
+
+    old_watch_factory = watch_to_vend
+    watch_to_vend = Test21Watch
+    mux = MultiplexingWatcher()
+    w = Watcher(Pod)
+    mux.add_watcher(w)
+    try:
+        for we in mux.stream(quit_on_timeout=True):
+            mux.stop()
+    finally:
+        watch_to_vend = old_watch_factory
 
 
 
 if __name__ == "__main__":
     setup()
-    # test14a()
+    test20()
     for k, v in dict(globals()).items():
         if callable(v) and k.startswith('test'):
             print(f'running {k}')

@@ -402,12 +402,15 @@ class MultiplexingWatcher(BaseWatcher):
         t.start()
 
     def _run_watcher(self, watcher: Watcher):
-        watcher.start()
-        while watcher.isrunning() and self.isrunning():
+        watcher_running = True
+        while watcher_running and self.isrunning():
             try:
                 for we in watcher.stream(manage_resource_version=self.manage_resource_version,
                                          quit_on_timeout=self.quit_on_timeout):
-                    self.results_queue.put(we)
+                    if watcher.isrunning() and self.isrunning():
+                        self.results_queue.put(we)
+                if self.quit_on_timeout:
+                    watcher.stop()
             except Exception as e:
                 if self.exception_callback is not None:
                     meth = self.exception_callback
@@ -419,6 +422,8 @@ class MultiplexingWatcher(BaseWatcher):
                     flag = None
                 if flag is not True:
                     watcher.stop()
+            watcher_running = watcher.isrunning()
+        self.del_watcher(watcher)
 
     def add_watcher(self, watcher: Watcher):
         """
@@ -438,7 +443,7 @@ class MultiplexingWatcher(BaseWatcher):
             current_watcher.stop()
         self.watchers[watcher.cls] = watcher
         if self.isrunning():
-            self._start_watcher()
+            self._start_watcher(watcher)
 
     def del_watcher(self, watcher: Watcher):
         """
@@ -457,7 +462,7 @@ class MultiplexingWatcher(BaseWatcher):
         Stop the multiplexor and all contained Watchers
         """
         super(MultiplexingWatcher, self).stop()
-        for watcher in self.watchers.values():
+        for watcher in dict(self.watchers).values():
             watcher.stop()
 
     def stream(self, manage_resource_version: bool = False,
@@ -495,13 +500,13 @@ class MultiplexingWatcher(BaseWatcher):
         self.manage_resource_version = manage_resource_version
         self.quit_on_timeout = quit_on_timeout
         self.start()
-        for watcher in self.watchers.values():
+        for watcher in dict(self.watchers).values():
             self._start_watcher(watcher)
 
         # now await messages to appear on the queue and yield them
-        while self.isrunning():
+        while self.isrunning() and self.watchers:
             try:
-                event = self.results_queue.get(block=True, timeout=1.0)
+                event = self.results_queue.get(block=True, timeout=0.1)
                 yield event
             except queue.Empty:
                 pass
