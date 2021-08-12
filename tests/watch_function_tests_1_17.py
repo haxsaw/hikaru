@@ -20,9 +20,10 @@
 
 import importlib
 import pytest
-from hikaru import HikaruDocumentBase
+from hikaru import HikaruDocumentBase, set_global_default_release
 from hikaru.watch import Watcher
 from hikaru.model.rel_1_17.versions import versions
+set_global_default_release('rel_1_17')
 
 
 namespaced_classes = []

@@ -20,8 +20,8 @@
 
 import time
 from kubernetes.client import ApiException
-from hikaru import watch, set_default_release
-set_default_release('rel_1_17')
+from hikaru import watch, set_global_default_release
+set_global_default_release('rel_1_17')
 from hikaru.meta import WatcherDescriptor
 from hikaru.model.rel_1_17.v1 import (Pod, Namespace, ObjectMeta, PodList,
                                       SelfSubjectRulesReview)

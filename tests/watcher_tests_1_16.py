@@ -680,7 +680,6 @@ def test21():
 
 if __name__ == "__main__":
     setup()
-    test15()
     for k, v in dict(globals()).items():
         if callable(v) and k.startswith('test'):
             print(f'running {k}')
