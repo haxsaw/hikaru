@@ -302,6 +302,8 @@ def write_modules(pkgpath: str):
             f.close()
             documents_path = version_path / "documents.py"
             write_documents_module(documents_path, md.version)
+            watchables_path = version_path / "watchables.py"
+            write_watchables_module(watchables_path, md)
 
     # finally, capture the names of all the version modules in version module
     versions = pkg / 'versions.py'
@@ -1073,6 +1075,14 @@ class ClassDescriptor(object):
             # maybe later...
             # create_op = ListCreateOperation(cd)
 
+    def supports_namespaced_watch(self):
+        if self.watchable:
+            retval = any([True for op in self.operations.values()
+                          if op.supports_watch and 'Namespaced' in op.op_id])
+        else:
+            retval = False
+        return retval
+
     @property
     def is_document(self):
         return self.has_doc_markers and self.has_gvk_dict
@@ -1342,6 +1352,60 @@ class ModuleDef(object):
                 print(f"{k}._watcher_cls = {v}", file=stream)
             print("\n", file=stream)
         output_footer(stream=stream)
+
+
+watchables_doc = \
+'''    """
+    Attributes of this class are classes that support watches without the namespace
+    keyword argument
+    """'''
+
+
+namespaced_watchables_doc = \
+'''    """
+    Attributes of this class are classes that support watches with the namespace
+    keyword argument
+    """'''
+
+
+def write_watchables_module(path: Path, md: ModuleDef):
+    watchables = {}
+    for cd in md.all_classes.values():
+        if cd.watchable and cd.is_document:
+            watchables[cd.short_name] = cd
+            if cd.short_name.endswith('List'):
+                item = md.all_classes.get(cd.short_name.replace('List', ''))
+                if item is not None:
+                    watchables[item.short_name] = item
+
+    namespaced = {k: v for k, v in watchables.items()
+                  if v.supports_namespaced_watch() and v.short_name.endswith('List')}
+    for cd in list(namespaced.values()):
+        if cd.short_name.endswith('List'):
+            item = md.all_classes.get(cd.short_name.replace('List', ''))
+            if item is not None and item.is_document:
+                namespaced[item.short_name] = item
+
+    if watchables:
+        path.touch()
+        f = path.open('w')
+        print(_module_docstring, file=f)
+        print(f'from .{md.version} import *', file=f)
+        print("\n", file=f)
+        print("class Watchables(object):  # pragma: no cover", file=f)
+        print(watchables_doc, file=f)
+        for cd in watchables.values():
+            print(f'    {cd.short_name} = {cd.short_name}', file=f)
+        print("\n\nwatchables = Watchables", file=f)
+
+        if namespaced:
+            print('\n', file=f)
+            print("class NamespacedWatchables(object):  # pragma: no cover", file=f)
+            print(namespaced_watchables_doc, file=f)
+            for cd in namespaced.values():
+                print(f'    {cd.short_name} = {cd.short_name}', file=f)
+            print("\n\nnamespaced_watchables = NamespacedWatchables", file=f)
+
 
 
 def get_module_def(version) -> ModuleDef:

@@ -340,6 +340,10 @@ class Watcher(BaseWatcher):
                     new_rv = int(o.metadata.resourceVersion)
                     if new_rv > self.highest_resource_version:
                         self.highest_resource_version = new_rv
+                    # THIS NEXT IF IS SOMEWHAT CONTROVERSIAL
+                    # don't yield events with a lower resource version
+                    # if new_rv < self.highest_resource_version:
+                    #     continue
                     event = WatchEvent(e['type'], o)
                     if not self.isrunning():
                         break  # pragma: no cover

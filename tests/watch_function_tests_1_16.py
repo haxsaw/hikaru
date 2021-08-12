@@ -30,31 +30,15 @@ namespaced_classes = []
 unnamespaced_classes = []
 
 for version in versions:
-    mod = importlib.import_module(".documents",
-                                  f"hikaru.model.rel_1_16.{version}")
-    for o in vars(mod).values():
-        if (type(o) is type and issubclass(o, HikaruDocumentBase)
-                and o is not HikaruDocumentBase):
-            if o._watcher_cls is not None:
-                target = o._watcher_cls
-            elif (o._watcher is not None or o._namespaced_watcher is not None):
-                target = o
-            else:
-                continue
-        else:
-            continue
-
-        # generate inputs for unnamespaced watchables
-        if target._watcher is not None:
-            unnamespaced_classes.append(target)
-            if o._watcher_cls is not None and o is not target:
-                unnamespaced_classes.append(o)
-
-        # generate inputs for namespaced watchables
-        if target._namespaced_watcher is not None:
-            namespaced_classes.append(target)
-            if o._watcher_cls is not None and o is not target:
-                namespaced_classes.append(o)
+    try:
+        mod = importlib.import_module(".watchables",
+                                      f"hikaru.model.rel_1_16.{version}")
+    except ModuleNotFoundError:
+        continue
+    namespaced_classes.extend([c for c in vars(mod.NamespacedWatchables).values()
+                               if type(c) is type and issubclass(c, HikaruDocumentBase)])
+    unnamespaced_classes.extend([c for c in vars(mod.Watchables).values()
+                                 if type(c) is type and issubclass(c, HikaruDocumentBase)])
 
 
 @pytest.mark.parametrize('cls', namespaced_classes)
@@ -68,12 +52,14 @@ def test_unnamespaced(cls: type):
 
 
 if __name__ == "__main__":
+    print(f"running {len(namespaced_classes)} namespaced classes tests")
     for cls in namespaced_classes:
         try:
             test_namespaced(cls)
         except Exception:
             print(f"Failed making watcher for {cls.__name__}")
 
+    print(f"running {len(unnamespaced_classes)} plain classes tests")
     for cls in unnamespaced_classes:
         try:
             test_unnamespaced(cls)
