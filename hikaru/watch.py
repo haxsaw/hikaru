@@ -138,7 +138,7 @@ class Watcher(BaseWatcher):
                  field_selector: str = None,
                  label_selector: str = None,
                  resource_version: Union[str, int] = None,
-                 timeout_seconds: int = 1,
+                 timeout_seconds: Union[int, None] = 1,
                  client: ApiClient = None):
         r"""
         Create a watch object for the specified class.
