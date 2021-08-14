@@ -408,8 +408,9 @@ add it to *mux*. The return value of the callback will determine what the
 
 - If **True** is returned, then the exception is considered handled by the callback
   and the ``MultiplexingWatcher`` will continue to monitor the ``Watcher`` for new
-  events (but if not arrive, it won't do anything about that).
-- If **False**, **None** or any other value is returned, then the ``MultiplexingWatcher``
+  events (but if not arrive, it won't do anything about that). Note the value must be
+  **True**, not just some value that logically evaluate to True.
+- If any other value is returned, then the ``MultiplexingWatcher``
   will delete the  ``Watcher`` that raised the exception.
   
 .. note::
@@ -421,3 +422,29 @@ add it to *mux*. The return value of the callback will determine what the
   that raised the exception. So remember, if you wish to replace the ``Watcher`` within
   the exception handler, be sure to return `True` from the handler.
   
+Callbacks can be any callable, such as a function or bound method on an instance. Below
+is an example of a callback that is a method instance:
+
+.. code:: python
+
+  from hikaru.watch import MultiplexingWatcher
+
+  class WatcherExceptionHandler(object):
+      def __init__(self):
+          # whatever you want
+
+      def callback(self, mux, watcher, exc):
+          # handle how you like; return True
+          # to indicate you want to keep the handler going
+          return True
+  exp_handler = WatcherExceptionHandler()
+  mux = MultiplexingWatcher(exception_callback=exp_hanlder.callback)
+
+Stopping the ``MultiplexingWatcher``
+------------------------------------
+
+This works just like with the ``Watcher``; simply invoke the ``stop()`` method on the
+instance. Since there is an internal queue within the ``MultiplexingWatcher``, it is
+possible that it contains events that haven't been delivered. Once stop is invoked, these
+events won't be delivered unless ``stream()`` is invoked on the method again.
+
