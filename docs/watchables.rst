@@ -95,7 +95,8 @@ implements some other common patterns on top of the underying watchers that allo
 to be a bit simpler.
 
 A K8s `watch` also produces a generator which may block until an event arrives. Hikaru's
-``Watcher`` manages this generator, and may restart it on timeouts or tell it to pick up with the most recent version of a resource, depending on how you configure it.
+``Watcher`` manages this generator, and may restart it on timeouts or tell it to pick up with
+the most recent version of a resource, depending on how you configure it.
 
 Key arguments when creating a ``Watcher``
 ---------------------------------------
@@ -290,8 +291,133 @@ creating a watcher; either one will result in a stream of events of the list ite
 
 When streaming such a `Watcher`, both will emit a series of events for `Pod` resources.
 
-==============================================
-Mixing Event Types: the `MultiplexingWatcher`
-==============================================
+===============================================================
+Streaming multiple event types: the ``MultiplexingWatcher``
+===============================================================
 
+A ``Watcher`` provides events containing Hikaru instances of a single class (kind); if you wish
+to monitor instances from multiple classes you need to make an additionaly ``Watcher`` for each
+class you wish to monitor. Managing multiple ``Watcher``s requires either configuring each for
+polling-style operations (setting timeout_seconds to 1, manage_resource_version to True, and 
+quit_on_timeout to True), or using ``threading`` or ``multiprocessing`` to handle parallel
+streaming across all ``Watcher``s.
 
+To take some of the burden of this type of use away from the user, Hikaru provides a convenience
+class, ``MultiplexingWatcher``, that handles these issues for you and produces a single stream
+of K8s events containing different types of Hikaru model instances.
+
+.. note::
+
+  If you are using the non-default model release in Hikaru, you **must** call
+  ``set_global_default_release()`` with the name of the release you are using prior to streaming
+  from a ``MultiplexingWatcher``, otherwise the individual ``Watcher`` threads will wind up using
+  the default release model instead of the one you intend. If code is written to a specific release,
+  it's good practice to *always* call ``set_global_default_release()`` when using a
+  ``MultiplexingWatcher`` to ensure that the code won't malfunction with a future release of
+  Hikaru where the default release changes.
+
+The ``MultiplexingWatcher`` is a container of ``Watcher``s that itself behaves like a ``Watcher``.
+To use it, you create individual ``Watcher`` instances, each configured as you wish regarding
+timeout behaviour, namespaces, model class being watched, and other parameters, and then create
+a ``MultiplexingWatcher`` instance and call its ``add_watcher()`` method with each ``Watcher``.
+You can then simply call ``stream()`` on the ``MultiplexingWatcher`` and receive a stream of
+``WatchEvent``s containing model instances from all the different ``Watcher``s managed by the
+``MultiplexingWatcher``.
+
+A simple multiplexing example
+------------------------------
+
+Below is some example code that looks for events on Namespaces and Pods using a
+``MultiplexingWatcher``:
+
+.. code:: python
+
+    from kubernetes import config
+    from hikaru import set_global_default_release
+    from hikaru.model.rel_1_17 import Pod, Namespace
+    from hikaru.watch import Watcher, MultiplexingWatcher
+    
+    def muxing_watcher():
+        # be sure to set the default release first!
+        set_global_default_release("rel_1_17")
+        # config file location on my dev system:
+        config.load_kube_config(config_file='/etc/rancher/k3s/k3s.yaml')
+        # make each Watcher:
+        pod_watcher = Watcher(Pod, timeout_seconds=1)
+        ns_watcher = Watcher(Namespace, timeout_seconds=1)
+        # make the multiplexor and add the watchers:
+        mux = MultiplexingWatcher()
+        mux.add_watcher(pod_watcher)
+        mux.add_watcher(ns_watcher)
+        # and then stream:
+        for we in mux.stream(manage_resource_version=True,
+                             quit_on_timeout=False):
+            if we.obj.kind == "Pod":
+                # do stuff
+            elfi we.obj.kind == "Namespace":
+                # do different stuff
+
+    if __name__ == "__main__":
+            muxing_watcher()
+
+Note that the ``MultiplexingWatcher`` takes the same arguments to ``stream()``
+that a plain ``Watcher`` does. The ``MultiplexingWatcher`` passes the values
+of ``manage_resource_version`` and ``quit_on_timeout`` to each ``Watcher`` so
+they can be managed consistently.
+
+A few key details regarding ``MultiplexingWatcher``s:
+
+- A ``MultiplexingWatcher`` can only contain one ``Watcher`` per watched model
+  class-- you can't give two ``Watcher``s that both are watching ``Pod``s, for
+  example. The ``MultiplexingWatcher`` will only manage the last supplied ``Watcher``
+  for any given class.
+- You can call ``add_watcher()`` while a ``MultiplexingWatcher()`` is streaming events,
+  and the new ``Watcher`` will be started and its events will be added to the stream.
+- Likewise, you can call ``del_watcher()`` on a ``MultiplexingWatcher`` while it is
+  streaming; however, you may still get a few events for the deleted ``Watcher``'s 
+  model class as they may have already been received and may be queued internally in
+  the ``MultiplexingWatcher`` instance.
+  
+Dealing with individual ``Watcher`` exceptions
+-----------------------------------------------
+
+A ``MultiplexingWatcher`` normally consumes any exceptions that its contained ``Watcher``s
+raise, giving not indication to the user of the ``MultiplexingWatcher`` that anything has
+arisen. While this isn't a problem in many cases, especially when ``manage_resource_version``
+is True and ``quit_on_timeout`` is False, there are still exceptions (such as HTTP status code
+500) that no ``Watcher`` is able to automatically recover from, and they will ``raise`` out
+of the ``stream()`` call. With no other mechanisms in place, ``MultiplexingWatcher`` will
+simply cull that ``Watcher`` from the set it manages.
+
+To give ``MultiplexingWatcher`` users an opportunity to handle and recover from such
+errors, there is an optional argument, ``exception_callback``, which can be provided to
+the ``MultiplexingWatcher`` during creation that is a callable that will be invoked if
+a ``Watcher`` allows any exception to escape out of ``stream()``. The callback has the
+following form:
+
+.. python::
+
+  def callback(mux: MultiplexingWatcher, w: Watcher, e: Exception):
+  
+...where *mux* is the ``MultiplexingWatcher`` that caught the ``Watcher`` exception,
+*w* is the ``Watcher`` that raised the exception, and `e` is the exception raised (these
+are normally instances of ``kubernetes.client.ApiException``). The callback is free to
+perform any action it wishes on *mux* or *w*, and can even create a new ``Watcher`` and
+add it to *mux*. The return value of the callback will determine what the
+``MultiplexingWatcher`` will do with the ``Watcher`` that raised the exception:
+
+- If **True** is returned, then the exception is considered handled by the callback
+  and the ``MultiplexingWatcher`` will continue to monitor the ``Watcher`` for new
+  events (but if not arrive, it won't do anything about that).
+- If **False**, **None** or any other value is returned, then the ``MultiplexingWatcher``
+  will delete the  ``Watcher`` that raised the exception.
+  
+.. note::
+
+  While in the callback, adding a new ``Watcher`` that watches the same model class
+  as the one that just raised the exception won't replace the old one with the new
+  unless the handler returns `True`. Otherwise, the ``Watcher`` for that particular
+  model class will simply be removed, whether it was a new ``Watcher`` or the one
+  that raised the exception. So remember, if you wish to replace the ``Watcher`` within
+  the exception handler, be sure to return `True` from the handler.
+  
