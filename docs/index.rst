@@ -19,7 +19,7 @@ Release: |release|
    hikaru-base
    hikaru-document
    using-with-kubernetes
-   watchables
+   watchers
    advanced
    patterns-recipes
    issues
