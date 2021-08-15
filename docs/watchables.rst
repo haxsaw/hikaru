@@ -1,5 +1,5 @@
 *******************************************
-Watchables: Monitoring Kubernetes Activity
+Watchers: Monitoring Kubernetes Activity
 *******************************************
 
 =======
