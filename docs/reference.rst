@@ -48,7 +48,29 @@ Hikaru modelling base classes
 
 .. autoclass:: hikaru.Response
    :members:
-   
+
+Hikaru Watchers
+***************
+
+.. _WatchEvent doc:
+
+.. autoclass:: hikaru.watch.WatchEvent
+   :members:
+
+.. _Watcher doc:
+
+.. autoclass:: hikaru.watch.Watcher
+   :members:
+
+   .. automethod:: __init__
+
+.. _MultiplexingWatcher doc:
+
+.. autoclass:: hikaru.watch.MultiplexingWatcher
+   :members:
+
+   .. automethod:: __init__
+
 Hikaru functions
 ****************
 
@@ -111,4 +133,3 @@ Hikaru functions
 .. _rollback_cm doc:
 
 .. autofunction:: hikaru.rollback_cm
-

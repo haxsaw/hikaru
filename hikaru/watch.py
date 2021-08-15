@@ -149,7 +149,7 @@ class Watcher(BaseWatcher):
 
         NOTE:
 
-        The arguments here are largely interpreted according to the 'list' methods
+        The arguments here are largely interpreted according to the 'list' operations
         in the K8s API, with the exception of some additional semantics added by
         Hikaru; these are noted where appropriate. Not all arguments from those funcitons
         are carried through here as some make no sense in the context of a watch.
@@ -241,9 +241,11 @@ class Watcher(BaseWatcher):
     def update_resource_version(self, new_resource_version: Union[str, int]):
         """
         Update the value of resource_version to use when initiating a stream
+
+        This will only take effect the next time the ``stream()`` method is invoked.
+
         :param new_resource_version: int or numeric string containing a
             version number; only version after this version will be streamed.
-        :return:
         """
         if new_resource_version is None:
             raise RuntimeError("resource_version cannot be None")
@@ -251,7 +253,8 @@ class Watcher(BaseWatcher):
 
     def current_resource_version(self) -> str:
         """
-        get the current resource version value
+        get the current resource version value for stream inintiation
+
         :return: string resource version, but can be None if this is a new
             Watcher, streaming hasn't begun, and the user didn't request that
             the Watcher manage the revision version number.
@@ -261,6 +264,10 @@ class Watcher(BaseWatcher):
     def stop(self):
         """
         Stops the current Watcher and underlying watch mechanism
+
+        Stopping will occur as soon as the Watcher itself regains control;
+        if awaiting on the arrival of an event, the streaming operation won't
+        stop until an event arrives.
         """
         if self.k8s_watcher is not None:
             self.k8s_watcher.stop()
@@ -274,7 +281,7 @@ class Watcher(BaseWatcher):
         Start yielding a stream of WatchEvents as events are received from K8s. You
         can use this in a for loop like so:
 
-        ..code:: python
+        .. code:: python
 
             for we in watcher.stream():
                 # do stuff
@@ -379,12 +386,12 @@ class MultiplexingWatcher(BaseWatcher):
             raises an exception and this callable has been provided, then the callable
             will be called as follows:
 
-            ..code:: python
+            .. code:: python
 
                 exception_callback(mux, watcher, exception)
 
-            Where mux is the MultiplexingWatcher instance, watcher is the Watcher
-            that raised the exception, and exception is the Exception object that was
+            Where `mux` is the MultiplexingWatcher instance, `watcher` is the Watcher
+            that raised the exception, and `exception` is the Exception object that was
             raised. The callback can perform whatever action it wishes on mux or watcher
             based on the information in exception (generally an instance of
             kubernetes.client.ApiException). The return value from callback will determine
@@ -479,7 +486,7 @@ class MultiplexingWatcher(BaseWatcher):
 
         You can use this in a for loop like so:
 
-        ..code:: python
+        .. code:: python
 
             mux = MultiplexingWatcher()
             mux.add_watcher(Watcher(Pod, timeout_seconds=1))

@@ -1,7 +1,19 @@
+=============================
 Dumb things you always forget
 =============================
 
+Where to change version numbers for a new release
+-------------------------------------------------
+hikaru/__init__.py: __version__
+hikaru/setup.py: __version__
+hikaru/README.rst
+
+Building
+--------
 building the package: python setup.py bdist_wheel
+
+Publishing to PyPI
+------------------
 publishing to official PyPI: twine upload dist/*
 publishing to test PyPI: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
