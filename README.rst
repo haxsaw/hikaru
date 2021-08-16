@@ -89,6 +89,14 @@ set of methods as well as all the operations defined in the Swagger API specific
 Hikaru can work with any Kubernetes-compliant system such as `K3s <https://k3s.io/>`_
 and `minikube <https://minikube.sigs.k8s.io/docs/>`_.
 
+Monitor Kubernetes activities with watches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Hikaru provides an abstraction on over the K8s `watch` APIs, which allow you to easily
+create code that receives events for all activites carried out in your K8s cluster on
+a per-kind basis. Or, you can create a watch container that multiplexes the output
+from individual watches into a single stream.
+
 Integrate your own subclasses
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

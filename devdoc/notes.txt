@@ -2,6 +2,12 @@
 Dumb things you always forget
 =============================
 
+Make a method/class map snapshot
+--------------------------------
+cd devtools
+python methodmap.py > release_maps/{snapshot_file}  # once the model has settled down
+python mcompare.py {oldmap} {newmap}   # the one from above
+
 Where to change version numbers for a new release
 -------------------------------------------------
 hikaru/__init__.py: __version__
