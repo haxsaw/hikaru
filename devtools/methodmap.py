@@ -1,6 +1,5 @@
 import importlib
 from hikaru import HikaruDocumentBase
-from hikaru.model.rel_1_17.v1 import documents
 
 
 def map_em(docsmod) -> dict:
@@ -25,7 +24,7 @@ def map_em(docsmod) -> dict:
 
         cancall = [attrname for attrname in vars(v).keys()
                    if (callable(getattr(v, attrname)) and
-                       not attrname.startswith('__'))]
+                       not attrname.startswith('_'))]
         for methname in cancall:
             if methname in {'create', 'read', 'update', 'delete'}:
                 continue

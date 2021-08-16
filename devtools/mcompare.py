@@ -4,15 +4,15 @@ a report showing the differences
 
 difference reports follow this form:
 
-REL=<relnumber>;VER=<vernumber>;MISSING|CHANGED|DEL|ADD;<msg>
+REL=<relnumber>;VER=<vernumber>;MISSING|MOVED|DEL|ADD;<msg>
 
-The message following MISSING|CHANGED|DEL|ADD will have the following
+The message following MISSING|MOVED|DEL|ADD will have the following
 interpretation and form:
 
 MISSING: means either the old or new map (or both) is/are missing
     example: no old map provided-- no further comparisons for this version
 
-CHANGED: means that the method has moved from one class to another
+MOVED: means that the method has moved from one class to another
     example: method wibble moved from Foo to Bar in the new map
 
 DEL: means a method no longer exists in the new map in any class
@@ -22,6 +22,7 @@ ADD: means a method has been added to the new map that isn't in the old one
     example: method wibble on Foo was added in the new map
 """
 
+import csv
 from ast import literal_eval
 import sys
 
@@ -45,29 +46,34 @@ def compare_version(old_map: dict, new_map: dict) -> list:
     """
     diffs = []
     if old_map is None:
-        diffs.append(f"MISSING;no old map provided-- no further comparisons "
-                     f"for this version")
+        diffs.append(['MISSING', "", '-no old map-', ""])
+        # diffs.append(f"MISSING:no old map provided-- no further comparisons "
+        #              f"for this version")
     if new_map is None:
-        diffs.append(f"MISSING;no new map provided-- no further comparisons "
-                     f"for this version")
+        diffs.append(['MISSING', "", "", '-no new map-'])
+        # diffs.append(f"MISSING:no new map provided-- no further comparisons "
+        #              f"for this version")
     if diffs:
         return diffs
 
     # first, compare the old to the new map for changes or deletions
     for k, v in old_map.items():
         if k not in new_map:
-            diffs.append(f"DEL;method {k} on {v} doesn't exist in the "
-                         f"new map")
+            diffs.append(['DELETED', k, v, '--'])
+            # diffs.append(f"DEL;method {k} on {v} doesn't exist in the "
+            #              f"old release")
         elif v != new_map[k]:
-            diffs.append(f"CHANGED;method {k} moved from {v} to {new_map[k]} "
-                         f"in the new map")
+            diffs.append(['MOVED', k, v, new_map[k]])
+            # diffs.append(f"MOVED;method {k} moved from {v} to {new_map[k]} "
+            #              f"in the new release")
         # else nothing; these are the same
 
     # now, compare the new map to the old for additions
     for k, v in new_map.items():
         if k not in old_map:
-            diffs.append(f"ADD;method {k} on {v} was added in the "
-                         f"new map")
+            diffs.append(['ADDED', k, '--', v])
+            # diffs.append(f"ADD;method {k} on {v} was added in the "
+            #              f"new release")
 
     return diffs
 
@@ -84,7 +90,8 @@ def compare_release(old_rel: dict, new_rel: dict) -> list:
     for vername, old_map in old_rel.items():
         new_map = new_rel.get(vername)
         verdiffs = compare_version(old_map, new_map)
-        diffs.extend([f"VER={vername};{i}" for i in verdiffs])
+        diffs.extend([[vername] + d for d in verdiffs])
+        # diffs.extend([f"VER={vername};{i}" for i in verdiffs])
         compared.add(vername)
 
     # now make sure there isn't a new version in the new_rel that should be covered
@@ -92,7 +99,8 @@ def compare_release(old_rel: dict, new_rel: dict) -> list:
         if vername in compared:
             continue
         verdiffs = compare_version(old_rel.get(vername), new_map)
-        diffs.extend([f"VER={vername};{i}" for i in verdiffs])
+        diffs.extend([[vername] + d for d in verdiffs])
+        # diffs.extend([f"VER={vername};{i}" for i in verdiffs])
 
     return diffs
 
@@ -115,7 +123,8 @@ def compare_snapshots(old_snap: dict, new_snap:dict) -> list:
                          f"doesn't have this release")
         else:
             reldiffs = compare_release(old_map, new_map)
-            diffs.extend([f"REL={relname};{i}" for i in reldiffs])
+            diffs.extend([[relname] + d for d in reldiffs])
+            # diffs.extend([f"REL={relname};{i}" for i in reldiffs])
 
     for relname, new_map in new_snap.items():
         if relname in compared:
@@ -126,7 +135,8 @@ def compare_snapshots(old_snap: dict, new_snap:dict) -> list:
                          f"doesn't have this release")
         else:
             reldiffs = compare_release(old_map, new_map)
-            diffs.extend([f"REL={relname};{i}" for i in reldiffs])
+            diffs.extend([[relname] + d for d in reldiffs])
+            # diffs.extend([f"REL={relname};{i}" for i in reldiffs])
     return diffs
 
 
@@ -150,6 +160,8 @@ if __name__ == "__main__":
         print(f"Usage: python {sys.argv[0]} <old-snapshot-file> <new-snapshot-file")
         sys.exit(1)
     diffs = load_and_compare_snapshots(sys.argv[1], sys.argv[2])
+    csv_writer = csv.writer(sys.stdout)
     for l in diffs:
-        print(l)
+        csv_writer.writerow(l)
+        # print(l)
     sys.exit(0)

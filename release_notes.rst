@@ -2,6 +2,86 @@
 Release Notes
 *************
 
+v0.7.0b
+-------
+
+This release includes support for Kubernetes' `watch` facility, but also includes what might
+be a breaking change for some to fix a bug in the model code generation.
+
+- This release exposes the underlying Kubernetes `watch` facility, enabling you to easily create
+  code that receives events detailing the activities that Kubernetes is carrying out. Events
+  are delivered to you in the form of Hikaru model objects. The facility provides a higher-level
+  absraction than is available from the underlying K8s Python client, enabling you to establish
+  watches simply by naming the class you wish to receive events about. Additional assistance
+  is provided to give you hints as to what classes are eligible for namespaced watches. See the
+  "Watchers: Monitoring Kubernetes Activity" section of the documentation for full details.
+- In the development of the `watch` facility, a bug was uncovered involving the auto-generated
+  model classes. This bug resulted in certain object 'list' methods to be assigned to the wrong
+  class. This had to be corrected in order to enable the `watch` implementation to be completed.
+  Hence, some methods have been relocated to other classes. The tables below list the changes in
+  method-class association that have been made in this release. It's recommended that you review
+  the table and modify your code prior to adopting this release in production.
+
+**Kubernetes release rel_1_16 model changes**
+
+======== ========== ============================================= ========== ==============================
+Ver      Action     Method                                        Old class  New class
+======== ========== ============================================= ========== ==============================
+v1       MOVED      listPodForAllNamespaces                       Pod        PodList
+v1       MOVED      listPodTemplateForAllNamespaces               Pod        PodTemplateList
+v1       MOVED      listHorizontalPodAutoscalerForAllNamespaces   Pod        HorizontalPodAutoscalerList
+v1       MOVED      listSecretForAllNamespaces                    Secret     SecretList
+v1       MOVED      listLeaseForAllNamespaces                     Lease      LeaseList
+v1       MOVED      listEndpointsForAllNamespaces                 Endpoints  EndpointsList
+v1       MOVED      listServiceAccountForAllNamespaces            Service    ServiceAccountList
+v1       MOVED      listServiceForAllNamespaces                   Service    ServiceList
+v1       MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+v1       MOVED      listEventForAllNamespaces                     Event      EventList
+v1       MOVED      listJobForAllNamespaces                       Job        JobList
+v1       MOVED      listRoleForAllNamespaces                      Role       RoleList
+v1       MOVED      listRoleBindingForAllNamespaces               Binding    RoleBindingList
+v1       ADDED      listPersistentVolumeClaimForAllNamespaces     --         PersistentVolumeClaimList
+v1beta1  MOVED      listLeaseForAllNamespaces                     Lease      LeaseList
+v1beta1  MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+v1beta1  MOVED      listEventForAllNamespaces                     Event      EventList
+v1beta1  MOVED      listRoleBindingForAllNamespaces               Role       RoleBindingList
+v1beta1  MOVED      listRoleForAllNamespaces                      Role	       RoleList
+v1beta1  MOVED      listIngressForAllNamespaces                   Ingress    IngressList
+v1beta2  MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+======== ========== ============================================= ========== ==============================
+
+**Kubernetes release rel_1_17 model changes**
+
+======== ========== ============================================= ========== ==============================
+Ver      Action     Method                                        Old class  New class
+======== ========== ============================================= ========== ==============================
+v1       MOVED      listPodForAllNamespaces                       Pod        PodList
+v1       MOVED      listPodTemplateForAllNamespaces               Pod        PodTemplateList
+v1       MOVED      listHorizontalPodAutoscalerForAllNamespaces   Pod        HorizontalPodAutoscalerList
+v1       MOVED      listSecretForAllNamespaces                    Secret     SecretList
+v1       MOVED      listLeaseForAllNamespaces                     Lease      LeaseList
+v1       MOVED      listEndpointsForAllNamespaces                 Endpoints  EndpointsList
+v1       MOVED      listServiceAccountForAllNamespaces            Service    ServiceAccountList
+v1       MOVED      listServiceForAllNamespaces                   Service    ServiceList
+v1       MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+v1       MOVED      listEventForAllNamespaces                     Event      EventList
+v1       MOVED      listCSINode                                   Node       CSINodeList
+v1       MOVED      listJobForAllNamespaces                       Job        JobList
+v1       MOVED      listRoleForAllNamespaces                      Role       RoleList
+v1       MOVED      listRoleBindingForAllNamespaces               Binding    RoleBindingList
+v1       ADDED      listPersistentVolumeClaimForAllNamespaces     --         PersistentVolumeClaimList
+v1beta1  MOVED      listLeaseForAllNamespaces                     Lease      LeaseList
+v1beta1  MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+v1beta1  MOVED      listEventForAllNamespaces                     Event      EventList
+v1beta1  MOVED      listRoleBindingForAllNamespaces               Role       RoleBindingList
+v1beta1  MOVED      listRoleForAllNamespaces                      Role       RoleList
+v1beta1  MOVED      listIngressForAllNamespaces                   Ingress    IngressList
+v1beta1  ADDED      listEndpointSliceForAllNamespaces             --         EndpointSliceList
+v1beta2  MOVED      listDeploymentForAllNamespaces                Deployment DeploymentList
+v1alpha1 MOVED      listRoleBindingForAllNamespaces               Role       RoleBindingList
+v1alpha1 MOVED      listRoleForAllNamespaces                      Role       RoleList
+======== ========== ============================================= ========== ==============================
+
 v0.6.0b
 -------
 
