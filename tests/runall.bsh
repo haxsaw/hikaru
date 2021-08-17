@@ -8,3 +8,6 @@ chmod 755 run_all_*.bsh
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_all_1_17.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_all_1_18.bsh a

@@ -51,4 +51,12 @@ K8s V1.17 v1 Documents Doc
 
    rel-1-17-v1
 
+K8s V1.18 v1 Documents Doc
+--------------------------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: 1.18v1 docs ref
+
+   rel-1-18-v1
 

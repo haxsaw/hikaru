@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 0.7b
+Version 0.8b
 
 |travis|   |license|   |versions|   |coverage|
 
