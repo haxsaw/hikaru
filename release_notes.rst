@@ -2,6 +2,35 @@
 Release Notes
 *************
 
+v0.8.0b
+-------
+
+This release adds support for release 18.20 of the Python Kubernetes
+client, which supports release 1.18 of the Kubernetes API swagger spec.
+This release of the spec is smaller than the 1.17 release, and there is
+a fair amount of pruning in evidence:
+
+- An entire version has be removed in the 1.18 release of the spec:
+  **v1beta2** no longer exists in the swagger file, and hence there is no
+  longer a v1beta2 subpackge in the rel_1_18 model package.
+- A number of operations (methods) have been dropped from the definition of
+  resources in **v1beta1**. This appears to have been a full promotion to
+  `v1` -only status.
+
+Because of this, 'rel_1_17' will be retained as the default release in Hikaru
+for some time to give consumers an opportunity to ensure that they don't rely
+on anything from v1beta2 or methods on v1beta1 objects, and a point release
+will be issued later where we switch to the default release to 'rel_1_18'.
+
+The total list of changes is too long to provide here; the CSV file
+`rel_0-7_to_0-8_diffs.csv <https://github.com/haxsaw/hikaru/blob/dev/release_notes.rst>`_
+provides a listing that shows, by release of the K8s swagger spec, the deleted
+methods/classes compared with the 1.18 spec.
+
+**If you are coming to 0.8 from 0.6.1 or earlier**
+
+Please read the release notes for 0.7 as they may also impact you.
+
 v0.7.0b
 -------
 
