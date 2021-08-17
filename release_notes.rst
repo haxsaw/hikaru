@@ -23,7 +23,7 @@ on anything from v1beta2 or methods on v1beta1 objects, and a point release
 will be issued later where we switch to the default release to 'rel_1_18'.
 
 The total list of changes is too long to provide here; the CSV file
-`rel_0-7_to_0-8_diffs.csv <https://github.com/haxsaw/hikaru/blob/dev/release_notes.rst>`_
+`rel_0-7_to_0-8_diffs.csv <https://github.com/haxsaw/hikaru/blob/dev/rel_0-7_to_0-8_diffs.csv>`_
 provides a listing that shows, by release of the K8s swagger spec, the deleted
 methods/classes compared with the 1.18 spec.
 
