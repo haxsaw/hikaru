@@ -36,7 +36,7 @@ import os
 import subprocess
 import tempfile
 from hikaru import get_json
-from hikaru.model import Namespace
+from hikaru.model.rel_1_16 import Namespace
 from kubernetes import config
 
 

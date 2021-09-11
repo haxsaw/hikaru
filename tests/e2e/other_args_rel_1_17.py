@@ -26,7 +26,7 @@ from hikaru.model.rel_1_17 import *
 from kubernetes import config
 
 
-tests_namespace = 'other-args-tests'
+tests_namespace = 'other-args-tests-17'
 
 
 def beginning():

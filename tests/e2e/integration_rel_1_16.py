@@ -44,7 +44,7 @@ else:
     # assume we're running in the parent directory
     base_path = Path('test_yaml')
 del cwd
-e2e_namespace = 'e2e-tests-v1'
+e2e_namespace = 'e2e-tests-v1-rel1-16'
 
 
 setup_calls = 0

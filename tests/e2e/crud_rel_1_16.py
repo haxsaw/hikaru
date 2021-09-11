@@ -38,7 +38,7 @@ else:
     # assume we're running in the parent directory
     base_path = Path('test_yaml')
 del cwd
-crud_namespace = 'crud-test-ns'
+crud_namespace = 'crud-test-ns-rel-1-16'
 
 
 def beginning():
@@ -400,7 +400,7 @@ def test13():
     """
     make a daemon set via crud
     """
-    name = 'ds-test15'
+    name = 'ds-test13'
     ds = make_daemonset(name)
     ds.metadata.namespace = crud_namespace
     ds.create()

@@ -29,7 +29,7 @@ from kubernetes import config
 set_default_release('rel_1_16')
 
 
-tests_namespace = 'other-args-tests'
+tests_namespace = 'other-args-tests-16'
 
 
 def beginning():
