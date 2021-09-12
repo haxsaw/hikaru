@@ -21,6 +21,7 @@ Because of this, 'rel_1_17' will be retained as the default release in Hikaru
 for some time to give consumers an opportunity to ensure that they don't rely
 on anything from v1beta2 or methods on v1beta1 objects, and a point release
 will be issued later where we switch to the default release to 'rel_1_18'.
+As always, you can explicity set your release to rel_1_18 if you choose.
 
 The total list of changes is too long to provide here; the CSV file
 `rel_0-7_to_0-8_diffs.csv <https://github
