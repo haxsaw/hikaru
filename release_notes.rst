@@ -32,6 +32,9 @@ methods/classes compared with the 1.18 spec.
 
 Please read the release notes for 0.7 as they may also impact you.
 
+This release also adds compatibility with the newest release of the black
+code formatter, 21.8b0.
+
 v0.7.0b
 -------
 
