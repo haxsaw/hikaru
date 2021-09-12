@@ -172,6 +172,7 @@ def test05():
     """
     path = base_path / "rbac-role.yaml"
     r: Role = cast(Role, load_full_yaml(path=str(path))[0])
+    r.metadata.namespace = e2e_namespace
     # this has its own namespace specified in the request so we need
     # to make sure they agree
     res = r.createNamespacedRole(r.metadata.namespace)
