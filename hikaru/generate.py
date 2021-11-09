@@ -89,7 +89,12 @@ def _clean_dict(d: dict) -> dict:
         if isinstance(v, (list, dict)) and not v:  # this is an empty container
             continue
         if isinstance(v, dict):
-            clean[k] = _clean_dict(v)
+            skip_keys = ('labels', 'matchLabels', 'selector', 'annotations', 'nodeSelector',
+                         'binaryData', 'data', 'stringData')    # configmap, secrets
+            if k in skip_keys:     # skip skip_keys, keep as it is.
+                clean[k] = v
+            else:
+                clean[k] = _clean_dict(v)
         elif isinstance(v, list):
             new_list = list()
             for i in v:
