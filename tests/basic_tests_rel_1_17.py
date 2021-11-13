@@ -1113,10 +1113,10 @@ def test102():
                         x_kubernetes_list_type='wobble')
     d = get_clean_dict(x)
     assert '$ref' in d
-    assert 'x-kubernetes-list-type' in d
+    assert 'x_kubernetes_list_type' in d
     y = get_yaml(x)
     assert '$ref' in y
-    assert 'x-kubernetes-list-type' in y
+    assert 'x_kubernetes_list_type' in y
 
 
 def test103():
