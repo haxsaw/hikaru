@@ -19,12 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import json
+import keyword
 from dataclasses import asdict
 from io import StringIO
 from typing import List, TextIO, Optional
 
-from autopep8 import fix_code
-from black import format_str, Mode, NothingChanged
 from ruamel.yaml import YAML
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
@@ -58,6 +57,9 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
     :return: Python source code that will re-create the supplied object
     :raises RuntimeError: if an unrecognized style is supplied
     """
+    from autopep8 import fix_code
+    from black import format_str, Mode, NothingChanged
+
     if style not in ('black', 'autopep8', None):
         raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
@@ -80,8 +82,7 @@ def _clean_dict(d: dict) -> dict:
     for k, v in d.items():
         if k.startswith(dprefix):
             k = f'${k.replace(dprefix, "")}'
-        k = k.replace('_', '-')
-        if k.endswith("-"):
+        if k.endswith("_") and keyword.iskeyword(k[:-1]):
             k = k[:-1]
         if v is None:
             continue
