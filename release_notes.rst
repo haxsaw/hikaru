@@ -2,6 +2,21 @@
 Release Notes
 *************
 
+v0.8.1b
+-------
+
+This bug fix/maintenance release provides the following:
+
+- This release officially works with the most recent versions of the `black`
+  code formatter; this is reflected in the updated requirements.txt.
+- Since importing the `black` package has side effects in terms of writing
+  configuration files into the user's home directory, the import of black
+  has been moved into the function that uses it so that it will only carry
+  out these actions in the case that actual code formatting will be performed.
+- A bug was fixed that was turning '_' to '-' in keys in labels dictionary.
+  This was a side-effect of the attribute renaming logic for attributes that
+  have the same name as Python keywords.
+
 v0.8.0b
 -------
 

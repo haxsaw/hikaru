@@ -21,6 +21,7 @@
 """
 Exercising CRUD methods
 """
+import time
 from os import getcwd
 from pathlib import Path
 from typing import cast
@@ -105,6 +106,7 @@ def test02():
     p.create()
     try:
         p.read()
+        time.sleep(0.1)
         p.read()
         p.metadata.labels['test'] = 'test02'
         p.update()

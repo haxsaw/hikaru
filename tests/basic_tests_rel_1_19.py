@@ -1070,7 +1070,7 @@ def test096():
     Test processing the group, version, name back into a swagger name
     """
     try:
-        from build import ClassDescriptor
+        from build3 import ClassDescriptor
     except ImportError:  # this test is only for in dev for the build
         pass
     else:
@@ -1078,12 +1078,12 @@ def test096():
         jdict = json.load(f)
         for k, v in jdict.items():
             cd = ClassDescriptor(k, v)
-            swagger_name = make_swagger_name(cd.group, cd.version, cd.short_name)
+            swagger_name = make_swagger_name(cd.group, cd.version, cd.name)
             break
         g, v, n = process_swagger_name(swagger_name)
         assert g == cd.group, "Group doesn't match"
         assert v == cd.version, "Version doesn't match"
-        assert n == cd.short_name, "Named doesn't match"
+        assert n == cd.name, "Named doesn't match"
 
 
 def test097():
@@ -1694,6 +1694,19 @@ def test142():
     del d['status']['daemonEndpoints']
     n2: Node = Node.from_yaml(d, translate=True)
     assert n2.status.daemonEndpoints.kubeletEndpoint.Port == 44
+
+
+def test143():
+    """
+    Ensure that labels keys that contain '_' aren't changed to '-'
+    """
+    m: ObjectMeta = ObjectMeta(labels={'Key_1': 'k1', 'key_2': 'k2'})
+    d = get_clean_dict(m)
+    assert 'Key_1' in d['labels']
+    assert 'key_2' in d['labels']
+    m2: ObjectMeta = from_dict(d, cls=ObjectMeta)
+    assert 'Key_1' in m2.labels
+    assert 'key_2' in m2.labels
 
 
 if __name__ == "__main__":

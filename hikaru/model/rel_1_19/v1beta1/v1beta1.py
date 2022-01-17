@@ -60,7 +60,7 @@ class MutatingWebhook(HikaruBase):
     MutatingWebhook describes an admission webhook and the resources and operations it
     applies to.
 
-    Full name: v1beta1.MutatingWebhook
+    Full name: MutatingWebhook
 
     Attributes:
     clientConfig: ClientConfig defines how to communicate with the hook. Required
@@ -159,112 +159,13 @@ class MutatingWebhook(HikaruBase):
 
 
 @dataclass
-class WebhookClientConfig(HikaruBase):
-    r"""
-    WebhookClientConfig contains the information to make a TLS connection with the
-    webhook.
-
-    Full name: admissionregistration.v1beta1.WebhookClientConfig
-
-    Attributes:
-    caBundle: caBundle is a PEM encoded CA bundle which will be used to validate the
-        webhook's server certificate. If unspecified, system trust roots on the apiserver
-        are used.
-    service: service is a reference to the service for this webhook. Either service or url
-        must be specified. If the webhook is running within the cluster, then you should
-        use `service`.
-    url: url gives the location of the webhook, in standard URL form
-        (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
-        The `host` should not refer to a service running in the cluster; use the `service`
-        field instead. The host might be resolved via external DNS in some apiservers
-        (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering
-        violation). `host` may also be an IP address. Please note that using `localhost`
-        or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook
-        on all hosts which run an apiserver which might need to make calls to this
-        webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in
-        a new cluster. The scheme must be "https"; the URL must begin with "https://". A
-        path is optional, and if present may be any string permissible in a URL. You may
-        use the path to pass an arbitrary string to the webhook, for example, a cluster
-        identifier. Attempting to use a user or basic auth e.g. "user:password@" is not
-        allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
-    """
-
-    caBundle: Optional[str] = None
-    service: Optional["ServiceReference"] = None
-    url: Optional[str] = None
-
-
-@dataclass
-class LabelSelector(HikaruBase):
-    r"""
-    A label selector is a label query over a set of resources. The result of matchLabels
-    and matchExpressions are ANDed. An empty label selector matches all objects. A null
-    label selector matches no objects.
-
-    Full name: v1.LabelSelector
-
-    Attributes:
-    matchExpressions: matchExpressions is a list of label selector requirements. The
-        requirements are ANDed.
-    matchLabels: matchLabels is a map of {key,value} pairs. A single {key,value} in the
-        matchLabels map is equivalent to an element of matchExpressions, whose key field
-        is "key", the operator is "In", and the values array contains only "value". The
-        requirements are ANDed.
-    """
-
-    matchExpressions: Optional[List["LabelSelectorRequirement"]] = field(
-        default_factory=list
-    )
-    matchLabels: Optional[Dict[str, str]] = field(default_factory=dict)
-
-
-@dataclass
-class RuleWithOperations(HikaruBase):
-    r"""
-    RuleWithOperations is a tuple of Operations and Resources. It is recommended to make
-    sure that all the tuple expansions are valid.
-
-    Full name: v1beta1.RuleWithOperations
-
-    Attributes:
-    scope: scope specifies the scope of this rule. Valid values are "Cluster",
-        "Namespaced", and "*" "Cluster" means that only cluster-scoped resources will
-        match this rule. Namespace API objects are cluster-scoped. "Namespaced" means that
-        only namespaced resources will match this rule. "*" means that there are no scope
-        restrictions. Subresources match the scope of their parent resource. Default is
-        "*".
-    apiGroups: APIGroups is the API groups the resources belong to. '*' is all groups. If
-        '*' is present, the length of the slice must be one. Required.
-    apiVersions: APIVersions is the API versions the resources belong to. '*' is all
-        versions. If '*' is present, the length of the slice must be one. Required.
-    operations: Operations is the operations the admission hook cares about - CREATE,
-        UPDATE, DELETE, CONNECT or * for all of those operations and any future admission
-        operations that are added. If '*' is present, the length of the slice must be one.
-        Required.
-    resources: Resources is a list of resources this rule applies to. For example: 'pods'
-        means pods. 'pods/log' means the log subresource of pods. '*' means all resources,
-        but not subresources. 'pods/*' means all subresources of pods. '*/scale' means all
-        scale subresources. '*/*' means all resources and their subresources. If wildcard
-        is present, the validation rule will ensure resources do not overlap with each
-        other. Depending on the enclosing object, subresources might not be allowed.
-        Required.
-    """
-
-    scope: Optional[str] = None
-    apiGroups: Optional[List[str]] = field(default_factory=list)
-    apiVersions: Optional[List[str]] = field(default_factory=list)
-    operations: Optional[List[str]] = field(default_factory=list)
-    resources: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
 class MutatingWebhookConfiguration(HikaruDocumentBase):
     r"""
     MutatingWebhookConfiguration describes the configuration of and admission webhook that
     accept or reject and may change the object. Deprecated in v1.16, planned for removal
     in v1.19. Use admissionregistration.k8s.io/v1 MutatingWebhookConfiguration instead.
 
-    Full name: v1beta1.MutatingWebhookConfiguration
+    Full name: MutatingWebhookConfiguration
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -304,7 +205,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         delete collection of MutatingWebhookConfiguration
 
@@ -395,7 +296,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -429,7 +330,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
     def createMutatingWebhookConfiguration(
         self,
@@ -437,7 +338,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         create a MutatingWebhookConfiguration
 
@@ -457,7 +358,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -489,7 +390,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
     def create(
         self,
@@ -542,7 +443,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         delete a MutatingWebhookConfiguration
 
@@ -578,7 +479,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -607,7 +508,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -693,7 +594,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         read the specified MutatingWebhookConfiguration
 
@@ -712,7 +613,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -736,7 +637,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
     def read(
         self,
@@ -804,7 +705,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         partially update the specified MutatingWebhookConfiguration
 
@@ -831,7 +732,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -863,7 +764,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
     def update(
         self,
@@ -944,7 +845,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfiguration"]:
         r"""
         replace the specified MutatingWebhookConfiguration
 
@@ -965,7 +866,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -997,136 +898,7 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class ObjectMeta(HikaruBase):
-    r"""
-    ObjectMeta is metadata that all persisted resources must have, which includes all
-    objects users must create.
-
-    Full name: v1.ObjectMeta
-
-    Attributes:
-    clusterName: The name of the cluster which the object belongs to. This is used to
-        distinguish resources with same name and namespace in different clusters. This
-        field is not set anywhere right now and apiserver is going to ignore it if set in
-        create or update request.
-    creationTimestamp: CreationTimestamp is a timestamp representing the server time when
-        this object was created. It is not guaranteed to be set in happens-before order
-        across separate operations. Clients may not set this value. It is represented in
-        RFC3339 form and is in UTC. Populated by the system. Read-only. Null for lists.
-        More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    deletionGracePeriodSeconds: Number of seconds allowed for this object to gracefully
-        terminate before it will be removed from the system. Only set when
-        deletionTimestamp is also set. May only be shortened. Read-only.
-    deletionTimestamp: DeletionTimestamp is RFC 3339 date and time at which this resource
-        will be deleted. This field is set by the server when a graceful deletion is
-        requested by the user, and is not directly settable by a client. The resource is
-        expected to be deleted (no longer visible from resource lists, and not reachable
-        by name) after the time in this field, once the finalizers list is empty. As long
-        as the finalizers list contains items, deletion is blocked. Once the
-        deletionTimestamp is set, this value may not be unset or be set further into the
-        future, although it may be shortened or the resource may be deleted prior to this
-        time. For example, a user may request that a pod is deleted in 30 seconds. The
-        Kubelet will react by sending a graceful termination signal to the containers in
-        the pod. After that 30 seconds, the Kubelet will send a hard termination signal
-        (SIGKILL) to the container and after cleanup, remove the pod from the API. In the
-        presence of network partitions, this object may still exist after this timestamp,
-        until an administrator or automated process can determine the resource is fully
-        terminated. If not set, graceful deletion of the object has not been requested.
-        Populated by the system when a graceful deletion is requested. Read-only. More
-        info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    generateName: GenerateName is an optional prefix, used by the server, to generate a
-        unique name ONLY IF the Name field has not been provided. If this field is used,
-        the name returned to the client will be different than the name passed. This value
-        will also be combined with a unique suffix. The provided value has the same
-        validation rules as the Name field, and may be truncated by the length of the
-        suffix required to make the value unique on the server. If this field is specified
-        and the generated name exists, the server will NOT return a 409 - instead, it will
-        either return 201 Created or 500 with Reason ServerTimeout indicating a unique
-        name could not be found in the time allotted, and the client should retry
-        (optionally after the time indicated in the Retry-After header). Applied only if
-        Name is not specified. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
-    generation: A sequence number representing a specific generation of the desired state.
-        Populated by the system. Read-only.
-    name: Name must be unique within a namespace. Is required when creating resources,
-        although some resources may allow a client to request the generation of an
-        appropriate name automatically. Name is primarily intended for creation
-        idempotence and configuration definition. Cannot be updated. More info:
-        http://kubernetes.io/docs/user-guide/identifiers#names
-    namespace: Namespace defines the space within which each name must be unique. An empty
-        namespace is equivalent to the "default" namespace, but "default" is the canonical
-        representation. Not all objects are required to be scoped to a namespace - the
-        value of this field for those objects will be empty. Must be a DNS_LABEL. Cannot
-        be updated. More info: http://kubernetes.io/docs/user-guide/namespaces
-    resourceVersion: An opaque value that represents the internal version of this object
-        that can be used by clients to determine when objects have changed. May be used
-        for optimistic concurrency, change detection, and the watch operation on a
-        resource or set of resources. Clients must treat these values as opaque and passed
-        unmodified back to the server. They may only be valid for a particular resource or
-        set of resources. Populated by the system. Read-only. Value must be treated as
-        opaque by clients and . More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
-    selfLink: SelfLink is a URL representing this object. Populated by the system.
-        Read-only. DEPRECATED Kubernetes will stop propagating this field in 1.20 release
-        and the field is planned to be removed in 1.21 release.
-    uid: UID is the unique in time and space value for this object. It is typically
-        generated by the server on successful creation of a resource and is not allowed to
-        change on PUT operations. Populated by the system. Read-only. More info:
-        http://kubernetes.io/docs/user-guide/identifiers#uids
-    annotations: Annotations is an unstructured key value map stored with a resource that
-        may be set by external tools to store and retrieve arbitrary metadata. They are
-        not queryable and should be preserved when modifying objects. More info:
-        http://kubernetes.io/docs/user-guide/annotations
-    finalizers: Must be empty before the object is deleted from the registry. Each entry
-        is an identifier for the responsible component that will remove the entry from the
-        list. If the deletionTimestamp of the object is non-nil, entries in this list can
-        only be removed. Finalizers may be processed and removed in any order. Order is
-        NOT enforced because it introduces significant risk of stuck finalizers.
-        finalizers is a shared field, any actor with permission can reorder it. If the
-        finalizer list is processed in order, then this can lead to a situation in which
-        the component responsible for the first finalizer in the list is waiting for a
-        signal (field value, external system, or other) produced by a component
-        responsible for a finalizer later in the list, resulting in a deadlock. Without
-        enforced ordering finalizers are free to order amongst themselves and are not
-        vulnerable to ordering changes in the list.
-    labels: Map of string keys and values that can be used to organize and categorize
-        (scope and select) objects. May match selectors of replication controllers and
-        services. More info: http://kubernetes.io/docs/user-guide/labels
-    managedFields: ManagedFields maps workflow-id and version to the set of fields that
-        are managed by that workflow. This is mostly for internal housekeeping, and users
-        typically shouldn't need to set or understand this field. A workflow can be the
-        user's name, a controller's name, or the name of a specific apply path like
-        "ci-cd". The set of fields is always in the version that the workflow used when
-        modifying the object.
-    ownerReferences: List of objects depended by this object. If ALL objects in the list
-        have been deleted, this object will be garbage collected. If this object is
-        managed by a controller, then an entry in this list will point to this controller,
-        with the controller field set to true. There cannot be more than one managing
-        controller.
-    """
-
-    clusterName: Optional[str] = None
-    creationTimestamp: Optional[str] = None
-    deletionGracePeriodSeconds: Optional[int] = None
-    deletionTimestamp: Optional[str] = None
-    generateName: Optional[str] = None
-    generation: Optional[int] = None
-    name: Optional[str] = None
-    namespace: Optional[str] = None
-    resourceVersion: Optional[str] = None
-    selfLink: Optional[str] = None
-    uid: Optional[str] = None
-    annotations: Optional[Dict[str, str]] = field(default_factory=dict)
-    finalizers: Optional[List[str]] = field(default_factory=list)
-    labels: Optional[Dict[str, str]] = field(default_factory=dict)
-    managedFields: Optional[List["ManagedFieldsEntry"]] = field(default_factory=list)
-    ownerReferences: Optional[List["OwnerReference"]] = field(default_factory=list)
+        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
 
 
 @dataclass
@@ -1134,7 +906,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
     r"""
     MutatingWebhookConfigurationList is a list of MutatingWebhookConfiguration.
 
-    Full name: v1beta1.MutatingWebhookConfigurationList
+    Full name: MutatingWebhookConfigurationList
 
     Attributes:
     items: List of MutatingWebhookConfiguration.
@@ -1172,7 +944,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["MutatingWebhookConfigurationList"]:
         r"""
         list or watch objects of kind MutatingWebhookConfiguration
 
@@ -1252,7 +1024,7 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1282,7 +1054,9 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["MutatingWebhookConfigurationList"](
+            result, codes_returning_objects
+        )
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1293,64 +1067,42 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
 
 
 @dataclass
-class ListMeta(HikaruBase):
+class RuleWithOperations(HikaruBase):
     r"""
-    ListMeta describes metadata that synthetic resources must have, including lists and
-    various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
+    RuleWithOperations is a tuple of Operations and Resources. It is recommended to make
+    sure that all the tuple expansions are valid.
 
-    Full name: v1.ListMeta
+    Full name: RuleWithOperations
 
     Attributes:
-    continue_: continue may be set if the user set a limit on the number of items
-        returned, and indicates that the server has more data available. The value is
-        opaque and may be used to issue another request to the endpoint that served this
-        list to retrieve the next set of available objects. Continuing a consistent list
-        may not be possible if the server configuration has changed or more than a few
-        minutes have passed. The resourceVersion field returned when using this continue
-        value will be identical to the value in the first response, unless you have
-        received this token from an error message.
-    remainingItemCount: remainingItemCount is the number of subsequent items in the list
-        which are not included in this list response. If the list request contained label
-        or field selectors, then the number of remaining items is unknown and the field
-        will be left unset and omitted during serialization. If the list is complete
-        (either because it is not chunking or because this is the last chunk), then there
-        are no more remaining items and this field will be left unset and omitted during
-        serialization. Servers older than v1.15 do not set this field. The intended use of
-        the remainingItemCount is *estimating* the size of a collection. Clients should
-        not rely on the remainingItemCount to be set or to be exact.
-    resourceVersion: String that identifies the server's internal version of this object
-        that can be used by clients to determine when objects have changed. Value must be
-        treated as opaque by clients and passed unmodified back to the server. Populated
-        by the system. Read-only. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
-    selfLink: selfLink is a URL representing this object. Populated by the system.
-        Read-only. DEPRECATED Kubernetes will stop propagating this field in 1.20 release
-        and the field is planned to be removed in 1.21 release.
+    scope: scope specifies the scope of this rule. Valid values are "Cluster",
+        "Namespaced", and "*" "Cluster" means that only cluster-scoped resources will
+        match this rule. Namespace API objects are cluster-scoped. "Namespaced" means that
+        only namespaced resources will match this rule. "*" means that there are no scope
+        restrictions. Subresources match the scope of their parent resource. Default is
+        "*".
+    apiGroups: APIGroups is the API groups the resources belong to. '*' is all groups. If
+        '*' is present, the length of the slice must be one. Required.
+    apiVersions: APIVersions is the API versions the resources belong to. '*' is all
+        versions. If '*' is present, the length of the slice must be one. Required.
+    operations: Operations is the operations the admission hook cares about - CREATE,
+        UPDATE, DELETE, CONNECT or * for all of those operations and any future admission
+        operations that are added. If '*' is present, the length of the slice must be one.
+        Required.
+    resources: Resources is a list of resources this rule applies to. For example: 'pods'
+        means pods. 'pods/log' means the log subresource of pods. '*' means all resources,
+        but not subresources. 'pods/*' means all subresources of pods. '*/scale' means all
+        scale subresources. '*/*' means all resources and their subresources. If wildcard
+        is present, the validation rule will ensure resources do not overlap with each
+        other. Depending on the enclosing object, subresources might not be allowed.
+        Required.
     """
 
-    continue_: Optional[str] = None
-    remainingItemCount: Optional[int] = None
-    resourceVersion: Optional[str] = None
-    selfLink: Optional[str] = None
-
-
-@dataclass
-class ServiceReference(HikaruBase):
-    r"""
-    ServiceReference holds a reference to Service.legacy.k8s.io
-
-    Full name: admissionregistration.v1beta1.ServiceReference
-
-    Attributes:
-    name: Name is the name of the service
-    namespace: Namespace is the namespace of the service
-    port: If specified, the port on the service that hosting webhook. Default to 443 for
-        backward compatibility. `port` should be a valid port number (1-65535, inclusive).
-    """
-
-    name: Optional[str] = None
-    namespace: Optional[str] = None
-    port: Optional[int] = None
+    scope: Optional[str] = None
+    apiGroups: Optional[List[str]] = field(default_factory=list)
+    apiVersions: Optional[List[str]] = field(default_factory=list)
+    operations: Optional[List[str]] = field(default_factory=list)
+    resources: Optional[List[str]] = field(default_factory=list)
 
 
 @dataclass
@@ -1359,7 +1111,7 @@ class ValidatingWebhook(HikaruBase):
     ValidatingWebhook describes an admission webhook and the resources and operations it
     applies to.
 
-    Full name: v1beta1.ValidatingWebhook
+    Full name: ValidatingWebhook
 
     Attributes:
     clientConfig: ClientConfig defines how to communicate with the hook. Required
@@ -1451,7 +1203,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
     removal in v1.19. Use admissionregistration.k8s.io/v1 ValidatingWebhookConfiguration
     instead.
 
-    Full name: v1beta1.ValidatingWebhookConfiguration
+    Full name: ValidatingWebhookConfiguration
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -1491,7 +1243,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         delete collection of ValidatingWebhookConfiguration
 
@@ -1582,7 +1334,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1616,7 +1368,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
     def createValidatingWebhookConfiguration(
         self,
@@ -1624,7 +1378,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         create a ValidatingWebhookConfiguration
 
@@ -1644,7 +1398,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1676,7 +1430,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
     def create(
         self,
@@ -1729,7 +1485,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         delete a ValidatingWebhookConfiguration
 
@@ -1765,7 +1521,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1794,7 +1550,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
     def delete(
         self,
@@ -1880,7 +1638,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         read the specified ValidatingWebhookConfiguration
 
@@ -1899,7 +1657,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1925,7 +1683,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
     def read(
         self,
@@ -1993,7 +1753,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         partially update the specified ValidatingWebhookConfiguration
 
@@ -2020,7 +1780,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -2052,7 +1812,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
     def update(
         self,
@@ -2133,7 +1895,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfiguration"]:
         r"""
         replace the specified ValidatingWebhookConfiguration
 
@@ -2154,7 +1916,7 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -2186,7 +1948,9 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfiguration"](
+            result, codes_returning_objects
+        )
 
 
 @dataclass
@@ -2194,7 +1958,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
     r"""
     ValidatingWebhookConfigurationList is a list of ValidatingWebhookConfiguration.
 
-    Full name: v1beta1.ValidatingWebhookConfigurationList
+    Full name: ValidatingWebhookConfigurationList
 
     Attributes:
     items: List of ValidatingWebhookConfiguration.
@@ -2232,7 +1996,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ValidatingWebhookConfigurationList"]:
         r"""
         list or watch objects of kind ValidatingWebhookConfiguration
 
@@ -2312,7 +2076,7 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -2344,7 +2108,9 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ValidatingWebhookConfigurationList"](
+            result, codes_returning_objects
+        )
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -2367,7 +2133,7 @@ class ControllerRevision(HikaruDocumentBase):
     releases, and clients should not depend on its stability. It is primarily for internal
     use by controllers.
 
-    Full name: v1.ControllerRevision
+    Full name: ControllerRevision
 
     Attributes:
     revision: Revision indicates the revision of the state represented by Data.
@@ -2399,7 +2165,7 @@ class ControllerRevisionList(HikaruDocumentBase):
     r"""
     ControllerRevisionList is a resource containing a list of ControllerRevision objects.
 
-    Full name: v1.ControllerRevisionList
+    Full name: ControllerRevisionList
 
     Attributes:
     items: Items is the list of ControllerRevisions
@@ -2429,7 +2195,7 @@ class DaemonSet(HikaruDocumentBase):
     r"""
     DaemonSet represents the configuration of a daemon set.
 
-    Full name: v1.DaemonSet
+    Full name: DaemonSet
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -2460,11 +2226,63 @@ class DaemonSet(HikaruDocumentBase):
 
 
 @dataclass
+class DaemonSetCondition(HikaruBase):
+    r"""
+    DaemonSetCondition describes the state of a DaemonSet at a certain point.
+
+    Full name: DaemonSetCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of DaemonSet condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    message: A human readable message indicating details about the transition.
+    reason: The reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class DaemonSetList(HikaruDocumentBase):
+    r"""
+    DaemonSetList is a collection of daemon sets.
+
+    Full name: DaemonSetList
+
+    Attributes:
+    items: A list of daemon sets.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    """
+
+    _version = "v1"
+    items: List["DaemonSet"]
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "DaemonSetList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class DaemonSetSpec(HikaruBase):
     r"""
     DaemonSetSpec is the specification of a daemon set.
 
-    Full name: v1.DaemonSetSpec
+    Full name: DaemonSetSpec
 
     Attributes:
     selector: A label query over pods that are managed by the daemon set. Must match in
@@ -2495,7 +2313,7 @@ class DaemonSetStatus(HikaruBase):
     r"""
     DaemonSetStatus represents the current status of a daemon set.
 
-    Full name: v1.DaemonSetStatus
+    Full name: DaemonSetStatus
 
     Attributes:
     currentNumberScheduled: The number of nodes that are running at least 1 daemon pod and
@@ -2537,82 +2355,12 @@ class DaemonSetStatus(HikaruBase):
 
 
 @dataclass
-class DaemonSetCondition(HikaruBase):
-    r"""
-    DaemonSetCondition describes the state of a DaemonSet at a certain point.
-
-    Full name: v1.DaemonSetCondition
-
-    Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of DaemonSet condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    message: A human readable message indicating details about the transition.
-    reason: The reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class DaemonSetList(HikaruDocumentBase):
-    r"""
-    DaemonSetList is a collection of daemon sets.
-
-    Full name: v1.DaemonSetList
-
-    Attributes:
-    items: A list of daemon sets.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1"
-    items: List["DaemonSet"]
-    apiVersion: Optional[str] = "apps/v1"
-    kind: Optional[str] = "DaemonSetList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class PodTemplateSpec(HikaruBase):
-    r"""
-    PodTemplateSpec describes the data a pod should have when created from a template
-
-    Full name: v1.PodTemplateSpec
-
-    Attributes:
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Specification of the desired behavior of the pod. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
-    """
-
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["PodSpec"] = None
-
-
-@dataclass
 class DaemonSetUpdateStrategy(HikaruBase):
     r"""
     DaemonSetUpdateStrategy is a struct used to control the update strategy for a
     DaemonSet.
 
-    Full name: v1.DaemonSetUpdateStrategy
+    Full name: DaemonSetUpdateStrategy
 
     Attributes:
     rollingUpdate: Rolling update config params. Present only if type = "RollingUpdate".
@@ -2625,35 +2373,11 @@ class DaemonSetUpdateStrategy(HikaruBase):
 
 
 @dataclass
-class RollingUpdateDaemonSet(HikaruBase):
-    r"""
-    Spec to control the desired behavior of daemon set rolling update.
-
-    Full name: v1.RollingUpdateDaemonSet
-
-    Attributes:
-    maxUnavailable: The maximum number of DaemonSet pods that can be unavailable during
-        the update. Value can be an absolute number (ex: 5) or a percentage of total
-        number of DaemonSet pods at the start of the update (ex: 10%). Absolute number is
-        calculated from percentage by rounding up. This cannot be 0. Default value is 1.
-        Example: when this is set to 30%, at most 30% of the total number of nodes that
-        should be running the daemon pod (i.e. status.desiredNumberScheduled) can have
-        their pods stopped for an update at any given time. The update starts by stopping
-        at most 30% of those DaemonSet pods and then brings up new DaemonSet pods in their
-        place. Once the new pods are available, it then proceeds onto other DaemonSet
-        pods, thus ensuring that at least 70% of original number of DaemonSet pods are
-        available at all times during the update.
-    """
-
-    maxUnavailable: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
 class Deployment(HikaruDocumentBase):
     r"""
     Deployment enables declarative updates for Pods and ReplicaSets.
 
-    Full name: v1.Deployment
+    Full name: Deployment
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -2680,11 +2404,64 @@ class Deployment(HikaruDocumentBase):
 
 
 @dataclass
+class DeploymentCondition(HikaruBase):
+    r"""
+    DeploymentCondition describes the state of a deployment at a certain point.
+
+    Full name: DeploymentCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of deployment condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    lastUpdateTime: The last time this condition was updated.
+    message: A human readable message indicating details about the transition.
+    reason: The reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    lastUpdateTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class DeploymentList(HikaruDocumentBase):
+    r"""
+    DeploymentList is a list of Deployments.
+
+    Full name: DeploymentList
+
+    Attributes:
+    items: Items is the list of Deployments.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata.
+    """
+
+    _version = "v1"
+    items: List["Deployment"]
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "DeploymentList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class DeploymentSpec(HikaruBase):
     r"""
     DeploymentSpec is the specification of the desired behavior of the Deployment.
 
-    Full name: v1.DeploymentSpec
+    Full name: DeploymentSpec
 
     Attributes:
     selector: Label selector for pods. Existing ReplicaSets whose pods are selected by
@@ -2723,7 +2500,7 @@ class DeploymentStatus(HikaruBase):
     r"""
     DeploymentStatus is the most recently observed status of the Deployment.
 
-    Full name: v1.DeploymentStatus
+    Full name: DeploymentStatus
 
     Attributes:
     availableReplicas: Total number of available pods (ready for at least minReadySeconds)
@@ -2756,64 +2533,11 @@ class DeploymentStatus(HikaruBase):
 
 
 @dataclass
-class DeploymentCondition(HikaruBase):
-    r"""
-    DeploymentCondition describes the state of a deployment at a certain point.
-
-    Full name: v1.DeploymentCondition
-
-    Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of deployment condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    lastUpdateTime: The last time this condition was updated.
-    message: A human readable message indicating details about the transition.
-    reason: The reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    lastUpdateTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class DeploymentList(HikaruDocumentBase):
-    r"""
-    DeploymentList is a list of Deployments.
-
-    Full name: v1.DeploymentList
-
-    Attributes:
-    items: Items is the list of Deployments.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata.
-    """
-
-    _version = "v1"
-    items: List["Deployment"]
-    apiVersion: Optional[str] = "apps/v1"
-    kind: Optional[str] = "DeploymentList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class DeploymentStrategy(HikaruBase):
     r"""
     DeploymentStrategy describes how to replace existing pods with new ones.
 
-    Full name: v1.DeploymentStrategy
+    Full name: DeploymentStrategy
 
     Attributes:
     rollingUpdate: Rolling update config params. Present only if DeploymentStrategyType =
@@ -2827,43 +2551,12 @@ class DeploymentStrategy(HikaruBase):
 
 
 @dataclass
-class RollingUpdateDeployment(HikaruBase):
-    r"""
-    Spec to control the desired behavior of rolling update.
-
-    Full name: v1.RollingUpdateDeployment
-
-    Attributes:
-    maxSurge: The maximum number of pods that can be scheduled above the desired number of
-        pods. Value can be an absolute number (ex: 5) or a percentage of desired pods (ex:
-        10%). This can not be 0 if MaxUnavailable is 0. Absolute number is calculated from
-        percentage by rounding up. Defaults to 25%. Example: when this is set to 30%, the
-        new ReplicaSet can be scaled up immediately when the rolling update starts, such
-        that the total number of old and new pods do not exceed 130% of desired pods. Once
-        old pods have been killed, new ReplicaSet can be scaled up further, ensuring that
-        total number of pods running at any time during the update is at most 130% of
-        desired pods.
-    maxUnavailable: The maximum number of pods that can be unavailable during the update.
-        Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
-        Absolute number is calculated from percentage by rounding down. This can not be 0
-        if MaxSurge is 0. Defaults to 25%. Example: when this is set to 30%, the old
-        ReplicaSet can be scaled down to 70% of desired pods immediately when the rolling
-        update starts. Once new pods are ready, old ReplicaSet can be scaled down further,
-        followed by scaling up the new ReplicaSet, ensuring that the total number of pods
-        available at all times during the update is at least 70% of desired pods.
-    """
-
-    maxSurge: Optional[object] = field(default_factory=dict)
-    maxUnavailable: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
 class ReplicaSet(HikaruDocumentBase):
     r"""
     ReplicaSet ensures that a specified number of pod replicas are running at any given
     time.
 
-    Full name: v1.ReplicaSet
+    Full name: ReplicaSet
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -2897,11 +2590,65 @@ class ReplicaSet(HikaruDocumentBase):
 
 
 @dataclass
+class ReplicaSetCondition(HikaruBase):
+    r"""
+    ReplicaSetCondition describes the state of a replica set at a certain point.
+
+    Full name: ReplicaSetCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of replica set condition.
+    lastTransitionTime: The last time the condition transitioned from one status to
+        another.
+    message: A human readable message indicating details about the transition.
+    reason: The reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class ReplicaSetList(HikaruDocumentBase):
+    r"""
+    ReplicaSetList is a collection of ReplicaSets.
+
+    Full name: ReplicaSetList
+
+    Attributes:
+    items: List of ReplicaSets. More info:
+        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ReplicaSet"]
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "ReplicaSetList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class ReplicaSetSpec(HikaruBase):
     r"""
     ReplicaSetSpec is the specification of a ReplicaSet.
 
-    Full name: v1.ReplicaSetSpec
+    Full name: ReplicaSetSpec
 
     Attributes:
     selector: Selector is a label query over pods that should match the replica count.
@@ -2930,7 +2677,7 @@ class ReplicaSetStatus(HikaruBase):
     r"""
     ReplicaSetStatus represents the current status of a ReplicaSet.
 
-    Full name: v1.ReplicaSetStatus
+    Full name: ReplicaSetStatus
 
     Attributes:
     replicas: Replicas is the most recently oberved number of replicas. More info:
@@ -2955,57 +2702,58 @@ class ReplicaSetStatus(HikaruBase):
 
 
 @dataclass
-class ReplicaSetCondition(HikaruBase):
+class RollingUpdateDaemonSet(HikaruBase):
     r"""
-    ReplicaSetCondition describes the state of a replica set at a certain point.
+    Spec to control the desired behavior of daemon set rolling update.
 
-    Full name: v1.ReplicaSetCondition
+    Full name: RollingUpdateDaemonSet
 
     Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of replica set condition.
-    lastTransitionTime: The last time the condition transitioned from one status to
-        another.
-    message: A human readable message indicating details about the transition.
-    reason: The reason for the condition's last transition.
+    maxUnavailable: The maximum number of DaemonSet pods that can be unavailable during
+        the update. Value can be an absolute number (ex: 5) or a percentage of total
+        number of DaemonSet pods at the start of the update (ex: 10%). Absolute number is
+        calculated from percentage by rounding up. This cannot be 0. Default value is 1.
+        Example: when this is set to 30%, at most 30% of the total number of nodes that
+        should be running the daemon pod (i.e. status.desiredNumberScheduled) can have
+        their pods stopped for an update at any given time. The update starts by stopping
+        at most 30% of those DaemonSet pods and then brings up new DaemonSet pods in their
+        place. Once the new pods are available, it then proceeds onto other DaemonSet
+        pods, thus ensuring that at least 70% of original number of DaemonSet pods are
+        available at all times during the update.
     """
 
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
+    maxUnavailable: Optional[object] = field(default_factory=dict)
 
 
 @dataclass
-class ReplicaSetList(HikaruDocumentBase):
+class RollingUpdateDeployment(HikaruBase):
     r"""
-    ReplicaSetList is a collection of ReplicaSets.
+    Spec to control the desired behavior of rolling update.
 
-    Full name: v1.ReplicaSetList
+    Full name: RollingUpdateDeployment
 
     Attributes:
-    items: List of ReplicaSets. More info:
-        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    maxSurge: The maximum number of pods that can be scheduled above the desired number of
+        pods. Value can be an absolute number (ex: 5) or a percentage of desired pods (ex:
+        10%). This can not be 0 if MaxUnavailable is 0. Absolute number is calculated from
+        percentage by rounding up. Defaults to 25%. Example: when this is set to 30%, the
+        new ReplicaSet can be scaled up immediately when the rolling update starts, such
+        that the total number of old and new pods do not exceed 130% of desired pods. Once
+        old pods have been killed, new ReplicaSet can be scaled up further, ensuring that
+        total number of pods running at any time during the update is at most 130% of
+        desired pods.
+    maxUnavailable: The maximum number of pods that can be unavailable during the update.
+        Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+        Absolute number is calculated from percentage by rounding down. This can not be 0
+        if MaxSurge is 0. Defaults to 25%. Example: when this is set to 30%, the old
+        ReplicaSet can be scaled down to 70% of desired pods immediately when the rolling
+        update starts. Once new pods are ready, old ReplicaSet can be scaled down further,
+        followed by scaling up the new ReplicaSet, ensuring that the total number of pods
+        available at all times during the update is at least 70% of desired pods.
     """
 
-    _version = "v1"
-    items: List["ReplicaSet"]
-    apiVersion: Optional[str] = "apps/v1"
-    kind: Optional[str] = "ReplicaSetList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
+    maxSurge: Optional[object] = field(default_factory=dict)
+    maxUnavailable: Optional[object] = field(default_factory=dict)
 
 
 @dataclass
@@ -3014,7 +2762,7 @@ class RollingUpdateStatefulSetStrategy(HikaruBase):
     RollingUpdateStatefulSetStrategy is used to communicate parameter for
     RollingUpdateStatefulSetStrategyType.
 
-    Full name: v1.RollingUpdateStatefulSetStrategy
+    Full name: RollingUpdateStatefulSetStrategy
 
     Attributes:
     partition: Partition indicates the ordinal at which the StatefulSet should be
@@ -3032,7 +2780,7 @@ class StatefulSet(HikaruDocumentBase):
     VolumeClaims as requested. The StatefulSet guarantees that a given network identity
     will always map to the same storage identity.
 
-    Full name: v1.StatefulSet
+    Full name: StatefulSet
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -3060,11 +2808,62 @@ class StatefulSet(HikaruDocumentBase):
 
 
 @dataclass
+class StatefulSetCondition(HikaruBase):
+    r"""
+    StatefulSetCondition describes the state of a statefulset at a certain point.
+
+    Full name: StatefulSetCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of statefulset condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    message: A human readable message indicating details about the transition.
+    reason: The reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class StatefulSetList(HikaruDocumentBase):
+    r"""
+    StatefulSetList is a collection of StatefulSets.
+
+    Full name: StatefulSetList
+
+    Attributes:
+    items:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    """
+
+    _version = "v1"
+    items: List["StatefulSet"]
+    apiVersion: Optional[str] = "apps/v1"
+    kind: Optional[str] = "StatefulSetList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class StatefulSetSpec(HikaruBase):
     r"""
     A StatefulSetSpec is the specification of a StatefulSet.
 
-    Full name: v1.StatefulSetSpec
+    Full name: StatefulSetSpec
 
     Attributes:
     selector: selector is a label query over pods that should match the replica count. It
@@ -3121,7 +2920,7 @@ class StatefulSetStatus(HikaruBase):
     r"""
     StatefulSetStatus represents the current state of a StatefulSet.
 
-    Full name: v1.StatefulSetStatus
+    Full name: StatefulSetStatus
 
     Attributes:
     replicas: replicas is the number of Pods created by the StatefulSet controller.
@@ -3157,64 +2956,13 @@ class StatefulSetStatus(HikaruBase):
 
 
 @dataclass
-class StatefulSetCondition(HikaruBase):
-    r"""
-    StatefulSetCondition describes the state of a statefulset at a certain point.
-
-    Full name: v1.StatefulSetCondition
-
-    Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of statefulset condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    message: A human readable message indicating details about the transition.
-    reason: The reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class StatefulSetList(HikaruDocumentBase):
-    r"""
-    StatefulSetList is a collection of StatefulSets.
-
-    Full name: v1.StatefulSetList
-
-    Attributes:
-    items:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata:
-    """
-
-    _version = "v1"
-    items: List["StatefulSet"]
-    apiVersion: Optional[str] = "apps/v1"
-    kind: Optional[str] = "StatefulSetList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class StatefulSetUpdateStrategy(HikaruBase):
     r"""
     StatefulSetUpdateStrategy indicates the strategy that the StatefulSet controller will
     use to perform updates. It includes any additional parameters necessary to perform the
     update for the indicated strategy.
 
-    Full name: v1.StatefulSetUpdateStrategy
+    Full name: StatefulSetUpdateStrategy
 
     Attributes:
     rollingUpdate: RollingUpdate is used to communicate parameters when Type is
@@ -3228,47 +2976,11 @@ class StatefulSetUpdateStrategy(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeClaim(HikaruDocumentBase):
-    r"""
-    PersistentVolumeClaim is a user's request for and claim to a persistent volume
-
-    Full name: v1.PersistentVolumeClaim
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    spec: Spec defines the desired characteristics of a volume requested by a pod author.
-        More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
-    status: Status represents the current information/status of a persistent volume claim.
-        Read-only. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PersistentVolumeClaim"
-    metadata: Optional["ObjectMeta"] = None
-    spec: Optional["PersistentVolumeClaimSpec"] = None
-    status: Optional["PersistentVolumeClaimStatus"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class BoundObjectReference(HikaruBase):
     r"""
     BoundObjectReference is a reference to an object that a token is bound to.
 
-    Full name: v1.BoundObjectReference
+    Full name: BoundObjectReference
 
     Attributes:
     apiVersion: API version of the referent.
@@ -3278,7 +2990,7 @@ class BoundObjectReference(HikaruBase):
     """
 
     apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "None"
+    kind: Optional[str] = "BoundObjectReference"
     name: Optional[str] = None
     uid: Optional[str] = None
 
@@ -3288,7 +3000,7 @@ class TokenRequest(HikaruDocumentBase):
     r"""
     TokenRequest requests a token for a given service account.
 
-    Full name: v1.TokenRequest
+    Full name: TokenRequest
 
     Attributes:
     spec:
@@ -3319,7 +3031,7 @@ class TokenRequestSpec(HikaruBase):
     r"""
     TokenRequestSpec contains client provided parameters of a token request.
 
-    Full name: v1.TokenRequestSpec
+    Full name: TokenRequestSpec
 
     Attributes:
     audiences: Audiences are the intendend audiences of the token. A recipient of a token
@@ -3347,7 +3059,7 @@ class TokenRequestStatus(HikaruBase):
     r"""
     TokenRequestStatus is the result of a token request.
 
-    Full name: v1.TokenRequestStatus
+    Full name: TokenRequestStatus
 
     Attributes:
     expirationTimestamp: ExpirationTimestamp is the time of expiration of the returned
@@ -3366,7 +3078,7 @@ class TokenReview(HikaruDocumentBase):
     requests may be cached by the webhook token authenticator plugin in the
     kube-apiserver.
 
-    Full name: v1beta1.TokenReview
+    Full name: TokenReview
 
     Attributes:
     spec: Spec holds information about the request being evaluated
@@ -3394,7 +3106,7 @@ class TokenReview(HikaruDocumentBase):
 
     def createTokenReview(
         self, client: ApiClient = None, async_req: bool = False
-    ) -> Response:
+    ) -> Response["TokenReview"]:
         r"""
         create a TokenReview
 
@@ -3405,7 +3117,7 @@ class TokenReview(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -3434,7 +3146,7 @@ class TokenReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["TokenReview"](result, codes_returning_objects)
 
     def create(self, client: ApiClient = None) -> "TokenReview":
         r"""
@@ -3467,7 +3179,7 @@ class TokenReviewSpec(HikaruBase):
     r"""
     TokenReviewSpec is a description of the token authentication request.
 
-    Full name: v1beta1.TokenReviewSpec
+    Full name: TokenReviewSpec
 
     Attributes:
     token: Token is the opaque bearer token.
@@ -3487,7 +3199,7 @@ class TokenReviewStatus(HikaruBase):
     r"""
     TokenReviewStatus is the result of the token authentication request.
 
-    Full name: v1beta1.TokenReviewStatus
+    Full name: TokenReviewStatus
 
     Attributes:
     authenticated: Authenticated indicates that the token was associated with a known
@@ -3516,7 +3228,7 @@ class UserInfo(HikaruBase):
     UserInfo holds the information about the user needed to implement the user.Info
     interface.
 
-    Full name: v1beta1.UserInfo
+    Full name: UserInfo
 
     Attributes:
     uid: A unique value that identifies this user across time. If this user is deleted and
@@ -3539,7 +3251,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
     in a given namespace. Having a namespace scoped resource makes it much easier to grant
     namespace scoped policy that includes permissions checking.
 
-    Full name: v1beta1.LocalSubjectAccessReview
+    Full name: LocalSubjectAccessReview
 
     Attributes:
     spec: Spec holds information about the request being evaluated. spec.namespace must be
@@ -3568,7 +3280,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
     def createNamespacedLocalSubjectAccessReview(
         self, namespace: str, client: ApiClient = None, async_req: bool = False
-    ) -> Response:
+    ) -> Response["LocalSubjectAccessReview"]:
         r"""
         create a LocalSubjectAccessReview
 
@@ -3581,7 +3293,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -3612,7 +3324,7 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["LocalSubjectAccessReview"](result, codes_returning_objects)
 
     def create(
         self, namespace: Optional[str] = None, client: ApiClient = None
@@ -3659,67 +3371,12 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
 
 
 @dataclass
-class SubjectAccessReviewSpec(HikaruBase):
-    r"""
-    SubjectAccessReviewSpec is a description of the access request. Exactly one of
-    ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
-
-    Full name: v1beta1.SubjectAccessReviewSpec
-
-    Attributes:
-    nonResourceAttributes: NonResourceAttributes describes information for a non-resource
-        access request
-    resourceAttributes: ResourceAuthorizationAttributes describes information for a
-        resource access request
-    uid: UID information about the requesting user.
-    user: User is the user you're testing for. If you specify "User" but not "Group", then
-        is it interpreted as "What if User were not a member of any groups
-    extra: Extra corresponds to the user.Info.GetExtra() method from the authenticator.
-        Since that is input to the authorizer it needs a reflection here.
-    group: Groups is the groups you're testing for.
-    """
-
-    nonResourceAttributes: Optional["NonResourceAttributes"] = None
-    resourceAttributes: Optional["ResourceAttributes"] = None
-    uid: Optional[str] = None
-    user: Optional[str] = None
-    extra: Optional[Dict[str, str]] = field(default_factory=dict)
-    group: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class SubjectAccessReviewStatus(HikaruBase):
-    r"""
-    SubjectAccessReviewStatus
-
-    Full name: v1beta1.SubjectAccessReviewStatus
-
-    Attributes:
-    allowed: Allowed is required. True if the action would be allowed, false otherwise.
-    denied: Denied is optional. True if the action would be denied, otherwise false. If
-        both allowed is false and denied is false, then the authorizer has no opinion on
-        whether to authorize the action. Denied may not be true if Allowed is true.
-    evaluationError: EvaluationError is an indication that some error occurred during the
-        authorization check. It is entirely possible to get an error and be able to
-        continue determine authorization status in spite of it. For instance, RBAC can be
-        missing a role, but enough roles are still present and bound to reason about the
-        request.
-    reason: Reason is optional. It indicates why a request was allowed or denied.
-    """
-
-    allowed: bool
-    denied: Optional[bool] = None
-    evaluationError: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
 class NonResourceAttributes(HikaruBase):
     r"""
     NonResourceAttributes includes the authorization attributes available for non-resource
     requests to the Authorizer interface
 
-    Full name: v1beta1.NonResourceAttributes
+    Full name: NonResourceAttributes
 
     Attributes:
     path: Path is the URL path of the request
@@ -3735,7 +3392,7 @@ class NonResourceRule(HikaruBase):
     r"""
     NonResourceRule holds information that describes a rule for the non-resource
 
-    Full name: v1beta1.NonResourceRule
+    Full name: NonResourceRule
 
     Attributes:
     verbs: Verb is a list of kubernetes non-resource API verbs, like: get, post, put,
@@ -3755,7 +3412,7 @@ class ResourceAttributes(HikaruBase):
     ResourceAttributes includes the authorization attributes available for resource
     requests to the Authorizer interface
 
-    Full name: v1beta1.ResourceAttributes
+    Full name: ResourceAttributes
 
     Attributes:
     group: Group is the API Group of the Resource. "*" means all.
@@ -3789,7 +3446,7 @@ class ResourceRule(HikaruBase):
     The list ordering isn't significant, may contain duplicates, and possibly be
     incomplete.
 
-    Full name: v1beta1.ResourceRule
+    Full name: ResourceRule
 
     Attributes:
     verbs: Verb is a list of kubernetes resource API verbs, like: get, list, watch,
@@ -3817,7 +3474,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
     filling in a spec.namespace means "in all namespaces". Self is a special case, because
     users should always be able to check whether they can perform an action
 
-    Full name: v1beta1.SelfSubjectAccessReview
+    Full name: SelfSubjectAccessReview
 
     Attributes:
     spec: Spec holds information about the request being evaluated. user and groups must
@@ -3846,7 +3503,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
 
     def createSelfSubjectAccessReview(
         self, client: ApiClient = None, async_req: bool = False
-    ) -> Response:
+    ) -> Response["SelfSubjectAccessReview"]:
         r"""
         create a SelfSubjectAccessReview
 
@@ -3857,7 +3514,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -3886,7 +3543,7 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["SelfSubjectAccessReview"](result, codes_returning_objects)
 
     def create(self, client: ApiClient = None) -> "SelfSubjectAccessReview":
         r"""
@@ -3920,7 +3577,7 @@ class SelfSubjectAccessReviewSpec(HikaruBase):
     SelfSubjectAccessReviewSpec is a description of the access request. Exactly one of
     ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
 
-    Full name: v1beta1.SelfSubjectAccessReviewSpec
+    Full name: SelfSubjectAccessReviewSpec
 
     Attributes:
     nonResourceAttributes: NonResourceAttributes describes information for a non-resource
@@ -3946,7 +3603,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
     LocalAccessReview are the correct way to defer authorization decisions to the API
     server.
 
-    Full name: v1beta1.SelfSubjectRulesReview
+    Full name: SelfSubjectRulesReview
 
     Attributes:
     spec: Spec holds information about the request being evaluated.
@@ -3974,7 +3631,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 
     def createSelfSubjectRulesReview(
         self, client: ApiClient = None, async_req: bool = False
-    ) -> Response:
+    ) -> Response["SelfSubjectRulesReview"]:
         r"""
         create a SelfSubjectRulesReview
 
@@ -3985,7 +3642,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -4014,7 +3671,7 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["SelfSubjectRulesReview"](result, codes_returning_objects)
 
     def create(self, client: ApiClient = None) -> "SelfSubjectRulesReview":
         r"""
@@ -4046,7 +3703,8 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
 class SelfSubjectRulesReviewSpec(HikaruBase):
     r"""
 
-    Full name: v1beta1.SelfSubjectRulesReviewSpec
+
+    Full name: SelfSubjectRulesReviewSpec
 
     Attributes:
     namespace: Namespace to evaluate rules for. Required.
@@ -4056,43 +3714,11 @@ class SelfSubjectRulesReviewSpec(HikaruBase):
 
 
 @dataclass
-class SubjectRulesReviewStatus(HikaruBase):
-    r"""
-    SubjectRulesReviewStatus contains the result of a rules check. This check can be
-    incomplete depending on the set of authorizers the server is configured with and any
-    errors experienced during evaluation. Because authorization rules are additive, if a
-    rule appears in a list it's safe to assume the subject has that permission, even if
-    that list is incomplete.
-
-    Full name: v1beta1.SubjectRulesReviewStatus
-
-    Attributes:
-    incomplete: Incomplete is true when the rules returned by this call are incomplete.
-        This is most commonly encountered when an authorizer, such as an external
-        authorizer, doesn't support rules evaluation.
-    nonResourceRules: NonResourceRules is the list of actions the subject is allowed to
-        perform on non-resources. The list ordering isn't significant, may contain
-        duplicates, and possibly be incomplete.
-    resourceRules: ResourceRules is the list of actions the subject is allowed to perform
-        on resources. The list ordering isn't significant, may contain duplicates, and
-        possibly be incomplete.
-    evaluationError: EvaluationError can appear in combination with Rules. It indicates an
-        error occurred during rule evaluation, such as an authorizer that doesn't support
-        rule evaluation, and that ResourceRules and/or NonResourceRules may be incomplete.
-    """
-
-    incomplete: bool
-    nonResourceRules: List["NonResourceRule"]
-    resourceRules: List["ResourceRule"]
-    evaluationError: Optional[str] = None
-
-
-@dataclass
 class SubjectAccessReview(HikaruDocumentBase):
     r"""
     SubjectAccessReview checks whether or not a user or group can perform an action.
 
-    Full name: v1beta1.SubjectAccessReview
+    Full name: SubjectAccessReview
 
     Attributes:
     spec: Spec holds information about the request being evaluated
@@ -4120,7 +3746,7 @@ class SubjectAccessReview(HikaruDocumentBase):
 
     def createSubjectAccessReview(
         self, client: ApiClient = None, async_req: bool = False
-    ) -> Response:
+    ) -> Response["SubjectAccessReview"]:
         r"""
         create a SubjectAccessReview
 
@@ -4131,7 +3757,7 @@ class SubjectAccessReview(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -4160,7 +3786,7 @@ class SubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["SubjectAccessReview"](result, codes_returning_objects)
 
     def create(self, client: ApiClient = None) -> "SubjectAccessReview":
         r"""
@@ -4189,12 +3815,99 @@ class SubjectAccessReview(HikaruDocumentBase):
 
 
 @dataclass
+class SubjectAccessReviewSpec(HikaruBase):
+    r"""
+    SubjectAccessReviewSpec is a description of the access request. Exactly one of
+    ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+
+    Full name: SubjectAccessReviewSpec
+
+    Attributes:
+    nonResourceAttributes: NonResourceAttributes describes information for a non-resource
+        access request
+    resourceAttributes: ResourceAuthorizationAttributes describes information for a
+        resource access request
+    uid: UID information about the requesting user.
+    user: User is the user you're testing for. If you specify "User" but not "Group", then
+        is it interpreted as "What if User were not a member of any groups
+    extra: Extra corresponds to the user.Info.GetExtra() method from the authenticator.
+        Since that is input to the authorizer it needs a reflection here.
+    group: Groups is the groups you're testing for.
+    """
+
+    nonResourceAttributes: Optional["NonResourceAttributes"] = None
+    resourceAttributes: Optional["ResourceAttributes"] = None
+    uid: Optional[str] = None
+    user: Optional[str] = None
+    extra: Optional[Dict[str, str]] = field(default_factory=dict)
+    group: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class SubjectAccessReviewStatus(HikaruBase):
+    r"""
+    SubjectAccessReviewStatus
+
+    Full name: SubjectAccessReviewStatus
+
+    Attributes:
+    allowed: Allowed is required. True if the action would be allowed, false otherwise.
+    denied: Denied is optional. True if the action would be denied, otherwise false. If
+        both allowed is false and denied is false, then the authorizer has no opinion on
+        whether to authorize the action. Denied may not be true if Allowed is true.
+    evaluationError: EvaluationError is an indication that some error occurred during the
+        authorization check. It is entirely possible to get an error and be able to
+        continue determine authorization status in spite of it. For instance, RBAC can be
+        missing a role, but enough roles are still present and bound to reason about the
+        request.
+    reason: Reason is optional. It indicates why a request was allowed or denied.
+    """
+
+    allowed: bool
+    denied: Optional[bool] = None
+    evaluationError: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class SubjectRulesReviewStatus(HikaruBase):
+    r"""
+    SubjectRulesReviewStatus contains the result of a rules check. This check can be
+    incomplete depending on the set of authorizers the server is configured with and any
+    errors experienced during evaluation. Because authorization rules are additive, if a
+    rule appears in a list it's safe to assume the subject has that permission, even if
+    that list is incomplete.
+
+    Full name: SubjectRulesReviewStatus
+
+    Attributes:
+    incomplete: Incomplete is true when the rules returned by this call are incomplete.
+        This is most commonly encountered when an authorizer, such as an external
+        authorizer, doesn't support rules evaluation.
+    nonResourceRules: NonResourceRules is the list of actions the subject is allowed to
+        perform on non-resources. The list ordering isn't significant, may contain
+        duplicates, and possibly be incomplete.
+    resourceRules: ResourceRules is the list of actions the subject is allowed to perform
+        on resources. The list ordering isn't significant, may contain duplicates, and
+        possibly be incomplete.
+    evaluationError: EvaluationError can appear in combination with Rules. It indicates an
+        error occurred during rule evaluation, such as an authorizer that doesn't support
+        rule evaluation, and that ResourceRules and/or NonResourceRules may be incomplete.
+    """
+
+    incomplete: bool
+    nonResourceRules: List["NonResourceRule"]
+    resourceRules: List["ResourceRule"]
+    evaluationError: Optional[str] = None
+
+
+@dataclass
 class CrossVersionObjectReference(HikaruBase):
     r"""
     CrossVersionObjectReference contains enough information to let you identify the
     referred resource.
 
-    Full name: v1.CrossVersionObjectReference
+    Full name: CrossVersionObjectReference
 
     Attributes:
     kind: Kind of the referent; More info:
@@ -4214,7 +3927,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
     r"""
     configuration of a horizontal pod autoscaler.
 
-    Full name: v1.HorizontalPodAutoscaler
+    Full name: HorizontalPodAutoscaler
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -4243,11 +3956,40 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
 
 
 @dataclass
+class HorizontalPodAutoscalerList(HikaruDocumentBase):
+    r"""
+    list of horizontal pod autoscaler objects.
+
+    Full name: HorizontalPodAutoscalerList
+
+    Attributes:
+    items: list of horizontal pod autoscaler objects.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata.
+    """
+
+    _version = "v1"
+    items: List["HorizontalPodAutoscaler"]
+    apiVersion: Optional[str] = "autoscaling/v1"
+    kind: Optional[str] = "HorizontalPodAutoscalerList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class HorizontalPodAutoscalerSpec(HikaruBase):
     r"""
     specification of a horizontal pod autoscaler.
 
-    Full name: v1.HorizontalPodAutoscalerSpec
+    Full name: HorizontalPodAutoscalerSpec
 
     Attributes:
     maxReplicas: upper limit for the number of pods that can be set by the autoscaler;
@@ -4276,7 +4018,7 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
     r"""
     current status of a horizontal pod autoscaler
 
-    Full name: v1.HorizontalPodAutoscalerStatus
+    Full name: HorizontalPodAutoscalerStatus
 
     Attributes:
     currentReplicas: current number of replicas of pods managed by this autoscaler.
@@ -4297,40 +4039,11 @@ class HorizontalPodAutoscalerStatus(HikaruBase):
 
 
 @dataclass
-class HorizontalPodAutoscalerList(HikaruDocumentBase):
-    r"""
-    list of horizontal pod autoscaler objects.
-
-    Full name: v1.HorizontalPodAutoscalerList
-
-    Attributes:
-    items: list of horizontal pod autoscaler objects.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata.
-    """
-
-    _version = "v1"
-    items: List["HorizontalPodAutoscaler"]
-    apiVersion: Optional[str] = "autoscaling/v1"
-    kind: Optional[str] = "HorizontalPodAutoscalerList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
 class Scale(HikaruDocumentBase):
     r"""
     Scale represents a scaling request for a resource.
 
-    Full name: v1.Scale
+    Full name: Scale
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -4365,7 +4078,7 @@ class ScaleSpec(HikaruBase):
     r"""
     ScaleSpec describes the attributes of a scale subresource.
 
-    Full name: v1.ScaleSpec
+    Full name: ScaleSpec
 
     Attributes:
     replicas: desired number of instances for the scaled object.
@@ -4379,7 +4092,7 @@ class ScaleStatus(HikaruBase):
     r"""
     ScaleStatus represents the current status of a scale subresource.
 
-    Full name: v1.ScaleStatus
+    Full name: ScaleStatus
 
     Attributes:
     replicas: actual number of observed instances of the scaled object.
@@ -4398,7 +4111,7 @@ class Job(HikaruDocumentBase):
     r"""
     Job represents the configuration of a single job.
 
-    Full name: v1.Job
+    Full name: Job
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -4428,11 +4141,65 @@ class Job(HikaruDocumentBase):
 
 
 @dataclass
+class JobCondition(HikaruBase):
+    r"""
+    JobCondition describes current state of a job.
+
+    Full name: JobCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of job condition, Complete or Failed.
+    lastProbeTime: Last time the condition was checked.
+    lastTransitionTime: Last time the condition transit from one status to another.
+    message: Human readable message indicating details about last transition.
+    reason: (brief) reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastProbeTime: Optional[str] = None
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class JobList(HikaruDocumentBase):
+    r"""
+    JobList is a collection of jobs.
+
+    Full name: JobList
+
+    Attributes:
+    items: items is the list of Jobs.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    """
+
+    _version = "v1"
+    items: List["Job"]
+    apiVersion: Optional[str] = "batch/v1"
+    kind: Optional[str] = "JobList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class JobSpec(HikaruBase):
     r"""
     JobSpec describes how the job execution will look like.
 
-    Full name: v1.JobSpec
+    Full name: JobSpec
 
     Attributes:
     template: Describes the pod that will be created when executing a job. More info:
@@ -4489,7 +4256,7 @@ class JobStatus(HikaruBase):
     r"""
     JobStatus represents the current state of a Job.
 
-    Full name: v1.JobStatus
+    Full name: JobStatus
 
     Attributes:
     active: The number of actively running pods.
@@ -4514,105 +4281,11 @@ class JobStatus(HikaruBase):
 
 
 @dataclass
-class JobCondition(HikaruBase):
-    r"""
-    JobCondition describes current state of a job.
-
-    Full name: v1.JobCondition
-
-    Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of job condition, Complete or Failed.
-    lastProbeTime: Last time the condition was checked.
-    lastTransitionTime: Last time the condition transit from one status to another.
-    message: Human readable message indicating details about last transition.
-    reason: (brief) reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastProbeTime: Optional[str] = None
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class JobList(HikaruDocumentBase):
-    r"""
-    JobList is a collection of jobs.
-
-    Full name: v1.JobList
-
-    Attributes:
-    items: items is the list of Jobs.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1"
-    items: List["Job"]
-    apiVersion: Optional[str] = "batch/v1"
-    kind: Optional[str] = "JobList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ObjectReference(HikaruBase):
-    r"""
-    ObjectReference contains enough information to let you inspect or modify the referred
-    object.
-
-    Full name: v1.ObjectReference
-
-    Attributes:
-    apiVersion: API version of the referent.
-    fieldPath: If referring to a piece of an object instead of an entire object, this
-        string should contain a valid JSON/Go field access statement, such as
-        desiredState.manifest.containers[2]. For example, if the object reference is to a
-        container within a pod, this would take on a value like: "spec.containers{name}"
-        (where "name" refers to the name of the container that triggered the event) or if
-        no container name is specified "spec.containers[2]" (container with index 2 in
-        this pod). This syntax is chosen only to have some well-defined way of referencing
-        a part of an object.
-    kind: Kind of the referent. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    name: Name of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-    namespace: Namespace of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-    resourceVersion: Specific resourceVersion to which this reference is made, if any.
-        More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
-    uid: UID of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids
-    """
-
-    apiVersion: Optional[str] = "v1"
-    fieldPath: Optional[str] = None
-    kind: Optional[str] = "None"
-    name: Optional[str] = None
-    namespace: Optional[str] = None
-    resourceVersion: Optional[str] = None
-    uid: Optional[str] = None
-
-
-@dataclass
 class CertificateSigningRequest(HikaruDocumentBase):
     r"""
     Describes a certificate signing request
 
-    Full name: v1beta1.CertificateSigningRequest
+    Full name: CertificateSigningRequest
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -4653,7 +4326,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         delete collection of CertificateSigningRequest
 
@@ -4744,7 +4417,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -4778,7 +4451,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def createCertificateSigningRequest(
         self,
@@ -4786,7 +4459,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         create a CertificateSigningRequest
 
@@ -4806,7 +4479,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -4836,7 +4509,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def create(
         self,
@@ -4889,7 +4562,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         delete a CertificateSigningRequest
 
@@ -4925,7 +4598,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -4952,7 +4625,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -5038,7 +4711,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         read the specified CertificateSigningRequest
 
@@ -5057,7 +4730,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5081,7 +4754,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def read(
         self,
@@ -5149,7 +4822,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         partially update the specified CertificateSigningRequest
 
@@ -5176,7 +4849,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5206,7 +4879,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def update(
         self,
@@ -5287,7 +4960,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         replace the specified CertificateSigningRequest
 
@@ -5308,7 +4981,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5338,7 +5011,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     @staticmethod
     def readCertificateSigningRequestApproval(
@@ -5346,7 +5019,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         read approval of the specified CertificateSigningRequest
 
@@ -5360,7 +5033,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5384,7 +5057,76 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+
+    def patchCertificateSigningRequestApproval(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["CertificateSigningRequest"]:
+        r"""
+        partially update approval of the specified CertificateSigningRequest
+
+        operationID: patchCertificateSigningRequestApproval
+        path: /apis/certificates.k8s.io/v1beta1/certificatesigningrequests/{name}/approval
+
+        :param name: name for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CertificateSigningRequest    OK
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = CertificatesV1beta1Api(api_client=client_to_use)
+        the_method = getattr(
+            inst, "patch_certificate_signing_request_approval_with_http_info"
+        )
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "patch_certificate_signing_request_approval_with_http_info "
+                "on CertificatesV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def replaceCertificateSigningRequestApproval(
         self,
@@ -5393,7 +5135,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         replace approval of the specified CertificateSigningRequest
 
@@ -5414,7 +5156,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5446,7 +5188,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
     def replaceCertificateSigningRequestStatus(
         self,
@@ -5455,7 +5197,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequest"]:
         r"""
         replace status of the specified CertificateSigningRequest
 
@@ -5476,7 +5218,7 @@ class CertificateSigningRequest(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5508,75 +5250,15 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class CertificateSigningRequestSpec(HikaruBase):
-    r"""
-    This information is immutable after the request is created. Only the Request and
-    Usages fields can be set on creation, other fields are derived by Kubernetes and
-    cannot be modified by users.
-
-    Full name: v1beta1.CertificateSigningRequestSpec
-
-    Attributes:
-    request: Base64-encoded PKCS#10 CSR data
-    signerName: Requested signer for the request. It is a qualified name in the form:
-        `scope-hostname.io/name`. If empty, it will be defaulted: 1. If it's a kubelet
-        client certificate, it is assigned "kubernetes.io/kube-apiserver-client-kubelet".
-        2. If it's a kubelet serving certificate, it is assigned
-        "kubernetes.io/kubelet-serving". 3. Otherwise, it is assigned
-        "kubernetes.io/legacy-unknown". Distribution of trust for signers happens out of
-        band. You can select on this field using `spec.signerName`.
-    uid: UID information about the requesting user. See user.Info interface for details.
-    username: Information about the requesting user. See user.Info interface for details.
-    extra: Extra information about the requesting user. See user.Info interface for
-        details.
-    groups: Group information about the requesting user. See user.Info interface for
-        details.
-    usages: allowedUsages specifies a set of usage contexts the key will be valid for.
-        See: https://tools.ietf.org/html/rfc5280#section-4.2.1.3
-        https://tools.ietf.org/html/rfc5280#section-4.2.1.12 Valid values are: "signing",
-        "digital signature", "content commitment", "key encipherment", "key agreement",
-        "data encipherment", "cert sign", "crl sign", "encipher only", "decipher only",
-        "any", "server auth", "client auth", "code signing", "email protection", "s/mime",
-        "ipsec end system", "ipsec tunnel", "ipsec user", "timestamping", "ocsp signing",
-        "microsoft sgc", "netscape sgc"
-    """
-
-    request: str
-    signerName: Optional[str] = None
-    uid: Optional[str] = None
-    username: Optional[str] = None
-    extra: Optional[Dict[str, str]] = field(default_factory=dict)
-    groups: Optional[List[str]] = field(default_factory=list)
-    usages: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class CertificateSigningRequestStatus(HikaruBase):
-    r"""
-
-    Full name: v1beta1.CertificateSigningRequestStatus
-
-    Attributes:
-    certificate: If request was approved, the controller will place the issued certificate
-        here.
-    conditions: Conditions applied to the request, such as approval or denial.
-    """
-
-    certificate: Optional[str] = None
-    conditions: Optional[List["CertificateSigningRequestCondition"]] = field(
-        default_factory=list
-    )
+        return Response["CertificateSigningRequest"](result, codes_returning_objects)
 
 
 @dataclass
 class CertificateSigningRequestCondition(HikaruBase):
     r"""
 
-    Full name: v1beta1.CertificateSigningRequestCondition
+
+    Full name: CertificateSigningRequestCondition
 
     Attributes:
     type: type of the condition. Known conditions include "Approved", "Denied", and
@@ -5605,7 +5287,8 @@ class CertificateSigningRequestCondition(HikaruBase):
 class CertificateSigningRequestList(HikaruDocumentBase):
     r"""
 
-    Full name: v1beta1.CertificateSigningRequestList
+
+    Full name: CertificateSigningRequestList
 
     Attributes:
     items:
@@ -5642,7 +5325,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CertificateSigningRequestList"]:
         r"""
         list or watch objects of kind CertificateSigningRequest
 
@@ -5722,7 +5405,7 @@ class CertificateSigningRequestList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5752,7 +5435,9 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CertificateSigningRequestList"](
+            result, codes_returning_objects
+        )
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -5763,11 +5448,73 @@ class CertificateSigningRequestList(HikaruDocumentBase):
 
 
 @dataclass
+class CertificateSigningRequestSpec(HikaruBase):
+    r"""
+    This information is immutable after the request is created. Only the Request and
+    Usages fields can be set on creation, other fields are derived by Kubernetes and
+    cannot be modified by users.
+
+    Full name: CertificateSigningRequestSpec
+
+    Attributes:
+    request: Base64-encoded PKCS#10 CSR data
+    signerName: Requested signer for the request. It is a qualified name in the form:
+        `scope-hostname.io/name`. If empty, it will be defaulted: 1. If it's a kubelet
+        client certificate, it is assigned "kubernetes.io/kube-apiserver-client-kubelet".
+        2. If it's a kubelet serving certificate, it is assigned
+        "kubernetes.io/kubelet-serving". 3. Otherwise, it is assigned
+        "kubernetes.io/legacy-unknown". Distribution of trust for signers happens out of
+        band. You can select on this field using `spec.signerName`.
+    uid: UID information about the requesting user. See user.Info interface for details.
+    username: Information about the requesting user. See user.Info interface for details.
+    extra: Extra information about the requesting user. See user.Info interface for
+        details.
+    groups: Group information about the requesting user. See user.Info interface for
+        details.
+    usages: allowedUsages specifies a set of usage contexts the key will be valid for.
+        See: https://tools.ietf.org/html/rfc5280#section-4.2.1.3
+        https://tools.ietf.org/html/rfc5280#section-4.2.1.12 Valid values are: "signing",
+        "digital signature", "content commitment", "key encipherment", "key agreement",
+        "data encipherment", "cert sign", "crl sign", "encipher only", "decipher only",
+        "any", "server auth", "client auth", "code signing", "email protection", "s/mime",
+        "ipsec end system", "ipsec tunnel", "ipsec user", "timestamping", "ocsp signing",
+        "microsoft sgc", "netscape sgc"
+    """
+
+    request: str
+    signerName: Optional[str] = None
+    uid: Optional[str] = None
+    username: Optional[str] = None
+    extra: Optional[Dict[str, str]] = field(default_factory=dict)
+    groups: Optional[List[str]] = field(default_factory=list)
+    usages: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class CertificateSigningRequestStatus(HikaruBase):
+    r"""
+
+
+    Full name: CertificateSigningRequestStatus
+
+    Attributes:
+    certificate: If request was approved, the controller will place the issued certificate
+        here.
+    conditions: Conditions applied to the request, such as approval or denial.
+    """
+
+    certificate: Optional[str] = None
+    conditions: Optional[List["CertificateSigningRequestCondition"]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
 class Lease(HikaruDocumentBase):
     r"""
     Lease defines a lease concept.
 
-    Full name: v1beta1.Lease
+    Full name: Lease
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -5809,7 +5556,7 @@ class Lease(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         delete collection of Lease
 
@@ -5901,7 +5648,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5934,7 +5681,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Lease"](result, codes_returning_objects)
 
     def createNamespacedLease(
         self,
@@ -5943,7 +5690,7 @@ class Lease(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         create a Lease
 
@@ -5964,7 +5711,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -5995,7 +5742,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Lease"](result, codes_returning_objects)
 
     def create(
         self,
@@ -6066,7 +5813,7 @@ class Lease(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         delete a Lease
 
@@ -6103,7 +5850,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6131,7 +5878,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Lease"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -6234,7 +5981,7 @@ class Lease(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         read the specified Lease
 
@@ -6254,7 +6001,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6279,7 +6026,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Lease"](result, codes_returning_objects)
 
     def read(
         self,
@@ -6364,7 +6111,7 @@ class Lease(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         partially update the specified Lease
 
@@ -6392,7 +6139,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6423,7 +6170,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Lease"](result, codes_returning_objects)
 
     def update(
         self,
@@ -6520,7 +6267,7 @@ class Lease(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Lease"]:
         r"""
         replace the specified Lease
 
@@ -6542,7 +6289,7 @@ class Lease(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6573,33 +6320,7 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class LeaseSpec(HikaruBase):
-    r"""
-    LeaseSpec is a specification of a Lease.
-
-    Full name: v1beta1.LeaseSpec
-
-    Attributes:
-    acquireTime: acquireTime is a time when the current lease was acquired.
-    holderIdentity: holderIdentity contains the identity of the holder of a current lease.
-    leaseDurationSeconds: leaseDurationSeconds is a duration that candidates for a lease
-        need to wait to force acquire it. This is measure against time of last observed
-        RenewTime.
-    leaseTransitions: leaseTransitions is the number of transitions of a lease between
-        holders.
-    renewTime: renewTime is a time when the current holder of a lease has last updated the
-        lease.
-    """
-
-    acquireTime: Optional[str] = None
-    holderIdentity: Optional[str] = None
-    leaseDurationSeconds: Optional[int] = None
-    leaseTransitions: Optional[int] = None
-    renewTime: Optional[str] = None
+        return Response["Lease"](result, codes_returning_objects)
 
 
 @dataclass
@@ -6607,7 +6328,7 @@ class LeaseList(HikaruDocumentBase):
     r"""
     LeaseList is a list of Lease objects.
 
-    Full name: v1beta1.LeaseList
+    Full name: LeaseList
 
     Attributes:
     items: Items is a list of schema objects.
@@ -6645,7 +6366,7 @@ class LeaseList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["LeaseList"]:
         r"""
         list or watch objects of kind Lease
 
@@ -6725,7 +6446,7 @@ class LeaseList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6755,7 +6476,7 @@ class LeaseList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["LeaseList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -6779,7 +6500,7 @@ class LeaseList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["LeaseList"]:
         r"""
         list or watch objects of kind Lease
 
@@ -6860,7 +6581,7 @@ class LeaseList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -6891,7 +6612,7 @@ class LeaseList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["LeaseList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -6902,6 +6623,32 @@ class LeaseList(HikaruDocumentBase):
 
 
 @dataclass
+class LeaseSpec(HikaruBase):
+    r"""
+    LeaseSpec is a specification of a Lease.
+
+    Full name: LeaseSpec
+
+    Attributes:
+    acquireTime: acquireTime is a time when the current lease was acquired.
+    holderIdentity: holderIdentity contains the identity of the holder of a current lease.
+    leaseDurationSeconds: leaseDurationSeconds is a duration that candidates for a lease
+        need to wait to force acquire it. This is measure against time of last observed
+        RenewTime.
+    leaseTransitions: leaseTransitions is the number of transitions of a lease between
+        holders.
+    renewTime: renewTime is a time when the current holder of a lease has last updated the
+        lease.
+    """
+
+    acquireTime: Optional[str] = None
+    holderIdentity: Optional[str] = None
+    leaseDurationSeconds: Optional[int] = None
+    leaseTransitions: Optional[int] = None
+    renewTime: Optional[str] = None
+
+
+@dataclass
 class AWSElasticBlockStoreVolumeSource(HikaruBase):
     r"""
     Represents a Persistent Disk resource in AWS. An AWS EBS disk must exist before
@@ -6909,7 +6656,7 @@ class AWSElasticBlockStoreVolumeSource(HikaruBase):
     AWS EBS disk can only be mounted as read/write once. AWS EBS volumes support ownership
     management and SELinux relabeling.
 
-    Full name: v1.AWSElasticBlockStoreVolumeSource
+    Full name: AWSElasticBlockStoreVolumeSource
 
     Attributes:
     volumeID: Unique ID of the persistent disk resource in AWS (Amazon EBS volume). More
@@ -6938,7 +6685,7 @@ class Affinity(HikaruBase):
     r"""
     Affinity is a group of affinity scheduling rules.
 
-    Full name: v1.Affinity
+    Full name: Affinity
 
     Attributes:
     nodeAffinity: Describes node affinity scheduling rules for the pod.
@@ -6954,109 +6701,11 @@ class Affinity(HikaruBase):
 
 
 @dataclass
-class NodeAffinity(HikaruBase):
-    r"""
-    Node affinity is a group of node affinity scheduling rules.
-
-    Full name: v1.NodeAffinity
-
-    Attributes:
-    requiredDuringSchedulingIgnoredDuringExecution: If the affinity requirements specified
-        by this field are not met at scheduling time, the pod will not be scheduled onto
-        the node. If the affinity requirements specified by this field cease to be met at
-        some point during pod execution (e.g. due to an update), the system may or may not
-        try to eventually evict the pod from its node.
-    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
-        pods to nodes that satisfy the affinity expressions specified by this field, but
-        it may choose a node that violates one or more of the expressions. The node that
-        is most preferred is the one with the greatest sum of weights, i.e. for each node
-        that meets all of the scheduling requirements (resource request,
-        requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating
-        through the elements of this field and adding "weight" to the sum if the node
-        matches the corresponding matchExpressions; the node(s) with the highest sum are
-        the most preferred.
-    """
-
-    requiredDuringSchedulingIgnoredDuringExecution: Optional["NodeSelector"] = None
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[
-        List["PreferredSchedulingTerm"]
-    ] = field(default_factory=list)
-
-
-@dataclass
-class PodAffinity(HikaruBase):
-    r"""
-    Pod affinity is a group of inter pod affinity scheduling rules.
-
-    Full name: v1.PodAffinity
-
-    Attributes:
-    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
-        pods to nodes that satisfy the affinity expressions specified by this field, but
-        it may choose a node that violates one or more of the expressions. The node that
-        is most preferred is the one with the greatest sum of weights, i.e. for each node
-        that meets all of the scheduling requirements (resource request,
-        requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating
-        through the elements of this field and adding "weight" to the sum if the node has
-        pods which matches the corresponding podAffinityTerm; the node(s) with the highest
-        sum are the most preferred.
-    requiredDuringSchedulingIgnoredDuringExecution: If the affinity requirements specified
-        by this field are not met at scheduling time, the pod will not be scheduled onto
-        the node. If the affinity requirements specified by this field cease to be met at
-        some point during pod execution (e.g. due to a pod label update), the system may
-        or may not try to eventually evict the pod from its node. When there are multiple
-        elements, the lists of nodes corresponding to each podAffinityTerm are
-        intersected, i.e. all terms must be satisfied.
-    """
-
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[
-        List["WeightedPodAffinityTerm"]
-    ] = field(default_factory=list)
-    requiredDuringSchedulingIgnoredDuringExecution: Optional[
-        List["PodAffinityTerm"]
-    ] = field(default_factory=list)
-
-
-@dataclass
-class PodAntiAffinity(HikaruBase):
-    r"""
-    Pod anti affinity is a group of inter pod anti affinity scheduling rules.
-
-    Full name: v1.PodAntiAffinity
-
-    Attributes:
-    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
-        pods to nodes that satisfy the anti-affinity expressions specified by this field,
-        but it may choose a node that violates one or more of the expressions. The node
-        that is most preferred is the one with the greatest sum of weights, i.e. for each
-        node that meets all of the scheduling requirements (resource request,
-        requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by
-        iterating through the elements of this field and adding "weight" to the sum if the
-        node has pods which matches the corresponding podAffinityTerm; the node(s) with
-        the highest sum are the most preferred.
-    requiredDuringSchedulingIgnoredDuringExecution: If the anti-affinity requirements
-        specified by this field are not met at scheduling time, the pod will not be
-        scheduled onto the node. If the anti-affinity requirements specified by this field
-        cease to be met at some point during pod execution (e.g. due to a pod label
-        update), the system may or may not try to eventually evict the pod from its node.
-        When there are multiple elements, the lists of nodes corresponding to each
-        podAffinityTerm are intersected, i.e. all terms must be satisfied.
-    """
-
-    preferredDuringSchedulingIgnoredDuringExecution: Optional[
-        List["WeightedPodAffinityTerm"]
-    ] = field(default_factory=list)
-    requiredDuringSchedulingIgnoredDuringExecution: Optional[
-        List["PodAffinityTerm"]
-    ] = field(default_factory=list)
-
-
-@dataclass
 class AttachedVolume(HikaruBase):
     r"""
     AttachedVolume describes a volume attached to a node
 
-    Full name: v1.AttachedVolume
+    Full name: AttachedVolume
 
     Attributes:
     devicePath: DevicePath represents the device path where the volume should be available
@@ -7072,7 +6721,7 @@ class AzureDiskVolumeSource(HikaruBase):
     r"""
     AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
 
-    Full name: v1.AzureDiskVolumeSource
+    Full name: AzureDiskVolumeSource
 
     Attributes:
     diskName: The Name of the data disk in the blob storage
@@ -7092,7 +6741,7 @@ class AzureDiskVolumeSource(HikaruBase):
     diskURI: str
     cachingMode: Optional[str] = None
     fsType: Optional[str] = None
-    kind: Optional[str] = "None"
+    kind: Optional[str] = "AzureDiskVolumeSource"
     readOnly: Optional[bool] = None
 
 
@@ -7102,7 +6751,7 @@ class AzureFilePersistentVolumeSource(HikaruBase):
     AzureFile represents an Azure File Service mount on the host and bind mount to the
     pod.
 
-    Full name: v1.AzureFilePersistentVolumeSource
+    Full name: AzureFilePersistentVolumeSource
 
     Attributes:
     secretName: the name of secret that contains Azure Storage Account Name and Key
@@ -7125,7 +6774,7 @@ class AzureFileVolumeSource(HikaruBase):
     AzureFile represents an Azure File Service mount on the host and bind mount to the
     pod.
 
-    Full name: v1.AzureFileVolumeSource
+    Full name: AzureFileVolumeSource
 
     Attributes:
     secretName: the name of secret that contains Azure Storage Account Name and Key
@@ -7145,7 +6794,7 @@ class Binding(HikaruDocumentBase):
     Binding ties one object to another; for example, a pod is bound to a node by a
     scheduler. Deprecated in 1.7, please use the bindings subresource of pods instead.
 
-    Full name: v1.Binding
+    Full name: Binding
 
     Attributes:
     target: The target object that you want to bind to the standard object.
@@ -7175,7 +6824,7 @@ class CSIPersistentVolumeSource(HikaruBase):
     r"""
     Represents storage that is managed by an external CSI volume driver (Beta feature)
 
-    Full name: v1.CSIPersistentVolumeSource
+    Full name: CSIPersistentVolumeSource
 
     Attributes:
     driver: Driver is the name of the driver to use for this volume. Required.
@@ -7221,28 +6870,11 @@ class CSIPersistentVolumeSource(HikaruBase):
 
 
 @dataclass
-class SecretReference(HikaruBase):
-    r"""
-    SecretReference represents a Secret Reference. It has enough information to retrieve
-    secret in any namespace
-
-    Full name: v1.SecretReference
-
-    Attributes:
-    name: Name is unique within a namespace to reference a secret resource.
-    namespace: Namespace defines the space within which the secret name must be unique.
-    """
-
-    name: Optional[str] = None
-    namespace: Optional[str] = None
-
-
-@dataclass
 class CSIVolumeSource(HikaruBase):
     r"""
     Represents a source location of a volume to mount, managed by an external CSI driver
 
-    Full name: v1.CSIVolumeSource
+    Full name: CSIVolumeSource
 
     Attributes:
     driver: Driver is the name of the CSI driver that handles this volume. Consult with
@@ -7269,27 +6901,11 @@ class CSIVolumeSource(HikaruBase):
 
 
 @dataclass
-class LocalObjectReference(HikaruBase):
-    r"""
-    LocalObjectReference contains enough information to let you locate the referenced
-    object inside the same namespace.
-
-    Full name: v1.LocalObjectReference
-
-    Attributes:
-    name: Name of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-    """
-
-    name: Optional[str] = None
-
-
-@dataclass
 class Capabilities(HikaruBase):
     r"""
     Adds and removes POSIX capabilities from running containers.
 
-    Full name: v1.Capabilities
+    Full name: Capabilities
 
     Attributes:
     add: Added capabilities
@@ -7306,7 +6922,7 @@ class CephFSPersistentVolumeSource(HikaruBase):
     Represents a Ceph Filesystem mount that lasts the lifetime of a pod Cephfs volumes do
     not support ownership management or SELinux relabeling.
 
-    Full name: v1.CephFSPersistentVolumeSource
+    Full name: CephFSPersistentVolumeSource
 
     Attributes:
     monitors: Required: Monitors is a collection of Ceph monitors More info:
@@ -7339,7 +6955,7 @@ class CephFSVolumeSource(HikaruBase):
     Represents a Ceph Filesystem mount that lasts the lifetime of a pod Cephfs volumes do
     not support ownership management or SELinux relabeling.
 
-    Full name: v1.CephFSVolumeSource
+    Full name: CephFSVolumeSource
 
     Attributes:
     monitors: Required: Monitors is a collection of Ceph monitors More info:
@@ -7373,7 +6989,7 @@ class CinderPersistentVolumeSource(HikaruBase):
     mounting to a container. The volume must also be in the same region as the kubelet.
     Cinder volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.CinderPersistentVolumeSource
+    Full name: CinderPersistentVolumeSource
 
     Attributes:
     volumeID: volume id used to identify the volume in cinder. More info:
@@ -7402,7 +7018,7 @@ class CinderVolumeSource(HikaruBase):
     mounting to a container. The volume must also be in the same region as the kubelet.
     Cinder volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.CinderVolumeSource
+    Full name: CinderVolumeSource
 
     Attributes:
     volumeID: volume id used to identify the volume in cinder. More info:
@@ -7429,7 +7045,7 @@ class ClientIPConfig(HikaruBase):
     r"""
     ClientIPConfig represents the configurations of Client IP based session affinity.
 
-    Full name: v1.ClientIPConfig
+    Full name: ClientIPConfig
 
     Attributes:
     timeoutSeconds: timeoutSeconds specifies the seconds of ClientIP type session sticky
@@ -7445,7 +7061,7 @@ class ComponentCondition(HikaruBase):
     r"""
     Information about the condition of a component.
 
-    Full name: v1.ComponentCondition
+    Full name: ComponentCondition
 
     Attributes:
     status: Status of the condition for a component. Valid values for "Healthy": "True",
@@ -7468,7 +7084,7 @@ class ComponentStatus(HikaruDocumentBase):
     ComponentStatus (and ComponentStatusList) holds the cluster validation info.
     Deprecated: This API is deprecated in v1.19+
 
-    Full name: v1.ComponentStatus
+    Full name: ComponentStatus
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -7499,7 +7115,7 @@ class ComponentStatusList(HikaruDocumentBase):
     Status of all the conditions for the component as a list of ComponentStatus objects.
     Deprecated: This API is deprecated in v1.19+
 
-    Full name: v1.ComponentStatusList
+    Full name: ComponentStatusList
 
     Attributes:
     items: List of ComponentStatus objects.
@@ -7529,7 +7145,7 @@ class ConfigMap(HikaruDocumentBase):
     r"""
     ConfigMap holds configuration data for pods to consume.
 
-    Full name: v1.ConfigMap
+    Full name: ConfigMap
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -7575,7 +7191,7 @@ class ConfigMapEnvSource(HikaruBase):
     contents of the target ConfigMap's Data field will represent the key-value pairs as
     environment variables.
 
-    Full name: v1.ConfigMapEnvSource
+    Full name: ConfigMapEnvSource
 
     Attributes:
     name: Name of the referent. More info:
@@ -7592,7 +7208,7 @@ class ConfigMapKeySelector(HikaruBase):
     r"""
     Selects a key from a ConfigMap.
 
-    Full name: v1.ConfigMapKeySelector
+    Full name: ConfigMapKeySelector
 
     Attributes:
     key: The key to select.
@@ -7611,7 +7227,7 @@ class ConfigMapList(HikaruDocumentBase):
     r"""
     ConfigMapList is a resource containing a list of ConfigMap objects.
 
-    Full name: v1.ConfigMapList
+    Full name: ConfigMapList
 
     Attributes:
     items: Items is the list of ConfigMaps.
@@ -7642,7 +7258,7 @@ class ConfigMapNodeConfigSource(HikaruBase):
     ConfigMapNodeConfigSource contains the information to reference a ConfigMap as a
     config source for the Node.
 
-    Full name: v1.ConfigMapNodeConfigSource
+    Full name: ConfigMapNodeConfigSource
 
     Attributes:
     kubeletConfigKey: KubeletConfigKey declares which key of the referenced ConfigMap
@@ -7674,7 +7290,7 @@ class ConfigMapProjection(HikaruBase):
     of keys to paths. Note that this is identical to a configmap volume source without the
     default mode.
 
-    Full name: v1.ConfigMapProjection
+    Full name: ConfigMapProjection
 
     Attributes:
     name: Name of the referent. More info:
@@ -7695,30 +7311,6 @@ class ConfigMapProjection(HikaruBase):
 
 
 @dataclass
-class KeyToPath(HikaruBase):
-    r"""
-    Maps a string key to a path within a volume.
-
-    Full name: v1.KeyToPath
-
-    Attributes:
-    key: The key to project.
-    path: The relative path of the file to map the key to. May not be an absolute path.
-        May not contain the path element '..'. May not start with the string '..'.
-    mode: Optional: mode bits used to set permissions on this file. Must be an octal value
-        between 0000 and 0777 or a decimal value between 0 and 511. YAML accepts both
-        octal and decimal values, JSON requires decimal values for mode bits. If not
-        specified, the volume defaultMode will be used. This might be in conflict with
-        other options that affect the file mode, like fsGroup, and the result can be other
-        mode bits set.
-    """
-
-    key: str
-    path: str
-    mode: Optional[int] = None
-
-
-@dataclass
 class ConfigMapVolumeSource(HikaruBase):
     r"""
     Adapts a ConfigMap into a volume. The contents of the target ConfigMap's Data field
@@ -7726,7 +7318,7 @@ class ConfigMapVolumeSource(HikaruBase):
     names, unless the items element is populated with specific mappings of keys to paths.
     ConfigMap volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.ConfigMapVolumeSource
+    Full name: ConfigMapVolumeSource
 
     Attributes:
     defaultMode: Optional: mode bits used to set permissions on created files by default.
@@ -7758,7 +7350,7 @@ class Container(HikaruBase):
     r"""
     A single application container that you want to run within a pod.
 
-    Full name: v1.Container
+    Full name: Container
 
     Attributes:
     name: Name of the container specified as a DNS_LABEL. Each container in a pod must
@@ -7873,116 +7465,20 @@ class Container(HikaruBase):
 
 
 @dataclass
-class EnvVar(HikaruBase):
+class ContainerImage(HikaruBase):
     r"""
-    EnvVar represents an environment variable present in a Container.
+    Describe a container image
 
-    Full name: v1.EnvVar
+    Full name: ContainerImage
 
     Attributes:
-    name: Name of the environment variable. Must be a C_IDENTIFIER.
-    value: Variable references $(VAR_NAME) are expanded using the previous defined
-        environment variables in the container and any service environment variables. If a
-        variable cannot be resolved, the reference in the input string will be unchanged.
-        The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped
-        references will never be expanded, regardless of whether the variable exists or
-        not. Defaults to "".
-    valueFrom: Source for the environment variable's value. Cannot be used if value is not
-        empty.
+    names: Names by which this image is known. e.g. ["k8s.gcr.io/hyperkube:v1.0.7",
+        "dockerhub.io/google_containers/hyperkube:v1.0.7"]
+    sizeBytes: The size of the image in bytes.
     """
 
-    name: str
-    value: Optional[str] = None
-    valueFrom: Optional["EnvVarSource"] = None
-
-
-@dataclass
-class EnvFromSource(HikaruBase):
-    r"""
-    EnvFromSource represents the source of a set of ConfigMaps
-
-    Full name: v1.EnvFromSource
-
-    Attributes:
-    configMapRef: The ConfigMap to select from
-    prefix: An optional identifier to prepend to each key in the ConfigMap. Must be a
-        C_IDENTIFIER.
-    secretRef: The Secret to select from
-    """
-
-    configMapRef: Optional["ConfigMapEnvSource"] = None
-    prefix: Optional[str] = None
-    secretRef: Optional["SecretEnvSource"] = None
-
-
-@dataclass
-class Lifecycle(HikaruBase):
-    r"""
-    Lifecycle describes actions that the management system should take in response to
-    container lifecycle events. For the PostStart and PreStop lifecycle handlers,
-    management of the container blocks until the action is complete, unless the container
-    process fails, in which case the handler is aborted.
-
-    Full name: v1.Lifecycle
-
-    Attributes:
-    postStart: PostStart is called immediately after a container is created. If the
-        handler fails, the container is terminated and restarted according to its restart
-        policy. Other management of the container blocks until the hook completes. More
-        info:
-        https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
-    preStop: PreStop is called immediately before a container is terminated due to an API
-        request or management event such as liveness/startup probe failure, preemption,
-        resource contention, etc. The handler is not called if the container crashes or
-        exits. The reason for termination is passed to the handler. The Pod's termination
-        grace period countdown begins before the PreStop hooked is executed. Regardless of
-        the outcome of the handler, the container will eventually terminate within the
-        Pod's termination grace period. Other management of the container blocks until the
-        hook completes or until the termination grace period is reached. More info:
-        https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
-    """
-
-    postStart: Optional["Handler"] = None
-    preStop: Optional["Handler"] = None
-
-
-@dataclass
-class Probe(HikaruBase):
-    r"""
-    Probe describes a health check to be performed against a container to determine
-    whether it is alive or ready to receive traffic.
-
-    Full name: v1.Probe
-
-    Attributes:
-    exec: One and only one of the following should be specified. Exec specifies the action
-        to take.
-    failureThreshold: Minimum consecutive failures for the probe to be considered failed
-        after having succeeded. Defaults to 3. Minimum value is 1.
-    httpGet: HTTPGet specifies the http request to perform.
-    initialDelaySeconds: Number of seconds after the container has started before liveness
-        probes are initiated. More info:
-        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
-    periodSeconds: How often (in seconds) to perform the probe. Default to 10 seconds.
-        Minimum value is 1.
-    successThreshold: Minimum consecutive successes for the probe to be considered
-        successful after having failed. Defaults to 1. Must be 1 for liveness and startup.
-        Minimum value is 1.
-    tcpSocket: TCPSocket specifies an action involving a TCP port. TCP hooks not yet
-        supported
-    timeoutSeconds: Number of seconds after which the probe times out. Defaults to 1
-        second. Minimum value is 1. More info:
-        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
-    """
-
-    exec: Optional["ExecAction"] = None
-    failureThreshold: Optional[int] = None
-    httpGet: Optional["HTTPGetAction"] = None
-    initialDelaySeconds: Optional[int] = None
-    periodSeconds: Optional[int] = None
-    successThreshold: Optional[int] = None
-    tcpSocket: Optional["TCPSocketAction"] = None
-    timeoutSeconds: Optional[int] = None
+    names: List[str]
+    sizeBytes: Optional[int] = None
 
 
 @dataclass
@@ -7990,7 +7486,7 @@ class ContainerPort(HikaruBase):
     r"""
     ContainerPort represents a network port in a single container.
 
-    Full name: v1.ContainerPort
+    Full name: ContainerPort
 
     Attributes:
     containerPort: Number of port to expose on the pod's IP address. This must be a valid
@@ -8013,162 +7509,12 @@ class ContainerPort(HikaruBase):
 
 
 @dataclass
-class ResourceRequirements(HikaruBase):
-    r"""
-    ResourceRequirements describes the compute resource requirements.
-
-    Full name: v1.ResourceRequirements
-
-    Attributes:
-    limits: Limits describes the maximum amount of compute resources allowed. More info:
-        https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    requests: Requests describes the minimum amount of compute resources required. If
-        Requests is omitted for a container, it defaults to Limits if that is explicitly
-        specified, otherwise to an implementation-defined value. More info:
-        https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    """
-
-    limits: Optional[Dict[str, str]] = field(default_factory=dict)
-    requests: Optional[Dict[str, str]] = field(default_factory=dict)
-
-
-@dataclass
-class SecurityContext(HikaruBase):
-    r"""
-    SecurityContext holds security configuration that will be applied to a container. Some
-    fields are present in both SecurityContext and PodSecurityContext. When both are set,
-    the values in SecurityContext take precedence.
-
-    Full name: v1.SecurityContext
-
-    Attributes:
-    allowPrivilegeEscalation: AllowPrivilegeEscalation controls whether a process can gain
-        more privileges than its parent process. This bool directly controls if the
-        no_new_privs flag will be set on the container process. AllowPrivilegeEscalation
-        is true always when the container is: 1) run as Privileged 2) has CAP_SYS_ADMIN
-    capabilities: The capabilities to add/drop when running containers. Defaults to the
-        default set of capabilities granted by the container runtime.
-    privileged: Run container in privileged mode. Processes in privileged containers are
-        essentially equivalent to root on the host. Defaults to false.
-    procMount: procMount denotes the type of proc mount to use for the containers. The
-        default is DefaultProcMount which uses the container runtime defaults for readonly
-        paths and masked paths. This requires the ProcMountType feature flag to be
-        enabled.
-    readOnlyRootFilesystem: Whether this container has a read-only root filesystem.
-        Default is false.
-    runAsGroup: The GID to run the entrypoint of the container process. Uses runtime
-        default if unset. May also be set in PodSecurityContext. If set in both
-        SecurityContext and PodSecurityContext, the value specified in SecurityContext
-        takes precedence.
-    runAsNonRoot: Indicates that the container must run as a non-root user. If true, the
-        Kubelet will validate the image at runtime to ensure that it does not run as UID 0
-        (root) and fail to start the container if it does. If unset or false, no such
-        validation will be performed. May also be set in PodSecurityContext. If set in
-        both SecurityContext and PodSecurityContext, the value specified in
-        SecurityContext takes precedence.
-    runAsUser: The UID to run the entrypoint of the container process. Defaults to user
-        specified in image metadata if unspecified. May also be set in PodSecurityContext.
-        If set in both SecurityContext and PodSecurityContext, the value specified in
-        SecurityContext takes precedence.
-    seLinuxOptions: The SELinux context to be applied to the container. If unspecified,
-        the container runtime will allocate a random SELinux context for each container.
-        May also be set in PodSecurityContext. If set in both SecurityContext and
-        PodSecurityContext, the value specified in SecurityContext takes precedence.
-    seccompProfile: The seccomp options to use by this container. If seccomp options are
-        provided at both the pod & container level, the container options override the pod
-        options.
-    windowsOptions: The Windows specific settings applied to all containers. If
-        unspecified, the options from the PodSecurityContext will be used. If set in both
-        SecurityContext and PodSecurityContext, the value specified in SecurityContext
-        takes precedence.
-    """
-
-    allowPrivilegeEscalation: Optional[bool] = None
-    capabilities: Optional["Capabilities"] = None
-    privileged: Optional[bool] = None
-    procMount: Optional[str] = None
-    readOnlyRootFilesystem: Optional[bool] = None
-    runAsGroup: Optional[int] = None
-    runAsNonRoot: Optional[bool] = None
-    runAsUser: Optional[int] = None
-    seLinuxOptions: Optional["SELinuxOptions"] = None
-    seccompProfile: Optional["SeccompProfile"] = None
-    windowsOptions: Optional["WindowsSecurityContextOptions"] = None
-
-
-@dataclass
-class VolumeDevice(HikaruBase):
-    r"""
-    volumeDevice describes a mapping of a raw block device within a container.
-
-    Full name: v1.VolumeDevice
-
-    Attributes:
-    devicePath: devicePath is the path inside of the container that the device will be
-        mapped to.
-    name: name must match the name of a persistentVolumeClaim in the pod
-    """
-
-    devicePath: str
-    name: str
-
-
-@dataclass
-class VolumeMount(HikaruBase):
-    r"""
-    VolumeMount describes a mounting of a Volume within a container.
-
-    Full name: v1.VolumeMount
-
-    Attributes:
-    mountPath: Path within the container at which the volume should be mounted. Must not
-        contain ':'.
-    name: This must match the Name of a Volume.
-    mountPropagation: mountPropagation determines how mounts are propagated from the host
-        to container and the other way around. When not set, MountPropagationNone is used.
-        This field is beta in 1.10.
-    readOnly: Mounted read-only if true, read-write otherwise (false or unspecified).
-        Defaults to false.
-    subPath: Path within the volume from which the container's volume should be mounted.
-        Defaults to "" (volume's root).
-    subPathExpr: Expanded path within the volume from which the container's volume should
-        be mounted. Behaves similarly to SubPath but environment variable references
-        $(VAR_NAME) are expanded using the container's environment. Defaults to ""
-        (volume's root). SubPathExpr and SubPath are mutually exclusive.
-    """
-
-    mountPath: str
-    name: str
-    mountPropagation: Optional[str] = None
-    readOnly: Optional[bool] = None
-    subPath: Optional[str] = None
-    subPathExpr: Optional[str] = None
-
-
-@dataclass
-class ContainerImage(HikaruBase):
-    r"""
-    Describe a container image
-
-    Full name: v1.ContainerImage
-
-    Attributes:
-    names: Names by which this image is known. e.g. ["k8s.gcr.io/hyperkube:v1.0.7",
-        "dockerhub.io/google_containers/hyperkube:v1.0.7"]
-    sizeBytes: The size of the image in bytes.
-    """
-
-    names: List[str]
-    sizeBytes: Optional[int] = None
-
-
-@dataclass
 class ContainerState(HikaruBase):
     r"""
     ContainerState holds a possible state of container. Only one of its members may be
     specified. If none of them is specified, the default one is ContainerStateWaiting.
 
-    Full name: v1.ContainerState
+    Full name: ContainerState
 
     Attributes:
     running: Details about a running container
@@ -8186,7 +7532,7 @@ class ContainerStateRunning(HikaruBase):
     r"""
     ContainerStateRunning is a running state of a container.
 
-    Full name: v1.ContainerStateRunning
+    Full name: ContainerStateRunning
 
     Attributes:
     startedAt: Time at which the container was last (re-)started
@@ -8200,7 +7546,7 @@ class ContainerStateTerminated(HikaruBase):
     r"""
     ContainerStateTerminated is a terminated state of a container.
 
-    Full name: v1.ContainerStateTerminated
+    Full name: ContainerStateTerminated
 
     Attributes:
     exitCode: Exit status from the last termination of the container
@@ -8226,7 +7572,7 @@ class ContainerStateWaiting(HikaruBase):
     r"""
     ContainerStateWaiting is a waiting state of a container.
 
-    Full name: v1.ContainerStateWaiting
+    Full name: ContainerStateWaiting
 
     Attributes:
     message: Message regarding why the container is not yet running.
@@ -8242,7 +7588,7 @@ class ContainerStatus(HikaruBase):
     r"""
     ContainerStatus contains details for the current status of this container.
 
-    Full name: v1.ContainerStatus
+    Full name: ContainerStatus
 
     Attributes:
     image: The image the container is running. More info:
@@ -8280,7 +7626,7 @@ class DaemonEndpoint(HikaruBase):
     r"""
     DaemonEndpoint contains information about a single Daemon endpoint.
 
-    Full name: v1.DaemonEndpoint
+    Full name: DaemonEndpoint
 
     Attributes:
     Port: Port number of the given endpoint.
@@ -8295,7 +7641,7 @@ class DownwardAPIProjection(HikaruBase):
     Represents downward API info for projecting into a projected volume. Note that this is
     identical to a downwardAPI volume source without the default mode.
 
-    Full name: v1.DownwardAPIProjection
+    Full name: DownwardAPIProjection
 
     Attributes:
     items: Items is a list of DownwardAPIVolume file
@@ -8310,7 +7656,7 @@ class DownwardAPIVolumeFile(HikaruBase):
     DownwardAPIVolumeFile represents information to create the file containing the pod
     field
 
-    Full name: v1.DownwardAPIVolumeFile
+    Full name: DownwardAPIVolumeFile
 
     Attributes:
     path: Required: Path is the relative path name of the file to be created. Must not be
@@ -8336,48 +7682,12 @@ class DownwardAPIVolumeFile(HikaruBase):
 
 
 @dataclass
-class ObjectFieldSelector(HikaruBase):
-    r"""
-    ObjectFieldSelector selects an APIVersioned field of an object.
-
-    Full name: v1.ObjectFieldSelector
-
-    Attributes:
-    fieldPath: Path of the field to select in the specified API version.
-    apiVersion: Version of the schema the FieldPath is written in terms of, defaults to
-        "v1".
-    """
-
-    fieldPath: str
-    apiVersion: Optional[str] = "v1"
-
-
-@dataclass
-class ResourceFieldSelector(HikaruBase):
-    r"""
-    ResourceFieldSelector represents container resources (cpu, memory) and their output
-    format
-
-    Full name: v1.ResourceFieldSelector
-
-    Attributes:
-    resource: Required: resource to select
-    containerName: Container name: required for volumes, optional for env vars
-    divisor: Specifies the output format of the exposed resources, defaults to "1"
-    """
-
-    resource: str
-    containerName: Optional[str] = None
-    divisor: Optional[str] = None
-
-
-@dataclass
 class DownwardAPIVolumeSource(HikaruBase):
     r"""
     DownwardAPIVolumeSource represents a volume containing downward API info. Downward API
     volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.DownwardAPIVolumeSource
+    Full name: DownwardAPIVolumeSource
 
     Attributes:
     defaultMode: Optional: mode bits to use on created files by default. Must be a
@@ -8400,7 +7710,7 @@ class EmptyDirVolumeSource(HikaruBase):
     Represents an empty directory for a pod. Empty directory volumes support ownership
     management and SELinux relabeling.
 
-    Full name: v1.EmptyDirVolumeSource
+    Full name: EmptyDirVolumeSource
 
     Attributes:
     medium: What type of storage medium should back this directory. The default is ""
@@ -8423,7 +7733,7 @@ class EndpointAddress(HikaruBase):
     r"""
     EndpointAddress is a tuple that describes single IP address.
 
-    Full name: v1.EndpointAddress
+    Full name: EndpointAddress
 
     Attributes:
     ip: The IP of this endpoint. May not be loopback (127.0.0.0/8), link-local
@@ -8447,7 +7757,7 @@ class EndpointPort(HikaruBase):
     r"""
     EndpointPort represents a Port used by an EndpointSlice
 
-    Full name: v1beta1.EndpointPort
+    Full name: EndpointPort
 
     Attributes:
     appProtocol: The application protocol for this port. This field follows standard
@@ -8481,7 +7791,7 @@ class EndpointSubset(HikaruBase):
     8675}, {"name": "b", "port": 309}] } The resulting set of endpoints can be viewed as:
     a: [ 10.10.1.1:8675, 10.10.2.2:8675 ], b: [ 10.10.1.1:309, 10.10.2.2:309 ]
 
-    Full name: v1.EndpointSubset
+    Full name: EndpointSubset
 
     Attributes:
     addresses: IP addresses which offer the related ports that are marked as ready. These
@@ -8506,7 +7816,7 @@ class Endpoints(HikaruDocumentBase):
     [{"ip": "10.10.3.3"}], Ports: [{"name": "a", "port": 93}, {"name": "b", "port": 76}]
     }, ]
 
-    Full name: v1.Endpoints
+    Full name: Endpoints
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -8542,7 +7852,7 @@ class EndpointsList(HikaruDocumentBase):
     r"""
     EndpointsList is a list of endpoints.
 
-    Full name: v1.EndpointsList
+    Full name: EndpointsList
 
     Attributes:
     items: List of endpoints.
@@ -8568,22 +7878,46 @@ class EndpointsList(HikaruDocumentBase):
 
 
 @dataclass
-class SecretEnvSource(HikaruBase):
+class EnvFromSource(HikaruBase):
     r"""
-    SecretEnvSource selects a Secret to populate the environment variables with. The
-    contents of the target Secret's Data field will represent the key-value pairs as
-    environment variables.
+    EnvFromSource represents the source of a set of ConfigMaps
 
-    Full name: v1.SecretEnvSource
+    Full name: EnvFromSource
 
     Attributes:
-    name: Name of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-    optional: Specify whether the Secret must be defined
+    configMapRef: The ConfigMap to select from
+    prefix: An optional identifier to prepend to each key in the ConfigMap. Must be a
+        C_IDENTIFIER.
+    secretRef: The Secret to select from
     """
 
-    name: Optional[str] = None
-    optional: Optional[bool] = None
+    configMapRef: Optional["ConfigMapEnvSource"] = None
+    prefix: Optional[str] = None
+    secretRef: Optional["SecretEnvSource"] = None
+
+
+@dataclass
+class EnvVar(HikaruBase):
+    r"""
+    EnvVar represents an environment variable present in a Container.
+
+    Full name: EnvVar
+
+    Attributes:
+    name: Name of the environment variable. Must be a C_IDENTIFIER.
+    value: Variable references $(VAR_NAME) are expanded using the previous defined
+        environment variables in the container and any service environment variables. If a
+        variable cannot be resolved, the reference in the input string will be unchanged.
+        The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped
+        references will never be expanded, regardless of whether the variable exists or
+        not. Defaults to "".
+    valueFrom: Source for the environment variable's value. Cannot be used if value is not
+        empty.
+    """
+
+    name: str
+    value: Optional[str] = None
+    valueFrom: Optional["EnvVarSource"] = None
 
 
 @dataclass
@@ -8591,7 +7925,7 @@ class EnvVarSource(HikaruBase):
     r"""
     EnvVarSource represents a source for the value of an EnvVar.
 
-    Full name: v1.EnvVarSource
+    Full name: EnvVarSource
 
     Attributes:
     configMapKeyRef: Selects a key of a ConfigMap.
@@ -8611,25 +7945,6 @@ class EnvVarSource(HikaruBase):
 
 
 @dataclass
-class SecretKeySelector(HikaruBase):
-    r"""
-    SecretKeySelector selects a key of a Secret.
-
-    Full name: v1.SecretKeySelector
-
-    Attributes:
-    key: The key of the secret to select from. Must be a valid secret key.
-    name: Name of the referent. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-    optional: Specify whether the Secret or its key must be defined
-    """
-
-    key: str
-    name: Optional[str] = None
-    optional: Optional[bool] = None
-
-
-@dataclass
 class EphemeralContainer(HikaruBase):
     r"""
     An EphemeralContainer is a container that may be added temporarily to an existing pod
@@ -8641,7 +7956,7 @@ class EphemeralContainer(HikaruBase):
     subresource, and they will appear in the pod spec once added. This is an alpha feature
     enabled by the EphemeralContainers feature flag.
 
-    Full name: v1.EphemeralContainer
+    Full name: EphemeralContainer
 
     Attributes:
     name: Name of the ephemeral container specified as a DNS_LABEL. This name must be
@@ -8746,7 +8061,7 @@ class EphemeralVolumeSource(HikaruBase):
     r"""
     Represents an ephemeral volume that is handled by a normal storage driver.
 
-    Full name: v1.EphemeralVolumeSource
+    Full name: EphemeralVolumeSource
 
     Attributes:
     readOnly: Specifies a read-only configuration for the volume. Defaults to false
@@ -8772,907 +8087,11 @@ class EphemeralVolumeSource(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeClaimTemplate(HikaruBase):
-    r"""
-    PersistentVolumeClaimTemplate is used to produce PersistentVolumeClaim objects as part
-    of an EphemeralVolumeSource.
-
-    Full name: v1.PersistentVolumeClaimTemplate
-
-    Attributes:
-    spec: The specification for the PersistentVolumeClaim. The entire content is copied
-        unchanged into the PVC that gets created from this template. The same fields as in
-        a PersistentVolumeClaim are also valid here.
-    metadata: May contain labels and annotations that will be copied into the PVC when
-        creating it. No other fields are allowed and will be rejected during validation.
-    """
-
-    spec: "PersistentVolumeClaimSpec"
-    metadata: Optional["ObjectMeta"] = None
-
-
-@dataclass
-class Event(HikaruDocumentBase):
-    r"""
-    Event is a report of an event somewhere in the cluster. It generally denotes some
-    state change in the system.
-
-    Full name: v1beta1.Event
-
-    Attributes:
-    eventTime: eventTime is the time when this Event was first observed. It is required.
-    action: action is what action was taken/failed regarding to the regarding object. It
-        is machine-readable. This field can have at most 128 characters.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    deprecatedCount: deprecatedCount is the deprecated field assuring backward
-        compatibility with core.v1 Event type.
-    deprecatedFirstTimestamp: deprecatedFirstTimestamp is the deprecated field assuring
-        backward compatibility with core.v1 Event type.
-    deprecatedLastTimestamp: deprecatedLastTimestamp is the deprecated field assuring
-        backward compatibility with core.v1 Event type.
-    deprecatedSource: deprecatedSource is the deprecated field assuring backward
-        compatibility with core.v1 Event type.
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata:
-    note: note is a human-readable description of the status of this operation. Maximal
-        length of the note is 1kB, but libraries should be prepared to handle values up to
-        64kB.
-    reason: reason is why the action was taken. It is human-readable. This field can have
-        at most 128 characters.
-    regarding: regarding contains the object this Event is about. In most cases it's an
-        Object reporting controller implements, e.g. ReplicaSetController implements
-        ReplicaSets and this event is emitted because it acts on some changes in a
-        ReplicaSet object.
-    related: related is the optional secondary object for more complex actions. E.g. when
-        regarding object triggers a creation or deletion of related object.
-    reportingController: reportingController is the name of the controller that emitted
-        this Event, e.g. `kubernetes.io/kubelet`. This field cannot be empty for new
-        Events.
-    reportingInstance: reportingInstance is the ID of the controller instance, e.g.
-        `kubelet-xyzf`. This field cannot be empty for new Events and it can have at most
-        128 characters.
-    series: series is data about the Event series this event represents or nil if it's a
-        singleton Event.
-    type: type is the type of this event (Normal, Warning), new types could be added in
-        the future. It is machine-readable.
-    """
-
-    _version = "v1beta1"
-    eventTime: str
-    action: Optional[str] = None
-    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
-    deprecatedCount: Optional[int] = None
-    deprecatedFirstTimestamp: Optional[str] = None
-    deprecatedLastTimestamp: Optional[str] = None
-    deprecatedSource: Optional["EventSource"] = None
-    kind: Optional[str] = "Event"
-    metadata: Optional["ObjectMeta"] = None
-    note: Optional[str] = None
-    reason: Optional[str] = None
-    regarding: Optional["ObjectReference"] = None
-    related: Optional["ObjectReference"] = None
-    reportingController: Optional[str] = None
-    reportingInstance: Optional[str] = None
-    series: Optional["EventSeries"] = None
-    type: Optional[str] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def deleteCollectionNamespacedEvent(
-        namespace: str,
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete collection of Event
-
-        operationID: deleteCollectionNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
-
-        :param namespace: namespace for the resource
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param body:
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "delete_collection_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def createNamespacedEvent(
-        self,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        create an Event
-
-        operationID: createNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
-
-        :param namespace: namespace for the resource
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          201   Event    Created
-          202   Event    Accepted
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            # noinspection PyDataclass
-            client_to_use = self.client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "create_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "create_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["field_manager"] = field_manager
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
-
-    def create(
-        self,
-        namespace: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> "Event":
-        r"""
-            create an Event
-
-            operationID: createNamespacedEvent
-            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
-
-            :param namespace: namespace for the resource. NOTE: if you leave out the
-                namespace from the arguments you *must* have filled in the namespace
-                attribute in the metadata for the resource!
-            :param dry_run: When present, indicates that modifications should not be
-                persisted. An invalid or unrecognized dryRun directive will result
-                in an error response and no further processing of the request. Valid
-                values are: - All: all dry run stages will be processed
-            :param field_manager: fieldManager is a name associated with the actor or
-                entity that is making these changes. The value must be less than or
-                128 characters long, and only contain printable characters, as
-                defined by https://golang.org/pkg/unicode/#IsPrint.
-            :param client: optional; instance of kubernetes.client.api_client.ApiClient
-            :return: returns self; the state of self may be permuted with a returned
-                HikaruDocumentBase object, whose values will be merged into self
-        (if of the same type).
-            :raises: KubernetesException. Raised only by the CRUD methods to signal
-                that a return code of 400 or higher was returned by the underlying
-                Kubernetes library.
-        """
-
-        # noinspection PyDataclass
-        client = client or self.client
-
-        if namespace is not None:
-            effective_namespace = namespace
-        elif not self.metadata or not self.metadata.namespace:
-            raise RuntimeError(
-                "There must be a namespace supplied in either "
-                "the arguments to create() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_namespace = self.metadata.namespace
-        res = self.createNamespacedEvent(
-            namespace=effective_namespace,
-            dry_run=dry_run,
-            field_manager=field_manager,
-            client=client,
-        )
-        if not 200 <= res.code <= 299:
-            raise KubernetesException("Kubernetes returned error " + str(res.code))
-        if self.__class__.__name__ == res.obj.__class__.__name__:
-            self.merge(res.obj, overwrite=True)
-        return self
-
-    @staticmethod
-    def deleteNamespacedEvent(
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete an Event
-
-        operationID: deleteNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-        :param name: name for the resource
-        :param namespace: namespace for the resource
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param body:
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          202   Status    Accepted
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "delete_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
-
-    def delete(
-        self,
-        name: Optional[str] = None,
-        namespace: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> "Event":
-        r"""
-            delete an Event
-
-            operationID: deleteNamespacedEvent
-            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-            :param name: name for the resource. NOTE: if you leave out the name from the
-                arguments you *must* have filled in the name attribute in the
-                metadata for the resource!
-            :param namespace: namespace for the resource. NOTE: if you leave out the
-                namespace from the arguments you *must* have filled in the namespace
-                attribute in the metadata for the resource!
-            :param dry_run: When present, indicates that modifications should not be
-                persisted. An invalid or unrecognized dryRun directive will result
-                in an error response and no further processing of the request. Valid
-                values are: - All: all dry run stages will be processed
-            :param grace_period_seconds: The duration in seconds before the object should
-                be deleted. Value must be non-negative integer. The value zero
-                indicates delete immediately. If this value is nil, the default
-                grace period for the specified type will be used. Defaults to a per
-                object value if not specified. zero means delete immediately.
-            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-                field will be deprecated in 1.7. Should the dependent objects be
-                orphaned. If true/false, the "orphan" finalizer will be added
-                to/removed from the object's finalizers list. Either this field or
-                PropagationPolicy may be set, but not both.
-            :param propagation_policy: Whether and how garbage collection will be
-                performed. Either this field or OrphanDependents may be set, but not
-                both. The default policy is decided by the existing finalizer set in
-                the metadata.finalizers and the resource-specific default policy.
-                Acceptable values are: 'Orphan' - orphan the dependents;
-                'Background' - allow the garbage collector to delete the dependents
-                in the background; 'Foreground' - a cascading policy that deletes
-                all dependents in the foreground.
-            :param client: optional; instance of kubernetes.client.api_client.ApiClient
-            :return: returns self; the state of self may be permuted with a returned
-                HikaruDocumentBase object, whose values will be merged into self
-        (if of the same type).
-            :raises: KubernetesException. Raised only by the CRUD methods to signal
-                that a return code of 400 or higher was returned by the underlying
-                Kubernetes library.
-        """
-
-        # noinspection PyDataclass
-        client = client or self.client
-
-        if namespace is not None:
-            effective_namespace = namespace
-        elif not self.metadata or not self.metadata.namespace:
-            raise RuntimeError(
-                "There must be a namespace supplied in either "
-                "the arguments to delete() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_namespace = self.metadata.namespace
-
-        if name is not None:
-            effective_name = name
-        elif not self.metadata or not self.metadata.name:
-            raise RuntimeError(
-                "There must be a name supplied in either "
-                "the arguments to delete() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_name = self.metadata.name
-        res = self.deleteNamespacedEvent(
-            name=effective_name,
-            namespace=effective_namespace,
-            dry_run=dry_run,
-            grace_period_seconds=grace_period_seconds,
-            orphan_dependents=orphan_dependents,
-            propagation_policy=propagation_policy,
-            client=client,
-        )
-        if not 200 <= res.code <= 299:
-            raise KubernetesException("Kubernetes returned error " + str(res.code))
-        if self.__class__.__name__ == res.obj.__class__.__name__:
-            self.merge(res.obj, overwrite=True)
-        return self
-
-    @staticmethod
-    def readNamespacedEvent(
-        name: str,
-        namespace: str,
-        exact: Optional[bool] = None,
-        export: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        read the specified Event
-
-        operationID: readNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-        :param name: name for the resource
-        :param namespace: namespace for the resource
-        :param exact: Should the export be exact. Exact export maintains
-            cluster-specific fields like 'Namespace'. Deprecated. Planned for
-            removal in 1.18.
-        :param export: Should this value be exported. Export strips fields that a user
-            can not specify. Deprecated. Planned for removal in 1.18.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "read_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "read_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["exact"] = exact
-        all_args["export"] = export
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def read(
-        self,
-        name: Optional[str] = None,
-        namespace: Optional[str] = None,
-        exact: Optional[bool] = None,
-        export: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-    ) -> "Event":
-        r"""
-            read the specified Event
-
-            operationID: readNamespacedEvent
-            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-            :param name: name for the resource. NOTE: if you leave out the name from the
-                arguments you *must* have filled in the name attribute in the
-                metadata for the resource!
-            :param namespace: namespace for the resource. NOTE: if you leave out the
-                namespace from the arguments you *must* have filled in the namespace
-                attribute in the metadata for the resource!
-            :param exact: Should the export be exact. Exact export maintains
-                cluster-specific fields like 'Namespace'. Deprecated. Planned for
-                removal in 1.18.
-            :param export: Should this value be exported. Export strips fields that a user
-                can not specify. Deprecated. Planned for removal in 1.18.
-            :param pretty: If 'true', then the output is pretty printed.
-            :param client: optional; instance of kubernetes.client.api_client.ApiClient
-            :return: returns self; the state of self may be permuted with a returned
-                HikaruDocumentBase object, whose values will be merged into self
-        (if of the same type).
-            :raises: KubernetesException. Raised only by the CRUD methods to signal
-                that a return code of 400 or higher was returned by the underlying
-                Kubernetes library.
-        """
-
-        # noinspection PyDataclass
-        client = client or self.client
-
-        if namespace is not None:
-            effective_namespace = namespace
-        elif not self.metadata or not self.metadata.namespace:
-            raise RuntimeError(
-                "There must be a namespace supplied in either "
-                "the arguments to read() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_namespace = self.metadata.namespace
-
-        if name is not None:
-            effective_name = name
-        elif not self.metadata or not self.metadata.name:
-            raise RuntimeError(
-                "There must be a name supplied in either "
-                "the arguments to read() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_name = self.metadata.name
-        res = self.readNamespacedEvent(
-            name=effective_name,
-            namespace=effective_namespace,
-            exact=exact,
-            export=export,
-            pretty=pretty,
-            client=client,
-        )
-        if not 200 <= res.code <= 299:
-            raise KubernetesException("Kubernetes returned error " + str(res.code))
-        if self.__class__.__name__ == res.obj.__class__.__name__:
-            self.merge(res.obj, overwrite=True)
-        return self
-
-    def patchNamespacedEvent(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        force: Optional[bool] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        partially update the specified Event
-
-        operationID: patchNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-        :param name: name for the resource
-        :param namespace: namespace for the resource
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-            required for apply requests (application/apply-patch) but optional
-            for non-apply patch types (JsonPatch, MergePatch,
-            StrategicMergePatch).
-        :param force: Force is going to "force" Apply requests. It means user will
-            re-acquire conflicting fields owned by other people. Force flag must
-            be unset for non-apply patch requests.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            # noinspection PyDataclass
-            client_to_use = self.client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "patch_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "patch_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["field_manager"] = field_manager
-        all_args["force"] = force
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    def update(
-        self,
-        namespace: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        force: Optional[bool] = None,
-        client: ApiClient = None,
-    ) -> "Event":
-        r"""
-            partially update the specified Event
-
-            operationID: patchNamespacedEvent
-            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-            :param namespace: namespace for the resource. NOTE: if you leave out the
-                namespace from the arguments you *must* have filled in the namespace
-                attribute in the metadata for the resource!
-            :param dry_run: When present, indicates that modifications should not be
-                persisted. An invalid or unrecognized dryRun directive will result
-                in an error response and no further processing of the request. Valid
-                values are: - All: all dry run stages will be processed
-            :param field_manager: fieldManager is a name associated with the actor or
-                entity that is making these changes. The value must be less than or
-                128 characters long, and only contain printable characters, as
-                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
-                required for apply requests (application/apply-patch) but optional
-                for non-apply patch types (JsonPatch, MergePatch,
-                StrategicMergePatch).
-            :param force: Force is going to "force" Apply requests. It means user will
-                re-acquire conflicting fields owned by other people. Force flag must
-                be unset for non-apply patch requests.
-            :param client: optional; instance of kubernetes.client.api_client.ApiClient
-            :return: returns self; the state of self may be permuted with a returned
-                HikaruDocumentBase object, whose values will be merged into self
-        (if of the same type).
-            :raises: KubernetesException. Raised only by the CRUD methods to signal
-                that a return code of 400 or higher was returned by the underlying
-                Kubernetes library.
-        """
-
-        # noinspection PyDataclass
-        client = client or self.client
-
-        if namespace is not None:
-            effective_namespace = namespace
-        elif not self.metadata or not self.metadata.namespace:
-            raise RuntimeError(
-                "There must be a namespace supplied in either "
-                "the arguments to update() or in a "
-                "Event's metadata"
-            )
-        else:
-            effective_namespace = self.metadata.namespace
-        res = self.patchNamespacedEvent(
-            name=self.metadata.name,
-            namespace=effective_namespace,
-            dry_run=dry_run,
-            field_manager=field_manager,
-            force=force,
-            client=client,
-        )
-        if not 200 <= res.code <= 299:
-            raise KubernetesException("Kubernetes returned error " + str(res.code))
-        if self.__class__.__name__ == res.obj.__class__.__name__:
-            self.merge(res.obj, overwrite=True)
-        return self
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, ex_type, ex_value, ex_traceback):
-        passed = ex_type is None and ex_value is None and ex_traceback is None
-        has_rollback = hasattr(self, "__rollback")
-        if passed:
-            try:
-                self.update()
-            except Exception:
-                if has_rollback:
-                    self.merge(getattr(self, "__rollback"), overwrite=True)
-                    delattr(self, "__rollback")
-                raise
-        if has_rollback:
-            if not passed:
-                self.merge(getattr(self, "__rollback"), overwrite=True)
-            delattr(self, "__rollback")
-        return False
-
-    def replaceNamespacedEvent(
-        self,
-        name: str,
-        namespace: str,
-        dry_run: Optional[str] = None,
-        field_manager: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        replace the specified Event
-
-        operationID: replaceNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
-
-        :param name: name for the resource
-        :param namespace: namespace for the resource
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_manager: fieldManager is a name associated with the actor or
-            entity that is making these changes. The value must be less than or
-            128 characters long, and only contain printable characters, as
-            defined by https://golang.org/pkg/unicode/#IsPrint.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Event    OK
-          201   Event    Created
-          401   None    Unauthorized
-        """
-        if client is not None:
-            client_to_use = client
-        else:
-            # noinspection PyDataclass
-            client_to_use = self.client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "replace_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "replace_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["name"] = name
-        all_args["namespace"] = namespace
-        all_args["dry_run"] = dry_run
-        all_args["field_manager"] = field_manager
-        body = get_clean_dict(self)
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class EventSeries(HikaruBase):
-    r"""
-    EventSeries contain information on series of events, i.e. thing that was/is happening
-    continuously for some time.
-
-    Full name: v1beta1.EventSeries
-
-    Attributes:
-    count: count is the number of occurrences in this series up to the last heartbeat
-        time.
-    lastObservedTime: lastObservedTime is the time when last Event from the series was
-        seen before last heartbeat.
-    """
-
-    count: int
-    lastObservedTime: str
-
-
-@dataclass
 class EventSource(HikaruBase):
     r"""
     EventSource contains information for an event.
 
-    Full name: v1.EventSource
+    Full name: EventSource
 
     Attributes:
     component: Component from which the event is generated.
@@ -9684,310 +8103,11 @@ class EventSource(HikaruBase):
 
 
 @dataclass
-class EventList(HikaruDocumentBase):
-    r"""
-    EventList is a list of Event objects.
-
-    Full name: v1beta1.EventList
-
-    Attributes:
-    items: items is a list of schema objects.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1beta1"
-    items: List["Event"]
-    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
-    kind: Optional[str] = "EventList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listEventForAllNamespaces(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        pretty: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind Event
-
-        operationID: listEventForAllNamespaces
-        path: /apis/events.k8s.io/v1beta1/events
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
-            type "BOOKMARK". Servers that do not implement bookmarks may ignore
-            this flag and bookmarks are sent at the server's discretion. Clients
-            should not assume bookmarks are returned at any specific interval,
-            nor may they assume the server will send any BOOKMARK event during a
-            session. If this is not a watch, this field is ignored. If the
-            feature gate WatchBookmarks is not enabled in apiserver, this field
-            is ignored.
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param watch: Watch for changes to the described resources and return them as a
-            stream of add, update, and remove notifications. Specify
-            resourceVersion.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   EventList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_event_for_all_namespaces_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "list_event_for_all_namespaces_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["pretty"] = pretty
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    _watcher = WatcherDescriptor(
-        "kubernetes.client.api",
-        ".events_v1beta1_api",
-        "EventsV1beta1Api",
-        "list_event_for_all_namespaces",
-    )
-
-    @staticmethod
-    def listNamespacedEvent(
-        namespace: str,
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind Event
-
-        operationID: listNamespacedEvent
-        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
-
-        :param namespace: namespace for the resource
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
-            type "BOOKMARK". Servers that do not implement bookmarks may ignore
-            this flag and bookmarks are sent at the server's discretion. Clients
-            should not assume bookmarks are returned at any specific interval,
-            nor may they assume the server will send any BOOKMARK event during a
-            session. If this is not a watch, this field is ignored. If the
-            feature gate WatchBookmarks is not enabled in apiserver, this field
-            is ignored.
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param watch: Watch for changes to the described resources and return them as a
-            stream of add, update, and remove notifications. Specify
-            resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   EventList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = EventsV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_namespaced_event_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "list_namespaced_event_with_http_info "
-                "on EventsV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["namespace"] = namespace
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    _namespaced_watcher = WatcherDescriptor(
-        "kubernetes.client.api",
-        ".events_v1beta1_api",
-        "EventsV1beta1Api",
-        "list_namespaced_event",
-    )
-
-
-@dataclass
 class ExecAction(HikaruBase):
     r"""
     ExecAction describes a "run in container" action.
 
-    Full name: v1.ExecAction
+    Full name: ExecAction
 
     Attributes:
     command: Command is the command line to execute inside the container, the working
@@ -10007,7 +8127,7 @@ class FCVolumeSource(HikaruBase):
     read/write once. Fibre Channel volumes support ownership management and SELinux
     relabeling.
 
-    Full name: v1.FCVolumeSource
+    Full name: FCVolumeSource
 
     Attributes:
     fsType: Filesystem type to mount. Must be a filesystem type supported by the host
@@ -10034,7 +8154,7 @@ class FlexPersistentVolumeSource(HikaruBase):
     FlexPersistentVolumeSource represents a generic persistent volume resource that is
     provisioned/attached using an exec based plugin.
 
-    Full name: v1.FlexPersistentVolumeSource
+    Full name: FlexPersistentVolumeSource
 
     Attributes:
     driver: Driver is the name of the driver to use for this volume.
@@ -10063,7 +8183,7 @@ class FlexVolumeSource(HikaruBase):
     FlexVolume represents a generic volume resource that is provisioned/attached using an
     exec based plugin.
 
-    Full name: v1.FlexVolumeSource
+    Full name: FlexVolumeSource
 
     Attributes:
     driver: Driver is the name of the driver to use for this volume.
@@ -10093,7 +8213,7 @@ class FlockerVolumeSource(HikaruBase):
     datasetName and datasetUUID should be set. Flocker volumes do not support ownership
     management or SELinux relabeling.
 
-    Full name: v1.FlockerVolumeSource
+    Full name: FlockerVolumeSource
 
     Attributes:
     datasetName: Name of the dataset stored as metadata -> name on the dataset for Flocker
@@ -10113,7 +8233,7 @@ class GCEPersistentDiskVolumeSource(HikaruBase):
     as the kubelet. A GCE PD can only be mounted as read/write once or read-only many
     times. GCE PDs support ownership management and SELinux relabeling.
 
-    Full name: v1.GCEPersistentDiskVolumeSource
+    Full name: GCEPersistentDiskVolumeSource
 
     Attributes:
     pdName: Unique name of the PD resource in GCE. Used to identify the disk in GCE. More
@@ -10147,7 +8267,7 @@ class GitRepoVolumeSource(HikaruBase):
     repo, mount an EmptyDir into an InitContainer that clones the repo using git, then
     mount the EmptyDir into the Pod's container.
 
-    Full name: v1.GitRepoVolumeSource
+    Full name: GitRepoVolumeSource
 
     Attributes:
     repository: Repository URL
@@ -10169,7 +8289,7 @@ class GlusterfsPersistentVolumeSource(HikaruBase):
     Represents a Glusterfs mount that lasts the lifetime of a pod. Glusterfs volumes do
     not support ownership management or SELinux relabeling.
 
-    Full name: v1.GlusterfsPersistentVolumeSource
+    Full name: GlusterfsPersistentVolumeSource
 
     Attributes:
     endpoints: EndpointsName is the endpoint name that details Glusterfs topology. More
@@ -10197,7 +8317,7 @@ class GlusterfsVolumeSource(HikaruBase):
     Represents a Glusterfs mount that lasts the lifetime of a pod. Glusterfs volumes do
     not support ownership management or SELinux relabeling.
 
-    Full name: v1.GlusterfsVolumeSource
+    Full name: GlusterfsVolumeSource
 
     Attributes:
     endpoints: EndpointsName is the endpoint name that details Glusterfs topology. More
@@ -10219,7 +8339,7 @@ class HTTPGetAction(HikaruBase):
     r"""
     HTTPGetAction describes an action based on HTTP Get requests.
 
-    Full name: v1.HTTPGetAction
+    Full name: HTTPGetAction
 
     Attributes:
     port: Name or number of the port to access on the container. Number must be in the
@@ -10243,7 +8363,7 @@ class HTTPHeader(HikaruBase):
     r"""
     HTTPHeader describes a custom header to be used in HTTP probes
 
-    Full name: v1.HTTPHeader
+    Full name: HTTPHeader
 
     Attributes:
     name: The header field name
@@ -10259,7 +8379,7 @@ class Handler(HikaruBase):
     r"""
     Handler defines a specific action that should be taken
 
-    Full name: v1.Handler
+    Full name: Handler
 
     Attributes:
     exec: One and only one of the following should be specified. Exec specifies the action
@@ -10275,29 +8395,12 @@ class Handler(HikaruBase):
 
 
 @dataclass
-class TCPSocketAction(HikaruBase):
-    r"""
-    TCPSocketAction describes an action based on opening a socket
-
-    Full name: v1.TCPSocketAction
-
-    Attributes:
-    port: Number or name of the port to access on the container. Number must be in the
-        range 1 to 65535. Name must be an IANA_SVC_NAME.
-    host: Optional: Host name to connect to, defaults to the pod IP.
-    """
-
-    port: object
-    host: Optional[str] = None
-
-
-@dataclass
 class HostAlias(HikaruBase):
     r"""
     HostAlias holds the mapping between IP and hostnames that will be injected as an entry
     in the pod's hosts file.
 
-    Full name: v1.HostAlias
+    Full name: HostAlias
 
     Attributes:
     ip: IP address of the host file entry.
@@ -10314,7 +8417,7 @@ class HostPathVolumeSource(HikaruBase):
     Represents a host path mapped into a pod. Host path volumes do not support ownership
     management or SELinux relabeling.
 
-    Full name: v1.HostPathVolumeSource
+    Full name: HostPathVolumeSource
 
     Attributes:
     path: Path of the directory on the host. If the path is a symlink, it will follow the
@@ -10335,7 +8438,7 @@ class ISCSIPersistentVolumeSource(HikaruBase):
     mounted as read/write once. ISCSI volumes support ownership management and SELinux
     relabeling.
 
-    Full name: v1.ISCSIPersistentVolumeSource
+    Full name: ISCSIPersistentVolumeSource
 
     Attributes:
     iqn: Target iSCSI Qualified Name.
@@ -10379,7 +8482,7 @@ class ISCSIVolumeSource(HikaruBase):
     Represents an ISCSI disk. ISCSI volumes can only be mounted as read/write once. ISCSI
     volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.ISCSIVolumeSource
+    Full name: ISCSIVolumeSource
 
     Attributes:
     iqn: Target iSCSI Qualified Name.
@@ -10418,11 +8521,66 @@ class ISCSIVolumeSource(HikaruBase):
 
 
 @dataclass
+class KeyToPath(HikaruBase):
+    r"""
+    Maps a string key to a path within a volume.
+
+    Full name: KeyToPath
+
+    Attributes:
+    key: The key to project.
+    path: The relative path of the file to map the key to. May not be an absolute path.
+        May not contain the path element '..'. May not start with the string '..'.
+    mode: Optional: mode bits used to set permissions on this file. Must be an octal value
+        between 0000 and 0777 or a decimal value between 0 and 511. YAML accepts both
+        octal and decimal values, JSON requires decimal values for mode bits. If not
+        specified, the volume defaultMode will be used. This might be in conflict with
+        other options that affect the file mode, like fsGroup, and the result can be other
+        mode bits set.
+    """
+
+    key: str
+    path: str
+    mode: Optional[int] = None
+
+
+@dataclass
+class Lifecycle(HikaruBase):
+    r"""
+    Lifecycle describes actions that the management system should take in response to
+    container lifecycle events. For the PostStart and PreStop lifecycle handlers,
+    management of the container blocks until the action is complete, unless the container
+    process fails, in which case the handler is aborted.
+
+    Full name: Lifecycle
+
+    Attributes:
+    postStart: PostStart is called immediately after a container is created. If the
+        handler fails, the container is terminated and restarted according to its restart
+        policy. Other management of the container blocks until the hook completes. More
+        info:
+        https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
+    preStop: PreStop is called immediately before a container is terminated due to an API
+        request or management event such as liveness/startup probe failure, preemption,
+        resource contention, etc. The handler is not called if the container crashes or
+        exits. The reason for termination is passed to the handler. The Pod's termination
+        grace period countdown begins before the PreStop hooked is executed. Regardless of
+        the outcome of the handler, the container will eventually terminate within the
+        Pod's termination grace period. Other management of the container blocks until the
+        hook completes or until the termination grace period is reached. More info:
+        https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks
+    """
+
+    postStart: Optional["Handler"] = None
+    preStop: Optional["Handler"] = None
+
+
+@dataclass
 class LimitRange(HikaruDocumentBase):
     r"""
     LimitRange sets resource usage limits for each kind of resource in a Namespace.
 
-    Full name: v1.LimitRange
+    Full name: LimitRange
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -10449,25 +8607,11 @@ class LimitRange(HikaruDocumentBase):
 
 
 @dataclass
-class LimitRangeSpec(HikaruBase):
-    r"""
-    LimitRangeSpec defines a min/max usage limit for resources that match on kind.
-
-    Full name: v1.LimitRangeSpec
-
-    Attributes:
-    limits: Limits is the list of LimitRangeItem objects that are enforced.
-    """
-
-    limits: List["LimitRangeItem"]
-
-
-@dataclass
 class LimitRangeItem(HikaruBase):
     r"""
     LimitRangeItem defines a min/max usage limit for any resource that matches on kind.
 
-    Full name: v1.LimitRangeItem
+    Full name: LimitRangeItem
 
     Attributes:
     type: Type of resource that this limit applies to.
@@ -10496,7 +8640,7 @@ class LimitRangeList(HikaruDocumentBase):
     r"""
     LimitRangeList is a list of LimitRange items.
 
-    Full name: v1.LimitRangeList
+    Full name: LimitRangeList
 
     Attributes:
     items: Items is a list of LimitRange objects. More info:
@@ -10523,12 +8667,26 @@ class LimitRangeList(HikaruDocumentBase):
 
 
 @dataclass
+class LimitRangeSpec(HikaruBase):
+    r"""
+    LimitRangeSpec defines a min/max usage limit for resources that match on kind.
+
+    Full name: LimitRangeSpec
+
+    Attributes:
+    limits: Limits is the list of LimitRangeItem objects that are enforced.
+    """
+
+    limits: List["LimitRangeItem"]
+
+
+@dataclass
 class LoadBalancerIngress(HikaruBase):
     r"""
     LoadBalancerIngress represents the status of a load-balancer ingress point: traffic
     intended for the service should be sent to an ingress point.
 
-    Full name: v1.LoadBalancerIngress
+    Full name: LoadBalancerIngress
 
     Attributes:
     hostname: Hostname is set for load-balancer ingress points that are DNS based
@@ -10546,7 +8704,7 @@ class LoadBalancerStatus(HikaruBase):
     r"""
     LoadBalancerStatus represents the status of a load-balancer.
 
-    Full name: v1.LoadBalancerStatus
+    Full name: LoadBalancerStatus
 
     Attributes:
     ingress: Ingress is a list containing ingress points for the load-balancer. Traffic
@@ -10557,11 +8715,27 @@ class LoadBalancerStatus(HikaruBase):
 
 
 @dataclass
+class LocalObjectReference(HikaruBase):
+    r"""
+    LocalObjectReference contains enough information to let you locate the referenced
+    object inside the same namespace.
+
+    Full name: LocalObjectReference
+
+    Attributes:
+    name: Name of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    """
+
+    name: Optional[str] = None
+
+
+@dataclass
 class LocalVolumeSource(HikaruBase):
     r"""
     Local represents directly-attached storage with node affinity (Beta feature)
 
-    Full name: v1.LocalVolumeSource
+    Full name: LocalVolumeSource
 
     Attributes:
     path: The full path to the volume on the node. It can be either a directory or block
@@ -10581,7 +8755,7 @@ class NFSVolumeSource(HikaruBase):
     Represents an NFS mount that lasts the lifetime of a pod. NFS volumes do not support
     ownership management or SELinux relabeling.
 
-    Full name: v1.NFSVolumeSource
+    Full name: NFSVolumeSource
 
     Attributes:
     path: Path that is exported by the NFS server. More info:
@@ -10603,7 +8777,7 @@ class Namespace(HikaruDocumentBase):
     r"""
     Namespace provides a scope for Names. Use of multiple namespaces is optional.
 
-    Full name: v1.Namespace
+    Full name: Namespace
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -10633,45 +8807,11 @@ class Namespace(HikaruDocumentBase):
 
 
 @dataclass
-class NamespaceSpec(HikaruBase):
-    r"""
-    NamespaceSpec describes the attributes on a Namespace.
-
-    Full name: v1.NamespaceSpec
-
-    Attributes:
-    finalizers: Finalizers is an opaque list of values that must be empty to permanently
-        remove object from storage. More info:
-        https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
-    """
-
-    finalizers: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class NamespaceStatus(HikaruBase):
-    r"""
-    NamespaceStatus is information about the current status of a Namespace.
-
-    Full name: v1.NamespaceStatus
-
-    Attributes:
-    phase: Phase is the current lifecycle phase of the namespace. More info:
-        https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
-    conditions: Represents the latest available observations of a namespace's current
-        state.
-    """
-
-    phase: Optional[str] = None
-    conditions: Optional[List["NamespaceCondition"]] = field(default_factory=list)
-
-
-@dataclass
 class NamespaceCondition(HikaruBase):
     r"""
     NamespaceCondition contains details about state of namespace.
 
-    Full name: v1.NamespaceCondition
+    Full name: NamespaceCondition
 
     Attributes:
     status: Status of the condition, one of True, False, Unknown.
@@ -10695,7 +8835,7 @@ class NamespaceList(HikaruDocumentBase):
     r"""
     NamespaceList is a list of Namespaces.
 
-    Full name: v1.NamespaceList
+    Full name: NamespaceList
 
     Attributes:
     items: Items is the list of Namespace objects in the list. More info:
@@ -10722,12 +8862,46 @@ class NamespaceList(HikaruDocumentBase):
 
 
 @dataclass
+class NamespaceSpec(HikaruBase):
+    r"""
+    NamespaceSpec describes the attributes on a Namespace.
+
+    Full name: NamespaceSpec
+
+    Attributes:
+    finalizers: Finalizers is an opaque list of values that must be empty to permanently
+        remove object from storage. More info:
+        https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
+    """
+
+    finalizers: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class NamespaceStatus(HikaruBase):
+    r"""
+    NamespaceStatus is information about the current status of a Namespace.
+
+    Full name: NamespaceStatus
+
+    Attributes:
+    phase: Phase is the current lifecycle phase of the namespace. More info:
+        https://kubernetes.io/docs/tasks/administer-cluster/namespaces/
+    conditions: Represents the latest available observations of a namespace's current
+        state.
+    """
+
+    phase: Optional[str] = None
+    conditions: Optional[List["NamespaceCondition"]] = field(default_factory=list)
+
+
+@dataclass
 class Node(HikaruDocumentBase):
     r"""
     Node is a worker node in Kubernetes. Each node will have a unique identifier in the
     cache (i.e. in etcd).
 
-    Full name: v1.Node
+    Full name: Node
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -10758,90 +8932,11 @@ class Node(HikaruDocumentBase):
 
 
 @dataclass
-class NodeSpec(HikaruBase):
-    r"""
-    NodeSpec describes the attributes that a node is created with.
-
-    Full name: v1.NodeSpec
-
-    Attributes:
-    configSource: If specified, the source to get node configuration from The
-        DynamicKubeletConfig feature gate must be enabled for the Kubelet to use this
-        field
-    externalID: Deprecated. Not all kubelets will set this field. Remove field after 1.13.
-        see: https://issues.k8s.io/61966
-    podCIDR: PodCIDR represents the pod IP range assigned to the node.
-    providerID: ID of the node assigned by the cloud provider in the format:
-        <ProviderName>://<ProviderSpecificNodeID>
-    unschedulable: Unschedulable controls node schedulability of new pods. By default,
-        node is schedulable. More info:
-        https://kubernetes.io/docs/concepts/nodes/node/#manual-node-administration
-    podCIDRs: podCIDRs represents the IP ranges assigned to the node for usage by Pods on
-        that node. If this field is specified, the 0th entry must match the podCIDR field.
-        It may contain at most 1 value for each of IPv4 and IPv6.
-    taints: If specified, the node's taints.
-    """
-
-    configSource: Optional["NodeConfigSource"] = None
-    externalID: Optional[str] = None
-    podCIDR: Optional[str] = None
-    providerID: Optional[str] = None
-    unschedulable: Optional[bool] = None
-    podCIDRs: Optional[List[str]] = field(default_factory=list)
-    taints: Optional[List["Taint"]] = field(default_factory=list)
-
-
-@dataclass
-class NodeStatus(HikaruBase):
-    r"""
-    NodeStatus is information about the current status of a node.
-
-    Full name: v1.NodeStatus
-
-    Attributes:
-    config: Status of the config assigned to the node via the dynamic Kubelet config
-        feature.
-    daemonEndpoints: Endpoints of daemons running on the Node.
-    nodeInfo: Set of ids/uuids to uniquely identify the node. More info:
-        https://kubernetes.io/docs/concepts/nodes/node/#info
-    phase: NodePhase is the recently observed lifecycle phase of the node. More info:
-        https://kubernetes.io/docs/concepts/nodes/node/#phase The field is never
-        populated, and now is deprecated.
-    addresses: List of addresses reachable to the node. Queried from cloud provider, if
-        available. More info: https://kubernetes.io/docs/concepts/nodes/node/#addresses
-        Note: This field is declared as mergeable, but the merge key is not sufficiently
-        unique, which can cause data corruption when it is merged. Callers should instead
-        use a full-replacement patch. See http://pr.k8s.io/79391 for an example.
-    allocatable: Allocatable represents the resources of a node that are available for
-        scheduling. Defaults to Capacity.
-    capacity: Capacity represents the total resources of a node. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity
-    conditions: Conditions is an array of current observed node conditions. More info:
-        https://kubernetes.io/docs/concepts/nodes/node/#condition
-    images: List of container images on this node
-    volumesAttached: List of volumes that are attached to the node.
-    volumesInUse: List of attachable volumes in use (mounted) by the node.
-    """
-
-    config: Optional["NodeConfigStatus"] = None
-    daemonEndpoints: Optional["NodeDaemonEndpoints"] = None
-    nodeInfo: Optional["NodeSystemInfo"] = None
-    phase: Optional[str] = None
-    addresses: Optional[List["NodeAddress"]] = field(default_factory=list)
-    allocatable: Optional[Dict[str, str]] = field(default_factory=dict)
-    capacity: Optional[Dict[str, str]] = field(default_factory=dict)
-    conditions: Optional[List["NodeCondition"]] = field(default_factory=list)
-    images: Optional[List["ContainerImage"]] = field(default_factory=list)
-    volumesAttached: Optional[List["AttachedVolume"]] = field(default_factory=list)
-    volumesInUse: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
 class NodeAddress(HikaruBase):
     r"""
     NodeAddress contains information for the node's address.
 
-    Full name: v1.NodeAddress
+    Full name: NodeAddress
 
     Attributes:
     address: The node address.
@@ -10853,38 +8948,33 @@ class NodeAddress(HikaruBase):
 
 
 @dataclass
-class PreferredSchedulingTerm(HikaruBase):
+class NodeAffinity(HikaruBase):
     r"""
-    An empty preferred scheduling term matches all objects with implicit weight 0 (i.e.
-    it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a
-    no-op).
+    Node affinity is a group of node affinity scheduling rules.
 
-    Full name: v1.PreferredSchedulingTerm
+    Full name: NodeAffinity
 
     Attributes:
-    preference: A node selector term, associated with the corresponding weight.
-    weight: Weight associated with matching the corresponding nodeSelectorTerm, in the
-        range 1-100.
+    requiredDuringSchedulingIgnoredDuringExecution: If the affinity requirements specified
+        by this field are not met at scheduling time, the pod will not be scheduled onto
+        the node. If the affinity requirements specified by this field cease to be met at
+        some point during pod execution (e.g. due to an update), the system may or may not
+        try to eventually evict the pod from its node.
+    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
+        pods to nodes that satisfy the affinity expressions specified by this field, but
+        it may choose a node that violates one or more of the expressions. The node that
+        is most preferred is the one with the greatest sum of weights, i.e. for each node
+        that meets all of the scheduling requirements (resource request,
+        requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating
+        through the elements of this field and adding "weight" to the sum if the node
+        matches the corresponding matchExpressions; the node(s) with the highest sum are
+        the most preferred.
     """
 
-    preference: "NodeSelectorTerm"
-    weight: int
-
-
-@dataclass
-class NodeSelector(HikaruBase):
-    r"""
-    A node selector represents the union of the results of one or more label queries over
-    a set of nodes; that is, it represents the OR of the selectors represented by the node
-    selector terms.
-
-    Full name: v1.NodeSelector
-
-    Attributes:
-    nodeSelectorTerms: Required. A list of node selector terms. The terms are ORed.
-    """
-
-    nodeSelectorTerms: List["NodeSelectorTerm"]
+    requiredDuringSchedulingIgnoredDuringExecution: Optional["NodeSelector"] = None
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List["PreferredSchedulingTerm"]
+    ] = field(default_factory=list)
 
 
 @dataclass
@@ -10892,7 +8982,7 @@ class NodeCondition(HikaruBase):
     r"""
     NodeCondition contains condition information for a node.
 
-    Full name: v1.NodeCondition
+    Full name: NodeCondition
 
     Attributes:
     status: Status of the condition, one of True, False, Unknown.
@@ -10917,7 +9007,7 @@ class NodeConfigSource(HikaruBase):
     NodeConfigSource specifies a source of node configuration. Exactly one subfield
     (excluding metadata) must be non-nil.
 
-    Full name: v1.NodeConfigSource
+    Full name: NodeConfigSource
 
     Attributes:
     configMap: ConfigMap is a reference to a Node's ConfigMap
@@ -10932,7 +9022,7 @@ class NodeConfigStatus(HikaruBase):
     NodeConfigStatus describes the status of the config assigned by
     Node.Spec.ConfigSource.
 
-    Full name: v1.NodeConfigStatus
+    Full name: NodeConfigStatus
 
     Attributes:
     active: Active reports the checkpointed config the node is actively using. Active will
@@ -10984,7 +9074,7 @@ class NodeDaemonEndpoints(HikaruBase):
     r"""
     NodeDaemonEndpoints lists ports opened by daemons running on the Node.
 
-    Full name: v1.NodeDaemonEndpoints
+    Full name: NodeDaemonEndpoints
 
     Attributes:
     kubeletEndpoint: Endpoint on which Kubelet is listening.
@@ -10998,7 +9088,7 @@ class NodeList(HikaruDocumentBase):
     r"""
     NodeList is the whole list of all Nodes which have been registered with master.
 
-    Full name: v1.NodeList
+    Full name: NodeList
 
     Attributes:
     items: List of nodes
@@ -11024,22 +9114,19 @@ class NodeList(HikaruDocumentBase):
 
 
 @dataclass
-class NodeSelectorTerm(HikaruBase):
+class NodeSelector(HikaruBase):
     r"""
-    A null or empty node selector term matches no objects. The requirements of them are
-    ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
+    A node selector represents the union of the results of one or more label queries over
+    a set of nodes; that is, it represents the OR of the selectors represented by the node
+    selector terms.
 
-    Full name: v1.NodeSelectorTerm
+    Full name: NodeSelector
 
     Attributes:
-    matchExpressions: A list of node selector requirements by node's labels.
-    matchFields: A list of node selector requirements by node's fields.
+    nodeSelectorTerms: Required. A list of node selector terms. The terms are ORed.
     """
 
-    matchExpressions: Optional[List["NodeSelectorRequirement"]] = field(
-        default_factory=list
-    )
-    matchFields: Optional[List["NodeSelectorRequirement"]] = field(default_factory=list)
+    nodeSelectorTerms: List["NodeSelectorTerm"]
 
 
 @dataclass
@@ -11048,7 +9135,7 @@ class NodeSelectorRequirement(HikaruBase):
     A node selector requirement is a selector that contains values, a key, and an operator
     that relates the key and values.
 
-    Full name: v1.NodeSelectorRequirement
+    Full name: NodeSelectorRequirement
 
     Attributes:
     key: The label key that the selector applies to.
@@ -11067,26 +9154,101 @@ class NodeSelectorRequirement(HikaruBase):
 
 
 @dataclass
-class Taint(HikaruBase):
+class NodeSelectorTerm(HikaruBase):
     r"""
-    The node this Taint is attached to has the "effect" on any pod that does not tolerate
-    the Taint.
+    A null or empty node selector term matches no objects. The requirements of them are
+    ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.
 
-    Full name: v1.Taint
+    Full name: NodeSelectorTerm
 
     Attributes:
-    effect: Required. The effect of the taint on pods that do not tolerate the taint.
-        Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
-    key: Required. The taint key to be applied to a node.
-    timeAdded: TimeAdded represents the time at which the taint was added. It is only
-        written for NoExecute taints.
-    value: The taint value corresponding to the taint key.
+    matchExpressions: A list of node selector requirements by node's labels.
+    matchFields: A list of node selector requirements by node's fields.
     """
 
-    effect: str
-    key: str
-    timeAdded: Optional[str] = None
-    value: Optional[str] = None
+    matchExpressions: Optional[List["NodeSelectorRequirement"]] = field(
+        default_factory=list
+    )
+    matchFields: Optional[List["NodeSelectorRequirement"]] = field(default_factory=list)
+
+
+@dataclass
+class NodeSpec(HikaruBase):
+    r"""
+    NodeSpec describes the attributes that a node is created with.
+
+    Full name: NodeSpec
+
+    Attributes:
+    configSource: If specified, the source to get node configuration from The
+        DynamicKubeletConfig feature gate must be enabled for the Kubelet to use this
+        field
+    externalID: Deprecated. Not all kubelets will set this field. Remove field after 1.13.
+        see: https://issues.k8s.io/61966
+    podCIDR: PodCIDR represents the pod IP range assigned to the node.
+    providerID: ID of the node assigned by the cloud provider in the format:
+        <ProviderName>://<ProviderSpecificNodeID>
+    unschedulable: Unschedulable controls node schedulability of new pods. By default,
+        node is schedulable. More info:
+        https://kubernetes.io/docs/concepts/nodes/node/#manual-node-administration
+    podCIDRs: podCIDRs represents the IP ranges assigned to the node for usage by Pods on
+        that node. If this field is specified, the 0th entry must match the podCIDR field.
+        It may contain at most 1 value for each of IPv4 and IPv6.
+    taints: If specified, the node's taints.
+    """
+
+    configSource: Optional["NodeConfigSource"] = None
+    externalID: Optional[str] = None
+    podCIDR: Optional[str] = None
+    providerID: Optional[str] = None
+    unschedulable: Optional[bool] = None
+    podCIDRs: Optional[List[str]] = field(default_factory=list)
+    taints: Optional[List["Taint"]] = field(default_factory=list)
+
+
+@dataclass
+class NodeStatus(HikaruBase):
+    r"""
+    NodeStatus is information about the current status of a node.
+
+    Full name: NodeStatus
+
+    Attributes:
+    config: Status of the config assigned to the node via the dynamic Kubelet config
+        feature.
+    daemonEndpoints: Endpoints of daemons running on the Node.
+    nodeInfo: Set of ids/uuids to uniquely identify the node. More info:
+        https://kubernetes.io/docs/concepts/nodes/node/#info
+    phase: NodePhase is the recently observed lifecycle phase of the node. More info:
+        https://kubernetes.io/docs/concepts/nodes/node/#phase The field is never
+        populated, and now is deprecated.
+    addresses: List of addresses reachable to the node. Queried from cloud provider, if
+        available. More info: https://kubernetes.io/docs/concepts/nodes/node/#addresses
+        Note: This field is declared as mergeable, but the merge key is not sufficiently
+        unique, which can cause data corruption when it is merged. Callers should instead
+        use a full-replacement patch. See http://pr.k8s.io/79391 for an example.
+    allocatable: Allocatable represents the resources of a node that are available for
+        scheduling. Defaults to Capacity.
+    capacity: Capacity represents the total resources of a node. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity
+    conditions: Conditions is an array of current observed node conditions. More info:
+        https://kubernetes.io/docs/concepts/nodes/node/#condition
+    images: List of container images on this node
+    volumesAttached: List of volumes that are attached to the node.
+    volumesInUse: List of attachable volumes in use (mounted) by the node.
+    """
+
+    config: Optional["NodeConfigStatus"] = None
+    daemonEndpoints: Optional["NodeDaemonEndpoints"] = None
+    nodeInfo: Optional["NodeSystemInfo"] = None
+    phase: Optional[str] = None
+    addresses: Optional[List["NodeAddress"]] = field(default_factory=list)
+    allocatable: Optional[Dict[str, str]] = field(default_factory=dict)
+    capacity: Optional[Dict[str, str]] = field(default_factory=dict)
+    conditions: Optional[List["NodeCondition"]] = field(default_factory=list)
+    images: Optional[List["ContainerImage"]] = field(default_factory=list)
+    volumesAttached: Optional[List["AttachedVolume"]] = field(default_factory=list)
+    volumesInUse: Optional[List[str]] = field(default_factory=list)
 
 
 @dataclass
@@ -11094,7 +9256,7 @@ class NodeSystemInfo(HikaruBase):
     r"""
     NodeSystemInfo is a set of ids/uuids to uniquely identify the node.
 
-    Full name: v1.NodeSystemInfo
+    Full name: NodeSystemInfo
 
     Attributes:
     architecture: The Architecture reported by the node
@@ -11129,13 +9291,70 @@ class NodeSystemInfo(HikaruBase):
 
 
 @dataclass
+class ObjectFieldSelector(HikaruBase):
+    r"""
+    ObjectFieldSelector selects an APIVersioned field of an object.
+
+    Full name: ObjectFieldSelector
+
+    Attributes:
+    fieldPath: Path of the field to select in the specified API version.
+    apiVersion: Version of the schema the FieldPath is written in terms of, defaults to
+        "v1".
+    """
+
+    fieldPath: str
+    apiVersion: Optional[str] = "v1"
+
+
+@dataclass
+class ObjectReference(HikaruBase):
+    r"""
+    ObjectReference contains enough information to let you inspect or modify the referred
+    object.
+
+    Full name: ObjectReference
+
+    Attributes:
+    apiVersion: API version of the referent.
+    fieldPath: If referring to a piece of an object instead of an entire object, this
+        string should contain a valid JSON/Go field access statement, such as
+        desiredState.manifest.containers[2]. For example, if the object reference is to a
+        container within a pod, this would take on a value like: "spec.containers{name}"
+        (where "name" refers to the name of the container that triggered the event) or if
+        no container name is specified "spec.containers[2]" (container with index 2 in
+        this pod). This syntax is chosen only to have some well-defined way of referencing
+        a part of an object.
+    kind: Kind of the referent. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    name: Name of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    namespace: Namespace of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+    resourceVersion: Specific resourceVersion to which this reference is made, if any.
+        More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+    uid: UID of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids
+    """
+
+    apiVersion: Optional[str] = "v1"
+    fieldPath: Optional[str] = None
+    kind: Optional[str] = "ObjectReference"
+    name: Optional[str] = None
+    namespace: Optional[str] = None
+    resourceVersion: Optional[str] = None
+    uid: Optional[str] = None
+
+
+@dataclass
 class PersistentVolume(HikaruDocumentBase):
     r"""
     PersistentVolume (PV) is a storage resource provisioned by an administrator. It is
     analogous to a node. More info:
     https://kubernetes.io/docs/concepts/storage/persistent-volumes
 
-    Full name: v1.PersistentVolume
+    Full name: PersistentVolume
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -11167,11 +9386,243 @@ class PersistentVolume(HikaruDocumentBase):
 
 
 @dataclass
+class PersistentVolumeClaim(HikaruDocumentBase):
+    r"""
+    PersistentVolumeClaim is a user's request for and claim to a persistent volume
+
+    Full name: PersistentVolumeClaim
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Spec defines the desired characteristics of a volume requested by a pod author.
+        More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+    status: Status represents the current information/status of a persistent volume claim.
+        Read-only. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeClaim"
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["PersistentVolumeClaimSpec"] = None
+    status: Optional["PersistentVolumeClaimStatus"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class PersistentVolumeClaimCondition(HikaruBase):
+    r"""
+    PersistentVolumeClaimCondition contails details about state of pvc
+
+    Full name: PersistentVolumeClaimCondition
+
+    Attributes:
+    status:
+    type:
+    lastProbeTime: Last time we probed the condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    message: Human-readable message indicating details about last transition.
+    reason: Unique, this should be a short, machine understandable string that gives the
+        reason for condition's last transition. If it reports "ResizeStarted" that means
+        the underlying persistent volume is being resized.
+    """
+
+    status: str
+    type: str
+    lastProbeTime: Optional[str] = None
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class PersistentVolumeClaimList(HikaruDocumentBase):
+    r"""
+    PersistentVolumeClaimList is a list of PersistentVolumeClaim items.
+
+    Full name: PersistentVolumeClaimList
+
+    Attributes:
+    items: A list of persistent volume claims. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["PersistentVolumeClaim"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeClaimList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class PersistentVolumeClaimSpec(HikaruBase):
+    r"""
+    PersistentVolumeClaimSpec describes the common attributes of storage devices and
+    allows a Source for provider-specific attributes
+
+    Full name: PersistentVolumeClaimSpec
+
+    Attributes:
+    dataSource: This field can be used to specify either: * An existing VolumeSnapshot
+        object (snapshot.storage.k8s.io/VolumeSnapshot - Beta) * An existing PVC
+        (PersistentVolumeClaim) * An existing custom resource/object that implements data
+        population (Alpha) In order to use VolumeSnapshot object types, the appropriate
+        feature gate must be enabled (VolumeSnapshotDataSource or AnyVolumeDataSource) If
+        the provisioner or an external controller can support the specified data source,
+        it will create a new volume based on the contents of the specified data source. If
+        the specified data source is not supported, the volume will not be created and the
+        failure will be reported as an event. In the future, we plan to support more data
+        source types and the behavior of the provisioner may change.
+    resources: Resources represents the minimum resources the volume should have. More
+        info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
+    selector: A label query over volumes to consider for binding.
+    storageClassName: Name of the StorageClass required by the claim. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
+    volumeMode: volumeMode defines what type of volume is required by the claim. Value of
+        Filesystem is implied when not included in claim spec.
+    volumeName: VolumeName is the binding reference to the PersistentVolume backing this
+        claim.
+    accessModes: AccessModes contains the desired access modes the volume should have.
+        More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
+    """
+
+    dataSource: Optional["TypedLocalObjectReference"] = None
+    resources: Optional["ResourceRequirements"] = None
+    selector: Optional["LabelSelector"] = None
+    storageClassName: Optional[str] = None
+    volumeMode: Optional[str] = None
+    volumeName: Optional[str] = None
+    accessModes: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class PersistentVolumeClaimStatus(HikaruBase):
+    r"""
+    PersistentVolumeClaimStatus is the current status of a persistent volume claim.
+
+    Full name: PersistentVolumeClaimStatus
+
+    Attributes:
+    phase: Phase represents the current phase of PersistentVolumeClaim.
+    accessModes: AccessModes contains the actual access modes the volume backing the PVC
+        has. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
+    capacity: Represents the actual resources of the underlying volume.
+    conditions: Current Condition of persistent volume claim. If underlying persistent
+        volume is being resized then the Condition will be set to 'ResizeStarted'.
+    """
+
+    phase: Optional[str] = None
+    accessModes: Optional[List[str]] = field(default_factory=list)
+    capacity: Optional[Dict[str, str]] = field(default_factory=dict)
+    conditions: Optional[List["PersistentVolumeClaimCondition"]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
+class PersistentVolumeClaimTemplate(HikaruBase):
+    r"""
+    PersistentVolumeClaimTemplate is used to produce PersistentVolumeClaim objects as part
+    of an EphemeralVolumeSource.
+
+    Full name: PersistentVolumeClaimTemplate
+
+    Attributes:
+    spec: The specification for the PersistentVolumeClaim. The entire content is copied
+        unchanged into the PVC that gets created from this template. The same fields as in
+        a PersistentVolumeClaim are also valid here.
+    metadata: May contain labels and annotations that will be copied into the PVC when
+        creating it. No other fields are allowed and will be rejected during validation.
+    """
+
+    spec: "PersistentVolumeClaimSpec"
+    metadata: Optional["ObjectMeta"] = None
+
+
+@dataclass
+class PersistentVolumeClaimVolumeSource(HikaruBase):
+    r"""
+    PersistentVolumeClaimVolumeSource references the user's PVC in the same namespace.
+    This volume finds the bound PV and mounts that volume for the pod. A
+    PersistentVolumeClaimVolumeSource is, essentially, a wrapper around another type of
+    volume that is owned by someone else (the system).
+
+    Full name: PersistentVolumeClaimVolumeSource
+
+    Attributes:
+    claimName: ClaimName is the name of a PersistentVolumeClaim in the same namespace as
+        the pod using this volume. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+    readOnly: Will force the ReadOnly setting in VolumeMounts. Default false.
+    """
+
+    claimName: str
+    readOnly: Optional[bool] = None
+
+
+@dataclass
+class PersistentVolumeList(HikaruDocumentBase):
+    r"""
+    PersistentVolumeList is a list of PersistentVolume items.
+
+    Full name: PersistentVolumeList
+
+    Attributes:
+    items: List of persistent volumes. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["PersistentVolume"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PersistentVolumeList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class PersistentVolumeSpec(HikaruBase):
     r"""
     PersistentVolumeSpec is the specification of a persistent volume.
 
-    Full name: v1.PersistentVolumeSpec
+    Full name: PersistentVolumeSpec
 
     Attributes:
     awsElasticBlockStore: AWSElasticBlockStore represents an AWS Disk resource that is
@@ -11285,7 +9736,7 @@ class PersistentVolumeStatus(HikaruBase):
     r"""
     PersistentVolumeStatus is the current status of a persistent volume.
 
-    Full name: v1.PersistentVolumeStatus
+    Full name: PersistentVolumeStatus
 
     Attributes:
     message: A human-readable message indicating details about why the volume is in this
@@ -11303,223 +9754,11 @@ class PersistentVolumeStatus(HikaruBase):
 
 
 @dataclass
-class PersistentVolumeClaimSpec(HikaruBase):
-    r"""
-    PersistentVolumeClaimSpec describes the common attributes of storage devices and
-    allows a Source for provider-specific attributes
-
-    Full name: v1.PersistentVolumeClaimSpec
-
-    Attributes:
-    dataSource: This field can be used to specify either: * An existing VolumeSnapshot
-        object (snapshot.storage.k8s.io/VolumeSnapshot - Beta) * An existing PVC
-        (PersistentVolumeClaim) * An existing custom resource/object that implements data
-        population (Alpha) In order to use VolumeSnapshot object types, the appropriate
-        feature gate must be enabled (VolumeSnapshotDataSource or AnyVolumeDataSource) If
-        the provisioner or an external controller can support the specified data source,
-        it will create a new volume based on the contents of the specified data source. If
-        the specified data source is not supported, the volume will not be created and the
-        failure will be reported as an event. In the future, we plan to support more data
-        source types and the behavior of the provisioner may change.
-    resources: Resources represents the minimum resources the volume should have. More
-        info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
-    selector: A label query over volumes to consider for binding.
-    storageClassName: Name of the StorageClass required by the claim. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
-    volumeMode: volumeMode defines what type of volume is required by the claim. Value of
-        Filesystem is implied when not included in claim spec.
-    volumeName: VolumeName is the binding reference to the PersistentVolume backing this
-        claim.
-    accessModes: AccessModes contains the desired access modes the volume should have.
-        More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
-    """
-
-    dataSource: Optional["TypedLocalObjectReference"] = None
-    resources: Optional["ResourceRequirements"] = None
-    selector: Optional["LabelSelector"] = None
-    storageClassName: Optional[str] = None
-    volumeMode: Optional[str] = None
-    volumeName: Optional[str] = None
-    accessModes: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class PersistentVolumeClaimStatus(HikaruBase):
-    r"""
-    PersistentVolumeClaimStatus is the current status of a persistent volume claim.
-
-    Full name: v1.PersistentVolumeClaimStatus
-
-    Attributes:
-    phase: Phase represents the current phase of PersistentVolumeClaim.
-    accessModes: AccessModes contains the actual access modes the volume backing the PVC
-        has. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
-    capacity: Represents the actual resources of the underlying volume.
-    conditions: Current Condition of persistent volume claim. If underlying persistent
-        volume is being resized then the Condition will be set to 'ResizeStarted'.
-    """
-
-    phase: Optional[str] = None
-    accessModes: Optional[List[str]] = field(default_factory=list)
-    capacity: Optional[Dict[str, str]] = field(default_factory=dict)
-    conditions: Optional[List["PersistentVolumeClaimCondition"]] = field(
-        default_factory=list
-    )
-
-
-@dataclass
-class PersistentVolumeClaimCondition(HikaruBase):
-    r"""
-    PersistentVolumeClaimCondition contails details about state of pvc
-
-    Full name: v1.PersistentVolumeClaimCondition
-
-    Attributes:
-    status:
-    type:
-    lastProbeTime: Last time we probed the condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    message: Human-readable message indicating details about last transition.
-    reason: Unique, this should be a short, machine understandable string that gives the
-        reason for condition's last transition. If it reports "ResizeStarted" that means
-        the underlying persistent volume is being resized.
-    """
-
-    status: str
-    type: str
-    lastProbeTime: Optional[str] = None
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class PersistentVolumeClaimList(HikaruDocumentBase):
-    r"""
-    PersistentVolumeClaimList is a list of PersistentVolumeClaim items.
-
-    Full name: v1.PersistentVolumeClaimList
-
-    Attributes:
-    items: A list of persistent volume claims. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["PersistentVolumeClaim"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PersistentVolumeClaimList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class TypedLocalObjectReference(HikaruBase):
-    r"""
-    TypedLocalObjectReference contains enough information to let you locate the typed
-    referenced object inside the same namespace.
-
-    Full name: v1.TypedLocalObjectReference
-
-    Attributes:
-    kind: Kind is the type of resource being referenced
-    name: Name is the name of resource being referenced
-    apiGroup: APIGroup is the group for the resource being referenced. If APIGroup is not
-        specified, the specified Kind must be in the core API group. For any other
-        third-party types, APIGroup is required.
-    """
-
-    kind: str
-    name: str
-    apiGroup: Optional[str] = None
-
-
-@dataclass
-class PersistentVolumeClaimVolumeSource(HikaruBase):
-    r"""
-    PersistentVolumeClaimVolumeSource references the user's PVC in the same namespace.
-    This volume finds the bound PV and mounts that volume for the pod. A
-    PersistentVolumeClaimVolumeSource is, essentially, a wrapper around another type of
-    volume that is owned by someone else (the system).
-
-    Full name: v1.PersistentVolumeClaimVolumeSource
-
-    Attributes:
-    claimName: ClaimName is the name of a PersistentVolumeClaim in the same namespace as
-        the pod using this volume. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
-    readOnly: Will force the ReadOnly setting in VolumeMounts. Default false.
-    """
-
-    claimName: str
-    readOnly: Optional[bool] = None
-
-
-@dataclass
-class PersistentVolumeList(HikaruDocumentBase):
-    r"""
-    PersistentVolumeList is a list of PersistentVolume items.
-
-    Full name: v1.PersistentVolumeList
-
-    Attributes:
-    items: List of persistent volumes. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["PersistentVolume"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PersistentVolumeList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class VolumeNodeAffinity(HikaruBase):
-    r"""
-    VolumeNodeAffinity defines constraints that limit what nodes this volume can be
-    accessed from.
-
-    Full name: v1.VolumeNodeAffinity
-
-    Attributes:
-    required: Required specifies hard node constraints that must be met.
-    """
-
-    required: Optional["NodeSelector"] = None
-
-
-@dataclass
 class PhotonPersistentDiskVolumeSource(HikaruBase):
     r"""
     Represents a Photon Controller persistent disk resource.
 
-    Full name: v1.PhotonPersistentDiskVolumeSource
+    Full name: PhotonPersistentDiskVolumeSource
 
     Attributes:
     pdID: ID that identifies Photon Controller persistent disk
@@ -11533,195 +9772,12 @@ class PhotonPersistentDiskVolumeSource(HikaruBase):
 
 
 @dataclass
-class PortworxVolumeSource(HikaruBase):
-    r"""
-    PortworxVolumeSource represents a Portworx volume resource.
-
-    Full name: v1.PortworxVolumeSource
-
-    Attributes:
-    volumeID: VolumeID uniquely identifies a Portworx volume
-    fsType: FSType represents the filesystem type to mount Must be a filesystem type
-        supported by the host operating system. Ex. "ext4", "xfs". Implicitly inferred to
-        be "ext4" if unspecified.
-    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
-        setting in VolumeMounts.
-    """
-
-    volumeID: str
-    fsType: Optional[str] = None
-    readOnly: Optional[bool] = None
-
-
-@dataclass
-class QuobyteVolumeSource(HikaruBase):
-    r"""
-    Represents a Quobyte mount that lasts the lifetime of a pod. Quobyte volumes do not
-    support ownership management or SELinux relabeling.
-
-    Full name: v1.QuobyteVolumeSource
-
-    Attributes:
-    registry: Registry represents a single or multiple Quobyte Registry services specified
-        as a string as host:port pair (multiple entries are separated with commas) which
-        acts as the central registry for volumes
-    volume: Volume is a string that references an already created Quobyte volume by name.
-    group: Group to map volume access to Default is no group
-    readOnly: ReadOnly here will force the Quobyte volume to be mounted with read-only
-        permissions. Defaults to false.
-    tenant: Tenant owning the given Quobyte volume in the Backend Used with dynamically
-        provisioned Quobyte volumes, value is set by the plugin
-    user: User to map volume access to Defaults to serivceaccount user
-    """
-
-    registry: str
-    volume: str
-    group: Optional[str] = None
-    readOnly: Optional[bool] = None
-    tenant: Optional[str] = None
-    user: Optional[str] = None
-
-
-@dataclass
-class RBDPersistentVolumeSource(HikaruBase):
-    r"""
-    Represents a Rados Block Device mount that lasts the lifetime of a pod. RBD volumes
-    support ownership management and SELinux relabeling.
-
-    Full name: v1.RBDPersistentVolumeSource
-
-    Attributes:
-    image: The rados image name. More info:
-        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    monitors: A collection of Ceph monitors. More info:
-        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    fsType: Filesystem type of the volume that you want to mount. Tip: Ensure that the
-        filesystem type is supported by the host operating system. Examples: "ext4",
-        "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#rbd
-    keyring: Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring.
-        More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    pool: The rados pool name. Default is rbd. More info:
-        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    readOnly: ReadOnly here will force the ReadOnly setting in VolumeMounts. Defaults to
-        false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    secretRef: SecretRef is name of the authentication secret for RBDUser. If provided
-        overrides keyring. Default is nil. More info:
-        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    user: The rados user name. Default is admin. More info:
-        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
-    """
-
-    image: str
-    monitors: List[str]
-    fsType: Optional[str] = None
-    keyring: Optional[str] = None
-    pool: Optional[str] = None
-    readOnly: Optional[bool] = None
-    secretRef: Optional["SecretReference"] = None
-    user: Optional[str] = None
-
-
-@dataclass
-class ScaleIOPersistentVolumeSource(HikaruBase):
-    r"""
-    ScaleIOPersistentVolumeSource represents a persistent ScaleIO volume
-
-    Full name: v1.ScaleIOPersistentVolumeSource
-
-    Attributes:
-    gateway: The host address of the ScaleIO API Gateway.
-    secretRef: SecretRef references to the secret for ScaleIO user and other sensitive
-        information. If this is not provided, Login operation will fail.
-    system: The name of the storage system as configured in ScaleIO.
-    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
-        operating system. Ex. "ext4", "xfs", "ntfs". Default is "xfs"
-    protectionDomain: The name of the ScaleIO Protection Domain for the configured
-        storage.
-    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
-        setting in VolumeMounts.
-    sslEnabled: Flag to enable/disable SSL communication with Gateway, default false
-    storageMode: Indicates whether the storage for a volume should be ThickProvisioned or
-        ThinProvisioned. Default is ThinProvisioned.
-    storagePool: The ScaleIO Storage Pool associated with the protection domain.
-    volumeName: The name of a volume already created in the ScaleIO system that is
-        associated with this volume source.
-    """
-
-    gateway: str
-    secretRef: "SecretReference"
-    system: str
-    fsType: Optional[str] = None
-    protectionDomain: Optional[str] = None
-    readOnly: Optional[bool] = None
-    sslEnabled: Optional[bool] = None
-    storageMode: Optional[str] = None
-    storagePool: Optional[str] = None
-    volumeName: Optional[str] = None
-
-
-@dataclass
-class StorageOSPersistentVolumeSource(HikaruBase):
-    r"""
-    Represents a StorageOS persistent volume resource.
-
-    Full name: v1.StorageOSPersistentVolumeSource
-
-    Attributes:
-    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
-        operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if
-        unspecified.
-    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
-        setting in VolumeMounts.
-    secretRef: SecretRef specifies the secret to use for obtaining the StorageOS API
-        credentials. If not specified, default values will be attempted.
-    volumeName: VolumeName is the human-readable name of the StorageOS volume. Volume
-        names are only unique within a namespace.
-    volumeNamespace: VolumeNamespace specifies the scope of the volume within StorageOS.
-        If no namespace is specified then the Pod's namespace will be used. This allows
-        the Kubernetes name scoping to be mirrored within StorageOS for tighter
-        integration. Set VolumeName to any name to override the default behaviour. Set to
-        "default" if you are not using namespaces within StorageOS. Namespaces that do not
-        pre-exist within StorageOS will be created.
-    """
-
-    fsType: Optional[str] = None
-    readOnly: Optional[bool] = None
-    secretRef: Optional["ObjectReference"] = None
-    volumeName: Optional[str] = None
-    volumeNamespace: Optional[str] = None
-
-
-@dataclass
-class VsphereVirtualDiskVolumeSource(HikaruBase):
-    r"""
-    Represents a vSphere volume resource.
-
-    Full name: v1.VsphereVirtualDiskVolumeSource
-
-    Attributes:
-    volumePath: Path that identifies vSphere volume vmdk
-    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
-        operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if
-        unspecified.
-    storagePolicyID: Storage Policy Based Management (SPBM) profile ID associated with the
-        StoragePolicyName.
-    storagePolicyName: Storage Policy Based Management (SPBM) profile name.
-    """
-
-    volumePath: str
-    fsType: Optional[str] = None
-    storagePolicyID: Optional[str] = None
-    storagePolicyName: Optional[str] = None
-
-
-@dataclass
 class Pod(HikaruDocumentBase):
     r"""
     Pod is a collection of containers that can run on a host. This resource is created by
     clients and scheduled onto hosts.
 
-    Full name: v1.Pod
+    Full name: Pod
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -11752,11 +9808,298 @@ class Pod(HikaruDocumentBase):
 
 
 @dataclass
+class PodAffinity(HikaruBase):
+    r"""
+    Pod affinity is a group of inter pod affinity scheduling rules.
+
+    Full name: PodAffinity
+
+    Attributes:
+    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
+        pods to nodes that satisfy the affinity expressions specified by this field, but
+        it may choose a node that violates one or more of the expressions. The node that
+        is most preferred is the one with the greatest sum of weights, i.e. for each node
+        that meets all of the scheduling requirements (resource request,
+        requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating
+        through the elements of this field and adding "weight" to the sum if the node has
+        pods which matches the corresponding podAffinityTerm; the node(s) with the highest
+        sum are the most preferred.
+    requiredDuringSchedulingIgnoredDuringExecution: If the affinity requirements specified
+        by this field are not met at scheduling time, the pod will not be scheduled onto
+        the node. If the affinity requirements specified by this field cease to be met at
+        some point during pod execution (e.g. due to a pod label update), the system may
+        or may not try to eventually evict the pod from its node. When there are multiple
+        elements, the lists of nodes corresponding to each podAffinityTerm are
+        intersected, i.e. all terms must be satisfied.
+    """
+
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List["WeightedPodAffinityTerm"]
+    ] = field(default_factory=list)
+    requiredDuringSchedulingIgnoredDuringExecution: Optional[
+        List["PodAffinityTerm"]
+    ] = field(default_factory=list)
+
+
+@dataclass
+class PodAffinityTerm(HikaruBase):
+    r"""
+    Defines a set of pods (namely those matching the labelSelector relative to the given
+    namespace(s)) that this pod should be co-located (affinity) or not co-located
+    (anti-affinity) with, where co-located is defined as running on a node whose value of
+    the label with key <topologyKey> matches that of any node on which a pod of the set of
+    pods is running
+
+    Full name: PodAffinityTerm
+
+    Attributes:
+    topologyKey: This pod should be co-located (affinity) or not co-located
+        (anti-affinity) with the pods matching the labelSelector in the specified
+        namespaces, where co-located is defined as running on a node whose value of the
+        label with key topologyKey matches that of any node on which any of the selected
+        pods is running. Empty topologyKey is not allowed.
+    labelSelector: A label query over a set of resources, in this case pods.
+    namespaces: namespaces specifies which namespaces the labelSelector applies to
+        (matches against); null or empty list means "this pod's namespace"
+    """
+
+    topologyKey: str
+    labelSelector: Optional["LabelSelector"] = None
+    namespaces: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class PodAntiAffinity(HikaruBase):
+    r"""
+    Pod anti affinity is a group of inter pod anti affinity scheduling rules.
+
+    Full name: PodAntiAffinity
+
+    Attributes:
+    preferredDuringSchedulingIgnoredDuringExecution: The scheduler will prefer to schedule
+        pods to nodes that satisfy the anti-affinity expressions specified by this field,
+        but it may choose a node that violates one or more of the expressions. The node
+        that is most preferred is the one with the greatest sum of weights, i.e. for each
+        node that meets all of the scheduling requirements (resource request,
+        requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by
+        iterating through the elements of this field and adding "weight" to the sum if the
+        node has pods which matches the corresponding podAffinityTerm; the node(s) with
+        the highest sum are the most preferred.
+    requiredDuringSchedulingIgnoredDuringExecution: If the anti-affinity requirements
+        specified by this field are not met at scheduling time, the pod will not be
+        scheduled onto the node. If the anti-affinity requirements specified by this field
+        cease to be met at some point during pod execution (e.g. due to a pod label
+        update), the system may or may not try to eventually evict the pod from its node.
+        When there are multiple elements, the lists of nodes corresponding to each
+        podAffinityTerm are intersected, i.e. all terms must be satisfied.
+    """
+
+    preferredDuringSchedulingIgnoredDuringExecution: Optional[
+        List["WeightedPodAffinityTerm"]
+    ] = field(default_factory=list)
+    requiredDuringSchedulingIgnoredDuringExecution: Optional[
+        List["PodAffinityTerm"]
+    ] = field(default_factory=list)
+
+
+@dataclass
+class PodCondition(HikaruBase):
+    r"""
+    PodCondition contains details for the current condition of this pod.
+
+    Full name: PodCondition
+
+    Attributes:
+    status: Status is the status of the condition. Can be True, False, Unknown. More info:
+        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+    type: Type is the type of the condition. More info:
+        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
+    lastProbeTime: Last time we probed the condition.
+    lastTransitionTime: Last time the condition transitioned from one status to another.
+    message: Human-readable message indicating details about last transition.
+    reason: Unique, one-word, CamelCase reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastProbeTime: Optional[str] = None
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class PodDNSConfig(HikaruBase):
+    r"""
+    PodDNSConfig defines the DNS parameters of a pod in addition to those generated from
+    DNSPolicy.
+
+    Full name: PodDNSConfig
+
+    Attributes:
+    nameservers: A list of DNS name server IP addresses. This will be appended to the base
+        nameservers generated from DNSPolicy. Duplicated nameservers will be removed.
+    options: A list of DNS resolver options. This will be merged with the base options
+        generated from DNSPolicy. Duplicated entries will be removed. Resolution options
+        given in Options will override those that appear in the base DNSPolicy.
+    searches: A list of DNS search domains for host-name lookup. This will be appended to
+        the base search paths generated from DNSPolicy. Duplicated search paths will be
+        removed.
+    """
+
+    nameservers: Optional[List[str]] = field(default_factory=list)
+    options: Optional[List["PodDNSConfigOption"]] = field(default_factory=list)
+    searches: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class PodDNSConfigOption(HikaruBase):
+    r"""
+    PodDNSConfigOption defines DNS resolver options of a pod.
+
+    Full name: PodDNSConfigOption
+
+    Attributes:
+    name: Required.
+    value:
+    """
+
+    name: Optional[str] = None
+    value: Optional[str] = None
+
+
+@dataclass
+class PodIP(HikaruBase):
+    r"""
+    IP address information for entries in the (plural) PodIPs field. Each entry includes:
+    IP: An IP address allocated to the pod. Routable at least within the cluster.
+
+    Full name: PodIP
+
+    Attributes:
+    ip: ip is an IP address (IPv4 or IPv6) assigned to the pod
+    """
+
+    ip: Optional[str] = None
+
+
+@dataclass
+class PodList(HikaruDocumentBase):
+    r"""
+    PodList is a list of Pods.
+
+    Full name: PodList
+
+    Attributes:
+    items: List of pods. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Pod"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "PodList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class PodReadinessGate(HikaruBase):
+    r"""
+    PodReadinessGate contains the reference to a pod condition
+
+    Full name: PodReadinessGate
+
+    Attributes:
+    conditionType: ConditionType refers to a condition in the pod's condition list with
+        matching type.
+    """
+
+    conditionType: str
+
+
+@dataclass
+class PodSecurityContext(HikaruBase):
+    r"""
+    PodSecurityContext holds pod-level security attributes and common container settings.
+    Some fields are also present in container.securityContext. Field values of
+    container.securityContext take precedence over field values of PodSecurityContext.
+
+    Full name: PodSecurityContext
+
+    Attributes:
+    fsGroup: A special supplemental group that applies to all containers in a pod. Some
+        volume types allow the Kubelet to change the ownership of that volume to be owned
+        by the pod: 1. The owning GID will be the FSGroup 2. The setgid bit is set (new
+        files created in the volume will be owned by FSGroup) 3. The permission bits are
+        OR'd with rw-rw---- If unset, the Kubelet will not modify the ownership and
+        permissions of any volume.
+    fsGroupChangePolicy: fsGroupChangePolicy defines behavior of changing ownership and
+        permission of the volume before being exposed inside Pod. This field will only
+        apply to volume types which support fsGroup based ownership(and permissions). It
+        will have no effect on ephemeral volume types such as: secret, configmaps and
+        emptydir. Valid values are "OnRootMismatch" and "Always". If not specified
+        defaults to "Always".
+    runAsGroup: The GID to run the entrypoint of the container process. Uses runtime
+        default if unset. May also be set in SecurityContext. If set in both
+        SecurityContext and PodSecurityContext, the value specified in SecurityContext
+        takes precedence for that container.
+    runAsNonRoot: Indicates that the container must run as a non-root user. If true, the
+        Kubelet will validate the image at runtime to ensure that it does not run as UID 0
+        (root) and fail to start the container if it does. If unset or false, no such
+        validation will be performed. May also be set in SecurityContext. If set in both
+        SecurityContext and PodSecurityContext, the value specified in SecurityContext
+        takes precedence.
+    runAsUser: The UID to run the entrypoint of the container process. Defaults to user
+        specified in image metadata if unspecified. May also be set in SecurityContext. If
+        set in both SecurityContext and PodSecurityContext, the value specified in
+        SecurityContext takes precedence for that container.
+    seLinuxOptions: The SELinux context to be applied to all containers. If unspecified,
+        the container runtime will allocate a random SELinux context for each container.
+        May also be set in SecurityContext. If set in both SecurityContext and
+        PodSecurityContext, the value specified in SecurityContext takes precedence for
+        that container.
+    seccompProfile: The seccomp options to use by the containers in this pod.
+    windowsOptions: The Windows specific settings applied to all containers. If
+        unspecified, the options within a container's SecurityContext will be used. If set
+        in both SecurityContext and PodSecurityContext, the value specified in
+        SecurityContext takes precedence.
+    supplementalGroups: A list of groups applied to the first process run in each
+        container, in addition to the container's primary GID. If unspecified, no groups
+        will be added to any container.
+    sysctls: Sysctls hold a list of namespaced sysctls used for the pod. Pods with
+        unsupported sysctls (by the container runtime) might fail to launch.
+    """
+
+    fsGroup: Optional[int] = None
+    fsGroupChangePolicy: Optional[str] = None
+    runAsGroup: Optional[int] = None
+    runAsNonRoot: Optional[bool] = None
+    runAsUser: Optional[int] = None
+    seLinuxOptions: Optional["SELinuxOptions"] = None
+    seccompProfile: Optional["SeccompProfile"] = None
+    windowsOptions: Optional["WindowsSecurityContextOptions"] = None
+    supplementalGroups: Optional[List[int]] = field(default_factory=list)
+    sysctls: Optional[List["Sysctl"]] = field(default_factory=list)
+
+
+@dataclass
 class PodSpec(HikaruBase):
     r"""
     PodSpec is a description of a pod.
 
-    Full name: v1.PodSpec
+    Full name: PodSpec
 
     Attributes:
     containers: List of containers belonging to the pod. Containers cannot currently be
@@ -11947,7 +10290,7 @@ class PodStatus(HikaruBase):
     actual state of a system, especially if the node that hosts the pod cannot contact the
     control plane.
 
-    Full name: v1.PodStatus
+    Full name: PodStatus
 
     Attributes:
     hostIP: IP address of the host to which the pod is assigned. Empty if not yet
@@ -12024,533 +10367,11 @@ class PodStatus(HikaruBase):
 
 
 @dataclass
-class WeightedPodAffinityTerm(HikaruBase):
-    r"""
-    The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to
-    find the most preferred node(s)
-
-    Full name: v1.WeightedPodAffinityTerm
-
-    Attributes:
-    podAffinityTerm: Required. A pod affinity term, associated with the corresponding
-        weight.
-    weight: weight associated with matching the corresponding podAffinityTerm, in the
-        range 1-100.
-    """
-
-    podAffinityTerm: "PodAffinityTerm"
-    weight: int
-
-
-@dataclass
-class PodAffinityTerm(HikaruBase):
-    r"""
-    Defines a set of pods (namely those matching the labelSelector relative to the given
-    namespace(s)) that this pod should be co-located (affinity) or not co-located
-    (anti-affinity) with, where co-located is defined as running on a node whose value of
-    the label with key <topologyKey> matches that of any node on which a pod of the set of
-    pods is running
-
-    Full name: v1.PodAffinityTerm
-
-    Attributes:
-    topologyKey: This pod should be co-located (affinity) or not co-located
-        (anti-affinity) with the pods matching the labelSelector in the specified
-        namespaces, where co-located is defined as running on a node whose value of the
-        label with key topologyKey matches that of any node on which any of the selected
-        pods is running. Empty topologyKey is not allowed.
-    labelSelector: A label query over a set of resources, in this case pods.
-    namespaces: namespaces specifies which namespaces the labelSelector applies to
-        (matches against); null or empty list means "this pod's namespace"
-    """
-
-    topologyKey: str
-    labelSelector: Optional["LabelSelector"] = None
-    namespaces: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class PodCondition(HikaruBase):
-    r"""
-    PodCondition contains details for the current condition of this pod.
-
-    Full name: v1.PodCondition
-
-    Attributes:
-    status: Status is the status of the condition. Can be True, False, Unknown. More info:
-        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
-    type: Type is the type of the condition. More info:
-        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions
-    lastProbeTime: Last time we probed the condition.
-    lastTransitionTime: Last time the condition transitioned from one status to another.
-    message: Human-readable message indicating details about last transition.
-    reason: Unique, one-word, CamelCase reason for the condition's last transition.
-    """
-
-    status: str
-    type: str
-    lastProbeTime: Optional[str] = None
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class PodDNSConfig(HikaruBase):
-    r"""
-    PodDNSConfig defines the DNS parameters of a pod in addition to those generated from
-    DNSPolicy.
-
-    Full name: v1.PodDNSConfig
-
-    Attributes:
-    nameservers: A list of DNS name server IP addresses. This will be appended to the base
-        nameservers generated from DNSPolicy. Duplicated nameservers will be removed.
-    options: A list of DNS resolver options. This will be merged with the base options
-        generated from DNSPolicy. Duplicated entries will be removed. Resolution options
-        given in Options will override those that appear in the base DNSPolicy.
-    searches: A list of DNS search domains for host-name lookup. This will be appended to
-        the base search paths generated from DNSPolicy. Duplicated search paths will be
-        removed.
-    """
-
-    nameservers: Optional[List[str]] = field(default_factory=list)
-    options: Optional[List["PodDNSConfigOption"]] = field(default_factory=list)
-    searches: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class PodDNSConfigOption(HikaruBase):
-    r"""
-    PodDNSConfigOption defines DNS resolver options of a pod.
-
-    Full name: v1.PodDNSConfigOption
-
-    Attributes:
-    name: Required.
-    value:
-    """
-
-    name: Optional[str] = None
-    value: Optional[str] = None
-
-
-@dataclass
-class PodIP(HikaruBase):
-    r"""
-    IP address information for entries in the (plural) PodIPs field. Each entry includes:
-    IP: An IP address allocated to the pod. Routable at least within the cluster.
-
-    Full name: v1.PodIP
-
-    Attributes:
-    ip: ip is an IP address (IPv4 or IPv6) assigned to the pod
-    """
-
-    ip: Optional[str] = None
-
-
-@dataclass
-class PodList(HikaruDocumentBase):
-    r"""
-    PodList is a list of Pods.
-
-    Full name: v1.PodList
-
-    Attributes:
-    items: List of pods. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Pod"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "PodList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class PodReadinessGate(HikaruBase):
-    r"""
-    PodReadinessGate contains the reference to a pod condition
-
-    Full name: v1.PodReadinessGate
-
-    Attributes:
-    conditionType: ConditionType refers to a condition in the pod's condition list with
-        matching type.
-    """
-
-    conditionType: str
-
-
-@dataclass
-class PodSecurityContext(HikaruBase):
-    r"""
-    PodSecurityContext holds pod-level security attributes and common container settings.
-    Some fields are also present in container.securityContext. Field values of
-    container.securityContext take precedence over field values of PodSecurityContext.
-
-    Full name: v1.PodSecurityContext
-
-    Attributes:
-    fsGroup: A special supplemental group that applies to all containers in a pod. Some
-        volume types allow the Kubelet to change the ownership of that volume to be owned
-        by the pod: 1. The owning GID will be the FSGroup 2. The setgid bit is set (new
-        files created in the volume will be owned by FSGroup) 3. The permission bits are
-        OR'd with rw-rw---- If unset, the Kubelet will not modify the ownership and
-        permissions of any volume.
-    fsGroupChangePolicy: fsGroupChangePolicy defines behavior of changing ownership and
-        permission of the volume before being exposed inside Pod. This field will only
-        apply to volume types which support fsGroup based ownership(and permissions). It
-        will have no effect on ephemeral volume types such as: secret, configmaps and
-        emptydir. Valid values are "OnRootMismatch" and "Always". If not specified
-        defaults to "Always".
-    runAsGroup: The GID to run the entrypoint of the container process. Uses runtime
-        default if unset. May also be set in SecurityContext. If set in both
-        SecurityContext and PodSecurityContext, the value specified in SecurityContext
-        takes precedence for that container.
-    runAsNonRoot: Indicates that the container must run as a non-root user. If true, the
-        Kubelet will validate the image at runtime to ensure that it does not run as UID 0
-        (root) and fail to start the container if it does. If unset or false, no such
-        validation will be performed. May also be set in SecurityContext. If set in both
-        SecurityContext and PodSecurityContext, the value specified in SecurityContext
-        takes precedence.
-    runAsUser: The UID to run the entrypoint of the container process. Defaults to user
-        specified in image metadata if unspecified. May also be set in SecurityContext. If
-        set in both SecurityContext and PodSecurityContext, the value specified in
-        SecurityContext takes precedence for that container.
-    seLinuxOptions: The SELinux context to be applied to all containers. If unspecified,
-        the container runtime will allocate a random SELinux context for each container.
-        May also be set in SecurityContext. If set in both SecurityContext and
-        PodSecurityContext, the value specified in SecurityContext takes precedence for
-        that container.
-    seccompProfile: The seccomp options to use by the containers in this pod.
-    windowsOptions: The Windows specific settings applied to all containers. If
-        unspecified, the options within a container's SecurityContext will be used. If set
-        in both SecurityContext and PodSecurityContext, the value specified in
-        SecurityContext takes precedence.
-    supplementalGroups: A list of groups applied to the first process run in each
-        container, in addition to the container's primary GID. If unspecified, no groups
-        will be added to any container.
-    sysctls: Sysctls hold a list of namespaced sysctls used for the pod. Pods with
-        unsupported sysctls (by the container runtime) might fail to launch.
-    """
-
-    fsGroup: Optional[int] = None
-    fsGroupChangePolicy: Optional[str] = None
-    runAsGroup: Optional[int] = None
-    runAsNonRoot: Optional[bool] = None
-    runAsUser: Optional[int] = None
-    seLinuxOptions: Optional["SELinuxOptions"] = None
-    seccompProfile: Optional["SeccompProfile"] = None
-    windowsOptions: Optional["WindowsSecurityContextOptions"] = None
-    supplementalGroups: Optional[List[int]] = field(default_factory=list)
-    sysctls: Optional[List["Sysctl"]] = field(default_factory=list)
-
-
-@dataclass
-class SELinuxOptions(HikaruBase):
-    r"""
-    SELinuxOptions are the labels to be applied to the container
-
-    Full name: v1.SELinuxOptions
-
-    Attributes:
-    level: Level is SELinux level label that applies to the container.
-    role: Role is a SELinux role label that applies to the container.
-    type: Type is a SELinux type label that applies to the container.
-    user: User is a SELinux user label that applies to the container.
-    """
-
-    level: Optional[str] = None
-    role: Optional[str] = None
-    type: Optional[str] = None
-    user: Optional[str] = None
-
-
-@dataclass
-class SeccompProfile(HikaruBase):
-    r"""
-    SeccompProfile defines a pod/container's seccomp profile settings. Only one profile
-    source may be set.
-
-    Full name: v1.SeccompProfile
-
-    Attributes:
-    type: type indicates which kind of seccomp profile will be applied. Valid options are:
-        Localhost - a profile defined in a file on the node should be used. RuntimeDefault
-        - the container runtime default profile should be used. Unconfined - no profile
-        should be applied.
-    localhostProfile: localhostProfile indicates a profile defined in a file on the node
-        should be used. The profile must be preconfigured on the node to work. Must be a
-        descending path, relative to the kubelet's configured seccomp profile location.
-        Must only be set if type is "Localhost".
-    """
-
-    type: str
-    localhostProfile: Optional[str] = None
-
-
-@dataclass
-class Sysctl(HikaruBase):
-    r"""
-    Sysctl defines a kernel parameter to be set
-
-    Full name: v1.Sysctl
-
-    Attributes:
-    name: Name of a property to set
-    value: Value of a property to set
-    """
-
-    name: str
-    value: str
-
-
-@dataclass
-class WindowsSecurityContextOptions(HikaruBase):
-    r"""
-    WindowsSecurityContextOptions contain Windows-specific options and credentials.
-
-    Full name: v1.WindowsSecurityContextOptions
-
-    Attributes:
-    gmsaCredentialSpec: GMSACredentialSpec is where the GMSA admission webhook
-        (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA
-        credential spec named by the GMSACredentialSpecName field.
-    gmsaCredentialSpecName: GMSACredentialSpecName is the name of the GMSA credential spec
-        to use.
-    runAsUserName: The UserName in Windows to run the entrypoint of the container process.
-        Defaults to the user specified in image metadata if unspecified. May also be set
-        in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the
-        value specified in SecurityContext takes precedence.
-    """
-
-    gmsaCredentialSpec: Optional[str] = None
-    gmsaCredentialSpecName: Optional[str] = None
-    runAsUserName: Optional[str] = None
-
-
-@dataclass
-class Toleration(HikaruBase):
-    r"""
-    The pod this Toleration is attached to tolerates any taint that matches the triple
-    <key,value,effect> using the matching operator <operator>.
-
-    Full name: v1.Toleration
-
-    Attributes:
-    effect: Effect indicates the taint effect to match. Empty means match all taint
-        effects. When specified, allowed values are NoSchedule, PreferNoSchedule and
-        NoExecute.
-    key: Key is the taint key that the toleration applies to. Empty means match all taint
-        keys. If the key is empty, operator must be Exists; this combination means to
-        match all values and all keys.
-    operator: Operator represents a key's relationship to the value. Valid operators are
-        Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value,
-        so that a pod can tolerate all taints of a particular category.
-    tolerationSeconds: TolerationSeconds represents the period of time the toleration
-        (which must be of effect NoExecute, otherwise this field is ignored) tolerates the
-        taint. By default, it is not set, which means tolerate the taint forever (do not
-        evict). Zero and negative values will be treated as 0 (evict immediately) by the
-        system.
-    value: Value is the taint value the toleration matches to. If the operator is Exists,
-        the value should be empty, otherwise just a regular string.
-    """
-
-    effect: Optional[str] = None
-    key: Optional[str] = None
-    operator: Optional[str] = None
-    tolerationSeconds: Optional[int] = None
-    value: Optional[str] = None
-
-
-@dataclass
-class TopologySpreadConstraint(HikaruBase):
-    r"""
-    TopologySpreadConstraint specifies how to spread matching pods among the given
-    topology.
-
-    Full name: v1.TopologySpreadConstraint
-
-    Attributes:
-    maxSkew: MaxSkew describes the degree to which pods may be unevenly distributed. When
-        `whenUnsatisfiable=DoNotSchedule`, it is the maximum permitted difference between
-        the number of matching pods in the target topology and the global minimum. For
-        example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same
-        labelSelector spread as 1/1/0: | zone1 | zone2 | zone3 | | P | P | | - if MaxSkew
-        is 1, incoming pod can only be scheduled to zone3 to become 1/1/1; scheduling it
-        onto zone1(zone2) would make the ActualSkew(2-0) on zone1(zone2) violate
-        MaxSkew(1). - if MaxSkew is 2, incoming pod can be scheduled onto any zone. When
-        `whenUnsatisfiable=ScheduleAnyway`, it is used to give higher precedence to
-        topologies that satisfy it. It's a required field. Default value is 1 and 0 is not
-        allowed.
-    topologyKey: TopologyKey is the key of node labels. Nodes that have a label with this
-        key and identical values are considered to be in the same topology. We consider
-        each <key, value> as a "bucket", and try to put balanced number of pods into each
-        bucket. It's a required field.
-    whenUnsatisfiable: WhenUnsatisfiable indicates how to deal with a pod if it doesn't
-        satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not
-        to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any
-        location, but giving higher precedence to topologies that would help reduce the
-        skew. A constraint is considered "Unsatisfiable" for an incoming pod if and only
-        if every possible node assigment for that pod would violate "MaxSkew" on some
-        topology. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the
-        same labelSelector spread as 3/1/1: | zone1 | zone2 | zone3 | | P P P | P | P | If
-        WhenUnsatisfiable is set to DoNotSchedule, incoming pod can only be scheduled to
-        zone2(zone3) to become 3/2/1(3/1/2) as ActualSkew(2-1) on zone2(zone3) satisfies
-        MaxSkew(1). In other words, the cluster can still be imbalanced, but scheduler
-        won't make it *more* imbalanced. It's a required field.
-    labelSelector: LabelSelector is used to find matching pods. Pods that match this label
-        selector are counted to determine the number of pods in their corresponding
-        topology domain.
-    """
-
-    maxSkew: int
-    topologyKey: str
-    whenUnsatisfiable: str
-    labelSelector: Optional["LabelSelector"] = None
-
-
-@dataclass
-class Volume(HikaruBase):
-    r"""
-    Volume represents a named volume in a pod that may be accessed by any container in the
-    pod.
-
-    Full name: v1.Volume
-
-    Attributes:
-    name: Volume's name. Must be a DNS_LABEL and unique within the pod. More info:
-        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-    awsElasticBlockStore: AWSElasticBlockStore represents an AWS Disk resource that is
-        attached to a kubelet's host machine and then exposed to the pod. More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
-    azureDisk: AzureDisk represents an Azure Data Disk mount on the host and bind mount to
-        the pod.
-    azureFile: AzureFile represents an Azure File Service mount on the host and bind mount
-        to the pod.
-    cephfs: CephFS represents a Ceph FS mount on the host that shares a pod's lifetime
-    cinder: Cinder represents a cinder volume attached and mounted on kubelets host
-        machine. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
-    configMap: ConfigMap represents a configMap that should populate this volume
-    csi: CSI (Container Storage Interface) represents ephemeral storage that is handled by
-        certain external CSI drivers (Beta feature).
-    downwardAPI: DownwardAPI represents downward API about the pod that should populate
-        this volume
-    emptyDir: EmptyDir represents a temporary directory that shares a pod's lifetime. More
-        info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
-    ephemeral: Ephemeral represents a volume that is handled by a cluster storage driver
-        (Alpha feature). The volume's lifecycle is tied to the pod that defines it - it
-        will be created before the pod starts, and deleted when the pod is removed. Use
-        this if: a) the volume is only needed while the pod runs, b) features of normal
-        volumes like restoring from snapshot or capacity tracking are needed, c) the
-        storage driver is specified through a storage class, and d) the storage driver
-        supports dynamic volume provisioning through a PersistentVolumeClaim (see
-        EphemeralVolumeSource for more information on the connection between this volume
-        type and PersistentVolumeClaim). Use PersistentVolumeClaim or one of the
-        vendor-specific APIs for volumes that persist for longer than the lifecycle of an
-        individual pod. Use CSI for light-weight local ephemeral volumes if the CSI driver
-        is meant to be used that way - see the documentation of the driver for more
-        information. A pod can use both types of ephemeral volumes and persistent volumes
-        at the same time.
-    fc: FC represents a Fibre Channel resource that is attached to a kubelet's host
-        machine and then exposed to the pod.
-    flexVolume: FlexVolume represents a generic volume resource that is
-        provisioned/attached using an exec based plugin.
-    flocker: Flocker represents a Flocker volume attached to a kubelet's host machine.
-        This depends on the Flocker control service being running
-    gcePersistentDisk: GCEPersistentDisk represents a GCE Disk resource that is attached
-        to a kubelet's host machine and then exposed to the pod. More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
-    gitRepo: GitRepo represents a git repository at a particular revision. DEPRECATED:
-        GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir
-        into an InitContainer that clones the repo using git, then mount the EmptyDir into
-        the Pod's container.
-    glusterfs: Glusterfs represents a Glusterfs mount on the host that shares a pod's
-        lifetime. More info: https://examples.k8s.io/volumes/glusterfs/README.md
-    hostPath: HostPath represents a pre-existing file or directory on the host machine
-        that is directly exposed to the container. This is generally used for system
-        agents or other privileged things that are allowed to see the host machine. Most
-        containers will NOT need this. More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-    iscsi: ISCSI represents an ISCSI Disk resource that is attached to a kubelet's host
-        machine and then exposed to the pod. More info:
-        https://examples.k8s.io/volumes/iscsi/README.md
-    nfs: NFS represents an NFS mount on the host that shares a pod's lifetime More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#nfs
-    persistentVolumeClaim: PersistentVolumeClaimVolumeSource represents a reference to a
-        PersistentVolumeClaim in the same namespace. More info:
-        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
-    photonPersistentDisk: PhotonPersistentDisk represents a PhotonController persistent
-        disk attached and mounted on kubelets host machine
-    portworxVolume: PortworxVolume represents a portworx volume attached and mounted on
-        kubelets host machine
-    projected: Items for all in one resources secrets, configmaps, and downward API
-    quobyte: Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
-    rbd: RBD represents a Rados Block Device mount on the host that shares a pod's
-        lifetime. More info: https://examples.k8s.io/volumes/rbd/README.md
-    scaleIO: ScaleIO represents a ScaleIO persistent volume attached and mounted on
-        Kubernetes nodes.
-    secret: Secret represents a secret that should populate this volume. More info:
-        https://kubernetes.io/docs/concepts/storage/volumes#secret
-    storageos: StorageOS represents a StorageOS volume attached and mounted on Kubernetes
-        nodes.
-    vsphereVolume: VsphereVolume represents a vSphere volume attached and mounted on
-        kubelets host machine
-    """
-
-    name: str
-    awsElasticBlockStore: Optional["AWSElasticBlockStoreVolumeSource"] = None
-    azureDisk: Optional["AzureDiskVolumeSource"] = None
-    azureFile: Optional["AzureFileVolumeSource"] = None
-    cephfs: Optional["CephFSVolumeSource"] = None
-    cinder: Optional["CinderVolumeSource"] = None
-    configMap: Optional["ConfigMapVolumeSource"] = None
-    csi: Optional["CSIVolumeSource"] = None
-    downwardAPI: Optional["DownwardAPIVolumeSource"] = None
-    emptyDir: Optional["EmptyDirVolumeSource"] = None
-    ephemeral: Optional["EphemeralVolumeSource"] = None
-    fc: Optional["FCVolumeSource"] = None
-    flexVolume: Optional["FlexVolumeSource"] = None
-    flocker: Optional["FlockerVolumeSource"] = None
-    gcePersistentDisk: Optional["GCEPersistentDiskVolumeSource"] = None
-    gitRepo: Optional["GitRepoVolumeSource"] = None
-    glusterfs: Optional["GlusterfsVolumeSource"] = None
-    hostPath: Optional["HostPathVolumeSource"] = None
-    iscsi: Optional["ISCSIVolumeSource"] = None
-    nfs: Optional["NFSVolumeSource"] = None
-    persistentVolumeClaim: Optional["PersistentVolumeClaimVolumeSource"] = None
-    photonPersistentDisk: Optional["PhotonPersistentDiskVolumeSource"] = None
-    portworxVolume: Optional["PortworxVolumeSource"] = None
-    projected: Optional["ProjectedVolumeSource"] = None
-    quobyte: Optional["QuobyteVolumeSource"] = None
-    rbd: Optional["RBDVolumeSource"] = None
-    scaleIO: Optional["ScaleIOVolumeSource"] = None
-    secret: Optional["SecretVolumeSource"] = None
-    storageos: Optional["StorageOSVolumeSource"] = None
-    vsphereVolume: Optional["VsphereVirtualDiskVolumeSource"] = None
-
-
-@dataclass
 class PodTemplate(HikaruDocumentBase):
     r"""
     PodTemplate describes a template for creating copies of a predefined pod.
 
-    Full name: v1.PodTemplate
+    Full name: PodTemplate
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -12581,7 +10402,7 @@ class PodTemplateList(HikaruDocumentBase):
     r"""
     PodTemplateList is a list of PodTemplates.
 
-    Full name: v1.PodTemplateList
+    Full name: PodTemplateList
 
     Attributes:
     items: List of pod templates
@@ -12607,11 +10428,108 @@ class PodTemplateList(HikaruDocumentBase):
 
 
 @dataclass
+class PodTemplateSpec(HikaruBase):
+    r"""
+    PodTemplateSpec describes the data a pod should have when created from a template
+
+    Full name: PodTemplateSpec
+
+    Attributes:
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    spec: Specification of the desired behavior of the pod. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    """
+
+    metadata: Optional["ObjectMeta"] = None
+    spec: Optional["PodSpec"] = None
+
+
+@dataclass
+class PortworxVolumeSource(HikaruBase):
+    r"""
+    PortworxVolumeSource represents a Portworx volume resource.
+
+    Full name: PortworxVolumeSource
+
+    Attributes:
+    volumeID: VolumeID uniquely identifies a Portworx volume
+    fsType: FSType represents the filesystem type to mount Must be a filesystem type
+        supported by the host operating system. Ex. "ext4", "xfs". Implicitly inferred to
+        be "ext4" if unspecified.
+    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
+        setting in VolumeMounts.
+    """
+
+    volumeID: str
+    fsType: Optional[str] = None
+    readOnly: Optional[bool] = None
+
+
+@dataclass
+class PreferredSchedulingTerm(HikaruBase):
+    r"""
+    An empty preferred scheduling term matches all objects with implicit weight 0 (i.e.
+    it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a
+    no-op).
+
+    Full name: PreferredSchedulingTerm
+
+    Attributes:
+    preference: A node selector term, associated with the corresponding weight.
+    weight: Weight associated with matching the corresponding nodeSelectorTerm, in the
+        range 1-100.
+    """
+
+    preference: "NodeSelectorTerm"
+    weight: int
+
+
+@dataclass
+class Probe(HikaruBase):
+    r"""
+    Probe describes a health check to be performed against a container to determine
+    whether it is alive or ready to receive traffic.
+
+    Full name: Probe
+
+    Attributes:
+    exec: One and only one of the following should be specified. Exec specifies the action
+        to take.
+    failureThreshold: Minimum consecutive failures for the probe to be considered failed
+        after having succeeded. Defaults to 3. Minimum value is 1.
+    httpGet: HTTPGet specifies the http request to perform.
+    initialDelaySeconds: Number of seconds after the container has started before liveness
+        probes are initiated. More info:
+        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+    periodSeconds: How often (in seconds) to perform the probe. Default to 10 seconds.
+        Minimum value is 1.
+    successThreshold: Minimum consecutive successes for the probe to be considered
+        successful after having failed. Defaults to 1. Must be 1 for liveness and startup.
+        Minimum value is 1.
+    tcpSocket: TCPSocket specifies an action involving a TCP port. TCP hooks not yet
+        supported
+    timeoutSeconds: Number of seconds after which the probe times out. Defaults to 1
+        second. Minimum value is 1. More info:
+        https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
+    """
+
+    exec: Optional["ExecAction"] = None
+    failureThreshold: Optional[int] = None
+    httpGet: Optional["HTTPGetAction"] = None
+    initialDelaySeconds: Optional[int] = None
+    periodSeconds: Optional[int] = None
+    successThreshold: Optional[int] = None
+    tcpSocket: Optional["TCPSocketAction"] = None
+    timeoutSeconds: Optional[int] = None
+
+
+@dataclass
 class ProjectedVolumeSource(HikaruBase):
     r"""
     Represents a projected volume source
 
-    Full name: v1.ProjectedVolumeSource
+    Full name: ProjectedVolumeSource
 
     Attributes:
     sources: list of volume projections
@@ -12628,23 +10546,72 @@ class ProjectedVolumeSource(HikaruBase):
 
 
 @dataclass
-class VolumeProjection(HikaruBase):
+class QuobyteVolumeSource(HikaruBase):
     r"""
-    Projection that may be projected along with other supported volume types
+    Represents a Quobyte mount that lasts the lifetime of a pod. Quobyte volumes do not
+    support ownership management or SELinux relabeling.
 
-    Full name: v1.VolumeProjection
+    Full name: QuobyteVolumeSource
 
     Attributes:
-    configMap: information about the configMap data to project
-    downwardAPI: information about the downwardAPI data to project
-    secret: information about the secret data to project
-    serviceAccountToken: information about the serviceAccountToken data to project
+    registry: Registry represents a single or multiple Quobyte Registry services specified
+        as a string as host:port pair (multiple entries are separated with commas) which
+        acts as the central registry for volumes
+    volume: Volume is a string that references an already created Quobyte volume by name.
+    group: Group to map volume access to Default is no group
+    readOnly: ReadOnly here will force the Quobyte volume to be mounted with read-only
+        permissions. Defaults to false.
+    tenant: Tenant owning the given Quobyte volume in the Backend Used with dynamically
+        provisioned Quobyte volumes, value is set by the plugin
+    user: User to map volume access to Defaults to serivceaccount user
     """
 
-    configMap: Optional["ConfigMapProjection"] = None
-    downwardAPI: Optional["DownwardAPIProjection"] = None
-    secret: Optional["SecretProjection"] = None
-    serviceAccountToken: Optional["ServiceAccountTokenProjection"] = None
+    registry: str
+    volume: str
+    group: Optional[str] = None
+    readOnly: Optional[bool] = None
+    tenant: Optional[str] = None
+    user: Optional[str] = None
+
+
+@dataclass
+class RBDPersistentVolumeSource(HikaruBase):
+    r"""
+    Represents a Rados Block Device mount that lasts the lifetime of a pod. RBD volumes
+    support ownership management and SELinux relabeling.
+
+    Full name: RBDPersistentVolumeSource
+
+    Attributes:
+    image: The rados image name. More info:
+        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    monitors: A collection of Ceph monitors. More info:
+        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    fsType: Filesystem type of the volume that you want to mount. Tip: Ensure that the
+        filesystem type is supported by the host operating system. Examples: "ext4",
+        "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#rbd
+    keyring: Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring.
+        More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    pool: The rados pool name. Default is rbd. More info:
+        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    readOnly: ReadOnly here will force the ReadOnly setting in VolumeMounts. Defaults to
+        false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    secretRef: SecretRef is name of the authentication secret for RBDUser. If provided
+        overrides keyring. Default is nil. More info:
+        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    user: The rados user name. Default is admin. More info:
+        https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it
+    """
+
+    image: str
+    monitors: List[str]
+    fsType: Optional[str] = None
+    keyring: Optional[str] = None
+    pool: Optional[str] = None
+    readOnly: Optional[bool] = None
+    secretRef: Optional["SecretReference"] = None
+    user: Optional[str] = None
 
 
 @dataclass
@@ -12653,7 +10620,7 @@ class RBDVolumeSource(HikaruBase):
     Represents a Rados Block Device mount that lasts the lifetime of a pod. RBD volumes
     support ownership management and SELinux relabeling.
 
-    Full name: v1.RBDVolumeSource
+    Full name: RBDVolumeSource
 
     Attributes:
     image: The rados image name. More info:
@@ -12692,7 +10659,7 @@ class ReplicationController(HikaruDocumentBase):
     r"""
     ReplicationController represents the configuration of a replication controller.
 
-    Full name: v1.ReplicationController
+    Full name: ReplicationController
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -12727,11 +10694,66 @@ class ReplicationController(HikaruDocumentBase):
 
 
 @dataclass
+class ReplicationControllerCondition(HikaruBase):
+    r"""
+    ReplicationControllerCondition describes the state of a replication controller at a
+    certain point.
+
+    Full name: ReplicationControllerCondition
+
+    Attributes:
+    status: Status of the condition, one of True, False, Unknown.
+    type: Type of replication controller condition.
+    lastTransitionTime: The last time the condition transitioned from one status to
+        another.
+    message: A human readable message indicating details about the transition.
+    reason: The reason for the condition's last transition.
+    """
+
+    status: str
+    type: str
+    lastTransitionTime: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+
+
+@dataclass
+class ReplicationControllerList(HikaruDocumentBase):
+    r"""
+    ReplicationControllerList is a collection of replication controllers.
+
+    Full name: ReplicationControllerList
+
+    Attributes:
+    items: List of replication controllers. More info:
+        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ReplicationController"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ReplicationControllerList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
 class ReplicationControllerSpec(HikaruBase):
     r"""
     ReplicationControllerSpec is the specification of a replication controller.
 
-    Full name: v1.ReplicationControllerSpec
+    Full name: ReplicationControllerSpec
 
     Attributes:
     minReadySeconds: Minimum number of seconds for which a newly created pod should be
@@ -12762,7 +10784,7 @@ class ReplicationControllerStatus(HikaruBase):
     r"""
     ReplicationControllerStatus represents the current status of a replication controller.
 
-    Full name: v1.ReplicationControllerStatus
+    Full name: ReplicationControllerStatus
 
     Attributes:
     replicas: Replicas is the most recently oberved number of replicas. More info:
@@ -12789,58 +10811,22 @@ class ReplicationControllerStatus(HikaruBase):
 
 
 @dataclass
-class ReplicationControllerCondition(HikaruBase):
+class ResourceFieldSelector(HikaruBase):
     r"""
-    ReplicationControllerCondition describes the state of a replication controller at a
-    certain point.
+    ResourceFieldSelector represents container resources (cpu, memory) and their output
+    format
 
-    Full name: v1.ReplicationControllerCondition
+    Full name: ResourceFieldSelector
 
     Attributes:
-    status: Status of the condition, one of True, False, Unknown.
-    type: Type of replication controller condition.
-    lastTransitionTime: The last time the condition transitioned from one status to
-        another.
-    message: A human readable message indicating details about the transition.
-    reason: The reason for the condition's last transition.
+    resource: Required: resource to select
+    containerName: Container name: required for volumes, optional for env vars
+    divisor: Specifies the output format of the exposed resources, defaults to "1"
     """
 
-    status: str
-    type: str
-    lastTransitionTime: Optional[str] = None
-    message: Optional[str] = None
-    reason: Optional[str] = None
-
-
-@dataclass
-class ReplicationControllerList(HikaruDocumentBase):
-    r"""
-    ReplicationControllerList is a collection of replication controllers.
-
-    Full name: v1.ReplicationControllerList
-
-    Attributes:
-    items: List of replication controllers. More info:
-        https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ReplicationController"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ReplicationControllerList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
+    resource: str
+    containerName: Optional[str] = None
+    divisor: Optional[str] = None
 
 
 @dataclass
@@ -12848,7 +10834,7 @@ class ResourceQuota(HikaruDocumentBase):
     r"""
     ResourceQuota sets aggregate quota restrictions enforced per namespace
 
-    Full name: v1.ResourceQuota
+    Full name: ResourceQuota
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -12878,51 +10864,11 @@ class ResourceQuota(HikaruDocumentBase):
 
 
 @dataclass
-class ResourceQuotaSpec(HikaruBase):
-    r"""
-    ResourceQuotaSpec defines the desired hard limits to enforce for Quota.
-
-    Full name: v1.ResourceQuotaSpec
-
-    Attributes:
-    scopeSelector: scopeSelector is also a collection of filters like scopes that must
-        match each object tracked by a quota but expressed using ScopeSelectorOperator in
-        combination with possible values. For a resource to match, both scopes AND
-        scopeSelector (if specified in spec), must be matched.
-    hard: hard is the set of desired hard limits for each named resource. More info:
-        https://kubernetes.io/docs/concepts/policy/resource-quotas/
-    scopes: A collection of filters that must match each object tracked by a quota. If not
-        specified, the quota matches all objects.
-    """
-
-    scopeSelector: Optional["ScopeSelector"] = None
-    hard: Optional[Dict[str, str]] = field(default_factory=dict)
-    scopes: Optional[List[str]] = field(default_factory=list)
-
-
-@dataclass
-class ResourceQuotaStatus(HikaruBase):
-    r"""
-    ResourceQuotaStatus defines the enforced hard limits and observed use.
-
-    Full name: v1.ResourceQuotaStatus
-
-    Attributes:
-    hard: Hard is the set of enforced hard limits for each named resource. More info:
-        https://kubernetes.io/docs/concepts/policy/resource-quotas/
-    used: Used is the current observed total usage of the resource in the namespace.
-    """
-
-    hard: Optional[Dict[str, str]] = field(default_factory=dict)
-    used: Optional[Dict[str, str]] = field(default_factory=dict)
-
-
-@dataclass
 class ResourceQuotaList(HikaruDocumentBase):
     r"""
     ResourceQuotaList is a list of ResourceQuota items.
 
-    Full name: v1.ResourceQuotaList
+    Full name: ResourceQuotaList
 
     Attributes:
     items: Items is a list of ResourceQuota objects. More info:
@@ -12949,20 +10895,121 @@ class ResourceQuotaList(HikaruDocumentBase):
 
 
 @dataclass
-class ScopeSelector(HikaruBase):
+class ResourceQuotaSpec(HikaruBase):
     r"""
-    A scope selector represents the AND of the selectors represented by the
-    scoped-resource selector requirements.
+    ResourceQuotaSpec defines the desired hard limits to enforce for Quota.
 
-    Full name: v1.ScopeSelector
+    Full name: ResourceQuotaSpec
 
     Attributes:
-    matchExpressions: A list of scope selector requirements by scope of the resources.
+    scopeSelector: scopeSelector is also a collection of filters like scopes that must
+        match each object tracked by a quota but expressed using ScopeSelectorOperator in
+        combination with possible values. For a resource to match, both scopes AND
+        scopeSelector (if specified in spec), must be matched.
+    hard: hard is the set of desired hard limits for each named resource. More info:
+        https://kubernetes.io/docs/concepts/policy/resource-quotas/
+    scopes: A collection of filters that must match each object tracked by a quota. If not
+        specified, the quota matches all objects.
     """
 
-    matchExpressions: Optional[List["ScopedResourceSelectorRequirement"]] = field(
-        default_factory=list
-    )
+    scopeSelector: Optional["ScopeSelector"] = None
+    hard: Optional[Dict[str, str]] = field(default_factory=dict)
+    scopes: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
+class ResourceQuotaStatus(HikaruBase):
+    r"""
+    ResourceQuotaStatus defines the enforced hard limits and observed use.
+
+    Full name: ResourceQuotaStatus
+
+    Attributes:
+    hard: Hard is the set of enforced hard limits for each named resource. More info:
+        https://kubernetes.io/docs/concepts/policy/resource-quotas/
+    used: Used is the current observed total usage of the resource in the namespace.
+    """
+
+    hard: Optional[Dict[str, str]] = field(default_factory=dict)
+    used: Optional[Dict[str, str]] = field(default_factory=dict)
+
+
+@dataclass
+class ResourceRequirements(HikaruBase):
+    r"""
+    ResourceRequirements describes the compute resource requirements.
+
+    Full name: ResourceRequirements
+
+    Attributes:
+    limits: Limits describes the maximum amount of compute resources allowed. More info:
+        https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    requests: Requests describes the minimum amount of compute resources required. If
+        Requests is omitted for a container, it defaults to Limits if that is explicitly
+        specified, otherwise to an implementation-defined value. More info:
+        https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    """
+
+    limits: Optional[Dict[str, str]] = field(default_factory=dict)
+    requests: Optional[Dict[str, str]] = field(default_factory=dict)
+
+
+@dataclass
+class SELinuxOptions(HikaruBase):
+    r"""
+    SELinuxOptions are the labels to be applied to the container
+
+    Full name: SELinuxOptions
+
+    Attributes:
+    level: Level is SELinux level label that applies to the container.
+    role: Role is a SELinux role label that applies to the container.
+    type: Type is a SELinux type label that applies to the container.
+    user: User is a SELinux user label that applies to the container.
+    """
+
+    level: Optional[str] = None
+    role: Optional[str] = None
+    type: Optional[str] = None
+    user: Optional[str] = None
+
+
+@dataclass
+class ScaleIOPersistentVolumeSource(HikaruBase):
+    r"""
+    ScaleIOPersistentVolumeSource represents a persistent ScaleIO volume
+
+    Full name: ScaleIOPersistentVolumeSource
+
+    Attributes:
+    gateway: The host address of the ScaleIO API Gateway.
+    secretRef: SecretRef references to the secret for ScaleIO user and other sensitive
+        information. If this is not provided, Login operation will fail.
+    system: The name of the storage system as configured in ScaleIO.
+    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
+        operating system. Ex. "ext4", "xfs", "ntfs". Default is "xfs"
+    protectionDomain: The name of the ScaleIO Protection Domain for the configured
+        storage.
+    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
+        setting in VolumeMounts.
+    sslEnabled: Flag to enable/disable SSL communication with Gateway, default false
+    storageMode: Indicates whether the storage for a volume should be ThickProvisioned or
+        ThinProvisioned. Default is ThinProvisioned.
+    storagePool: The ScaleIO Storage Pool associated with the protection domain.
+    volumeName: The name of a volume already created in the ScaleIO system that is
+        associated with this volume source.
+    """
+
+    gateway: str
+    secretRef: "SecretReference"
+    system: str
+    fsType: Optional[str] = None
+    protectionDomain: Optional[str] = None
+    readOnly: Optional[bool] = None
+    sslEnabled: Optional[bool] = None
+    storageMode: Optional[str] = None
+    storagePool: Optional[str] = None
+    volumeName: Optional[str] = None
 
 
 @dataclass
@@ -12970,7 +11017,7 @@ class ScaleIOVolumeSource(HikaruBase):
     r"""
     ScaleIOVolumeSource represents a persistent ScaleIO volume
 
-    Full name: v1.ScaleIOVolumeSource
+    Full name: ScaleIOVolumeSource
 
     Attributes:
     gateway: The host address of the ScaleIO API Gateway.
@@ -13004,12 +11051,29 @@ class ScaleIOVolumeSource(HikaruBase):
 
 
 @dataclass
+class ScopeSelector(HikaruBase):
+    r"""
+    A scope selector represents the AND of the selectors represented by the
+    scoped-resource selector requirements.
+
+    Full name: ScopeSelector
+
+    Attributes:
+    matchExpressions: A list of scope selector requirements by scope of the resources.
+    """
+
+    matchExpressions: Optional[List["ScopedResourceSelectorRequirement"]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
 class ScopedResourceSelectorRequirement(HikaruBase):
     r"""
     A scoped-resource selector requirement is a selector that contains values, a scope
     name, and an operator that relates the scope name and values.
 
-    Full name: v1.ScopedResourceSelectorRequirement
+    Full name: ScopedResourceSelectorRequirement
 
     Attributes:
     operator: Represents a scope's relationship to a set of values. Valid operators are
@@ -13026,12 +11090,35 @@ class ScopedResourceSelectorRequirement(HikaruBase):
 
 
 @dataclass
+class SeccompProfile(HikaruBase):
+    r"""
+    SeccompProfile defines a pod/container's seccomp profile settings. Only one profile
+    source may be set.
+
+    Full name: SeccompProfile
+
+    Attributes:
+    type: type indicates which kind of seccomp profile will be applied. Valid options are:
+        Localhost - a profile defined in a file on the node should be used. RuntimeDefault
+        - the container runtime default profile should be used. Unconfined - no profile
+        should be applied.
+    localhostProfile: localhostProfile indicates a profile defined in a file on the node
+        should be used. The profile must be preconfigured on the node to work. Must be a
+        descending path, relative to the kubelet's configured seccomp profile location.
+        Must only be set if type is "Localhost".
+    """
+
+    type: str
+    localhostProfile: Optional[str] = None
+
+
+@dataclass
 class Secret(HikaruDocumentBase):
     r"""
     Secret holds secret data of a certain type. The total bytes of the values in the Data
     field must be less than MaxSecretSize bytes.
 
-    Full name: v1.Secret
+    Full name: Secret
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -13072,11 +11159,49 @@ class Secret(HikaruDocumentBase):
 
 
 @dataclass
+class SecretEnvSource(HikaruBase):
+    r"""
+    SecretEnvSource selects a Secret to populate the environment variables with. The
+    contents of the target Secret's Data field will represent the key-value pairs as
+    environment variables.
+
+    Full name: SecretEnvSource
+
+    Attributes:
+    name: Name of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    optional: Specify whether the Secret must be defined
+    """
+
+    name: Optional[str] = None
+    optional: Optional[bool] = None
+
+
+@dataclass
+class SecretKeySelector(HikaruBase):
+    r"""
+    SecretKeySelector selects a key of a Secret.
+
+    Full name: SecretKeySelector
+
+    Attributes:
+    key: The key of the secret to select from. Must be a valid secret key.
+    name: Name of the referent. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    optional: Specify whether the Secret or its key must be defined
+    """
+
+    key: str
+    name: Optional[str] = None
+    optional: Optional[bool] = None
+
+
+@dataclass
 class SecretList(HikaruDocumentBase):
     r"""
     SecretList is a list of Secret.
 
-    Full name: v1.SecretList
+    Full name: SecretList
 
     Attributes:
     items: Items is a list of secret objects. More info:
@@ -13110,7 +11235,7 @@ class SecretProjection(HikaruBase):
     field as the file names. Note that this is identical to a secret volume source without
     the default mode.
 
-    Full name: v1.SecretProjection
+    Full name: SecretProjection
 
     Attributes:
     name: Name of the referent. More info:
@@ -13130,13 +11255,30 @@ class SecretProjection(HikaruBase):
 
 
 @dataclass
+class SecretReference(HikaruBase):
+    r"""
+    SecretReference represents a Secret Reference. It has enough information to retrieve
+    secret in any namespace
+
+    Full name: SecretReference
+
+    Attributes:
+    name: Name is unique within a namespace to reference a secret resource.
+    namespace: Namespace defines the space within which the secret name must be unique.
+    """
+
+    name: Optional[str] = None
+    namespace: Optional[str] = None
+
+
+@dataclass
 class SecretVolumeSource(HikaruBase):
     r"""
     Adapts a Secret into a volume. The contents of the target Secret's Data field will be
     presented in a volume as files using the keys in the Data field as the file names.
     Secret volumes support ownership management and SELinux relabeling.
 
-    Full name: v1.SecretVolumeSource
+    Full name: SecretVolumeSource
 
     Attributes:
     defaultMode: Optional: mode bits used to set permissions on created files by default.
@@ -13163,13 +11305,77 @@ class SecretVolumeSource(HikaruBase):
 
 
 @dataclass
+class SecurityContext(HikaruBase):
+    r"""
+    SecurityContext holds security configuration that will be applied to a container. Some
+    fields are present in both SecurityContext and PodSecurityContext. When both are set,
+    the values in SecurityContext take precedence.
+
+    Full name: SecurityContext
+
+    Attributes:
+    allowPrivilegeEscalation: AllowPrivilegeEscalation controls whether a process can gain
+        more privileges than its parent process. This bool directly controls if the
+        no_new_privs flag will be set on the container process. AllowPrivilegeEscalation
+        is true always when the container is: 1) run as Privileged 2) has CAP_SYS_ADMIN
+    capabilities: The capabilities to add/drop when running containers. Defaults to the
+        default set of capabilities granted by the container runtime.
+    privileged: Run container in privileged mode. Processes in privileged containers are
+        essentially equivalent to root on the host. Defaults to false.
+    procMount: procMount denotes the type of proc mount to use for the containers. The
+        default is DefaultProcMount which uses the container runtime defaults for readonly
+        paths and masked paths. This requires the ProcMountType feature flag to be
+        enabled.
+    readOnlyRootFilesystem: Whether this container has a read-only root filesystem.
+        Default is false.
+    runAsGroup: The GID to run the entrypoint of the container process. Uses runtime
+        default if unset. May also be set in PodSecurityContext. If set in both
+        SecurityContext and PodSecurityContext, the value specified in SecurityContext
+        takes precedence.
+    runAsNonRoot: Indicates that the container must run as a non-root user. If true, the
+        Kubelet will validate the image at runtime to ensure that it does not run as UID 0
+        (root) and fail to start the container if it does. If unset or false, no such
+        validation will be performed. May also be set in PodSecurityContext. If set in
+        both SecurityContext and PodSecurityContext, the value specified in
+        SecurityContext takes precedence.
+    runAsUser: The UID to run the entrypoint of the container process. Defaults to user
+        specified in image metadata if unspecified. May also be set in PodSecurityContext.
+        If set in both SecurityContext and PodSecurityContext, the value specified in
+        SecurityContext takes precedence.
+    seLinuxOptions: The SELinux context to be applied to the container. If unspecified,
+        the container runtime will allocate a random SELinux context for each container.
+        May also be set in PodSecurityContext. If set in both SecurityContext and
+        PodSecurityContext, the value specified in SecurityContext takes precedence.
+    seccompProfile: The seccomp options to use by this container. If seccomp options are
+        provided at both the pod & container level, the container options override the pod
+        options.
+    windowsOptions: The Windows specific settings applied to all containers. If
+        unspecified, the options from the PodSecurityContext will be used. If set in both
+        SecurityContext and PodSecurityContext, the value specified in SecurityContext
+        takes precedence.
+    """
+
+    allowPrivilegeEscalation: Optional[bool] = None
+    capabilities: Optional["Capabilities"] = None
+    privileged: Optional[bool] = None
+    procMount: Optional[str] = None
+    readOnlyRootFilesystem: Optional[bool] = None
+    runAsGroup: Optional[int] = None
+    runAsNonRoot: Optional[bool] = None
+    runAsUser: Optional[int] = None
+    seLinuxOptions: Optional["SELinuxOptions"] = None
+    seccompProfile: Optional["SeccompProfile"] = None
+    windowsOptions: Optional["WindowsSecurityContextOptions"] = None
+
+
+@dataclass
 class Service(HikaruDocumentBase):
     r"""
     Service is a named abstraction of software service (for example, mysql) consisting of
     local port (for example 3306) that the proxy listens on, and the selector that
     determines which pods will answer requests sent through the proxy.
 
-    Full name: v1.Service
+    Full name: Service
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -13200,11 +11406,191 @@ class Service(HikaruDocumentBase):
 
 
 @dataclass
+class ServiceAccount(HikaruDocumentBase):
+    r"""
+    ServiceAccount binds together: * a name, understood by users, and perhaps by
+    peripheral systems, for an identity * a principal that can be authenticated and
+    authorized * a set of secrets
+
+    Full name: ServiceAccount
+
+    Attributes:
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    automountServiceAccountToken: AutomountServiceAccountToken indicates whether pods
+        running as this service account should have an API token automatically mounted.
+        Can be overridden at the pod level.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    imagePullSecrets: ImagePullSecrets is a list of references to secrets in the same
+        namespace to use for pulling any images in pods that reference this
+        ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets can be
+        mounted in the pod, but ImagePullSecrets are only accessed by the kubelet. More
+        info:
+        https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+    secrets: Secrets is the list of secrets allowed to be used by pods running using this
+        ServiceAccount. More info:
+        https://kubernetes.io/docs/concepts/configuration/secret
+    """
+
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    automountServiceAccountToken: Optional[bool] = None
+    kind: Optional[str] = "ServiceAccount"
+    metadata: Optional["ObjectMeta"] = None
+    imagePullSecrets: Optional[List["LocalObjectReference"]] = field(
+        default_factory=list
+    )
+    secrets: Optional[List["ObjectReference"]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ServiceAccountList(HikaruDocumentBase):
+    r"""
+    ServiceAccountList is a list of ServiceAccount objects
+
+    Full name: ServiceAccountList
+
+    Attributes:
+    items: List of ServiceAccounts. More info:
+        https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["ServiceAccount"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ServiceAccountList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ServiceAccountTokenProjection(HikaruBase):
+    r"""
+    ServiceAccountTokenProjection represents a projected service account token volume.
+    This projection can be used to insert a service account token into the pods runtime
+    filesystem for use against APIs (Kubernetes API Server or otherwise).
+
+    Full name: ServiceAccountTokenProjection
+
+    Attributes:
+    path: Path is the path relative to the mount point of the file to project the token
+        into.
+    audience: Audience is the intended audience of the token. A recipient of a token must
+        identify itself with an identifier specified in the audience of the token, and
+        otherwise should reject the token. The audience defaults to the identifier of the
+        apiserver.
+    expirationSeconds: ExpirationSeconds is the requested duration of validity of the
+        service account token. As the token approaches expiration, the kubelet volume
+        plugin will proactively rotate the service account token. The kubelet will start
+        trying to rotate the token if the token is older than 80 percent of its time to
+        live or if the token is older than 24 hours.Defaults to 1 hour and must be at
+        least 10 minutes.
+    """
+
+    path: str
+    audience: Optional[str] = None
+    expirationSeconds: Optional[int] = None
+
+
+@dataclass
+class ServiceList(HikaruDocumentBase):
+    r"""
+    ServiceList holds a list of services.
+
+    Full name: ServiceList
+
+    Attributes:
+    items: List of services
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    """
+
+    _version = "v1"
+    items: List["Service"]
+    apiVersion: Optional[str] = "v1"
+    kind: Optional[str] = "ServiceList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class ServicePort(HikaruBase):
+    r"""
+    ServicePort contains information on service's port.
+
+    Full name: ServicePort
+
+    Attributes:
+    port: The port that will be exposed by this service.
+    appProtocol: The application protocol for this port. This field follows standard
+        Kubernetes label syntax. Un-prefixed names are reserved for IANA standard service
+        names (as per RFC-6335 and http://www.iana.org/assignments/service-names).
+        Non-standard protocols should use prefixed names such as
+        mycompany.com/my-custom-protocol. This is a beta field that is guarded by the
+        ServiceAppProtocol feature gate and enabled by default.
+    name: The name of this port within the service. This must be a DNS_LABEL. All ports
+        within a ServiceSpec must have unique names. When considering the endpoints for a
+        Service, this must match the 'name' field in the EndpointPort. Optional if only
+        one ServicePort is defined on this service.
+    nodePort: The port on each node on which this service is exposed when type=NodePort or
+        LoadBalancer. Usually assigned by the system. If specified, it will be allocated
+        to the service if unused or else creation of the service will fail. Default is to
+        auto-allocate a port if the ServiceType of this Service requires one. More info:
+        https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+    protocol: The IP protocol for this port. Supports "TCP", "UDP", and "SCTP". Default is
+        TCP.
+    targetPort: Number or name of the port to access on the pods targeted by the service.
+        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is
+        a string, it will be looked up as a named port in the target Pod's container
+        ports. If this is not specified, the value of the 'port' field is used (an
+        identity map). This field is ignored for services with clusterIP=None, and should
+        be omitted or set equal to the 'port' field. More info:
+        https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
+    """
+
+    port: int
+    appProtocol: Optional[str] = None
+    name: Optional[str] = None
+    nodePort: Optional[int] = None
+    protocol: Optional[str] = None
+    targetPort: Optional[object] = field(default_factory=dict)
+
+
+@dataclass
 class ServiceSpec(HikaruBase):
     r"""
     ServiceSpec describes the attributes that a user creates on a service.
 
-    Full name: v1.ServiceSpec
+    Full name: ServiceSpec
 
     Attributes:
     clusterIP: clusterIP is the IP address of the service and is usually assigned randomly
@@ -13328,7 +11714,7 @@ class ServiceStatus(HikaruBase):
     r"""
     ServiceStatus represents the current status of a service.
 
-    Full name: v1.ServiceStatus
+    Full name: ServiceStatus
 
     Attributes:
     loadBalancer: LoadBalancer contains the current status of the load-balancer, if one is
@@ -13339,191 +11725,11 @@ class ServiceStatus(HikaruBase):
 
 
 @dataclass
-class ServiceAccount(HikaruDocumentBase):
-    r"""
-    ServiceAccount binds together: * a name, understood by users, and perhaps by
-    peripheral systems, for an identity * a principal that can be authenticated and
-    authorized * a set of secrets
-
-    Full name: v1.ServiceAccount
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    automountServiceAccountToken: AutomountServiceAccountToken indicates whether pods
-        running as this service account should have an API token automatically mounted.
-        Can be overridden at the pod level.
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard object's metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    imagePullSecrets: ImagePullSecrets is a list of references to secrets in the same
-        namespace to use for pulling any images in pods that reference this
-        ServiceAccount. ImagePullSecrets are distinct from Secrets because Secrets can be
-        mounted in the pod, but ImagePullSecrets are only accessed by the kubelet. More
-        info:
-        https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
-    secrets: Secrets is the list of secrets allowed to be used by pods running using this
-        ServiceAccount. More info:
-        https://kubernetes.io/docs/concepts/configuration/secret
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    automountServiceAccountToken: Optional[bool] = None
-    kind: Optional[str] = "ServiceAccount"
-    metadata: Optional["ObjectMeta"] = None
-    imagePullSecrets: Optional[List["LocalObjectReference"]] = field(
-        default_factory=list
-    )
-    secrets: Optional[List["ObjectReference"]] = field(default_factory=list)
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ServiceAccountList(HikaruDocumentBase):
-    r"""
-    ServiceAccountList is a list of ServiceAccount objects
-
-    Full name: v1.ServiceAccountList
-
-    Attributes:
-    items: List of ServiceAccounts. More info:
-        https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["ServiceAccount"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ServiceAccountList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ServiceAccountTokenProjection(HikaruBase):
-    r"""
-    ServiceAccountTokenProjection represents a projected service account token volume.
-    This projection can be used to insert a service account token into the pods runtime
-    filesystem for use against APIs (Kubernetes API Server or otherwise).
-
-    Full name: v1.ServiceAccountTokenProjection
-
-    Attributes:
-    path: Path is the path relative to the mount point of the file to project the token
-        into.
-    audience: Audience is the intended audience of the token. A recipient of a token must
-        identify itself with an identifier specified in the audience of the token, and
-        otherwise should reject the token. The audience defaults to the identifier of the
-        apiserver.
-    expirationSeconds: ExpirationSeconds is the requested duration of validity of the
-        service account token. As the token approaches expiration, the kubelet volume
-        plugin will proactively rotate the service account token. The kubelet will start
-        trying to rotate the token if the token is older than 80 percent of its time to
-        live or if the token is older than 24 hours.Defaults to 1 hour and must be at
-        least 10 minutes.
-    """
-
-    path: str
-    audience: Optional[str] = None
-    expirationSeconds: Optional[int] = None
-
-
-@dataclass
-class ServiceList(HikaruDocumentBase):
-    r"""
-    ServiceList holds a list of services.
-
-    Full name: v1.ServiceList
-
-    Attributes:
-    items: List of services
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    """
-
-    _version = "v1"
-    items: List["Service"]
-    apiVersion: Optional[str] = "v1"
-    kind: Optional[str] = "ServiceList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class ServicePort(HikaruBase):
-    r"""
-    ServicePort contains information on service's port.
-
-    Full name: v1.ServicePort
-
-    Attributes:
-    port: The port that will be exposed by this service.
-    appProtocol: The application protocol for this port. This field follows standard
-        Kubernetes label syntax. Un-prefixed names are reserved for IANA standard service
-        names (as per RFC-6335 and http://www.iana.org/assignments/service-names).
-        Non-standard protocols should use prefixed names such as
-        mycompany.com/my-custom-protocol. This is a beta field that is guarded by the
-        ServiceAppProtocol feature gate and enabled by default.
-    name: The name of this port within the service. This must be a DNS_LABEL. All ports
-        within a ServiceSpec must have unique names. When considering the endpoints for a
-        Service, this must match the 'name' field in the EndpointPort. Optional if only
-        one ServicePort is defined on this service.
-    nodePort: The port on each node on which this service is exposed when type=NodePort or
-        LoadBalancer. Usually assigned by the system. If specified, it will be allocated
-        to the service if unused or else creation of the service will fail. Default is to
-        auto-allocate a port if the ServiceType of this Service requires one. More info:
-        https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-    protocol: The IP protocol for this port. Supports "TCP", "UDP", and "SCTP". Default is
-        TCP.
-    targetPort: Number or name of the port to access on the pods targeted by the service.
-        Number must be in the range 1 to 65535. Name must be an IANA_SVC_NAME. If this is
-        a string, it will be looked up as a named port in the target Pod's container
-        ports. If this is not specified, the value of the 'port' field is used (an
-        identity map). This field is ignored for services with clusterIP=None, and should
-        be omitted or set equal to the 'port' field. More info:
-        https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
-    """
-
-    port: int
-    appProtocol: Optional[str] = None
-    name: Optional[str] = None
-    nodePort: Optional[int] = None
-    protocol: Optional[str] = None
-    targetPort: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
 class SessionAffinityConfig(HikaruBase):
     r"""
     SessionAffinityConfig represents the configurations of session affinity.
 
-    Full name: v1.SessionAffinityConfig
+    Full name: SessionAffinityConfig
 
     Attributes:
     clientIP: clientIP contains the configurations of Client IP based session affinity.
@@ -13533,11 +11739,43 @@ class SessionAffinityConfig(HikaruBase):
 
 
 @dataclass
+class StorageOSPersistentVolumeSource(HikaruBase):
+    r"""
+    Represents a StorageOS persistent volume resource.
+
+    Full name: StorageOSPersistentVolumeSource
+
+    Attributes:
+    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
+        operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if
+        unspecified.
+    readOnly: Defaults to false (read/write). ReadOnly here will force the ReadOnly
+        setting in VolumeMounts.
+    secretRef: SecretRef specifies the secret to use for obtaining the StorageOS API
+        credentials. If not specified, default values will be attempted.
+    volumeName: VolumeName is the human-readable name of the StorageOS volume. Volume
+        names are only unique within a namespace.
+    volumeNamespace: VolumeNamespace specifies the scope of the volume within StorageOS.
+        If no namespace is specified then the Pod's namespace will be used. This allows
+        the Kubernetes name scoping to be mirrored within StorageOS for tighter
+        integration. Set VolumeName to any name to override the default behaviour. Set to
+        "default" if you are not using namespaces within StorageOS. Namespaces that do not
+        pre-exist within StorageOS will be created.
+    """
+
+    fsType: Optional[str] = None
+    readOnly: Optional[bool] = None
+    secretRef: Optional["ObjectReference"] = None
+    volumeName: Optional[str] = None
+    volumeNamespace: Optional[str] = None
+
+
+@dataclass
 class StorageOSVolumeSource(HikaruBase):
     r"""
     Represents a StorageOS persistent volume resource.
 
-    Full name: v1.StorageOSVolumeSource
+    Full name: StorageOSVolumeSource
 
     Attributes:
     fsType: Filesystem type to mount. Must be a filesystem type supported by the host
@@ -13565,12 +11803,102 @@ class StorageOSVolumeSource(HikaruBase):
 
 
 @dataclass
+class Sysctl(HikaruBase):
+    r"""
+    Sysctl defines a kernel parameter to be set
+
+    Full name: Sysctl
+
+    Attributes:
+    name: Name of a property to set
+    value: Value of a property to set
+    """
+
+    name: str
+    value: str
+
+
+@dataclass
+class TCPSocketAction(HikaruBase):
+    r"""
+    TCPSocketAction describes an action based on opening a socket
+
+    Full name: TCPSocketAction
+
+    Attributes:
+    port: Number or name of the port to access on the container. Number must be in the
+        range 1 to 65535. Name must be an IANA_SVC_NAME.
+    host: Optional: Host name to connect to, defaults to the pod IP.
+    """
+
+    port: object
+    host: Optional[str] = None
+
+
+@dataclass
+class Taint(HikaruBase):
+    r"""
+    The node this Taint is attached to has the "effect" on any pod that does not tolerate
+    the Taint.
+
+    Full name: Taint
+
+    Attributes:
+    effect: Required. The effect of the taint on pods that do not tolerate the taint.
+        Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
+    key: Required. The taint key to be applied to a node.
+    timeAdded: TimeAdded represents the time at which the taint was added. It is only
+        written for NoExecute taints.
+    value: The taint value corresponding to the taint key.
+    """
+
+    effect: str
+    key: str
+    timeAdded: Optional[str] = None
+    value: Optional[str] = None
+
+
+@dataclass
+class Toleration(HikaruBase):
+    r"""
+    The pod this Toleration is attached to tolerates any taint that matches the triple
+    <key,value,effect> using the matching operator <operator>.
+
+    Full name: Toleration
+
+    Attributes:
+    effect: Effect indicates the taint effect to match. Empty means match all taint
+        effects. When specified, allowed values are NoSchedule, PreferNoSchedule and
+        NoExecute.
+    key: Key is the taint key that the toleration applies to. Empty means match all taint
+        keys. If the key is empty, operator must be Exists; this combination means to
+        match all values and all keys.
+    operator: Operator represents a key's relationship to the value. Valid operators are
+        Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value,
+        so that a pod can tolerate all taints of a particular category.
+    tolerationSeconds: TolerationSeconds represents the period of time the toleration
+        (which must be of effect NoExecute, otherwise this field is ignored) tolerates the
+        taint. By default, it is not set, which means tolerate the taint forever (do not
+        evict). Zero and negative values will be treated as 0 (evict immediately) by the
+        system.
+    value: Value is the taint value the toleration matches to. If the operator is Exists,
+        the value should be empty, otherwise just a regular string.
+    """
+
+    effect: Optional[str] = None
+    key: Optional[str] = None
+    operator: Optional[str] = None
+    tolerationSeconds: Optional[int] = None
+    value: Optional[str] = None
+
+
+@dataclass
 class TopologySelectorLabelRequirement(HikaruBase):
     r"""
     A topology selector requirement is a selector that matches given label. This is an
     alpha feature and may change in the future.
 
-    Full name: v1.TopologySelectorLabelRequirement
+    Full name: TopologySelectorLabelRequirement
 
     Attributes:
     key: The label key that the selector applies to.
@@ -13590,7 +11918,7 @@ class TopologySelectorTerm(HikaruBase):
     provides a subset of functionality as NodeSelectorTerm. This is an alpha feature and
     may change in the future.
 
-    Full name: v1.TopologySelectorTerm
+    Full name: TopologySelectorTerm
 
     Attributes:
     matchLabelExpressions: A list of topology selector requirements by labels.
@@ -13602,12 +11930,350 @@ class TopologySelectorTerm(HikaruBase):
 
 
 @dataclass
+class TopologySpreadConstraint(HikaruBase):
+    r"""
+    TopologySpreadConstraint specifies how to spread matching pods among the given
+    topology.
+
+    Full name: TopologySpreadConstraint
+
+    Attributes:
+    maxSkew: MaxSkew describes the degree to which pods may be unevenly distributed. When
+        `whenUnsatisfiable=DoNotSchedule`, it is the maximum permitted difference between
+        the number of matching pods in the target topology and the global minimum. For
+        example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same
+        labelSelector spread as 1/1/0: | zone1 | zone2 | zone3 | | P | P | | - if MaxSkew
+        is 1, incoming pod can only be scheduled to zone3 to become 1/1/1; scheduling it
+        onto zone1(zone2) would make the ActualSkew(2-0) on zone1(zone2) violate
+        MaxSkew(1). - if MaxSkew is 2, incoming pod can be scheduled onto any zone. When
+        `whenUnsatisfiable=ScheduleAnyway`, it is used to give higher precedence to
+        topologies that satisfy it. It's a required field. Default value is 1 and 0 is not
+        allowed.
+    topologyKey: TopologyKey is the key of node labels. Nodes that have a label with this
+        key and identical values are considered to be in the same topology. We consider
+        each <key, value> as a "bucket", and try to put balanced number of pods into each
+        bucket. It's a required field.
+    whenUnsatisfiable: WhenUnsatisfiable indicates how to deal with a pod if it doesn't
+        satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not
+        to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any
+        location, but giving higher precedence to topologies that would help reduce the
+        skew. A constraint is considered "Unsatisfiable" for an incoming pod if and only
+        if every possible node assigment for that pod would violate "MaxSkew" on some
+        topology. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the
+        same labelSelector spread as 3/1/1: | zone1 | zone2 | zone3 | | P P P | P | P | If
+        WhenUnsatisfiable is set to DoNotSchedule, incoming pod can only be scheduled to
+        zone2(zone3) to become 3/2/1(3/1/2) as ActualSkew(2-1) on zone2(zone3) satisfies
+        MaxSkew(1). In other words, the cluster can still be imbalanced, but scheduler
+        won't make it *more* imbalanced. It's a required field.
+    labelSelector: LabelSelector is used to find matching pods. Pods that match this label
+        selector are counted to determine the number of pods in their corresponding
+        topology domain.
+    """
+
+    maxSkew: int
+    topologyKey: str
+    whenUnsatisfiable: str
+    labelSelector: Optional["LabelSelector"] = None
+
+
+@dataclass
+class TypedLocalObjectReference(HikaruBase):
+    r"""
+    TypedLocalObjectReference contains enough information to let you locate the typed
+    referenced object inside the same namespace.
+
+    Full name: TypedLocalObjectReference
+
+    Attributes:
+    kind: Kind is the type of resource being referenced
+    name: Name is the name of resource being referenced
+    apiGroup: APIGroup is the group for the resource being referenced. If APIGroup is not
+        specified, the specified Kind must be in the core API group. For any other
+        third-party types, APIGroup is required.
+    """
+
+    kind: str
+    name: str
+    apiGroup: Optional[str] = None
+
+
+@dataclass
+class Volume(HikaruBase):
+    r"""
+    Volume represents a named volume in a pod that may be accessed by any container in the
+    pod.
+
+    Full name: Volume
+
+    Attributes:
+    name: Volume's name. Must be a DNS_LABEL and unique within the pod. More info:
+        https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    awsElasticBlockStore: AWSElasticBlockStore represents an AWS Disk resource that is
+        attached to a kubelet's host machine and then exposed to the pod. More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore
+    azureDisk: AzureDisk represents an Azure Data Disk mount on the host and bind mount to
+        the pod.
+    azureFile: AzureFile represents an Azure File Service mount on the host and bind mount
+        to the pod.
+    cephfs: CephFS represents a Ceph FS mount on the host that shares a pod's lifetime
+    cinder: Cinder represents a cinder volume attached and mounted on kubelets host
+        machine. More info: https://examples.k8s.io/mysql-cinder-pd/README.md
+    configMap: ConfigMap represents a configMap that should populate this volume
+    csi: CSI (Container Storage Interface) represents ephemeral storage that is handled by
+        certain external CSI drivers (Beta feature).
+    downwardAPI: DownwardAPI represents downward API about the pod that should populate
+        this volume
+    emptyDir: EmptyDir represents a temporary directory that shares a pod's lifetime. More
+        info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
+    ephemeral: Ephemeral represents a volume that is handled by a cluster storage driver
+        (Alpha feature). The volume's lifecycle is tied to the pod that defines it - it
+        will be created before the pod starts, and deleted when the pod is removed. Use
+        this if: a) the volume is only needed while the pod runs, b) features of normal
+        volumes like restoring from snapshot or capacity tracking are needed, c) the
+        storage driver is specified through a storage class, and d) the storage driver
+        supports dynamic volume provisioning through a PersistentVolumeClaim (see
+        EphemeralVolumeSource for more information on the connection between this volume
+        type and PersistentVolumeClaim). Use PersistentVolumeClaim or one of the
+        vendor-specific APIs for volumes that persist for longer than the lifecycle of an
+        individual pod. Use CSI for light-weight local ephemeral volumes if the CSI driver
+        is meant to be used that way - see the documentation of the driver for more
+        information. A pod can use both types of ephemeral volumes and persistent volumes
+        at the same time.
+    fc: FC represents a Fibre Channel resource that is attached to a kubelet's host
+        machine and then exposed to the pod.
+    flexVolume: FlexVolume represents a generic volume resource that is
+        provisioned/attached using an exec based plugin.
+    flocker: Flocker represents a Flocker volume attached to a kubelet's host machine.
+        This depends on the Flocker control service being running
+    gcePersistentDisk: GCEPersistentDisk represents a GCE Disk resource that is attached
+        to a kubelet's host machine and then exposed to the pod. More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk
+    gitRepo: GitRepo represents a git repository at a particular revision. DEPRECATED:
+        GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir
+        into an InitContainer that clones the repo using git, then mount the EmptyDir into
+        the Pod's container.
+    glusterfs: Glusterfs represents a Glusterfs mount on the host that shares a pod's
+        lifetime. More info: https://examples.k8s.io/volumes/glusterfs/README.md
+    hostPath: HostPath represents a pre-existing file or directory on the host machine
+        that is directly exposed to the container. This is generally used for system
+        agents or other privileged things that are allowed to see the host machine. Most
+        containers will NOT need this. More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#hostpath
+    iscsi: ISCSI represents an ISCSI Disk resource that is attached to a kubelet's host
+        machine and then exposed to the pod. More info:
+        https://examples.k8s.io/volumes/iscsi/README.md
+    nfs: NFS represents an NFS mount on the host that shares a pod's lifetime More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#nfs
+    persistentVolumeClaim: PersistentVolumeClaimVolumeSource represents a reference to a
+        PersistentVolumeClaim in the same namespace. More info:
+        https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims
+    photonPersistentDisk: PhotonPersistentDisk represents a PhotonController persistent
+        disk attached and mounted on kubelets host machine
+    portworxVolume: PortworxVolume represents a portworx volume attached and mounted on
+        kubelets host machine
+    projected: Items for all in one resources secrets, configmaps, and downward API
+    quobyte: Quobyte represents a Quobyte mount on the host that shares a pod's lifetime
+    rbd: RBD represents a Rados Block Device mount on the host that shares a pod's
+        lifetime. More info: https://examples.k8s.io/volumes/rbd/README.md
+    scaleIO: ScaleIO represents a ScaleIO persistent volume attached and mounted on
+        Kubernetes nodes.
+    secret: Secret represents a secret that should populate this volume. More info:
+        https://kubernetes.io/docs/concepts/storage/volumes#secret
+    storageos: StorageOS represents a StorageOS volume attached and mounted on Kubernetes
+        nodes.
+    vsphereVolume: VsphereVolume represents a vSphere volume attached and mounted on
+        kubelets host machine
+    """
+
+    name: str
+    awsElasticBlockStore: Optional["AWSElasticBlockStoreVolumeSource"] = None
+    azureDisk: Optional["AzureDiskVolumeSource"] = None
+    azureFile: Optional["AzureFileVolumeSource"] = None
+    cephfs: Optional["CephFSVolumeSource"] = None
+    cinder: Optional["CinderVolumeSource"] = None
+    configMap: Optional["ConfigMapVolumeSource"] = None
+    csi: Optional["CSIVolumeSource"] = None
+    downwardAPI: Optional["DownwardAPIVolumeSource"] = None
+    emptyDir: Optional["EmptyDirVolumeSource"] = None
+    ephemeral: Optional["EphemeralVolumeSource"] = None
+    fc: Optional["FCVolumeSource"] = None
+    flexVolume: Optional["FlexVolumeSource"] = None
+    flocker: Optional["FlockerVolumeSource"] = None
+    gcePersistentDisk: Optional["GCEPersistentDiskVolumeSource"] = None
+    gitRepo: Optional["GitRepoVolumeSource"] = None
+    glusterfs: Optional["GlusterfsVolumeSource"] = None
+    hostPath: Optional["HostPathVolumeSource"] = None
+    iscsi: Optional["ISCSIVolumeSource"] = None
+    nfs: Optional["NFSVolumeSource"] = None
+    persistentVolumeClaim: Optional["PersistentVolumeClaimVolumeSource"] = None
+    photonPersistentDisk: Optional["PhotonPersistentDiskVolumeSource"] = None
+    portworxVolume: Optional["PortworxVolumeSource"] = None
+    projected: Optional["ProjectedVolumeSource"] = None
+    quobyte: Optional["QuobyteVolumeSource"] = None
+    rbd: Optional["RBDVolumeSource"] = None
+    scaleIO: Optional["ScaleIOVolumeSource"] = None
+    secret: Optional["SecretVolumeSource"] = None
+    storageos: Optional["StorageOSVolumeSource"] = None
+    vsphereVolume: Optional["VsphereVirtualDiskVolumeSource"] = None
+
+
+@dataclass
+class VolumeDevice(HikaruBase):
+    r"""
+    volumeDevice describes a mapping of a raw block device within a container.
+
+    Full name: VolumeDevice
+
+    Attributes:
+    devicePath: devicePath is the path inside of the container that the device will be
+        mapped to.
+    name: name must match the name of a persistentVolumeClaim in the pod
+    """
+
+    devicePath: str
+    name: str
+
+
+@dataclass
+class VolumeMount(HikaruBase):
+    r"""
+    VolumeMount describes a mounting of a Volume within a container.
+
+    Full name: VolumeMount
+
+    Attributes:
+    mountPath: Path within the container at which the volume should be mounted. Must not
+        contain ':'.
+    name: This must match the Name of a Volume.
+    mountPropagation: mountPropagation determines how mounts are propagated from the host
+        to container and the other way around. When not set, MountPropagationNone is used.
+        This field is beta in 1.10.
+    readOnly: Mounted read-only if true, read-write otherwise (false or unspecified).
+        Defaults to false.
+    subPath: Path within the volume from which the container's volume should be mounted.
+        Defaults to "" (volume's root).
+    subPathExpr: Expanded path within the volume from which the container's volume should
+        be mounted. Behaves similarly to SubPath but environment variable references
+        $(VAR_NAME) are expanded using the container's environment. Defaults to ""
+        (volume's root). SubPathExpr and SubPath are mutually exclusive.
+    """
+
+    mountPath: str
+    name: str
+    mountPropagation: Optional[str] = None
+    readOnly: Optional[bool] = None
+    subPath: Optional[str] = None
+    subPathExpr: Optional[str] = None
+
+
+@dataclass
+class VolumeNodeAffinity(HikaruBase):
+    r"""
+    VolumeNodeAffinity defines constraints that limit what nodes this volume can be
+    accessed from.
+
+    Full name: VolumeNodeAffinity
+
+    Attributes:
+    required: Required specifies hard node constraints that must be met.
+    """
+
+    required: Optional["NodeSelector"] = None
+
+
+@dataclass
+class VolumeProjection(HikaruBase):
+    r"""
+    Projection that may be projected along with other supported volume types
+
+    Full name: VolumeProjection
+
+    Attributes:
+    configMap: information about the configMap data to project
+    downwardAPI: information about the downwardAPI data to project
+    secret: information about the secret data to project
+    serviceAccountToken: information about the serviceAccountToken data to project
+    """
+
+    configMap: Optional["ConfigMapProjection"] = None
+    downwardAPI: Optional["DownwardAPIProjection"] = None
+    secret: Optional["SecretProjection"] = None
+    serviceAccountToken: Optional["ServiceAccountTokenProjection"] = None
+
+
+@dataclass
+class VsphereVirtualDiskVolumeSource(HikaruBase):
+    r"""
+    Represents a vSphere volume resource.
+
+    Full name: VsphereVirtualDiskVolumeSource
+
+    Attributes:
+    volumePath: Path that identifies vSphere volume vmdk
+    fsType: Filesystem type to mount. Must be a filesystem type supported by the host
+        operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if
+        unspecified.
+    storagePolicyID: Storage Policy Based Management (SPBM) profile ID associated with the
+        StoragePolicyName.
+    storagePolicyName: Storage Policy Based Management (SPBM) profile name.
+    """
+
+    volumePath: str
+    fsType: Optional[str] = None
+    storagePolicyID: Optional[str] = None
+    storagePolicyName: Optional[str] = None
+
+
+@dataclass
+class WeightedPodAffinityTerm(HikaruBase):
+    r"""
+    The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to
+    find the most preferred node(s)
+
+    Full name: WeightedPodAffinityTerm
+
+    Attributes:
+    podAffinityTerm: Required. A pod affinity term, associated with the corresponding
+        weight.
+    weight: weight associated with matching the corresponding podAffinityTerm, in the
+        range 1-100.
+    """
+
+    podAffinityTerm: "PodAffinityTerm"
+    weight: int
+
+
+@dataclass
+class WindowsSecurityContextOptions(HikaruBase):
+    r"""
+    WindowsSecurityContextOptions contain Windows-specific options and credentials.
+
+    Full name: WindowsSecurityContextOptions
+
+    Attributes:
+    gmsaCredentialSpec: GMSACredentialSpec is where the GMSA admission webhook
+        (https://github.com/kubernetes-sigs/windows-gmsa) inlines the contents of the GMSA
+        credential spec named by the GMSACredentialSpecName field.
+    gmsaCredentialSpecName: GMSACredentialSpecName is the name of the GMSA credential spec
+        to use.
+    runAsUserName: The UserName in Windows to run the entrypoint of the container process.
+        Defaults to the user specified in image metadata if unspecified. May also be set
+        in PodSecurityContext. If set in both SecurityContext and PodSecurityContext, the
+        value specified in SecurityContext takes precedence.
+    """
+
+    gmsaCredentialSpec: Optional[str] = None
+    gmsaCredentialSpecName: Optional[str] = None
+    runAsUserName: Optional[str] = None
+
+
+@dataclass
 class HTTPIngressPath(HikaruBase):
     r"""
     HTTPIngressPath associates a path with a backend. Incoming urls matching the path are
     forwarded to the backend.
 
-    Full name: extensions.v1beta1.HTTPIngressPath
+    Full name: HTTPIngressPath
 
     Attributes:
     backend: Backend defines the referenced service endpoint to which the traffic will be
@@ -13636,26 +12302,6 @@ class HTTPIngressPath(HikaruBase):
 
 
 @dataclass
-class IngressBackend(HikaruBase):
-    r"""
-    IngressBackend describes all endpoints for a given service and port.
-
-    Full name: extensions.v1beta1.IngressBackend
-
-    Attributes:
-    resource: Resource is an ObjectRef to another Kubernetes resource in the namespace of
-        the Ingress object. If resource is specified, serviceName and servicePort must not
-        be specified.
-    serviceName: Specifies the name of the referenced service.
-    servicePort: Specifies the port of the referenced service.
-    """
-
-    resource: Optional["TypedLocalObjectReference"] = None
-    serviceName: Optional[str] = None
-    servicePort: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
 class HTTPIngressRuleValue(HikaruBase):
     r"""
     HTTPIngressRuleValue is a list of http selectors pointing to backends. In the example:
@@ -13663,7 +12309,7 @@ class HTTPIngressRuleValue(HikaruBase):
     to RFC 3986, this resource will be used to match against everything after the last '/'
     and before the first '?' or '#'.
 
-    Full name: extensions.v1beta1.HTTPIngressRuleValue
+    Full name: HTTPIngressRuleValue
 
     Attributes:
     paths: A collection of paths that map requests to backends.
@@ -13679,7 +12325,7 @@ class IPBlock(HikaruBase):
     allowed to the pods matched by a NetworkPolicySpec's podSelector. The except entry
     describes CIDRs that should not be included within this rule.
 
-    Full name: v1.IPBlock
+    Full name: IPBlock
 
     Attributes:
     cidr: CIDR is a string representing the IP Block Valid examples are "192.168.1.1/24"
@@ -13701,7 +12347,7 @@ class Ingress(HikaruDocumentBase):
     externally-reachable urls, load balance traffic, terminate SSL, offer name based
     virtual hosting etc.
 
-    Full name: extensions.v1beta1.Ingress
+    Full name: Ingress
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -13746,7 +12392,7 @@ class Ingress(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         delete collection of Ingress
 
@@ -13838,7 +12484,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -13873,7 +12519,7 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def createNamespacedIngress(
         self,
@@ -13882,7 +12528,7 @@ class Ingress(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         create an Ingress
 
@@ -13903,7 +12549,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -13934,7 +12580,7 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def create(
         self,
@@ -14005,7 +12651,7 @@ class Ingress(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         delete an Ingress
 
@@ -14042,7 +12688,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14070,7 +12716,7 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -14173,7 +12819,7 @@ class Ingress(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         read the specified Ingress
 
@@ -14193,7 +12839,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14218,7 +12864,7 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def read(
         self,
@@ -14303,7 +12949,7 @@ class Ingress(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         partially update the specified Ingress
 
@@ -14331,7 +12977,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14362,7 +13008,7 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def update(
         self,
@@ -14459,7 +13105,7 @@ class Ingress(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         replace the specified Ingress
 
@@ -14481,7 +13127,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14512,7 +13158,124 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
+
+    @staticmethod
+    def readNamespacedIngressStatus(
+        name: str,
+        namespace: str,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Ingress"]:
+        r"""
+        read status of the specified Ingress
+
+        operationID: readNamespacedIngressStatus
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_ingress_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "read_namespaced_ingress_status_with_http_info "
+                "on NetworkingV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["Ingress"](result, codes_returning_objects)
+
+    def patchNamespacedIngressStatus(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Ingress"]:
+        r"""
+        partially update status of the specified Ingress
+
+        operationID: patchNamespacedIngressStatus
+        path: /apis/networking.k8s.io/v1beta1/namespaces/{namespace}/ingresses/{name}/status
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Ingress    OK
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = NetworkingV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_ingress_status_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "patch_namespaced_ingress_status_with_http_info "
+                "on NetworkingV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["Ingress"](result, codes_returning_objects)
 
     def replaceNamespacedIngressStatus(
         self,
@@ -14522,7 +13285,7 @@ class Ingress(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Ingress"]:
         r"""
         replace status of the specified Ingress
 
@@ -14544,7 +13307,7 @@ class Ingress(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14575,73 +13338,27 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Ingress"](result, codes_returning_objects)
 
 
 @dataclass
-class IngressSpec(HikaruBase):
+class IngressBackend(HikaruBase):
     r"""
-    IngressSpec describes the Ingress the user wishes to exist.
+    IngressBackend describes all endpoints for a given service and port.
 
-    Full name: extensions.v1beta1.IngressSpec
+    Full name: IngressBackend
 
     Attributes:
-    backend: A default backend capable of servicing requests that don't match any rule. At
-        least one of 'backend' or 'rules' must be specified. This field is optional to
-        allow the loadbalancer controller or defaulting logic to specify a global default.
-    ingressClassName: IngressClassName is the name of the IngressClass cluster resource.
-        The associated IngressClass defines which controller will implement the resource.
-        This replaces the deprecated `kubernetes.io/ingress.class` annotation. For
-        backwards compatibility, when that annotation is set, it must be given precedence
-        over this field. The controller may emit a warning if the field and annotation
-        have different values. Implementations of this API should ignore Ingresses without
-        a class specified. An IngressClass resource may be marked as default, which can be
-        used to set a default value for this field. For more information, refer to the
-        IngressClass documentation.
-    rules: A list of host rules used to configure the Ingress. If unspecified, or no rule
-        matches, all traffic is sent to the default backend.
-    tls: TLS configuration. Currently the Ingress only supports a single TLS port, 443. If
-        multiple members of this list specify different hosts, they will be multiplexed on
-        the same port according to the hostname specified through the SNI TLS extension,
-        if the ingress controller fulfilling the ingress supports SNI.
+    resource: Resource is an ObjectRef to another Kubernetes resource in the namespace of
+        the Ingress object. If resource is specified, serviceName and servicePort must not
+        be specified.
+    serviceName: Specifies the name of the referenced service.
+    servicePort: Specifies the port of the referenced service.
     """
 
-    backend: Optional["IngressBackend"] = None
-    ingressClassName: Optional[str] = None
-    rules: Optional[List["IngressRule"]] = field(default_factory=list)
-    tls: Optional[List["IngressTLS"]] = field(default_factory=list)
-
-
-@dataclass
-class IngressStatus(HikaruBase):
-    r"""
-    IngressStatus describe the current state of the Ingress.
-
-    Full name: extensions.v1beta1.IngressStatus
-
-    Attributes:
-    loadBalancer: LoadBalancer contains the current status of the load-balancer.
-    """
-
-    loadBalancer: Optional["LoadBalancerStatus"] = None
-
-
-@dataclass
-class IngressServiceBackend(HikaruBase):
-    r"""
-    IngressServiceBackend references a Kubernetes Service as a Backend.
-
-    Full name: v1.IngressServiceBackend
-
-    Attributes:
-    name: Name is the referenced service. The service must exist in the same namespace as
-        the Ingress object.
-    port: Port of the referenced service. A port name or port number is required for a
-        IngressServiceBackend.
-    """
-
-    name: str
-    port: Optional["ServiceBackendPort"] = None
+    resource: Optional["TypedLocalObjectReference"] = None
+    serviceName: Optional[str] = None
+    servicePort: Optional[object] = field(default_factory=dict)
 
 
 @dataclass
@@ -14653,7 +13370,7 @@ class IngressClass(HikaruDocumentBase):
     this annotation set to true, new Ingress resources without a class specified will be
     assigned this default class.
 
-    Full name: v1beta1.IngressClass
+    Full name: IngressClass
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -14694,7 +13411,7 @@ class IngressClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         delete collection of IngressClass
 
@@ -14785,7 +13502,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14817,7 +13534,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClass"](result, codes_returning_objects)
 
     def createIngressClass(
         self,
@@ -14825,7 +13542,7 @@ class IngressClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         create an IngressClass
 
@@ -14845,7 +13562,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14875,7 +13592,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClass"](result, codes_returning_objects)
 
     def create(
         self,
@@ -14928,7 +13645,7 @@ class IngressClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         delete an IngressClass
 
@@ -14964,7 +13681,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14991,7 +13708,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClass"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -15077,7 +13794,7 @@ class IngressClass(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         read the specified IngressClass
 
@@ -15096,7 +13813,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15120,7 +13837,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClass"](result, codes_returning_objects)
 
     def read(
         self,
@@ -15188,7 +13905,7 @@ class IngressClass(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         partially update the specified IngressClass
 
@@ -15215,7 +13932,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15245,7 +13962,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClass"](result, codes_returning_objects)
 
     def update(
         self,
@@ -15326,7 +14043,7 @@ class IngressClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClass"]:
         r"""
         replace the specified IngressClass
 
@@ -15347,7 +14064,7 @@ class IngressClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15377,30 +14094,7 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class IngressClassSpec(HikaruBase):
-    r"""
-    IngressClassSpec provides information about the class of an Ingress.
-
-    Full name: v1beta1.IngressClassSpec
-
-    Attributes:
-    controller: Controller refers to the name of the controller that should handle this
-        class. This allows for different "flavors" that are controlled by the same
-        controller. For example, you may have different Parameters for the same
-        implementing controller. This should be specified as a domain-prefixed path no
-        more than 250 characters in length, e.g. "acme.io/ingress-controller". This field
-        is immutable.
-    parameters: Parameters is a link to a custom resource containing additional
-        configuration for the controller. This is optional if the controller does not
-        require extra parameters.
-    """
-
-    controller: Optional[str] = None
-    parameters: Optional["TypedLocalObjectReference"] = None
+        return Response["IngressClass"](result, codes_returning_objects)
 
 
 @dataclass
@@ -15408,7 +14102,7 @@ class IngressClassList(HikaruDocumentBase):
     r"""
     IngressClassList is a collection of IngressClasses.
 
-    Full name: v1beta1.IngressClassList
+    Full name: IngressClassList
 
     Attributes:
     items: Items is the list of IngressClasses.
@@ -15445,7 +14139,7 @@ class IngressClassList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressClassList"]:
         r"""
         list or watch objects of kind IngressClass
 
@@ -15525,7 +14219,7 @@ class IngressClassList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15555,7 +14249,7 @@ class IngressClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressClassList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15566,11 +14260,34 @@ class IngressClassList(HikaruDocumentBase):
 
 
 @dataclass
+class IngressClassSpec(HikaruBase):
+    r"""
+    IngressClassSpec provides information about the class of an Ingress.
+
+    Full name: IngressClassSpec
+
+    Attributes:
+    controller: Controller refers to the name of the controller that should handle this
+        class. This allows for different "flavors" that are controlled by the same
+        controller. For example, you may have different Parameters for the same
+        implementing controller. This should be specified as a domain-prefixed path no
+        more than 250 characters in length, e.g. "acme.io/ingress-controller". This field
+        is immutable.
+    parameters: Parameters is a link to a custom resource containing additional
+        configuration for the controller. This is optional if the controller does not
+        require extra parameters.
+    """
+
+    controller: Optional[str] = None
+    parameters: Optional["TypedLocalObjectReference"] = None
+
+
+@dataclass
 class IngressList(HikaruDocumentBase):
     r"""
     IngressList is a collection of Ingress.
 
-    Full name: extensions.v1beta1.IngressList
+    Full name: IngressList
 
     Attributes:
     items: Items is the list of Ingress.
@@ -15608,7 +14325,7 @@ class IngressList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressList"]:
         r"""
         list or watch objects of kind Ingress
 
@@ -15688,7 +14405,7 @@ class IngressList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15718,7 +14435,7 @@ class IngressList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15742,7 +14459,7 @@ class IngressList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["IngressList"]:
         r"""
         list or watch objects of kind Ingress
 
@@ -15823,7 +14540,7 @@ class IngressList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15854,7 +14571,7 @@ class IngressList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["IngressList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15871,7 +14588,7 @@ class IngressRule(HikaruBase):
     related backend services. Incoming requests are first evaluated for a host match, then
     routed to the backend associated with the matching IngressRuleValue.
 
-    Full name: extensions.v1beta1.IngressRule
+    Full name: IngressRule
 
     Attributes:
     host: Host is the fully qualified domain name of a network host, as defined by RFC
@@ -15900,21 +14617,69 @@ class IngressRule(HikaruBase):
 
 
 @dataclass
-class ServiceBackendPort(HikaruBase):
+class IngressServiceBackend(HikaruBase):
     r"""
-    ServiceBackendPort is the service port being referenced.
+    IngressServiceBackend references a Kubernetes Service as a Backend.
 
-    Full name: v1.ServiceBackendPort
+    Full name: IngressServiceBackend
 
     Attributes:
-    name: Name is the name of the port on the Service. This is a mutually exclusive
-        setting with "Number".
-    number: Number is the numerical port number (e.g. 80) on the Service. This is a
-        mutually exclusive setting with "Name".
+    name: Name is the referenced service. The service must exist in the same namespace as
+        the Ingress object.
+    port: Port of the referenced service. A port name or port number is required for a
+        IngressServiceBackend.
     """
 
-    name: Optional[str] = None
-    number: Optional[int] = None
+    name: str
+    port: Optional["ServiceBackendPort"] = None
+
+
+@dataclass
+class IngressSpec(HikaruBase):
+    r"""
+    IngressSpec describes the Ingress the user wishes to exist.
+
+    Full name: IngressSpec
+
+    Attributes:
+    backend: A default backend capable of servicing requests that don't match any rule. At
+        least one of 'backend' or 'rules' must be specified. This field is optional to
+        allow the loadbalancer controller or defaulting logic to specify a global default.
+    ingressClassName: IngressClassName is the name of the IngressClass cluster resource.
+        The associated IngressClass defines which controller will implement the resource.
+        This replaces the deprecated `kubernetes.io/ingress.class` annotation. For
+        backwards compatibility, when that annotation is set, it must be given precedence
+        over this field. The controller may emit a warning if the field and annotation
+        have different values. Implementations of this API should ignore Ingresses without
+        a class specified. An IngressClass resource may be marked as default, which can be
+        used to set a default value for this field. For more information, refer to the
+        IngressClass documentation.
+    rules: A list of host rules used to configure the Ingress. If unspecified, or no rule
+        matches, all traffic is sent to the default backend.
+    tls: TLS configuration. Currently the Ingress only supports a single TLS port, 443. If
+        multiple members of this list specify different hosts, they will be multiplexed on
+        the same port according to the hostname specified through the SNI TLS extension,
+        if the ingress controller fulfilling the ingress supports SNI.
+    """
+
+    backend: Optional["IngressBackend"] = None
+    ingressClassName: Optional[str] = None
+    rules: Optional[List["IngressRule"]] = field(default_factory=list)
+    tls: Optional[List["IngressTLS"]] = field(default_factory=list)
+
+
+@dataclass
+class IngressStatus(HikaruBase):
+    r"""
+    IngressStatus describe the current state of the Ingress.
+
+    Full name: IngressStatus
+
+    Attributes:
+    loadBalancer: LoadBalancer contains the current status of the load-balancer.
+    """
+
+    loadBalancer: Optional["LoadBalancerStatus"] = None
 
 
 @dataclass
@@ -15922,7 +14687,7 @@ class IngressTLS(HikaruBase):
     r"""
     IngressTLS describes the transport layer security associated with an Ingress.
 
-    Full name: extensions.v1beta1.IngressTLS
+    Full name: IngressTLS
 
     Attributes:
     secretName: SecretName is the name of the secret used to terminate TLS traffic on port
@@ -15945,7 +14710,7 @@ class NetworkPolicy(HikaruDocumentBase):
     r"""
     NetworkPolicy describes what network traffic is allowed for a set of Pods
 
-    Full name: v1.NetworkPolicy
+    Full name: NetworkPolicy
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -15971,11 +14736,140 @@ class NetworkPolicy(HikaruDocumentBase):
 
 
 @dataclass
+class NetworkPolicyEgressRule(HikaruBase):
+    r"""
+    NetworkPolicyEgressRule describes a particular set of traffic that is allowed out of
+    pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
+    and to. This type is beta-level in 1.8
+
+    Full name: NetworkPolicyEgressRule
+
+    Attributes:
+    ports: List of destination ports for outgoing traffic. Each item in this list is
+        combined using a logical OR. If this field is empty or missing, this rule matches
+        all ports (traffic not restricted by port). If this field is present and contains
+        at least one item, then this rule allows traffic only if the traffic matches at
+        least one port in the list.
+    to: List of destinations for outgoing traffic of pods selected for this rule. Items in
+        this list are combined using a logical OR operation. If this field is empty or
+        missing, this rule matches all destinations (traffic not restricted by
+        destination). If this field is present and contains at least one item, this rule
+        allows traffic only if the traffic matches at least one item in the to list.
+    """
+
+    ports: Optional[List["NetworkPolicyPort"]] = field(default_factory=list)
+    to: Optional[List["NetworkPolicyPeer"]] = field(default_factory=list)
+
+
+@dataclass
+class NetworkPolicyIngressRule(HikaruBase):
+    r"""
+    NetworkPolicyIngressRule describes a particular set of traffic that is allowed to the
+    pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
+    and from.
+
+    Full name: NetworkPolicyIngressRule
+
+    Attributes:
+    from_: List of sources which should be able to access the pods selected for this rule.
+        Items in this list are combined using a logical OR operation. If this field is
+        empty or missing, this rule matches all sources (traffic not restricted by
+        source). If this field is present and contains at least one item, this rule allows
+        traffic only if the traffic matches at least one item in the from list.
+    ports: List of ports which should be made accessible on the pods selected for this
+        rule. Each item in this list is combined using a logical OR. If this field is
+        empty or missing, this rule matches all ports (traffic not restricted by port). If
+        this field is present and contains at least one item, then this rule allows
+        traffic only if the traffic matches at least one port in the list.
+    """
+
+    from_: Optional[List["NetworkPolicyPeer"]] = field(default_factory=list)
+    ports: Optional[List["NetworkPolicyPort"]] = field(default_factory=list)
+
+
+@dataclass
+class NetworkPolicyList(HikaruDocumentBase):
+    r"""
+    NetworkPolicyList is a list of NetworkPolicy objects.
+
+    Full name: NetworkPolicyList
+
+    Attributes:
+    items: Items is a list of schema objects.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    """
+
+    _version = "v1"
+    items: List["NetworkPolicy"]
+    apiVersion: Optional[str] = "networking.k8s.io/v1"
+    kind: Optional[str] = "NetworkPolicyList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class NetworkPolicyPeer(HikaruBase):
+    r"""
+    NetworkPolicyPeer describes a peer to allow traffic to/from. Only certain combinations
+    of fields are allowed
+
+    Full name: NetworkPolicyPeer
+
+    Attributes:
+    ipBlock: IPBlock defines policy on a particular IPBlock. If this field is set then
+        neither of the other fields can be.
+    namespaceSelector: Selects Namespaces using cluster-scoped labels. This field follows
+        standard label selector semantics; if present but empty, it selects all
+        namespaces. If PodSelector is also set, then the NetworkPolicyPeer as a whole
+        selects the Pods matching PodSelector in the Namespaces selected by
+        NamespaceSelector. Otherwise it selects all Pods in the Namespaces selected by
+        NamespaceSelector.
+    podSelector: This is a label selector which selects Pods. This field follows standard
+        label selector semantics; if present but empty, it selects all pods. If
+        NamespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the
+        Pods matching PodSelector in the Namespaces selected by NamespaceSelector.
+        Otherwise it selects the Pods matching PodSelector in the policy's own Namespace.
+    """
+
+    ipBlock: Optional["IPBlock"] = None
+    namespaceSelector: Optional["LabelSelector"] = None
+    podSelector: Optional["LabelSelector"] = None
+
+
+@dataclass
+class NetworkPolicyPort(HikaruBase):
+    r"""
+    NetworkPolicyPort describes a port to allow traffic on
+
+    Full name: NetworkPolicyPort
+
+    Attributes:
+    protocol: The protocol (TCP, UDP, or SCTP) which traffic must match. If not specified,
+        this field defaults to TCP.
+    port: The port on the given protocol. This can either be a numerical or named port on
+        a pod. If this field is not provided, this matches all port names and numbers.
+    """
+
+    protocol: Optional[str] = None
+    port: Optional[object] = field(default_factory=dict)
+
+
+@dataclass
 class NetworkPolicySpec(HikaruBase):
     r"""
     NetworkPolicySpec provides the specification of a NetworkPolicy
 
-    Full name: v1.NetworkPolicySpec
+    Full name: NetworkPolicySpec
 
     Attributes:
     podSelector: Selects the pods to which this NetworkPolicy object applies. The array of
@@ -16016,183 +14910,21 @@ class NetworkPolicySpec(HikaruBase):
 
 
 @dataclass
-class NetworkPolicyEgressRule(HikaruBase):
+class ServiceBackendPort(HikaruBase):
     r"""
-    NetworkPolicyEgressRule describes a particular set of traffic that is allowed out of
-    pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
-    and to. This type is beta-level in 1.8
+    ServiceBackendPort is the service port being referenced.
 
-    Full name: v1.NetworkPolicyEgressRule
+    Full name: ServiceBackendPort
 
     Attributes:
-    ports: List of destination ports for outgoing traffic. Each item in this list is
-        combined using a logical OR. If this field is empty or missing, this rule matches
-        all ports (traffic not restricted by port). If this field is present and contains
-        at least one item, then this rule allows traffic only if the traffic matches at
-        least one port in the list.
-    to: List of destinations for outgoing traffic of pods selected for this rule. Items in
-        this list are combined using a logical OR operation. If this field is empty or
-        missing, this rule matches all destinations (traffic not restricted by
-        destination). If this field is present and contains at least one item, this rule
-        allows traffic only if the traffic matches at least one item in the to list.
+    name: Name is the name of the port on the Service. This is a mutually exclusive
+        setting with "Number".
+    number: Number is the numerical port number (e.g. 80) on the Service. This is a
+        mutually exclusive setting with "Name".
     """
 
-    ports: Optional[List["NetworkPolicyPort"]] = field(default_factory=list)
-    to: Optional[List["NetworkPolicyPeer"]] = field(default_factory=list)
-
-
-@dataclass
-class NetworkPolicyPort(HikaruBase):
-    r"""
-    NetworkPolicyPort describes a port to allow traffic on
-
-    Full name: v1.NetworkPolicyPort
-
-    Attributes:
-    protocol: The protocol (TCP, UDP, or SCTP) which traffic must match. If not specified,
-        this field defaults to TCP.
-    port: The port on the given protocol. This can either be a numerical or named port on
-        a pod. If this field is not provided, this matches all port names and numbers.
-    """
-
-    protocol: Optional[str] = None
-    port: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
-class NetworkPolicyPeer(HikaruBase):
-    r"""
-    NetworkPolicyPeer describes a peer to allow traffic to/from. Only certain combinations
-    of fields are allowed
-
-    Full name: v1.NetworkPolicyPeer
-
-    Attributes:
-    ipBlock: IPBlock defines policy on a particular IPBlock. If this field is set then
-        neither of the other fields can be.
-    namespaceSelector: Selects Namespaces using cluster-scoped labels. This field follows
-        standard label selector semantics; if present but empty, it selects all
-        namespaces. If PodSelector is also set, then the NetworkPolicyPeer as a whole
-        selects the Pods matching PodSelector in the Namespaces selected by
-        NamespaceSelector. Otherwise it selects all Pods in the Namespaces selected by
-        NamespaceSelector.
-    podSelector: This is a label selector which selects Pods. This field follows standard
-        label selector semantics; if present but empty, it selects all pods. If
-        NamespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the
-        Pods matching PodSelector in the Namespaces selected by NamespaceSelector.
-        Otherwise it selects the Pods matching PodSelector in the policy's own Namespace.
-    """
-
-    ipBlock: Optional["IPBlock"] = None
-    namespaceSelector: Optional["LabelSelector"] = None
-    podSelector: Optional["LabelSelector"] = None
-
-
-@dataclass
-class NetworkPolicyIngressRule(HikaruBase):
-    r"""
-    NetworkPolicyIngressRule describes a particular set of traffic that is allowed to the
-    pods matched by a NetworkPolicySpec's podSelector. The traffic must match both ports
-    and from.
-
-    Full name: v1.NetworkPolicyIngressRule
-
-    Attributes:
-    from_: List of sources which should be able to access the pods selected for this rule.
-        Items in this list are combined using a logical OR operation. If this field is
-        empty or missing, this rule matches all sources (traffic not restricted by
-        source). If this field is present and contains at least one item, this rule allows
-        traffic only if the traffic matches at least one item in the from list.
-    ports: List of ports which should be made accessible on the pods selected for this
-        rule. Each item in this list is combined using a logical OR. If this field is
-        empty or missing, this rule matches all ports (traffic not restricted by port). If
-        this field is present and contains at least one item, then this rule allows
-        traffic only if the traffic matches at least one port in the list.
-    """
-
-    from_: Optional[List["NetworkPolicyPeer"]] = field(default_factory=list)
-    ports: Optional[List["NetworkPolicyPort"]] = field(default_factory=list)
-
-
-@dataclass
-class NetworkPolicyList(HikaruDocumentBase):
-    r"""
-    NetworkPolicyList is a list of NetworkPolicy objects.
-
-    Full name: v1.NetworkPolicyList
-
-    Attributes:
-    items: Items is a list of schema objects.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1"
-    items: List["NetworkPolicy"]
-    apiVersion: Optional[str] = "networking.k8s.io/v1"
-    kind: Optional[str] = "NetworkPolicyList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-
-@dataclass
-class DeleteOptions(HikaruDocumentBase):
-    r"""
-    DeleteOptions may be provided when deleting an API object.
-
-    Full name: v1.DeleteOptions
-
-    Attributes:
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
-        must be non-negative integer. The value zero indicates delete immediately. If this
-        value is nil, the default grace period for the specified type will be used.
-        Defaults to a per object value if not specified. zero means delete immediately.
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
-        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
-        "orphan" finalizer will be added to/removed from the object's finalizers list.
-        Either this field or PropagationPolicy may be set, but not both.
-    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
-        409 Conflict status will be returned.
-    propagationPolicy: Whether and how garbage collection will be performed. Either this
-        field or OrphanDependents may be set, but not both. The default policy is decided
-        by the existing finalizer set in the metadata.finalizers and the resource-specific
-        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
-        'Background' - allow the garbage collector to delete the dependents in the
-        background; 'Foreground' - a cascading policy that deletes all dependents in the
-        foreground.
-    dryRun: When present, indicates that modifications should not be persisted. An invalid
-        or unrecognized dryRun directive will result in an error response and no further
-        processing of the request. Valid values are: - All: all dry run stages will be
-        processed
-    """
-
-    _version = "v1"
-    apiVersion: Optional[str] = "v1"
-    gracePeriodSeconds: Optional[int] = None
-    kind: Optional[str] = "DeleteOptions"
-    orphanDependents: Optional[bool] = None
-    preconditions: Optional["Preconditions"] = None
-    propagationPolicy: Optional[str] = None
-    dryRun: Optional[List[str]] = field(default_factory=list)
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
+    name: Optional[str] = None
+    number: Optional[int] = None
 
 
 @dataclass
@@ -16200,7 +14932,7 @@ class AggregationRule(HikaruBase):
     r"""
     AggregationRule describes how to locate ClusterRoles to aggregate into the ClusterRole
 
-    Full name: v1beta1.AggregationRule
+    Full name: AggregationRule
 
     Attributes:
     clusterRoleSelectors: ClusterRoleSelectors holds a list of selectors which will be
@@ -16218,7 +14950,7 @@ class ClusterRole(HikaruDocumentBase):
     as a unit by a RoleBinding or ClusterRoleBinding. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 ClusterRole, and will no longer be served in v1.22.
 
-    Full name: v1beta1.ClusterRole
+    Full name: ClusterRole
 
     Attributes:
     aggregationRule: AggregationRule is an optional field that describes how to build the
@@ -16261,7 +14993,7 @@ class ClusterRole(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         delete collection of ClusterRole
 
@@ -16352,7 +15084,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16384,7 +15116,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
     def createClusterRole(
         self,
@@ -16392,7 +15124,7 @@ class ClusterRole(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         create a ClusterRole
 
@@ -16412,7 +15144,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16442,7 +15174,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
     def create(
         self,
@@ -16495,7 +15227,7 @@ class ClusterRole(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         delete a ClusterRole
 
@@ -16531,7 +15263,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16558,7 +15290,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -16642,7 +15374,7 @@ class ClusterRole(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         read the specified ClusterRole
 
@@ -16656,7 +15388,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16678,7 +15410,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
     def read(
         self,
@@ -16733,7 +15465,7 @@ class ClusterRole(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         partially update the specified ClusterRole
 
@@ -16760,7 +15492,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16790,7 +15522,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
     def update(
         self,
@@ -16871,7 +15603,7 @@ class ClusterRole(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRole"]:
         r"""
         replace the specified ClusterRole
 
@@ -16892,7 +15624,7 @@ class ClusterRole(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16922,41 +15654,7 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class PolicyRule(HikaruBase):
-    r"""
-    PolicyRule holds information that describes a policy rule, but does not contain
-    information about who the rule applies to or which namespace the rule applies to.
-
-    Full name: v1beta1.PolicyRule
-
-    Attributes:
-    verbs: Verbs is a list of Verbs that apply to ALL the ResourceKinds and
-        AttributeRestrictions contained in this rule. VerbAll represents all kinds.
-    apiGroups: APIGroups is the name of the APIGroup that contains the resources. If
-        multiple API groups are specified, any action requested against one of the
-        enumerated resources in any API group will be allowed.
-    nonResourceURLs: NonResourceURLs is a set of partial urls that a user should have
-        access to. *s are allowed, but only as the full, final step in the path Since
-        non-resource URLs are not namespaced, this field is only applicable for
-        ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API
-        resources (such as "pods" or "secrets") or non-resource URL paths (such as
-        "/api"), but not both.
-    resourceNames: ResourceNames is an optional white list of names that the rule applies
-        to. An empty set means that everything is allowed.
-    resources: Resources is a list of resources this rule applies to. '*' represents all
-        resources in the specified apiGroups. '*/foo' represents the subresource 'foo' for
-        all resources in the specified apiGroups.
-    """
-
-    verbs: List[str]
-    apiGroups: Optional[List[str]] = field(default_factory=list)
-    nonResourceURLs: Optional[List[str]] = field(default_factory=list)
-    resourceNames: Optional[List[str]] = field(default_factory=list)
-    resources: Optional[List[str]] = field(default_factory=list)
+        return Response["ClusterRole"](result, codes_returning_objects)
 
 
 @dataclass
@@ -16967,7 +15665,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
     in v1.17 in favor of rbac.authorization.k8s.io/v1 ClusterRoleBinding, and will no
     longer be served in v1.22.
 
-    Full name: v1beta1.ClusterRoleBinding
+    Full name: ClusterRoleBinding
 
     Attributes:
     roleRef: RoleRef can only reference a ClusterRole in the global namespace. If the
@@ -16989,7 +15687,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
     apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "ClusterRoleBinding"
     metadata: Optional["ObjectMeta"] = None
-    subjects: Optional[List["Subject"]] = field(default_factory=list)
+    subjects: Optional[List["Subject_"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -17009,7 +15707,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         delete collection of ClusterRoleBinding
 
@@ -17100,7 +15798,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17134,7 +15832,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
     def createClusterRoleBinding(
         self,
@@ -17142,7 +15840,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         create a ClusterRoleBinding
 
@@ -17162,7 +15860,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17192,7 +15890,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
     def create(
         self,
@@ -17245,7 +15943,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         delete a ClusterRoleBinding
 
@@ -17281,7 +15979,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17308,7 +16006,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -17392,7 +16090,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         read the specified ClusterRoleBinding
 
@@ -17406,7 +16104,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17428,7 +16126,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
     def read(
         self,
@@ -17485,7 +16183,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         partially update the specified ClusterRoleBinding
 
@@ -17512,7 +16210,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17542,7 +16240,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
     def update(
         self,
@@ -17623,7 +16321,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBinding"]:
         r"""
         replace the specified ClusterRoleBinding
 
@@ -17644,7 +16342,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17674,53 +16372,7 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class RoleRef(HikaruBase):
-    r"""
-    RoleRef contains information that points to the role being used
-
-    Full name: v1beta1.RoleRef
-
-    Attributes:
-    apiGroup: APIGroup is the group for the resource being referenced
-    kind: Kind is the type of resource being referenced
-    name: Name is the name of resource being referenced
-    """
-
-    apiGroup: str
-    kind: str
-    name: str
-
-
-@dataclass
-class Subject(HikaruBase):
-    r"""
-    Subject contains a reference to the object or user identities a role binding applies
-    to. This can either hold a direct API object reference, or a value for non-objects
-    such as user and group names.
-
-    Full name: v1beta1.Subject
-
-    Attributes:
-    kind: Kind of object being referenced. Values defined by this API group are "User",
-        "Group", and "ServiceAccount". If the Authorizer does not recognized the kind
-        value, the Authorizer should report an error.
-    name: Name of the object being referenced.
-    apiGroup: APIGroup holds the API group of the referenced subject. Defaults to "" for
-        ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io" for User and
-        Group subjects.
-    namespace: Namespace of the referenced object. If the object kind is non-namespace,
-        such as "User" or "Group", and this value is not empty the Authorizer should
-        report an error.
-    """
-
-    kind: str
-    name: str
-    apiGroup: Optional[str] = None
-    namespace: Optional[str] = None
+        return Response["ClusterRoleBinding"](result, codes_returning_objects)
 
 
 @dataclass
@@ -17730,7 +16382,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
     favor of rbac.authorization.k8s.io/v1 ClusterRoleBindingList, and will no longer be
     served in v1.22.
 
-    Full name: v1beta1.ClusterRoleBindingList
+    Full name: ClusterRoleBindingList
 
     Attributes:
     items: Items is a list of ClusterRoleBindings
@@ -17767,7 +16419,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleBindingList"]:
         r"""
         list or watch objects of kind ClusterRoleBinding
 
@@ -17847,7 +16499,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -17877,7 +16529,7 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleBindingList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -17893,7 +16545,7 @@ class ClusterRoleList(HikaruDocumentBase):
     ClusterRoleList is a collection of ClusterRoles. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 ClusterRoles, and will no longer be served in v1.22.
 
-    Full name: v1beta1.ClusterRoleList
+    Full name: ClusterRoleList
 
     Attributes:
     items: Items is a list of ClusterRoles
@@ -17930,7 +16582,7 @@ class ClusterRoleList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ClusterRoleList"]:
         r"""
         list or watch objects of kind ClusterRole
 
@@ -18010,7 +16662,7 @@ class ClusterRoleList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18040,7 +16692,7 @@ class ClusterRoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ClusterRoleList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -18051,13 +16703,47 @@ class ClusterRoleList(HikaruDocumentBase):
 
 
 @dataclass
+class PolicyRule(HikaruBase):
+    r"""
+    PolicyRule holds information that describes a policy rule, but does not contain
+    information about who the rule applies to or which namespace the rule applies to.
+
+    Full name: PolicyRule
+
+    Attributes:
+    verbs: Verbs is a list of Verbs that apply to ALL the ResourceKinds and
+        AttributeRestrictions contained in this rule. VerbAll represents all kinds.
+    apiGroups: APIGroups is the name of the APIGroup that contains the resources. If
+        multiple API groups are specified, any action requested against one of the
+        enumerated resources in any API group will be allowed.
+    nonResourceURLs: NonResourceURLs is a set of partial urls that a user should have
+        access to. *s are allowed, but only as the full, final step in the path Since
+        non-resource URLs are not namespaced, this field is only applicable for
+        ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API
+        resources (such as "pods" or "secrets") or non-resource URL paths (such as
+        "/api"), but not both.
+    resourceNames: ResourceNames is an optional white list of names that the rule applies
+        to. An empty set means that everything is allowed.
+    resources: Resources is a list of resources this rule applies to. '*' represents all
+        resources in the specified apiGroups. '*/foo' represents the subresource 'foo' for
+        all resources in the specified apiGroups.
+    """
+
+    verbs: List[str]
+    apiGroups: Optional[List[str]] = field(default_factory=list)
+    nonResourceURLs: Optional[List[str]] = field(default_factory=list)
+    resourceNames: Optional[List[str]] = field(default_factory=list)
+    resources: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
 class Role(HikaruDocumentBase):
     r"""
     Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit
     by a RoleBinding. Deprecated in v1.17 in favor of rbac.authorization.k8s.io/v1 Role,
     and will no longer be served in v1.22.
 
-    Full name: v1beta1.Role
+    Full name: Role
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -18097,7 +16783,7 @@ class Role(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         delete collection of Role
 
@@ -18189,7 +16875,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18222,7 +16908,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
     def createNamespacedRole(
         self,
@@ -18231,7 +16917,7 @@ class Role(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         create a Role
 
@@ -18252,7 +16938,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18283,7 +16969,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
     def create(
         self,
@@ -18354,7 +17040,7 @@ class Role(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         delete a Role
 
@@ -18391,7 +17077,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18419,7 +17105,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -18520,7 +17206,7 @@ class Role(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         read the specified Role
 
@@ -18535,7 +17221,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18558,7 +17244,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
     def read(
         self,
@@ -18634,7 +17320,7 @@ class Role(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         partially update the specified Role
 
@@ -18662,7 +17348,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18693,7 +17379,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
     def update(
         self,
@@ -18790,7 +17476,7 @@ class Role(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Role"]:
         r"""
         replace the specified Role
 
@@ -18812,7 +17498,7 @@ class Role(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -18843,7 +17529,7 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Role"](result, codes_returning_objects)
 
 
 @dataclass
@@ -18855,7 +17541,7 @@ class RoleBinding(HikaruDocumentBase):
     given namespace only have effect in that namespace. Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleBinding, and will no longer be served in v1.22.
 
-    Full name: v1beta1.RoleBinding
+    Full name: RoleBinding
 
     Attributes:
     roleRef: RoleRef can reference a Role in the current namespace or a ClusterRole in the
@@ -18878,7 +17564,7 @@ class RoleBinding(HikaruDocumentBase):
     apiVersion: Optional[str] = "rbac.authorization.k8s.io/v1beta1"
     kind: Optional[str] = "RoleBinding"
     metadata: Optional["ObjectMeta"] = None
-    subjects: Optional[List["Subject"]] = field(default_factory=list)
+    subjects: Optional[List["Subject_"]] = field(default_factory=list)
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
@@ -18899,7 +17585,7 @@ class RoleBinding(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         delete collection of RoleBinding
 
@@ -18991,7 +17677,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19026,7 +17712,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
     def createNamespacedRoleBinding(
         self,
@@ -19035,7 +17721,7 @@ class RoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         create a RoleBinding
 
@@ -19056,7 +17742,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19087,7 +17773,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
     def create(
         self,
@@ -19158,7 +17844,7 @@ class RoleBinding(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         delete a RoleBinding
 
@@ -19195,7 +17881,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19223,7 +17909,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -19324,7 +18010,7 @@ class RoleBinding(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         read the specified RoleBinding
 
@@ -19339,7 +18025,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19362,7 +18048,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
     def read(
         self,
@@ -19438,7 +18124,7 @@ class RoleBinding(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         partially update the specified RoleBinding
 
@@ -19466,7 +18152,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19497,7 +18183,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
     def update(
         self,
@@ -19594,7 +18280,7 @@ class RoleBinding(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBinding"]:
         r"""
         replace the specified RoleBinding
 
@@ -19616,7 +18302,7 @@ class RoleBinding(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19647,7 +18333,7 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBinding"](result, codes_returning_objects)
 
 
 @dataclass
@@ -19656,7 +18342,7 @@ class RoleBindingList(HikaruDocumentBase):
     RoleBindingList is a collection of RoleBindings Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleBindingList, and will no longer be served in v1.22.
 
-    Full name: v1beta1.RoleBindingList
+    Full name: RoleBindingList
 
     Attributes:
     items: Items is a list of RoleBindings
@@ -19694,7 +18380,7 @@ class RoleBindingList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBindingList"]:
         r"""
         list or watch objects of kind RoleBinding
 
@@ -19775,7 +18461,7 @@ class RoleBindingList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19806,7 +18492,7 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBindingList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -19829,7 +18515,7 @@ class RoleBindingList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleBindingList"]:
         r"""
         list or watch objects of kind RoleBinding
 
@@ -19909,7 +18595,7 @@ class RoleBindingList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -19941,7 +18627,7 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleBindingList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -19957,7 +18643,7 @@ class RoleList(HikaruDocumentBase):
     RoleList is a collection of Roles Deprecated in v1.17 in favor of
     rbac.authorization.k8s.io/v1 RoleList, and will no longer be served in v1.22.
 
-    Full name: v1beta1.RoleList
+    Full name: RoleList
 
     Attributes:
     items: Items is a list of Roles
@@ -19995,7 +18681,7 @@ class RoleList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleList"]:
         r"""
         list or watch objects of kind Role
 
@@ -20076,7 +18762,7 @@ class RoleList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20107,7 +18793,7 @@ class RoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -20130,7 +18816,7 @@ class RoleList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RoleList"]:
         r"""
         list or watch objects of kind Role
 
@@ -20210,7 +18896,7 @@ class RoleList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20240,7 +18926,7 @@ class RoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RoleList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -20251,13 +18937,59 @@ class RoleList(HikaruDocumentBase):
 
 
 @dataclass
+class RoleRef(HikaruBase):
+    r"""
+    RoleRef contains information that points to the role being used
+
+    Full name: RoleRef
+
+    Attributes:
+    apiGroup: APIGroup is the group for the resource being referenced
+    kind: Kind is the type of resource being referenced
+    name: Name is the name of resource being referenced
+    """
+
+    apiGroup: str
+    kind: str
+    name: str
+
+
+@dataclass
+class Subject(HikaruBase):
+    r"""
+    Subject contains a reference to the object or user identities a role binding applies
+    to. This can either hold a direct API object reference, or a value for non-objects
+    such as user and group names.
+
+    Full name: Subject
+
+    Attributes:
+    kind: Kind of object being referenced. Values defined by this API group are "User",
+        "Group", and "ServiceAccount". If the Authorizer does not recognized the kind
+        value, the Authorizer should report an error.
+    name: Name of the object being referenced.
+    apiGroup: APIGroup holds the API group of the referenced subject. Defaults to "" for
+        ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io" for User and
+        Group subjects.
+    namespace: Namespace of the referenced object. If the object kind is non-namespace,
+        such as "User" or "Group", and this value is not empty the Authorizer should
+        report an error.
+    """
+
+    kind: str
+    name: str
+    apiGroup: Optional[str] = None
+    namespace: Optional[str] = None
+
+
+@dataclass
 class PriorityClass(HikaruDocumentBase):
     r"""
     DEPRECATED - This group version of PriorityClass is deprecated by
     scheduling.k8s.io/v1/PriorityClass. PriorityClass defines mapping from a priority
     class name to the priority integer value. The value can be any valid integer.
 
-    Full name: v1beta1.PriorityClass
+    Full name: PriorityClass
 
     Attributes:
     value: The value of this priority class. This is the actual priority that pods receive
@@ -20311,7 +19043,7 @@ class PriorityClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         delete collection of PriorityClass
 
@@ -20402,7 +19134,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20434,7 +19166,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
     def createPriorityClass(
         self,
@@ -20442,7 +19174,7 @@ class PriorityClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         create a PriorityClass
 
@@ -20462,7 +19194,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20492,7 +19224,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
     def create(
         self,
@@ -20545,7 +19277,7 @@ class PriorityClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         delete a PriorityClass
 
@@ -20581,7 +19313,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20608,7 +19340,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -20694,7 +19426,7 @@ class PriorityClass(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         read the specified PriorityClass
 
@@ -20713,7 +19445,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20737,7 +19469,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
     def read(
         self,
@@ -20805,7 +19537,7 @@ class PriorityClass(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         partially update the specified PriorityClass
 
@@ -20832,7 +19564,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20862,7 +19594,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
     def update(
         self,
@@ -20943,7 +19675,7 @@ class PriorityClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClass"]:
         r"""
         replace the specified PriorityClass
 
@@ -20964,7 +19696,7 @@ class PriorityClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -20994,7 +19726,7 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClass"](result, codes_returning_objects)
 
 
 @dataclass
@@ -21002,7 +19734,7 @@ class PriorityClassList(HikaruDocumentBase):
     r"""
     PriorityClassList is a collection of priority classes.
 
-    Full name: v1beta1.PriorityClassList
+    Full name: PriorityClassList
 
     Attributes:
     items: items is the list of PriorityClasses
@@ -21040,7 +19772,7 @@ class PriorityClassList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PriorityClassList"]:
         r"""
         list or watch objects of kind PriorityClass
 
@@ -21120,7 +19852,7 @@ class PriorityClassList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21150,7 +19882,7 @@ class PriorityClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PriorityClassList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -21171,7 +19903,7 @@ class CSIDriver(HikaruDocumentBase):
     attach is required. Kubelet uses this object to determine whether pod information
     needs to be passed on mount. CSIDriver objects are non-namespaced.
 
-    Full name: v1beta1.CSIDriver
+    Full name: CSIDriver
 
     Attributes:
     spec: Specification of the CSI Driver.
@@ -21199,13 +19931,154 @@ class CSIDriver(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
+    @staticmethod
+    def deleteCollectionCSIDriver(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["CSIDriver"]:
+        r"""
+        delete collection of CSIDriver
+
+        operationID: deleteCollectionCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers
+
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param body:
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_csi_driver_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "delete_collection_csi_driver_with_http_info "
+                "on StorageV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["CSIDriver"](result, codes_returning_objects)
+
     def createCSIDriver(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSIDriver"]:
         r"""
         create a CSIDriver
 
@@ -21225,7 +20098,7 @@ class CSIDriver(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21255,7 +20128,7 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CSIDriver"](result, codes_returning_objects)
 
     def create(
         self,
@@ -21308,7 +20181,7 @@ class CSIDriver(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSIDriver"]:
         r"""
         delete a CSIDriver
 
@@ -21344,7 +20217,7 @@ class CSIDriver(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21371,7 +20244,7 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CSIDriver"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -21457,7 +20330,7 @@ class CSIDriver(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSIDriver"]:
         r"""
         read the specified CSIDriver
 
@@ -21476,7 +20349,7 @@ class CSIDriver(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21500,7 +20373,7 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CSIDriver"](result, codes_returning_objects)
 
     def read(
         self,
@@ -21560,6 +20433,145 @@ class CSIDriver(HikaruDocumentBase):
             self.merge(res.obj, overwrite=True)
         return self
 
+    def patchCSIDriver(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["CSIDriver"]:
+        r"""
+        partially update the specified CSIDriver
+
+        operationID: patchCSIDriver
+        path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
+
+        :param name: name for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CSIDriver    OK
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_csi_driver_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "patch_csi_driver_with_http_info "
+                "on StorageV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["CSIDriver"](result, codes_returning_objects)
+
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> "CSIDriver":
+        r"""
+            partially update the specified CSIDriver
+
+            operationID: patchCSIDriver
+            path: /apis/storage.k8s.io/v1beta1/csidrivers/{name}
+
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        res = self.patchCSIDriver(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
+        if passed:
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
+
     def replaceCSIDriver(
         self,
         name: str,
@@ -21567,7 +20579,7 @@ class CSIDriver(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSIDriver"]:
         r"""
         replace the specified CSIDriver
 
@@ -21588,7 +20600,7 @@ class CSIDriver(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21618,74 +20630,7 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class CSIDriverSpec(HikaruBase):
-    r"""
-    CSIDriverSpec is the specification of a CSIDriver.
-
-    Full name: v1beta1.CSIDriverSpec
-
-    Attributes:
-    attachRequired: attachRequired indicates this CSI volume driver requires an attach
-        operation (because it implements the CSI ControllerPublishVolume() method), and
-        that the Kubernetes attach detach controller should call the attach volume
-        interface which checks the volumeattachment status and waits until the volume is
-        attached before proceeding to mounting. The CSI external-attacher coordinates with
-        CSI volume driver and updates the volumeattachment status when the attach
-        operation is complete. If the CSIDriverRegistry feature gate is enabled and the
-        value is specified to false, the attach operation will be skipped. Otherwise the
-        attach operation will be called.
-    fsGroupPolicy: Defines if the underlying volume supports changing ownership and
-        permission of the volume before being mounted. Refer to the specific FSGroupPolicy
-        values for additional details. This field is alpha-level, and is only honored by
-        servers that enable the CSIVolumeFSGroupPolicy feature gate.
-    podInfoOnMount: If set to true, podInfoOnMount indicates this CSI volume driver
-        requires additional pod information (like podName, podUID, etc.) during mount
-        operations. If set to false, pod information will not be passed on mount. Default
-        is false. The CSI driver specifies podInfoOnMount as part of driver deployment. If
-        true, Kubelet will pass pod information as VolumeContext in the CSI
-        NodePublishVolume() calls. The CSI driver is responsible for parsing and
-        validating the information passed in as VolumeContext. The following VolumeConext
-        will be passed if podInfoOnMount is set to true. This list might grow, but the
-        prefix will be used. "csi.storage.k8s.io/pod.name": pod.Name
-        "csi.storage.k8s.io/pod.namespace": pod.Namespace "csi.storage.k8s.io/pod.uid":
-        string(pod.UID) "csi.storage.k8s.io/ephemeral": "true" iff the volume is an
-        ephemeral inline volume defined by a CSIVolumeSource, otherwise "false"
-        "csi.storage.k8s.io/ephemeral" is a new feature in Kubernetes 1.16. It is only
-        required for drivers which support both the "Persistent" and "Ephemeral"
-        VolumeLifecycleMode. Other drivers can leave pod info disabled and/or ignore this
-        field. As Kubernetes 1.15 doesn't support this field, drivers can only support one
-        mode when deployed on such a cluster and the deployment determines which mode that
-        is, for example via a command line parameter of the driver.
-    storageCapacity: If set to true, storageCapacity indicates that the CSI volume driver
-        wants pod scheduling to consider the storage capacity that the driver deployment
-        will report by creating CSIStorageCapacity objects with capacity information. The
-        check can be enabled immediately when deploying a driver. In that case,
-        provisioning new volumes with late binding will pause until the driver deployment
-        has published some suitable CSIStorageCapacity object. Alternatively, the driver
-        can be deployed with the field unset or false and it can be flipped later when
-        storage capacity information has been published. This is an alpha field and only
-        available when the CSIStorageCapacity feature is enabled. The default is false.
-    volumeLifecycleModes: VolumeLifecycleModes defines what kind of volumes this CSI
-        volume driver supports. The default if the list is empty is "Persistent", which is
-        the usage defined by the CSI specification and implemented in Kubernetes via the
-        usual PV/PVC mechanism. The other mode is "Ephemeral". In this mode, volumes are
-        defined inline inside the pod spec with CSIVolumeSource and their lifecycle is
-        tied to the lifecycle of that pod. A driver has to be aware of this because it is
-        only going to get a NodePublishVolume call for such a volume. For more information
-        about implementing this mode, see
-        https://kubernetes-csi.github.io/docs/ephemeral-local-volumes.html A driver can
-        support one or more of these modes and more modes may be added in the future.
-    """
-
-    attachRequired: Optional[bool] = None
-    fsGroupPolicy: Optional[str] = None
-    podInfoOnMount: Optional[bool] = None
-    storageCapacity: Optional[bool] = None
-    volumeLifecycleModes: Optional[List[str]] = field(default_factory=list)
+        return Response["CSIDriver"](result, codes_returning_objects)
 
 
 @dataclass
@@ -21693,7 +20638,7 @@ class CSIDriverList(HikaruDocumentBase):
     r"""
     CSIDriverList is a collection of CSIDriver objects.
 
-    Full name: v1beta1.CSIDriverList
+    Full name: CSIDriverList
 
     Attributes:
     items: items is the list of CSIDriver
@@ -21731,7 +20676,7 @@ class CSIDriverList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSIDriverList"]:
         r"""
         list or watch objects of kind CSIDriver
 
@@ -21811,7 +20756,7 @@ class CSIDriverList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21841,7 +20786,7 @@ class CSIDriverList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CSIDriverList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -21849,6 +20794,73 @@ class CSIDriverList(HikaruDocumentBase):
         "StorageV1beta1Api",
         "list_csi_driver",
     )
+
+
+@dataclass
+class CSIDriverSpec(HikaruBase):
+    r"""
+    CSIDriverSpec is the specification of a CSIDriver.
+
+    Full name: CSIDriverSpec
+
+    Attributes:
+    attachRequired: attachRequired indicates this CSI volume driver requires an attach
+        operation (because it implements the CSI ControllerPublishVolume() method), and
+        that the Kubernetes attach detach controller should call the attach volume
+        interface which checks the volumeattachment status and waits until the volume is
+        attached before proceeding to mounting. The CSI external-attacher coordinates with
+        CSI volume driver and updates the volumeattachment status when the attach
+        operation is complete. If the CSIDriverRegistry feature gate is enabled and the
+        value is specified to false, the attach operation will be skipped. Otherwise the
+        attach operation will be called.
+    fsGroupPolicy: Defines if the underlying volume supports changing ownership and
+        permission of the volume before being mounted. Refer to the specific FSGroupPolicy
+        values for additional details. This field is alpha-level, and is only honored by
+        servers that enable the CSIVolumeFSGroupPolicy feature gate.
+    podInfoOnMount: If set to true, podInfoOnMount indicates this CSI volume driver
+        requires additional pod information (like podName, podUID, etc.) during mount
+        operations. If set to false, pod information will not be passed on mount. Default
+        is false. The CSI driver specifies podInfoOnMount as part of driver deployment. If
+        true, Kubelet will pass pod information as VolumeContext in the CSI
+        NodePublishVolume() calls. The CSI driver is responsible for parsing and
+        validating the information passed in as VolumeContext. The following VolumeConext
+        will be passed if podInfoOnMount is set to true. This list might grow, but the
+        prefix will be used. "csi.storage.k8s.io/pod.name": pod.Name
+        "csi.storage.k8s.io/pod.namespace": pod.Namespace "csi.storage.k8s.io/pod.uid":
+        string(pod.UID) "csi.storage.k8s.io/ephemeral": "true" iff the volume is an
+        ephemeral inline volume defined by a CSIVolumeSource, otherwise "false"
+        "csi.storage.k8s.io/ephemeral" is a new feature in Kubernetes 1.16. It is only
+        required for drivers which support both the "Persistent" and "Ephemeral"
+        VolumeLifecycleMode. Other drivers can leave pod info disabled and/or ignore this
+        field. As Kubernetes 1.15 doesn't support this field, drivers can only support one
+        mode when deployed on such a cluster and the deployment determines which mode that
+        is, for example via a command line parameter of the driver.
+    storageCapacity: If set to true, storageCapacity indicates that the CSI volume driver
+        wants pod scheduling to consider the storage capacity that the driver deployment
+        will report by creating CSIStorageCapacity objects with capacity information. The
+        check can be enabled immediately when deploying a driver. In that case,
+        provisioning new volumes with late binding will pause until the driver deployment
+        has published some suitable CSIStorageCapacity object. Alternatively, the driver
+        can be deployed with the field unset or false and it can be flipped later when
+        storage capacity information has been published. This is an alpha field and only
+        available when the CSIStorageCapacity feature is enabled. The default is false.
+    volumeLifecycleModes: VolumeLifecycleModes defines what kind of volumes this CSI
+        volume driver supports. The default if the list is empty is "Persistent", which is
+        the usage defined by the CSI specification and implemented in Kubernetes via the
+        usual PV/PVC mechanism. The other mode is "Ephemeral". In this mode, volumes are
+        defined inline inside the pod spec with CSIVolumeSource and their lifecycle is
+        tied to the lifecycle of that pod. A driver has to be aware of this because it is
+        only going to get a NodePublishVolume call for such a volume. For more information
+        about implementing this mode, see
+        https://kubernetes-csi.github.io/docs/ephemeral-local-volumes.html A driver can
+        support one or more of these modes and more modes may be added in the future.
+    """
+
+    attachRequired: Optional[bool] = None
+    fsGroupPolicy: Optional[str] = None
+    podInfoOnMount: Optional[bool] = None
+    storageCapacity: Optional[bool] = None
+    volumeLifecycleModes: Optional[List[str]] = field(default_factory=list)
 
 
 @dataclass
@@ -21864,7 +20876,7 @@ class CSINode(HikaruDocumentBase):
     low enough that it doesn't create this object. CSINode has an OwnerReference that
     points to the corresponding node object.
 
-    Full name: v1beta1.CSINode
+    Full name: CSINode
 
     Attributes:
     spec: spec is the specification of CSINode
@@ -21887,13 +20899,154 @@ class CSINode(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
+    @staticmethod
+    def deleteCollectionCSINode(
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["CSINode"]:
+        r"""
+        delete collection of CSINode
+
+        operationID: deleteCollectionCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes
+
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param body:
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_csi_node_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "delete_collection_csi_node_with_http_info "
+                "on StorageV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["CSINode"](result, codes_returning_objects)
+
     def createCSINode(
         self,
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSINode"]:
         r"""
         create a CSINode
 
@@ -21913,7 +21066,7 @@ class CSINode(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -21943,7 +21096,7 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CSINode"](result, codes_returning_objects)
 
     def create(
         self,
@@ -21996,7 +21149,7 @@ class CSINode(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSINode"]:
         r"""
         delete a CSINode
 
@@ -22032,7 +21185,7 @@ class CSINode(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22059,7 +21212,7 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CSINode"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -22145,7 +21298,7 @@ class CSINode(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSINode"]:
         r"""
         read the specified CSINode
 
@@ -22164,7 +21317,7 @@ class CSINode(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22188,7 +21341,7 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CSINode"](result, codes_returning_objects)
 
     def read(
         self,
@@ -22248,6 +21401,145 @@ class CSINode(HikaruDocumentBase):
             self.merge(res.obj, overwrite=True)
         return self
 
+    def patchCSINode(
+        self,
+        name: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["CSINode"]:
+        r"""
+        partially update the specified CSINode
+
+        operationID: patchCSINode
+        path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
+
+        :param name: name for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   CSINode    OK
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = StorageV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_csi_node_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "patch_csi_node_with_http_info "
+                "on StorageV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["CSINode"](result, codes_returning_objects)
+
+    def update(
+        self,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> "CSINode":
+        r"""
+            partially update the specified CSINode
+
+            operationID: patchCSINode
+            path: /apis/storage.k8s.io/v1beta1/csinodes/{name}
+
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        res = self.patchCSINode(
+            name=self.metadata.name,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
+        if passed:
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
+
     def replaceCSINode(
         self,
         name: str,
@@ -22255,7 +21547,7 @@ class CSINode(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSINode"]:
         r"""
         replace the specified CSINode
 
@@ -22276,7 +21568,7 @@ class CSINode(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22306,23 +21598,7 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class CSINodeSpec(HikaruBase):
-    r"""
-    CSINodeSpec holds information about the specification of all CSI drivers installed on
-    a node
-
-    Full name: v1beta1.CSINodeSpec
-
-    Attributes:
-    drivers: drivers is a list of information of all CSI Drivers existing on a node. If
-        all drivers in the list are uninstalled, this can become empty.
-    """
-
-    drivers: List["CSINodeDriver"]
+        return Response["CSINode"](result, codes_returning_objects)
 
 
 @dataclass
@@ -22331,7 +21607,7 @@ class CSINodeDriver(HikaruBase):
     CSINodeDriver holds information about the specification of one CSI driver installed on
     a node
 
-    Full name: v1beta1.CSINodeDriver
+    Full name: CSINodeDriver
 
     Attributes:
     name: This is the name of the CSI driver that this object refers to. This MUST be the
@@ -22364,29 +21640,11 @@ class CSINodeDriver(HikaruBase):
 
 
 @dataclass
-class VolumeNodeResources(HikaruBase):
-    r"""
-    VolumeNodeResources is a set of resource limits for scheduling of volumes.
-
-    Full name: v1beta1.VolumeNodeResources
-
-    Attributes:
-    count: Maximum number of unique volumes managed by the CSI driver that can be used on
-        a node. A volume that is both attached and mounted on a node is considered to be
-        used once, not twice. The same rule applies for a unique volume that is shared
-        among multiple pods on the same node. If this field is nil, then the supported
-        number of volumes on this node is unbounded.
-    """
-
-    count: Optional[int] = None
-
-
-@dataclass
 class CSINodeList(HikaruDocumentBase):
     r"""
     CSINodeList is a collection of CSINode objects.
 
-    Full name: v1beta1.CSINodeList
+    Full name: CSINodeList
 
     Attributes:
     items: items is the list of CSINode
@@ -22424,7 +21682,7 @@ class CSINodeList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CSINodeList"]:
         r"""
         list or watch objects of kind CSINode
 
@@ -22504,7 +21762,7 @@ class CSINodeList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22534,7 +21792,7 @@ class CSINodeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CSINodeList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -22545,13 +21803,29 @@ class CSINodeList(HikaruDocumentBase):
 
 
 @dataclass
+class CSINodeSpec(HikaruBase):
+    r"""
+    CSINodeSpec holds information about the specification of all CSI drivers installed on
+    a node
+
+    Full name: CSINodeSpec
+
+    Attributes:
+    drivers: drivers is a list of information of all CSI Drivers existing on a node. If
+        all drivers in the list are uninstalled, this can become empty.
+    """
+
+    drivers: List["CSINodeDriver"]
+
+
+@dataclass
 class StorageClass(HikaruDocumentBase):
     r"""
     StorageClass describes the parameters for a class of storage for which
     PersistentVolumes can be dynamically provisioned. StorageClasses are non-namespaced;
     the name of the storage class according to etcd is in ObjectMeta.Name.
 
-    Full name: v1beta1.StorageClass
+    Full name: StorageClass
 
     Attributes:
     provisioner: Provisioner indicates the type of the provisioner.
@@ -22615,7 +21889,7 @@ class StorageClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         delete collection of StorageClass
 
@@ -22706,7 +21980,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22738,7 +22012,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
     def createStorageClass(
         self,
@@ -22746,7 +22020,7 @@ class StorageClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         create a StorageClass
 
@@ -22766,7 +22040,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22796,7 +22070,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
     def create(
         self,
@@ -22849,7 +22123,7 @@ class StorageClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         delete a StorageClass
 
@@ -22885,7 +22159,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -22912,7 +22186,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -22998,7 +22272,7 @@ class StorageClass(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         read the specified StorageClass
 
@@ -23017,7 +22291,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23041,7 +22315,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
     def read(
         self,
@@ -23109,7 +22383,7 @@ class StorageClass(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         partially update the specified StorageClass
 
@@ -23136,7 +22410,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23166,7 +22440,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
     def update(
         self,
@@ -23247,7 +22521,7 @@ class StorageClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClass"]:
         r"""
         replace the specified StorageClass
 
@@ -23268,7 +22542,7 @@ class StorageClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23298,7 +22572,7 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClass"](result, codes_returning_objects)
 
 
 @dataclass
@@ -23306,7 +22580,7 @@ class StorageClassList(HikaruDocumentBase):
     r"""
     StorageClassList is a collection of storage classes.
 
-    Full name: v1beta1.StorageClassList
+    Full name: StorageClassList
 
     Attributes:
     items: Items is the list of StorageClasses
@@ -23344,7 +22618,7 @@ class StorageClassList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StorageClassList"]:
         r"""
         list or watch objects of kind StorageClass
 
@@ -23424,7 +22698,7 @@ class StorageClassList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23454,7 +22728,7 @@ class StorageClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StorageClassList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -23470,7 +22744,7 @@ class VolumeAttachment(HikaruDocumentBase):
     VolumeAttachment captures the intent to attach or detach the specified volume to/from
     the specified node. VolumeAttachment objects are non-namespaced.
 
-    Full name: v1beta1.VolumeAttachment
+    Full name: VolumeAttachment
 
     Attributes:
     spec: Specification of the desired attach/detach volume behavior. Populated by the
@@ -23514,7 +22788,7 @@ class VolumeAttachment(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         delete collection of VolumeAttachment
 
@@ -23605,7 +22879,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23637,7 +22911,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
     def createVolumeAttachment(
         self,
@@ -23645,7 +22919,7 @@ class VolumeAttachment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         create a VolumeAttachment
 
@@ -23665,7 +22939,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23695,7 +22969,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
     def create(
         self,
@@ -23748,7 +23022,7 @@ class VolumeAttachment(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         delete a VolumeAttachment
 
@@ -23784,7 +23058,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23811,7 +23085,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -23897,7 +23171,7 @@ class VolumeAttachment(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         read the specified VolumeAttachment
 
@@ -23916,7 +23190,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -23940,7 +23214,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
     def read(
         self,
@@ -24008,7 +23282,7 @@ class VolumeAttachment(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         partially update the specified VolumeAttachment
 
@@ -24035,7 +23309,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24065,7 +23339,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
     def update(
         self,
@@ -24146,7 +23420,7 @@ class VolumeAttachment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachment"]:
         r"""
         replace the specified VolumeAttachment
 
@@ -24167,7 +23441,7 @@ class VolumeAttachment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24197,54 +23471,7 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class VolumeAttachmentSpec(HikaruBase):
-    r"""
-    VolumeAttachmentSpec is the specification of a VolumeAttachment request.
-
-    Full name: v1beta1.VolumeAttachmentSpec
-
-    Attributes:
-    attacher: Attacher indicates the name of the volume driver that MUST handle this
-        request. This is the name returned by GetPluginName().
-    nodeName: The node that the volume should be attached to.
-    source: Source represents the volume that should be attached.
-    """
-
-    attacher: str
-    nodeName: str
-    source: "VolumeAttachmentSource"
-
-
-@dataclass
-class VolumeAttachmentStatus(HikaruBase):
-    r"""
-    VolumeAttachmentStatus is the status of a VolumeAttachment request.
-
-    Full name: v1beta1.VolumeAttachmentStatus
-
-    Attributes:
-    attached: Indicates the volume is successfully attached. This field must only be set
-        by the entity completing the attach operation, i.e. the external-attacher.
-    attachError: The last error encountered during attach operation, if any. This field
-        must only be set by the entity completing the attach operation, i.e. the
-        external-attacher.
-    detachError: The last error encountered during detach operation, if any. This field
-        must only be set by the entity completing the detach operation, i.e. the
-        external-attacher.
-    attachmentMetadata: Upon successful attach, this field is populated with any
-        information returned by the attach operation that must be passed into subsequent
-        WaitForAttach or Mount calls. This field must only be set by the entity completing
-        the attach operation, i.e. the external-attacher.
-    """
-
-    attached: bool
-    attachError: Optional["VolumeError"] = None
-    detachError: Optional["VolumeError"] = None
-    attachmentMetadata: Optional[Dict[str, str]] = field(default_factory=dict)
+        return Response["VolumeAttachment"](result, codes_returning_objects)
 
 
 @dataclass
@@ -24252,7 +23479,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
     r"""
     VolumeAttachmentList is a collection of VolumeAttachment objects.
 
-    Full name: v1beta1.VolumeAttachmentList
+    Full name: VolumeAttachmentList
 
     Attributes:
     items: Items is the list of VolumeAttachments
@@ -24290,7 +23517,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["VolumeAttachmentList"]:
         r"""
         list or watch objects of kind VolumeAttachment
 
@@ -24370,7 +23597,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24400,7 +23627,7 @@ class VolumeAttachmentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["VolumeAttachmentList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -24417,7 +23644,7 @@ class VolumeAttachmentSource(HikaruBase):
     PersistenVolumes can be attached via external attacher, in future we may allow also
     inline volumes in pods. Exactly one member can be set.
 
-    Full name: v1beta1.VolumeAttachmentSource
+    Full name: VolumeAttachmentSource
 
     Attributes:
     inlineVolumeSpec: inlineVolumeSpec contains all the information necessary to attach a
@@ -24433,11 +23660,58 @@ class VolumeAttachmentSource(HikaruBase):
 
 
 @dataclass
+class VolumeAttachmentSpec(HikaruBase):
+    r"""
+    VolumeAttachmentSpec is the specification of a VolumeAttachment request.
+
+    Full name: VolumeAttachmentSpec
+
+    Attributes:
+    attacher: Attacher indicates the name of the volume driver that MUST handle this
+        request. This is the name returned by GetPluginName().
+    nodeName: The node that the volume should be attached to.
+    source: Source represents the volume that should be attached.
+    """
+
+    attacher: str
+    nodeName: str
+    source: "VolumeAttachmentSource"
+
+
+@dataclass
+class VolumeAttachmentStatus(HikaruBase):
+    r"""
+    VolumeAttachmentStatus is the status of a VolumeAttachment request.
+
+    Full name: VolumeAttachmentStatus
+
+    Attributes:
+    attached: Indicates the volume is successfully attached. This field must only be set
+        by the entity completing the attach operation, i.e. the external-attacher.
+    attachError: The last error encountered during attach operation, if any. This field
+        must only be set by the entity completing the attach operation, i.e. the
+        external-attacher.
+    detachError: The last error encountered during detach operation, if any. This field
+        must only be set by the entity completing the detach operation, i.e. the
+        external-attacher.
+    attachmentMetadata: Upon successful attach, this field is populated with any
+        information returned by the attach operation that must be passed into subsequent
+        WaitForAttach or Mount calls. This field must only be set by the entity completing
+        the attach operation, i.e. the external-attacher.
+    """
+
+    attached: bool
+    attachError: Optional["VolumeError"] = None
+    detachError: Optional["VolumeError"] = None
+    attachmentMetadata: Optional[Dict[str, str]] = field(default_factory=dict)
+
+
+@dataclass
 class VolumeError(HikaruBase):
     r"""
     VolumeError captures an error encountered during a volume operation.
 
-    Full name: v1beta1.VolumeError
+    Full name: VolumeError
 
     Attributes:
     message: String detailing the error encountered during Attach or Detach operation.
@@ -24450,11 +23724,29 @@ class VolumeError(HikaruBase):
 
 
 @dataclass
+class VolumeNodeResources(HikaruBase):
+    r"""
+    VolumeNodeResources is a set of resource limits for scheduling of volumes.
+
+    Full name: VolumeNodeResources
+
+    Attributes:
+    count: Maximum number of unique volumes managed by the CSI driver that can be used on
+        a node. A volume that is both attached and mounted on a node is considered to be
+        used once, not twice. The same rule applies for a unique volume that is shared
+        among multiple pods on the same node. If this field is nil, then the supported
+        number of volumes on this node is unbounded.
+    """
+
+    count: Optional[int] = None
+
+
+@dataclass
 class CustomResourceColumnDefinition(HikaruBase):
     r"""
     CustomResourceColumnDefinition specifies a column for server side printing.
 
-    Full name: v1beta1.CustomResourceColumnDefinition
+    Full name: CustomResourceColumnDefinition
 
     Attributes:
     JSONPath: JSONPath is a simple JSON path (i.e. with array notation) which is evaluated
@@ -24487,7 +23779,7 @@ class CustomResourceConversion(HikaruBase):
     r"""
     CustomResourceConversion describes how to convert different versions of a CR.
 
-    Full name: v1beta1.CustomResourceConversion
+    Full name: CustomResourceConversion
 
     Attributes:
     strategy: strategy specifies how custom resources are converted between versions.
@@ -24513,28 +23805,6 @@ class CustomResourceConversion(HikaruBase):
 
 
 @dataclass
-class WebhookConversion(HikaruBase):
-    r"""
-    WebhookConversion describes how to call a conversion webhook
-
-    Full name: v1.WebhookConversion
-
-    Attributes:
-    conversionReviewVersions: conversionReviewVersions is an ordered list of preferred
-        `ConversionReview` versions the Webhook expects. The API server will use the first
-        version in the list which it supports. If none of the versions specified in this
-        list are supported by API server, conversion will fail for the custom resource. If
-        a persisted Webhook configuration specifies allowed versions and does not include
-        any versions known to the API Server, calls to the webhook will fail.
-    clientConfig: clientConfig is the instructions for how to call the webhook if strategy
-        is `Webhook`.
-    """
-
-    conversionReviewVersions: List[str]
-    clientConfig: Optional["WebhookClientConfig"] = None
-
-
-@dataclass
 class CustomResourceDefinition(HikaruDocumentBase):
     r"""
     CustomResourceDefinition represents a resource that should be exposed on the API
@@ -24542,7 +23812,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
     v1.16, planned for removal in v1.22. Use apiextensions.k8s.io/v1
     CustomResourceDefinition instead.
 
-    Full name: v1beta1.CustomResourceDefinition
+    Full name: CustomResourceDefinition
 
     Attributes:
     spec: spec describes how the user wants the resources to appear
@@ -24583,7 +23853,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         delete collection of CustomResourceDefinition
 
@@ -24674,7 +23944,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24708,7 +23978,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def createCustomResourceDefinition(
         self,
@@ -24716,7 +23986,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         create a CustomResourceDefinition
 
@@ -24736,7 +24006,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24766,7 +24036,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def create(
         self,
@@ -24819,7 +24089,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         delete a CustomResourceDefinition
 
@@ -24855,7 +24125,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -24882,7 +24152,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -24968,7 +24238,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         read the specified CustomResourceDefinition
 
@@ -24987,7 +24257,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -25011,7 +24281,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def read(
         self,
@@ -25079,7 +24349,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         partially update the specified CustomResourceDefinition
 
@@ -25106,7 +24376,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -25136,7 +24406,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def update(
         self,
@@ -25217,7 +24487,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         replace the specified CustomResourceDefinition
 
@@ -25238,7 +24508,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -25268,7 +24538,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
     def replaceCustomResourceDefinitionStatus(
         self,
@@ -25277,7 +24547,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinition"]:
         r"""
         replace status of the specified CustomResourceDefinition
 
@@ -25298,7 +24568,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -25330,107 +24600,7 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class CustomResourceDefinitionSpec(HikaruBase):
-    r"""
-    CustomResourceDefinitionSpec describes how a user wants their resource to appear
-
-    Full name: v1beta1.CustomResourceDefinitionSpec
-
-    Attributes:
-    group: group is the API group of the defined custom resource. The custom resources are
-        served under `/apis/<group>/...`. Must match the name of the
-        CustomResourceDefinition (in the form `<names.plural>.<group>`).
-    names: names specify the resource and kind names for the custom resource.
-    scope: scope indicates whether the defined custom resource is cluster- or
-        namespace-scoped. Allowed values are `Cluster` and `Namespaced`. Default is
-        `Namespaced`.
-    conversion: conversion defines conversion settings for the CRD.
-    preserveUnknownFields: preserveUnknownFields indicates that object fields which are
-        not specified in the OpenAPI schema should be preserved when persisting to
-        storage. apiVersion, kind, metadata and known fields inside metadata are always
-        preserved. If false, schemas must be defined for all versions. Defaults to true in
-        v1beta for backwards compatibility. Deprecated: will be required to be false in
-        v1. Preservation of unknown fields can be specified in the validation schema using
-        the `x-kubernetes-preserve-unknown-fields: true` extension. See
-        https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#pruning-versus-preserving-unknown-fields
-        for details.
-    subresources: subresources specify what subresources the defined custom resource has.
-        If present, this field configures subresources for all versions. Top-level and
-        per-version subresources are mutually exclusive.
-    validation: validation describes the schema used for validation and pruning of the
-        custom resource. If present, this validation schema is used to validate all
-        versions. Top-level and per-version schemas are mutually exclusive.
-    version: version is the API version of the defined custom resource. The custom
-        resources are served under `/apis/<group>/<version>/...`. Must match the name of
-        the first item in the `versions` list if `version` and `versions` are both
-        specified. Optional if `versions` is specified. Deprecated: use `versions`
-        instead.
-    additionalPrinterColumns: additionalPrinterColumns specifies additional columns
-        returned in Table output. See
-        https://kubernetes.io/docs/reference/using-api/api-concepts/#receiving-resources-as-tables
-        for details. If present, this field configures columns for all versions. Top-level
-        and per-version columns are mutually exclusive. If no top-level or per-version
-        columns are specified, a single column displaying the age of the custom resource
-        is used.
-    versions: versions is the list of all API versions of the defined custom resource.
-        Optional if `version` is specified. The name of the first item in the `versions`
-        list must match the `version` field if `version` and `versions` are both
-        specified. Version names are used to compute the order in which served versions
-        are listed in API discovery. If the version string is "kube-like", it will sort
-        above non "kube-like" version strings, which are ordered lexicographically.
-        "Kube-like" versions start with a "v", then are followed by a number (the major
-        version), then optionally the string "alpha" or "beta" and another number (the
-        minor version). These are sorted first by GA > beta > alpha (where GA is a version
-        with no suffix such as beta or alpha), and then by comparing major version, then
-        minor version. An example sorted list of versions: v10, v2, v1, v11beta2,
-        v10beta3, v3beta1, v12alpha1, v11alpha2, foo1, foo10.
-    """
-
-    group: str
-    names: "CustomResourceDefinitionNames"
-    scope: str
-    conversion: Optional["CustomResourceConversion"] = None
-    preserveUnknownFields: Optional[bool] = None
-    subresources: Optional["CustomResourceSubresources"] = None
-    validation: Optional["CustomResourceValidation"] = None
-    version: Optional[str] = None
-    additionalPrinterColumns: Optional[List["CustomResourceColumnDefinition"]] = field(
-        default_factory=list
-    )
-    versions: Optional[List["CustomResourceDefinitionVersion"]] = field(
-        default_factory=list
-    )
-
-
-@dataclass
-class CustomResourceDefinitionStatus(HikaruBase):
-    r"""
-    CustomResourceDefinitionStatus indicates the state of the CustomResourceDefinition
-
-    Full name: v1beta1.CustomResourceDefinitionStatus
-
-    Attributes:
-    acceptedNames: acceptedNames are the names that are actually being used to serve
-        discovery. They may be different than the names in spec.
-    conditions: conditions indicate state for particular aspects of a
-        CustomResourceDefinition
-    storedVersions: storedVersions lists all versions of CustomResources that were ever
-        persisted. Tracking these versions allows a migration path for stored versions in
-        etcd. The field is mutable so a migration controller can finish a migration to
-        another version (ensuring no old objects are left in storage), and then remove the
-        rest of the versions from this list. Versions may not be removed from
-        `spec.versions` while they exist in this list.
-    """
-
-    acceptedNames: Optional["CustomResourceDefinitionNames"] = None
-    conditions: Optional[List["CustomResourceDefinitionCondition"]] = field(
-        default_factory=list
-    )
-    storedVersions: Optional[List[str]] = field(default_factory=list)
+        return Response["CustomResourceDefinition"](result, codes_returning_objects)
 
 
 @dataclass
@@ -25439,7 +24609,7 @@ class CustomResourceDefinitionCondition(HikaruBase):
     CustomResourceDefinitionCondition contains details for the current condition of this
     pod.
 
-    Full name: v1beta1.CustomResourceDefinitionCondition
+    Full name: CustomResourceDefinitionCondition
 
     Attributes:
     status: status is the status of the condition. Can be True, False, Unknown.
@@ -25464,7 +24634,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
     r"""
     CustomResourceDefinitionList is a list of CustomResourceDefinition objects.
 
-    Full name: v1beta1.CustomResourceDefinitionList
+    Full name: CustomResourceDefinitionList
 
     Attributes:
     items: items list individual CustomResourceDefinition objects
@@ -25501,7 +24671,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CustomResourceDefinitionList"]:
         r"""
         list or watch objects of kind CustomResourceDefinition
 
@@ -25581,7 +24751,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -25611,7 +24781,7 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CustomResourceDefinitionList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -25627,7 +24797,7 @@ class CustomResourceDefinitionNames(HikaruBase):
     CustomResourceDefinitionNames indicates the names to serve this
     CustomResourceDefinition
 
-    Full name: v1beta1.CustomResourceDefinitionNames
+    Full name: CustomResourceDefinitionNames
 
     Attributes:
     kind: kind is the serialized kind of the resource. It is normally CamelCase and
@@ -25658,11 +24828,111 @@ class CustomResourceDefinitionNames(HikaruBase):
 
 
 @dataclass
+class CustomResourceDefinitionSpec(HikaruBase):
+    r"""
+    CustomResourceDefinitionSpec describes how a user wants their resource to appear
+
+    Full name: CustomResourceDefinitionSpec
+
+    Attributes:
+    group: group is the API group of the defined custom resource. The custom resources are
+        served under `/apis/<group>/...`. Must match the name of the
+        CustomResourceDefinition (in the form `<names.plural>.<group>`).
+    names: names specify the resource and kind names for the custom resource.
+    scope: scope indicates whether the defined custom resource is cluster- or
+        namespace-scoped. Allowed values are `Cluster` and `Namespaced`. Default is
+        `Namespaced`.
+    conversion: conversion defines conversion settings for the CRD.
+    preserveUnknownFields: preserveUnknownFields indicates that object fields which are
+        not specified in the OpenAPI schema should be preserved when persisting to
+        storage. apiVersion, kind, metadata and known fields inside metadata are always
+        preserved. If false, schemas must be defined for all versions. Defaults to true in
+        v1beta for backwards compatibility. Deprecated: will be required to be false in
+        v1. Preservation of unknown fields can be specified in the validation schema using
+        the `x-kubernetes-preserve-unknown-fields: true` extension. See
+        https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#pruning-versus-preserving-unknown-fields
+        for details.
+    subresources: subresources specify what subresources the defined custom resource has.
+        If present, this field configures subresources for all versions. Top-level and
+        per-version subresources are mutually exclusive.
+    validation: validation describes the schema used for validation and pruning of the
+        custom resource. If present, this validation schema is used to validate all
+        versions. Top-level and per-version schemas are mutually exclusive.
+    version: version is the API version of the defined custom resource. The custom
+        resources are served under `/apis/<group>/<version>/...`. Must match the name of
+        the first item in the `versions` list if `version` and `versions` are both
+        specified. Optional if `versions` is specified. Deprecated: use `versions`
+        instead.
+    additionalPrinterColumns: additionalPrinterColumns specifies additional columns
+        returned in Table output. See
+        https://kubernetes.io/docs/reference/using-api/api-concepts/#receiving-resources-as-tables
+        for details. If present, this field configures columns for all versions. Top-level
+        and per-version columns are mutually exclusive. If no top-level or per-version
+        columns are specified, a single column displaying the age of the custom resource
+        is used.
+    versions: versions is the list of all API versions of the defined custom resource.
+        Optional if `version` is specified. The name of the first item in the `versions`
+        list must match the `version` field if `version` and `versions` are both
+        specified. Version names are used to compute the order in which served versions
+        are listed in API discovery. If the version string is "kube-like", it will sort
+        above non "kube-like" version strings, which are ordered lexicographically.
+        "Kube-like" versions start with a "v", then are followed by a number (the major
+        version), then optionally the string "alpha" or "beta" and another number (the
+        minor version). These are sorted first by GA > beta > alpha (where GA is a version
+        with no suffix such as beta or alpha), and then by comparing major version, then
+        minor version. An example sorted list of versions: v10, v2, v1, v11beta2,
+        v10beta3, v3beta1, v12alpha1, v11alpha2, foo1, foo10.
+    """
+
+    group: str
+    names: "CustomResourceDefinitionNames"
+    scope: str
+    conversion: Optional["CustomResourceConversion"] = None
+    preserveUnknownFields: Optional[bool] = None
+    subresources: Optional["CustomResourceSubresources"] = None
+    validation: Optional["CustomResourceValidation"] = None
+    version: Optional[str] = None
+    additionalPrinterColumns: Optional[List["CustomResourceColumnDefinition"]] = field(
+        default_factory=list
+    )
+    versions: Optional[List["CustomResourceDefinitionVersion"]] = field(
+        default_factory=list
+    )
+
+
+@dataclass
+class CustomResourceDefinitionStatus(HikaruBase):
+    r"""
+    CustomResourceDefinitionStatus indicates the state of the CustomResourceDefinition
+
+    Full name: CustomResourceDefinitionStatus
+
+    Attributes:
+    acceptedNames: acceptedNames are the names that are actually being used to serve
+        discovery. They may be different than the names in spec.
+    conditions: conditions indicate state for particular aspects of a
+        CustomResourceDefinition
+    storedVersions: storedVersions lists all versions of CustomResources that were ever
+        persisted. Tracking these versions allows a migration path for stored versions in
+        etcd. The field is mutable so a migration controller can finish a migration to
+        another version (ensuring no old objects are left in storage), and then remove the
+        rest of the versions from this list. Versions may not be removed from
+        `spec.versions` while they exist in this list.
+    """
+
+    acceptedNames: Optional["CustomResourceDefinitionNames"] = None
+    conditions: Optional[List["CustomResourceDefinitionCondition"]] = field(
+        default_factory=list
+    )
+    storedVersions: Optional[List[str]] = field(default_factory=list)
+
+
+@dataclass
 class CustomResourceDefinitionVersion(HikaruBase):
     r"""
     CustomResourceDefinitionVersion describes a version for CRD.
 
-    Full name: v1beta1.CustomResourceDefinitionVersion
+    Full name: CustomResourceDefinitionVersion
 
     Attributes:
     name: name is the version name, e.g. “v1”, “v2beta1”, etc. The custom resources are
@@ -25708,49 +24978,12 @@ class CustomResourceDefinitionVersion(HikaruBase):
 
 
 @dataclass
-class CustomResourceValidation(HikaruBase):
-    r"""
-    CustomResourceValidation is a list of validation methods for CustomResources.
-
-    Full name: v1beta1.CustomResourceValidation
-
-    Attributes:
-    openAPIV3Schema: openAPIV3Schema is the OpenAPI v3 schema to use for validation and
-        pruning.
-    """
-
-    openAPIV3Schema: Optional["JSONSchemaProps"] = None
-
-
-@dataclass
-class CustomResourceSubresources(HikaruBase):
-    r"""
-    CustomResourceSubresources defines the status and scale subresources for
-    CustomResources.
-
-    Full name: v1beta1.CustomResourceSubresources
-
-    Attributes:
-    scale: scale indicates the custom resource should serve a `/scale` subresource that
-        returns an `autoscaling/v1` Scale object.
-    status: status indicates the custom resource should serve a `/status` subresource.
-        When enabled: 1. requests to the custom resource primary endpoint ignore changes
-        to the `status` stanza of the object. 2. requests to the custom resource `/status`
-        subresource ignore changes to anything other than the `status` stanza of the
-        object.
-    """
-
-    scale: Optional["CustomResourceSubresourceScale"] = None
-    status: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
 class CustomResourceSubresourceScale(HikaruBase):
     r"""
     CustomResourceSubresourceScale defines how to serve the scale subresource for
     CustomResources.
 
-    Full name: v1beta1.CustomResourceSubresourceScale
+    Full name: CustomResourceSubresourceScale
 
     Attributes:
     specReplicasPath: specReplicasPath defines the JSON path inside of a custom resource
@@ -25781,17 +25014,71 @@ class CustomResourceSubresourceScale(HikaruBase):
 
 
 @dataclass
+class CustomResourceSubresources(HikaruBase):
+    r"""
+    CustomResourceSubresources defines the status and scale subresources for
+    CustomResources.
+
+    Full name: CustomResourceSubresources
+
+    Attributes:
+    scale: scale indicates the custom resource should serve a `/scale` subresource that
+        returns an `autoscaling/v1` Scale object.
+    status: status indicates the custom resource should serve a `/status` subresource.
+        When enabled: 1. requests to the custom resource primary endpoint ignore changes
+        to the `status` stanza of the object. 2. requests to the custom resource `/status`
+        subresource ignore changes to anything other than the `status` stanza of the
+        object.
+    """
+
+    scale: Optional["CustomResourceSubresourceScale"] = None
+    status: Optional[object] = field(default_factory=dict)
+
+
+@dataclass
+class CustomResourceValidation(HikaruBase):
+    r"""
+    CustomResourceValidation is a list of validation methods for CustomResources.
+
+    Full name: CustomResourceValidation
+
+    Attributes:
+    openAPIV3Schema: openAPIV3Schema is the OpenAPI v3 schema to use for validation and
+        pruning.
+    """
+
+    openAPIV3Schema: Optional["JSONSchemaProps"] = None
+
+
+@dataclass
+class ExternalDocumentation(HikaruBase):
+    r"""
+    ExternalDocumentation allows referencing an external resource for extended
+    documentation.
+
+    Full name: ExternalDocumentation
+
+    Attributes:
+    description:
+    url:
+    """
+
+    description: Optional[str] = None
+    url: Optional[str] = None
+
+
+@dataclass
 class JSONSchemaProps(HikaruBase):
     r"""
     JSONSchemaProps is a JSON-Schema following Specification Draft 4
     (http://json-schema.org/).
 
-    Full name: v1beta1.JSONSchemaProps
+    Full name: JSONSchemaProps
 
     Attributes:
-    description:
     dollar_ref:
     dollar_schema:
+    description:
     exclusiveMaximum:
     exclusiveMinimum:
     externalDocs:
@@ -25904,9 +25191,9 @@ class JSONSchemaProps(HikaruBase):
         those properties are present for all list items.
     """
 
-    description: Optional[str] = None
     dollar_ref: Optional[str] = None
     dollar_schema: Optional[str] = None
+    description: Optional[str] = None
     exclusiveMaximum: Optional[bool] = None
     exclusiveMinimum: Optional[bool] = None
     externalDocs: Optional["ExternalDocumentation"] = None
@@ -25950,20 +25237,25 @@ class JSONSchemaProps(HikaruBase):
 
 
 @dataclass
-class ExternalDocumentation(HikaruBase):
+class WebhookConversion(HikaruBase):
     r"""
-    ExternalDocumentation allows referencing an external resource for extended
-    documentation.
+    WebhookConversion describes how to call a conversion webhook
 
-    Full name: v1beta1.ExternalDocumentation
+    Full name: WebhookConversion
 
     Attributes:
-    description:
-    url:
+    conversionReviewVersions: conversionReviewVersions is an ordered list of preferred
+        `ConversionReview` versions the Webhook expects. The API server will use the first
+        version in the list which it supports. If none of the versions specified in this
+        list are supported by API server, conversion will fail for the custom resource. If
+        a persisted Webhook configuration specifies allowed versions and does not include
+        any versions known to the API Server, calls to the webhook will fail.
+    clientConfig: clientConfig is the instructions for how to call the webhook if strategy
+        is `Webhook`.
     """
 
-    description: Optional[str] = None
-    url: Optional[str] = None
+    conversionReviewVersions: List[str]
+    clientConfig: Optional["WebhookClientConfig"] = None
 
 
 @dataclass
@@ -25972,7 +25264,7 @@ class APIGroup(HikaruDocumentBase):
     APIGroup contains the name, the supported versions, and the preferred version of a
     group.
 
-    Full name: v1.APIGroup
+    Full name: APIGroup
 
     Attributes:
     name: name is the name of the group.
@@ -26011,49 +25303,11 @@ class APIGroup(HikaruDocumentBase):
 
 
 @dataclass
-class GroupVersionForDiscovery(HikaruBase):
-    r"""
-    GroupVersion contains the "group/version" and "version" string of a version. It is
-    made a struct to keep extensibility.
-
-    Full name: v1.GroupVersionForDiscovery
-
-    Attributes:
-    groupVersion: groupVersion specifies the API group and version in the form
-        "group/version"
-    version: version specifies the version in the form of "version". This is to save the
-        clients the trouble of splitting the GroupVersion.
-    """
-
-    groupVersion: str
-    version: str
-
-
-@dataclass
-class ServerAddressByClientCIDR(HikaruBase):
-    r"""
-    ServerAddressByClientCIDR helps the client to determine the server address that they
-    should use, depending on the clientCIDR that they match.
-
-    Full name: v1.ServerAddressByClientCIDR
-
-    Attributes:
-    clientCIDR: The CIDR with which clients can match their IP to figure out the server
-        address that they should use.
-    serverAddress: Address of this server, suitable for a client that matches the above
-        CIDR. This can be a hostname, hostname:port, IP or IP:port.
-    """
-
-    clientCIDR: str
-    serverAddress: str
-
-
-@dataclass
 class APIGroupList(HikaruDocumentBase):
     r"""
     APIGroupList is a list of APIGroup, to allow clients to discover the API at /apis.
 
-    Full name: v1.APIGroupList
+    Full name: APIGroupList
 
     Attributes:
     groups: groups is a list of APIGroup.
@@ -26080,7 +25334,7 @@ class APIResource(HikaruBase):
     r"""
     APIResource specifies the name of a resource and whether it is namespaced.
 
-    Full name: v1.APIResource
+    Full name: APIResource
 
     Attributes:
     kind: kind is the kind for the resource (e.g. 'Foo' is the kind for a resource 'foo')
@@ -26128,7 +25382,7 @@ class APIResourceList(HikaruDocumentBase):
     resources supported in a specific group and version, and if the resource is
     namespaced.
 
-    Full name: v1.APIResourceList
+    Full name: APIResourceList
 
     Attributes:
     groupVersion: groupVersion is the group and version this APIResourceList is for.
@@ -26152,7 +25406,9 @@ class APIResourceList(HikaruDocumentBase):
     client: InitVar[Optional[ApiClient]] = None
 
     @staticmethod
-    def getAPIResources(client: ApiClient = None, async_req: bool = False) -> Response:
+    def getAPIResources(
+        client: ApiClient = None, async_req: bool = False
+    ) -> Response["APIResourceList"]:
         r"""
         get available resources
 
@@ -26163,7 +25419,7 @@ class APIResourceList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -26184,7 +25440,7 @@ class APIResourceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["APIResourceList"](result, codes_returning_objects)
 
 
 @dataclass
@@ -26193,7 +25449,7 @@ class APIVersions(HikaruDocumentBase):
     APIVersions lists the versions that are available, to allow clients to discover the
     API at /api, which is the root path of the legacy v1 API.
 
-    Full name: v1.APIVersions
+    Full name: APIVersions
 
     Attributes:
     serverAddressByClientCIDRs: a map of client CIDR to server address that is serving
@@ -26225,20 +25481,97 @@ class APIVersions(HikaruDocumentBase):
 
 
 @dataclass
-class Preconditions(HikaruBase):
+class DeleteOptions(HikaruDocumentBase):
     r"""
-    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
-    out.
+    DeleteOptions may be provided when deleting an API object.
 
-    Full name: v1.Preconditions
+    Full name: DeleteOptions
 
     Attributes:
-    resourceVersion: Specifies the target ResourceVersion
-    uid: Specifies the target UID.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    gracePeriodSeconds: The duration in seconds before the object should be deleted. Value
+        must be non-negative integer. The value zero indicates delete immediately. If this
+        value is nil, the default grace period for the specified type will be used.
+        Defaults to a per object value if not specified. zero means delete immediately.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    orphanDependents: Deprecated: please use the PropagationPolicy, this field will be
+        deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the
+        "orphan" finalizer will be added to/removed from the object's finalizers list.
+        Either this field or PropagationPolicy may be set, but not both.
+    preconditions: Must be fulfilled before a deletion is carried out. If not possible, a
+        409 Conflict status will be returned.
+    propagationPolicy: Whether and how garbage collection will be performed. Either this
+        field or OrphanDependents may be set, but not both. The default policy is decided
+        by the existing finalizer set in the metadata.finalizers and the resource-specific
+        default policy. Acceptable values are: 'Orphan' - orphan the dependents;
+        'Background' - allow the garbage collector to delete the dependents in the
+        background; 'Foreground' - a cascading policy that deletes all dependents in the
+        foreground.
+    dryRun: When present, indicates that modifications should not be persisted. An invalid
+        or unrecognized dryRun directive will result in an error response and no further
+        processing of the request. Valid values are: - All: all dry run stages will be
+        processed
     """
 
-    resourceVersion: Optional[str] = None
-    uid: Optional[str] = None
+    _version = "v1"
+    apiVersion: Optional[str] = "v1"
+    gracePeriodSeconds: Optional[int] = None
+    kind: Optional[str] = "DeleteOptions"
+    orphanDependents: Optional[bool] = None
+    preconditions: Optional["Preconditions"] = None
+    propagationPolicy: Optional[str] = None
+    dryRun: Optional[List[str]] = field(default_factory=list)
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class GroupVersionForDiscovery(HikaruBase):
+    r"""
+    GroupVersion contains the "group/version" and "version" string of a version. It is
+    made a struct to keep extensibility.
+
+    Full name: GroupVersionForDiscovery
+
+    Attributes:
+    groupVersion: groupVersion specifies the API group and version in the form
+        "group/version"
+    version: version specifies the version in the form of "version". This is to save the
+        clients the trouble of splitting the GroupVersion.
+    """
+
+    groupVersion: str
+    version: str
+
+
+@dataclass
+class LabelSelector(HikaruBase):
+    r"""
+    A label selector is a label query over a set of resources. The result of matchLabels
+    and matchExpressions are ANDed. An empty label selector matches all objects. A null
+    label selector matches no objects.
+
+    Full name: LabelSelector
+
+    Attributes:
+    matchExpressions: matchExpressions is a list of label selector requirements. The
+        requirements are ANDed.
+    matchLabels: matchLabels is a map of {key,value} pairs. A single {key,value} in the
+        matchLabels map is equivalent to an element of matchExpressions, whose key field
+        is "key", the operator is "In", and the values array contains only "value". The
+        requirements are ANDed.
+    """
+
+    matchExpressions: Optional[List["LabelSelectorRequirement"]] = field(
+        default_factory=list
+    )
+    matchLabels: Optional[Dict[str, str]] = field(default_factory=dict)
 
 
 @dataclass
@@ -26247,7 +25580,7 @@ class LabelSelectorRequirement(HikaruBase):
     A label selector requirement is a selector that contains values, a key, and an
     operator that relates the key and values.
 
-    Full name: v1.LabelSelectorRequirement
+    Full name: LabelSelectorRequirement
 
     Attributes:
     key: key is the label key that the selector applies to.
@@ -26264,12 +25597,54 @@ class LabelSelectorRequirement(HikaruBase):
 
 
 @dataclass
+class ListMeta(HikaruBase):
+    r"""
+    ListMeta describes metadata that synthetic resources must have, including lists and
+    various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
+
+    Full name: ListMeta
+
+    Attributes:
+    continue_: continue may be set if the user set a limit on the number of items
+        returned, and indicates that the server has more data available. The value is
+        opaque and may be used to issue another request to the endpoint that served this
+        list to retrieve the next set of available objects. Continuing a consistent list
+        may not be possible if the server configuration has changed or more than a few
+        minutes have passed. The resourceVersion field returned when using this continue
+        value will be identical to the value in the first response, unless you have
+        received this token from an error message.
+    remainingItemCount: remainingItemCount is the number of subsequent items in the list
+        which are not included in this list response. If the list request contained label
+        or field selectors, then the number of remaining items is unknown and the field
+        will be left unset and omitted during serialization. If the list is complete
+        (either because it is not chunking or because this is the last chunk), then there
+        are no more remaining items and this field will be left unset and omitted during
+        serialization. Servers older than v1.15 do not set this field. The intended use of
+        the remainingItemCount is *estimating* the size of a collection. Clients should
+        not rely on the remainingItemCount to be set or to be exact.
+    resourceVersion: String that identifies the server's internal version of this object
+        that can be used by clients to determine when objects have changed. Value must be
+        treated as opaque by clients and passed unmodified back to the server. Populated
+        by the system. Read-only. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+    selfLink: selfLink is a URL representing this object. Populated by the system.
+        Read-only. DEPRECATED Kubernetes will stop propagating this field in 1.20 release
+        and the field is planned to be removed in 1.21 release.
+    """
+
+    continue_: Optional[str] = None
+    remainingItemCount: Optional[int] = None
+    resourceVersion: Optional[str] = None
+    selfLink: Optional[str] = None
+
+
+@dataclass
 class ManagedFieldsEntry(HikaruBase):
     r"""
     ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
     that the fieldset applies to.
 
-    Full name: v1.ManagedFieldsEntry
+    Full name: ManagedFieldsEntry
 
     Attributes:
     apiVersion: APIVersion defines the version of this resource that this field set
@@ -26296,13 +25671,142 @@ class ManagedFieldsEntry(HikaruBase):
 
 
 @dataclass
+class ObjectMeta(HikaruBase):
+    r"""
+    ObjectMeta is metadata that all persisted resources must have, which includes all
+    objects users must create.
+
+    Full name: ObjectMeta
+
+    Attributes:
+    clusterName: The name of the cluster which the object belongs to. This is used to
+        distinguish resources with same name and namespace in different clusters. This
+        field is not set anywhere right now and apiserver is going to ignore it if set in
+        create or update request.
+    creationTimestamp: CreationTimestamp is a timestamp representing the server time when
+        this object was created. It is not guaranteed to be set in happens-before order
+        across separate operations. Clients may not set this value. It is represented in
+        RFC3339 form and is in UTC. Populated by the system. Read-only. Null for lists.
+        More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    deletionGracePeriodSeconds: Number of seconds allowed for this object to gracefully
+        terminate before it will be removed from the system. Only set when
+        deletionTimestamp is also set. May only be shortened. Read-only.
+    deletionTimestamp: DeletionTimestamp is RFC 3339 date and time at which this resource
+        will be deleted. This field is set by the server when a graceful deletion is
+        requested by the user, and is not directly settable by a client. The resource is
+        expected to be deleted (no longer visible from resource lists, and not reachable
+        by name) after the time in this field, once the finalizers list is empty. As long
+        as the finalizers list contains items, deletion is blocked. Once the
+        deletionTimestamp is set, this value may not be unset or be set further into the
+        future, although it may be shortened or the resource may be deleted prior to this
+        time. For example, a user may request that a pod is deleted in 30 seconds. The
+        Kubelet will react by sending a graceful termination signal to the containers in
+        the pod. After that 30 seconds, the Kubelet will send a hard termination signal
+        (SIGKILL) to the container and after cleanup, remove the pod from the API. In the
+        presence of network partitions, this object may still exist after this timestamp,
+        until an administrator or automated process can determine the resource is fully
+        terminated. If not set, graceful deletion of the object has not been requested.
+        Populated by the system when a graceful deletion is requested. Read-only. More
+        info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    generateName: GenerateName is an optional prefix, used by the server, to generate a
+        unique name ONLY IF the Name field has not been provided. If this field is used,
+        the name returned to the client will be different than the name passed. This value
+        will also be combined with a unique suffix. The provided value has the same
+        validation rules as the Name field, and may be truncated by the length of the
+        suffix required to make the value unique on the server. If this field is specified
+        and the generated name exists, the server will NOT return a 409 - instead, it will
+        either return 201 Created or 500 with Reason ServerTimeout indicating a unique
+        name could not be found in the time allotted, and the client should retry
+        (optionally after the time indicated in the Retry-After header). Applied only if
+        Name is not specified. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
+    generation: A sequence number representing a specific generation of the desired state.
+        Populated by the system. Read-only.
+    name: Name must be unique within a namespace. Is required when creating resources,
+        although some resources may allow a client to request the generation of an
+        appropriate name automatically. Name is primarily intended for creation
+        idempotence and configuration definition. Cannot be updated. More info:
+        http://kubernetes.io/docs/user-guide/identifiers#names
+    namespace: Namespace defines the space within which each name must be unique. An empty
+        namespace is equivalent to the "default" namespace, but "default" is the canonical
+        representation. Not all objects are required to be scoped to a namespace - the
+        value of this field for those objects will be empty. Must be a DNS_LABEL. Cannot
+        be updated. More info: http://kubernetes.io/docs/user-guide/namespaces
+    resourceVersion: An opaque value that represents the internal version of this object
+        that can be used by clients to determine when objects have changed. May be used
+        for optimistic concurrency, change detection, and the watch operation on a
+        resource or set of resources. Clients must treat these values as opaque and passed
+        unmodified back to the server. They may only be valid for a particular resource or
+        set of resources. Populated by the system. Read-only. Value must be treated as
+        opaque by clients and . More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+    selfLink: SelfLink is a URL representing this object. Populated by the system.
+        Read-only. DEPRECATED Kubernetes will stop propagating this field in 1.20 release
+        and the field is planned to be removed in 1.21 release.
+    uid: UID is the unique in time and space value for this object. It is typically
+        generated by the server on successful creation of a resource and is not allowed to
+        change on PUT operations. Populated by the system. Read-only. More info:
+        http://kubernetes.io/docs/user-guide/identifiers#uids
+    annotations: Annotations is an unstructured key value map stored with a resource that
+        may be set by external tools to store and retrieve arbitrary metadata. They are
+        not queryable and should be preserved when modifying objects. More info:
+        http://kubernetes.io/docs/user-guide/annotations
+    finalizers: Must be empty before the object is deleted from the registry. Each entry
+        is an identifier for the responsible component that will remove the entry from the
+        list. If the deletionTimestamp of the object is non-nil, entries in this list can
+        only be removed. Finalizers may be processed and removed in any order. Order is
+        NOT enforced because it introduces significant risk of stuck finalizers.
+        finalizers is a shared field, any actor with permission can reorder it. If the
+        finalizer list is processed in order, then this can lead to a situation in which
+        the component responsible for the first finalizer in the list is waiting for a
+        signal (field value, external system, or other) produced by a component
+        responsible for a finalizer later in the list, resulting in a deadlock. Without
+        enforced ordering finalizers are free to order amongst themselves and are not
+        vulnerable to ordering changes in the list.
+    labels: Map of string keys and values that can be used to organize and categorize
+        (scope and select) objects. May match selectors of replication controllers and
+        services. More info: http://kubernetes.io/docs/user-guide/labels
+    managedFields: ManagedFields maps workflow-id and version to the set of fields that
+        are managed by that workflow. This is mostly for internal housekeeping, and users
+        typically shouldn't need to set or understand this field. A workflow can be the
+        user's name, a controller's name, or the name of a specific apply path like
+        "ci-cd". The set of fields is always in the version that the workflow used when
+        modifying the object.
+    ownerReferences: List of objects depended by this object. If ALL objects in the list
+        have been deleted, this object will be garbage collected. If this object is
+        managed by a controller, then an entry in this list will point to this controller,
+        with the controller field set to true. There cannot be more than one managing
+        controller.
+    """
+
+    clusterName: Optional[str] = None
+    creationTimestamp: Optional[str] = None
+    deletionGracePeriodSeconds: Optional[int] = None
+    deletionTimestamp: Optional[str] = None
+    generateName: Optional[str] = None
+    generation: Optional[int] = None
+    name: Optional[str] = None
+    namespace: Optional[str] = None
+    resourceVersion: Optional[str] = None
+    selfLink: Optional[str] = None
+    uid: Optional[str] = None
+    annotations: Optional[Dict[str, str]] = field(default_factory=dict)
+    finalizers: Optional[List[str]] = field(default_factory=list)
+    labels: Optional[Dict[str, str]] = field(default_factory=dict)
+    managedFields: Optional[List["ManagedFieldsEntry"]] = field(default_factory=list)
+    ownerReferences: Optional[List["OwnerReference"]] = field(default_factory=list)
+
+
+@dataclass
 class OwnerReference(HikaruBase):
     r"""
     OwnerReference contains enough information to let you identify an owning object. An
     owning object must be in the same namespace as the dependent, or be cluster-scoped, so
     there is no namespace field.
 
-    Full name: v1.OwnerReference
+    Full name: OwnerReference
 
     Attributes:
     apiVersion: API version of the referent.
@@ -26328,11 +25832,47 @@ class OwnerReference(HikaruBase):
 
 
 @dataclass
+class Preconditions(HikaruBase):
+    r"""
+    Preconditions must be fulfilled before an operation (update, delete, etc.) is carried
+    out.
+
+    Full name: Preconditions
+
+    Attributes:
+    resourceVersion: Specifies the target ResourceVersion
+    uid: Specifies the target UID.
+    """
+
+    resourceVersion: Optional[str] = None
+    uid: Optional[str] = None
+
+
+@dataclass
+class ServerAddressByClientCIDR(HikaruBase):
+    r"""
+    ServerAddressByClientCIDR helps the client to determine the server address that they
+    should use, depending on the clientCIDR that they match.
+
+    Full name: ServerAddressByClientCIDR
+
+    Attributes:
+    clientCIDR: The CIDR with which clients can match their IP to figure out the server
+        address that they should use.
+    serverAddress: Address of this server, suitable for a client that matches the above
+        CIDR. This can be a hostname, hostname:port, IP or IP:port.
+    """
+
+    clientCIDR: str
+    serverAddress: str
+
+
+@dataclass
 class Status(HikaruDocumentBase):
     r"""
     Status is a return value for calls that don't return other objects.
 
-    Full name: v1.Status
+    Full name: Status
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -26369,324 +25909,6 @@ class Status(HikaruDocumentBase):
     # noinspection PyDataclass
     client: InitVar[Optional[ApiClient]] = None
 
-    @staticmethod
-    def deleteCollectionCSIDriver(
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete collection of CSIDriver
-
-        operationID: deleteCollectionCSIDriver
-        path: /apis/storage.k8s.io/v1beta1/csidrivers
-
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param body:
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_driver_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "delete_collection_csi_driver_with_http_info "
-                "on StorageV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    @staticmethod
-    def deleteCollectionCSINode(
-        continue_: Optional[str] = None,
-        dry_run: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        grace_period_seconds: Optional[int] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        orphan_dependents: Optional[bool] = None,
-        propagation_policy: Optional[str] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        body: Optional["DeleteOptions"] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        delete collection of CSINode
-
-        operationID: deleteCollectionCSINode
-        path: /apis/storage.k8s.io/v1beta1/csinodes
-
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param dry_run: When present, indicates that modifications should not be
-            persisted. An invalid or unrecognized dryRun directive will result
-            in an error response and no further processing of the request. Valid
-            values are: - All: all dry run stages will be processed
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param grace_period_seconds: The duration in seconds before the object should
-            be deleted. Value must be non-negative integer. The value zero
-            indicates delete immediately. If this value is nil, the default
-            grace period for the specified type will be used. Defaults to a per
-            object value if not specified. zero means delete immediately.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
-            field will be deprecated in 1.7. Should the dependent objects be
-            orphaned. If true/false, the "orphan" finalizer will be added
-            to/removed from the object's finalizers list. Either this field or
-            PropagationPolicy may be set, but not both.
-        :param propagation_policy: Whether and how garbage collection will be
-            performed. Either this field or OrphanDependents may be set, but not
-            both. The default policy is decided by the existing finalizer set in
-            the metadata.finalizers and the resource-specific default policy.
-            Acceptable values are: 'Orphan' - orphan the dependents;
-            'Background' - allow the garbage collector to delete the dependents
-            in the background; 'Foreground' - a cascading policy that deletes
-            all dependents in the foreground.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param body:
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   Status    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = StorageV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "delete_collection_csi_node_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "delete_collection_csi_node_with_http_info "
-                "on StorageV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["_continue"] = continue_
-        all_args["dry_run"] = dry_run
-        all_args["field_selector"] = field_selector
-        all_args["grace_period_seconds"] = grace_period_seconds
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["orphan_dependents"] = orphan_dependents
-        all_args["propagation_policy"] = propagation_policy
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["body"] = body
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class StatusDetails(HikaruBase):
-    r"""
-    StatusDetails is a set of additional properties that MAY be set by the server to
-    provide additional information about a response. The Reason field of a Status object
-    defines what attributes will be set. Clients must ignore fields that do not match the
-    defined type of each attribute, and should assume that any attribute may be empty,
-    invalid, or under defined.
-
-    Full name: v1.StatusDetails
-
-    Attributes:
-    group: The group attribute of the resource associated with the status StatusReason.
-    kind: The kind attribute of the resource associated with the status StatusReason. On
-        some operations may differ from the requested resource Kind. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    name: The name attribute of the resource associated with the status StatusReason (when
-        there is a single name which can be described).
-    retryAfterSeconds: If specified, the time in seconds before the operation should be
-        retried. Some errors may indicate the client must take an alternate action - for
-        those errors this field may indicate how long to wait before taking the alternate
-        action.
-    uid: UID of the resource. (when there is a single resource which can be described).
-        More info: http://kubernetes.io/docs/user-guide/identifiers#uids
-    causes: The Causes array includes more details associated with the StatusReason
-        failure. Not all StatusReasons may provide detailed causes.
-    """
-
-    group: Optional[str] = None
-    kind: Optional[str] = "None"
-    name: Optional[str] = None
-    retryAfterSeconds: Optional[int] = None
-    uid: Optional[str] = None
-    causes: Optional[List["StatusCause"]] = field(default_factory=list)
-
 
 @dataclass
 class StatusCause(HikaruBase):
@@ -26694,7 +25916,7 @@ class StatusCause(HikaruBase):
     StatusCause provides more information about an api.Status failure, including cases
     when multiple errors are encountered.
 
-    Full name: v1.StatusCause
+    Full name: StatusCause
 
     Attributes:
     field: The field of the resource that has caused this error, as named by its JSON
@@ -26715,11 +25937,47 @@ class StatusCause(HikaruBase):
 
 
 @dataclass
+class StatusDetails(HikaruBase):
+    r"""
+    StatusDetails is a set of additional properties that MAY be set by the server to
+    provide additional information about a response. The Reason field of a Status object
+    defines what attributes will be set. Clients must ignore fields that do not match the
+    defined type of each attribute, and should assume that any attribute may be empty,
+    invalid, or under defined.
+
+    Full name: StatusDetails
+
+    Attributes:
+    group: The group attribute of the resource associated with the status StatusReason.
+    kind: The kind attribute of the resource associated with the status StatusReason. On
+        some operations may differ from the requested resource Kind. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    name: The name attribute of the resource associated with the status StatusReason (when
+        there is a single name which can be described).
+    retryAfterSeconds: If specified, the time in seconds before the operation should be
+        retried. Some errors may indicate the client must take an alternate action - for
+        those errors this field may indicate how long to wait before taking the alternate
+        action.
+    uid: UID of the resource. (when there is a single resource which can be described).
+        More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+    causes: The Causes array includes more details associated with the StatusReason
+        failure. Not all StatusReasons may provide detailed causes.
+    """
+
+    group: Optional[str] = None
+    kind: Optional[str] = "StatusDetails"
+    name: Optional[str] = None
+    retryAfterSeconds: Optional[int] = None
+    uid: Optional[str] = None
+    causes: Optional[List["StatusCause"]] = field(default_factory=list)
+
+
+@dataclass
 class WatchEvent(HikaruBase):
     r"""
     Event represents a single event to a watched resource.
 
-    Full name: v1.WatchEvent
+    Full name: WatchEvent
 
     Attributes:
     object: Object is: * If Type is Added or Modified: the new state of the object. * If
@@ -26738,7 +25996,7 @@ class APIService(HikaruDocumentBase):
     APIService represents a server for a particular GroupVersion. Name must be
     "version.group".
 
-    Full name: v1beta1.APIService
+    Full name: APIService
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -26779,7 +26037,7 @@ class APIService(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         delete collection of APIService
 
@@ -26870,7 +26128,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -26902,7 +26160,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def createAPIService(
         self,
@@ -26910,7 +26168,7 @@ class APIService(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         create an APIService
 
@@ -26930,7 +26188,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -26960,7 +26218,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def create(
         self,
@@ -27013,7 +26271,7 @@ class APIService(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         delete an APIService
 
@@ -27049,7 +26307,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27076,7 +26334,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -27162,7 +26420,7 @@ class APIService(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         read the specified APIService
 
@@ -27181,7 +26439,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27205,7 +26463,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def read(
         self,
@@ -27273,7 +26531,7 @@ class APIService(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         partially update the specified APIService
 
@@ -27300,7 +26558,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27330,7 +26588,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def update(
         self,
@@ -27411,7 +26669,7 @@ class APIService(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         replace the specified APIService
 
@@ -27432,7 +26690,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27462,7 +26720,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["APIService"](result, codes_returning_objects)
 
     def replaceAPIServiceStatus(
         self,
@@ -27471,7 +26729,7 @@ class APIService(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIService"]:
         r"""
         replace status of the specified APIService
 
@@ -27492,7 +26750,7 @@ class APIService(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27522,75 +26780,7 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class APIServiceSpec(HikaruBase):
-    r"""
-    APIServiceSpec contains information for locating and communicating with a server. Only
-    https is supported, though you are able to disable certificate verification.
-
-    Full name: v1beta1.APIServiceSpec
-
-    Attributes:
-    groupPriorityMinimum: GroupPriorityMininum is the priority this group should have at
-        least. Higher priority means that the group is preferred by clients over lower
-        priority ones. Note that other versions of this group might specify even higher
-        GroupPriorityMininum values such that the whole group gets a higher priority. The
-        primary sort is based on GroupPriorityMinimum, ordered highest number to lowest
-        (20 before 10). The secondary sort is based on the alphabetical comparison of the
-        name of the object. (v1.bar before v1.foo) We'd recommend something like: *.k8s.io
-        (except extensions) at 18000 and PaaSes (OpenShift, Deis) are recommended to be in
-        the 2000s
-    versionPriority: VersionPriority controls the ordering of this API version inside of
-        its group. Must be greater than zero. The primary sort is based on
-        VersionPriority, ordered highest to lowest (20 before 10). Since it's inside of a
-        group, the number can be small, probably in the 10s. In case of equal version
-        priorities, the version string will be used to compute the order inside a group.
-        If the version string is "kube-like", it will sort above non "kube-like" version
-        strings, which are ordered lexicographically. "Kube-like" versions start with a
-        "v", then are followed by a number (the major version), then optionally the string
-        "alpha" or "beta" and another number (the minor version). These are sorted first
-        by GA > beta > alpha (where GA is a version with no suffix such as beta or alpha),
-        and then by comparing major version, then minor version. An example sorted list of
-        versions: v10, v2, v1, v11beta2, v10beta3, v3beta1, v12alpha1, v11alpha2, foo1,
-        foo10.
-    caBundle: CABundle is a PEM encoded CA bundle which will be used to validate an API
-        server's serving certificate. If unspecified, system trust roots on the apiserver
-        are used.
-    group: Group is the API group name this server hosts
-    insecureSkipTLSVerify: InsecureSkipTLSVerify disables TLS certificate verification
-        when communicating with this server. This is strongly discouraged. You should use
-        the CABundle instead.
-    service: Service is a reference to the service for this API server. It must
-        communicate on port 443. If the Service is nil, that means the handling for the
-        API groupversion is handled locally on this server. The call will simply delegate
-        to the normal handler chain to be fulfilled.
-    version: Version is the API version this server hosts. For example, "v1"
-    """
-
-    groupPriorityMinimum: int
-    versionPriority: int
-    caBundle: Optional[str] = None
-    group: Optional[str] = None
-    insecureSkipTLSVerify: Optional[bool] = None
-    service: Optional["ServiceReference"] = None
-    version: Optional[str] = None
-
-
-@dataclass
-class APIServiceStatus(HikaruBase):
-    r"""
-    APIServiceStatus contains derived information about an API server
-
-    Full name: v1beta1.APIServiceStatus
-
-    Attributes:
-    conditions: Current service state of apiService.
-    """
-
-    conditions: Optional[List["APIServiceCondition"]] = field(default_factory=list)
+        return Response["APIService"](result, codes_returning_objects)
 
 
 @dataclass
@@ -27598,7 +26788,7 @@ class APIServiceCondition(HikaruBase):
     r"""
     APIServiceCondition describes the state of an APIService at a particular point
 
-    Full name: v1beta1.APIServiceCondition
+    Full name: APIServiceCondition
 
     Attributes:
     status: Status is the status of the condition. Can be True, False, Unknown.
@@ -27620,7 +26810,7 @@ class APIServiceList(HikaruDocumentBase):
     r"""
     APIServiceList is a list of APIService objects.
 
-    Full name: v1beta1.APIServiceList
+    Full name: APIServiceList
 
     Attributes:
     items:
@@ -27657,7 +26847,7 @@ class APIServiceList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["APIServiceList"]:
         r"""
         list or watch objects of kind APIService
 
@@ -27737,7 +26927,7 @@ class APIServiceList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27767,7 +26957,7 @@ class APIServiceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["APIServiceList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -27778,11 +26968,632 @@ class APIServiceList(HikaruDocumentBase):
 
 
 @dataclass
+class APIServiceSpec(HikaruBase):
+    r"""
+    APIServiceSpec contains information for locating and communicating with a server. Only
+    https is supported, though you are able to disable certificate verification.
+
+    Full name: APIServiceSpec
+
+    Attributes:
+    groupPriorityMinimum: GroupPriorityMininum is the priority this group should have at
+        least. Higher priority means that the group is preferred by clients over lower
+        priority ones. Note that other versions of this group might specify even higher
+        GroupPriorityMininum values such that the whole group gets a higher priority. The
+        primary sort is based on GroupPriorityMinimum, ordered highest number to lowest
+        (20 before 10). The secondary sort is based on the alphabetical comparison of the
+        name of the object. (v1.bar before v1.foo) We'd recommend something like: *.k8s.io
+        (except extensions) at 18000 and PaaSes (OpenShift, Deis) are recommended to be in
+        the 2000s
+    versionPriority: VersionPriority controls the ordering of this API version inside of
+        its group. Must be greater than zero. The primary sort is based on
+        VersionPriority, ordered highest to lowest (20 before 10). Since it's inside of a
+        group, the number can be small, probably in the 10s. In case of equal version
+        priorities, the version string will be used to compute the order inside a group.
+        If the version string is "kube-like", it will sort above non "kube-like" version
+        strings, which are ordered lexicographically. "Kube-like" versions start with a
+        "v", then are followed by a number (the major version), then optionally the string
+        "alpha" or "beta" and another number (the minor version). These are sorted first
+        by GA > beta > alpha (where GA is a version with no suffix such as beta or alpha),
+        and then by comparing major version, then minor version. An example sorted list of
+        versions: v10, v2, v1, v11beta2, v10beta3, v3beta1, v12alpha1, v11alpha2, foo1,
+        foo10.
+    caBundle: CABundle is a PEM encoded CA bundle which will be used to validate an API
+        server's serving certificate. If unspecified, system trust roots on the apiserver
+        are used.
+    group: Group is the API group name this server hosts
+    insecureSkipTLSVerify: InsecureSkipTLSVerify disables TLS certificate verification
+        when communicating with this server. This is strongly discouraged. You should use
+        the CABundle instead.
+    service: Service is a reference to the service for this API server. It must
+        communicate on port 443. If the Service is nil, that means the handling for the
+        API groupversion is handled locally on this server. The call will simply delegate
+        to the normal handler chain to be fulfilled.
+    version: Version is the API version this server hosts. For example, "v1"
+    """
+
+    groupPriorityMinimum: int
+    versionPriority: int
+    caBundle: Optional[str] = None
+    group: Optional[str] = None
+    insecureSkipTLSVerify: Optional[bool] = None
+    service: Optional["ServiceReference_apiregistration"] = None
+    version: Optional[str] = None
+
+
+@dataclass
+class APIServiceStatus(HikaruBase):
+    r"""
+    APIServiceStatus contains derived information about an API server
+
+    Full name: APIServiceStatus
+
+    Attributes:
+    conditions: Current service state of apiService.
+    """
+
+    conditions: Optional[List["APIServiceCondition"]] = field(default_factory=list)
+
+
+@dataclass
+class ServiceReference(HikaruBase):
+    r"""
+    ServiceReference holds a reference to Service.legacy.k8s.io
+
+    Full name: ServiceReference
+
+    Attributes:
+    name: `name` is the name of the service. Required
+    namespace: `namespace` is the namespace of the service. Required
+    path: `path` is an optional URL path which will be sent in any request to this
+        service.
+    port: If specified, the port on the service that hosting webhook. Default to 443 for
+        backward compatibility. `port` should be a valid port number (1-65535, inclusive).
+    """
+
+    name: str
+    namespace: str
+    path: Optional[str] = None
+    port: Optional[int] = None
+
+
+@dataclass
+class ServiceReference_apiextensions(HikaruBase):
+    r"""
+    ServiceReference holds a reference to Service.legacy.k8s.io
+
+    Full name: ServiceReference
+
+    Attributes:
+    name: name is the name of the service. Required
+    namespace: namespace is the namespace of the service. Required
+    path: path is an optional URL path at which the webhook will be contacted.
+    port: port is an optional service port at which the webhook will be contacted. `port`
+        should be a valid port number (1-65535, inclusive). Defaults to 443 for backward
+        compatibility.
+    """
+
+    name: str
+    namespace: str
+    path: Optional[str] = None
+    port: Optional[int] = None
+
+
+@dataclass
+class ServiceReference_apiregistration(HikaruBase):
+    r"""
+    ServiceReference holds a reference to Service.legacy.k8s.io
+
+    Full name: ServiceReference
+
+    Attributes:
+    name: Name is the name of the service
+    namespace: Namespace is the namespace of the service
+    port: If specified, the port on the service that hosting webhook. Default to 443 for
+        backward compatibility. `port` should be a valid port number (1-65535, inclusive).
+    """
+
+    name: Optional[str] = None
+    namespace: Optional[str] = None
+    port: Optional[int] = None
+
+
+@dataclass
+class WebhookClientConfig(HikaruBase):
+    r"""
+    WebhookClientConfig contains the information to make a TLS connection with the
+    webhook.
+
+    Full name: WebhookClientConfig
+
+    Attributes:
+    caBundle: caBundle is a PEM encoded CA bundle which will be used to validate the
+        webhook's server certificate. If unspecified, system trust roots on the apiserver
+        are used.
+    service: service is a reference to the service for this webhook. Either service or url
+        must be specified. If the webhook is running within the cluster, then you should
+        use `service`.
+    url: url gives the location of the webhook, in standard URL form
+        (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
+        The `host` should not refer to a service running in the cluster; use the `service`
+        field instead. The host might be resolved via external DNS in some apiservers
+        (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering
+        violation). `host` may also be an IP address. Please note that using `localhost`
+        or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook
+        on all hosts which run an apiserver which might need to make calls to this
+        webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in
+        a new cluster. The scheme must be "https"; the URL must begin with "https://". A
+        path is optional, and if present may be any string permissible in a URL. You may
+        use the path to pass an arbitrary string to the webhook, for example, a cluster
+        identifier. Attempting to use a user or basic auth e.g. "user:password@" is not
+        allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
+    """
+
+    caBundle: Optional[str] = None
+    service: Optional["ServiceReference_apiextensions"] = None
+    url: Optional[str] = None
+
+
+@dataclass
+class Event_core(HikaruDocumentBase):
+    r"""
+    Event is a report of an event somewhere in the cluster.
+
+    Full name: Event
+
+    Attributes:
+    involvedObject: The object that this event is about.
+    metadata: Standard object's metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    action: What action was taken/failed regarding to the Regarding object.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    count: The number of times this event has occurred.
+    eventTime: Time when this Event was first observed.
+    firstTimestamp: The time at which the event was first recorded. (Time of server
+        receipt is in TypeMeta.)
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    lastTimestamp: The time at which the most recent occurrence of this event was
+        recorded.
+    message: A human-readable description of the status of this operation.
+    reason: This should be a short, machine understandable string that gives the reason
+        for the transition into the object's current status.
+    related: Optional secondary object for more complex actions.
+    reportingComponent: Name of the controller that emitted this Event, e.g.
+        `kubernetes.io/kubelet`.
+    reportingInstance: ID of the controller instance, e.g. `kubelet-xyzf`.
+    series: Data about the Event series this event represents or nil if it's a singleton
+        Event.
+    source: The component reporting this event. Should be a short machine understandable
+        string.
+    type: Type of this event (Normal, Warning), new types could be added in the future
+    """
+
+    _version = "v1"
+    involvedObject: "ObjectReference"
+    metadata: "ObjectMeta"
+    action: Optional[str] = None
+    apiVersion: Optional[str] = "v1"
+    count: Optional[int] = None
+    eventTime: Optional[str] = None
+    firstTimestamp: Optional[str] = None
+    kind: Optional[str] = "Event"
+    lastTimestamp: Optional[str] = None
+    message: Optional[str] = None
+    reason: Optional[str] = None
+    related: Optional["ObjectReference"] = None
+    reportingComponent: Optional[str] = None
+    reportingInstance: Optional[str] = None
+    series: Optional["EventSeries"] = None
+    source: Optional["EventSource"] = None
+    type: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class Event(HikaruDocumentBase):
+    r"""
+    Event is a report of an event somewhere in the cluster. It generally denotes some
+    state change in the system.
+
+    Full name: Event
+
+    Attributes:
+    eventTime: eventTime is the time when this Event was first observed. It is required.
+    action: action is what action was taken/failed regarding to the regarding object. It
+        is machine-readable. This field can have at most 128 characters.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    deprecatedCount: deprecatedCount is the deprecated field assuring backward
+        compatibility with core.v1 Event type.
+    deprecatedFirstTimestamp: deprecatedFirstTimestamp is the deprecated field assuring
+        backward compatibility with core.v1 Event type.
+    deprecatedLastTimestamp: deprecatedLastTimestamp is the deprecated field assuring
+        backward compatibility with core.v1 Event type.
+    deprecatedSource: deprecatedSource is the deprecated field assuring backward
+        compatibility with core.v1 Event type.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    note: note is a human-readable description of the status of this operation. Maximal
+        length of the note is 1kB, but libraries should be prepared to handle values up to
+        64kB.
+    reason: reason is why the action was taken. It is human-readable. This field can have
+        at most 128 characters.
+    regarding: regarding contains the object this Event is about. In most cases it's an
+        Object reporting controller implements, e.g. ReplicaSetController implements
+        ReplicaSets and this event is emitted because it acts on some changes in a
+        ReplicaSet object.
+    related: related is the optional secondary object for more complex actions. E.g. when
+        regarding object triggers a creation or deletion of related object.
+    reportingController: reportingController is the name of the controller that emitted
+        this Event, e.g. `kubernetes.io/kubelet`. This field cannot be empty for new
+        Events.
+    reportingInstance: reportingInstance is the ID of the controller instance, e.g.
+        `kubelet-xyzf`. This field cannot be empty for new Events and it can have at most
+        128 characters.
+    series: series is data about the Event series this event represents or nil if it's a
+        singleton Event.
+    type: type is the type of this event (Normal, Warning), new types could be added in
+        the future. It is machine-readable.
+    """
+
+    _version = "v1"
+    eventTime: str
+    action: Optional[str] = None
+    apiVersion: Optional[str] = "events.k8s.io/v1"
+    deprecatedCount: Optional[int] = None
+    deprecatedFirstTimestamp: Optional[str] = None
+    deprecatedLastTimestamp: Optional[str] = None
+    deprecatedSource: Optional["EventSource"] = None
+    kind: Optional[str] = "Event"
+    metadata: Optional["ObjectMeta"] = None
+    note: Optional[str] = None
+    reason: Optional[str] = None
+    regarding: Optional["ObjectReference"] = None
+    related: Optional["ObjectReference"] = None
+    reportingController: Optional[str] = None
+    reportingInstance: Optional[str] = None
+    series: Optional["EventSeries"] = None
+    type: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+
+@dataclass
+class EventList(HikaruDocumentBase):
+    r"""
+    EventList is a list of Event objects.
+
+    Full name: EventList
+
+    Attributes:
+    items: items is a list of schema objects.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    """
+
+    _version = "v1beta1"
+    items: List["Event_"]
+    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
+    kind: Optional[str] = "EventList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listEventForAllNamespaces(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        pretty: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["EventList"]:
+        r"""
+        list or watch objects of kind Event
+
+        operationID: listEventForAllNamespaces
+        path: /apis/events.k8s.io/v1beta1/events
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
+            type "BOOKMARK". Servers that do not implement bookmarks may ignore
+            this flag and bookmarks are sent at the server's discretion. Clients
+            should not assume bookmarks are returned at any specific interval,
+            nor may they assume the server will send any BOOKMARK event during a
+            session. If this is not a watch, this field is ignored. If the
+            feature gate WatchBookmarks is not enabled in apiserver, this field
+            is ignored.
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param watch: Watch for changes to the described resources and return them as a
+            stream of add, update, and remove notifications. Specify
+            resourceVersion.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   EventList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_event_for_all_namespaces_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "list_event_for_all_namespaces_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["pretty"] = pretty
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["EventList"](result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".events_v1beta1_api",
+        "EventsV1beta1Api",
+        "list_event_for_all_namespaces",
+    )
+
+    @staticmethod
+    def listNamespacedEvent(
+        namespace: str,
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["EventList"]:
+        r"""
+        list or watch objects of kind Event
+
+        operationID: listNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+        :param namespace: namespace for the resource
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
+            type "BOOKMARK". Servers that do not implement bookmarks may ignore
+            this flag and bookmarks are sent at the server's discretion. Clients
+            should not assume bookmarks are returned at any specific interval,
+            nor may they assume the server will send any BOOKMARK event during a
+            session. If this is not a watch, this field is ignored. If the
+            feature gate WatchBookmarks is not enabled in apiserver, this field
+            is ignored.
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param watch: Watch for changes to the described resources and return them as a
+            stream of add, update, and remove notifications. Specify
+            resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   EventList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "list_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["EventList"](result, codes_returning_objects)
+
+    _namespaced_watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".events_v1beta1_api",
+        "EventsV1beta1Api",
+        "list_namespaced_event",
+    )
+
+
+@dataclass
+class EventSeries(HikaruBase):
+    r"""
+    EventSeries contain information on series of events, i.e. thing that was/is happening
+    continuously for some time.
+
+    Full name: EventSeries
+
+    Attributes:
+    count: count is the number of occurrences in this series up to the last heartbeat
+        time.
+    lastObservedTime: lastObservedTime is the time when last Event from the series was
+        seen before last heartbeat.
+    """
+
+    count: int
+    lastObservedTime: str
+
+
+@dataclass
 class CronJob(HikaruDocumentBase):
     r"""
     CronJob represents the configuration of a single cron job.
 
-    Full name: v1beta1.CronJob
+    Full name: CronJob
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -27828,7 +27639,7 @@ class CronJob(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         delete collection of CronJob
 
@@ -27920,7 +27731,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -27955,7 +27766,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def createNamespacedCronJob(
         self,
@@ -27964,7 +27775,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         create a CronJob
 
@@ -27985,7 +27796,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28016,7 +27827,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def create(
         self,
@@ -28087,7 +27898,7 @@ class CronJob(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         delete a CronJob
 
@@ -28124,7 +27935,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28152,7 +27963,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -28255,7 +28066,7 @@ class CronJob(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         read the specified CronJob
 
@@ -28275,7 +28086,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28300,7 +28111,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def read(
         self,
@@ -28385,7 +28196,7 @@ class CronJob(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         partially update the specified CronJob
 
@@ -28413,7 +28224,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28444,7 +28255,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def update(
         self,
@@ -28541,7 +28352,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         replace the specified CronJob
 
@@ -28563,7 +28374,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28594,7 +28405,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -28604,7 +28415,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         replace status of the specified CronJob
 
@@ -28626,7 +28437,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28657,59 +28468,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class CronJobSpec(HikaruBase):
-    r"""
-    CronJobSpec describes how the job execution will look like and when it will actually
-    run.
-
-    Full name: v1beta1.CronJobSpec
-
-    Attributes:
-    jobTemplate: Specifies the job that will be created when executing a CronJob.
-    schedule: The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
-    concurrencyPolicy: Specifies how to treat concurrent executions of a Job. Valid values
-        are: - "Allow" (default): allows CronJobs to run concurrently; - "Forbid": forbids
-        concurrent runs, skipping next run if previous run hasn't finished yet; -
-        "Replace": cancels currently running job and replaces it with a new one
-    failedJobsHistoryLimit: The number of failed finished jobs to retain. This is a
-        pointer to distinguish between explicit zero and not specified. Defaults to 1.
-    startingDeadlineSeconds: Optional deadline in seconds for starting the job if it
-        misses scheduled time for any reason. Missed jobs executions will be counted as
-        failed ones.
-    successfulJobsHistoryLimit: The number of successful finished jobs to retain. This is
-        a pointer to distinguish between explicit zero and not specified. Defaults to 3.
-    suspend: This flag tells the controller to suspend subsequent executions, it does not
-        apply to already started executions. Defaults to false.
-    """
-
-    jobTemplate: "JobTemplateSpec"
-    schedule: str
-    concurrencyPolicy: Optional[str] = None
-    failedJobsHistoryLimit: Optional[int] = None
-    startingDeadlineSeconds: Optional[int] = None
-    successfulJobsHistoryLimit: Optional[int] = None
-    suspend: Optional[bool] = None
-
-
-@dataclass
-class CronJobStatus(HikaruBase):
-    r"""
-    CronJobStatus represents the current state of a cron job.
-
-    Full name: v1beta1.CronJobStatus
-
-    Attributes:
-    lastScheduleTime: Information when was the last time the job was successfully
-        scheduled.
-    active: A list of pointers to currently running jobs.
-    """
-
-    lastScheduleTime: Optional[str] = None
-    active: Optional[List["ObjectReference"]] = field(default_factory=list)
+        return Response["CronJob"](result, codes_returning_objects)
 
 
 @dataclass
@@ -28717,7 +28476,7 @@ class CronJobList(HikaruDocumentBase):
     r"""
     CronJobList is a collection of cron jobs.
 
-    Full name: v1beta1.CronJobList
+    Full name: CronJobList
 
     Attributes:
     items: items is the list of CronJobs.
@@ -28755,7 +28514,7 @@ class CronJobList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJobList"]:
         r"""
         list or watch objects of kind CronJob
 
@@ -28835,7 +28594,7 @@ class CronJobList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -28865,7 +28624,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJobList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -28889,7 +28648,7 @@ class CronJobList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJobList"]:
         r"""
         list or watch objects of kind CronJob
 
@@ -28970,7 +28729,7 @@ class CronJobList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29001,7 +28760,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJobList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -29012,11 +28771,63 @@ class CronJobList(HikaruDocumentBase):
 
 
 @dataclass
+class CronJobSpec(HikaruBase):
+    r"""
+    CronJobSpec describes how the job execution will look like and when it will actually
+    run.
+
+    Full name: CronJobSpec
+
+    Attributes:
+    jobTemplate: Specifies the job that will be created when executing a CronJob.
+    schedule: The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+    concurrencyPolicy: Specifies how to treat concurrent executions of a Job. Valid values
+        are: - "Allow" (default): allows CronJobs to run concurrently; - "Forbid": forbids
+        concurrent runs, skipping next run if previous run hasn't finished yet; -
+        "Replace": cancels currently running job and replaces it with a new one
+    failedJobsHistoryLimit: The number of failed finished jobs to retain. This is a
+        pointer to distinguish between explicit zero and not specified. Defaults to 1.
+    startingDeadlineSeconds: Optional deadline in seconds for starting the job if it
+        misses scheduled time for any reason. Missed jobs executions will be counted as
+        failed ones.
+    successfulJobsHistoryLimit: The number of successful finished jobs to retain. This is
+        a pointer to distinguish between explicit zero and not specified. Defaults to 3.
+    suspend: This flag tells the controller to suspend subsequent executions, it does not
+        apply to already started executions. Defaults to false.
+    """
+
+    jobTemplate: "JobTemplateSpec"
+    schedule: str
+    concurrencyPolicy: Optional[str] = None
+    failedJobsHistoryLimit: Optional[int] = None
+    startingDeadlineSeconds: Optional[int] = None
+    successfulJobsHistoryLimit: Optional[int] = None
+    suspend: Optional[bool] = None
+
+
+@dataclass
+class CronJobStatus(HikaruBase):
+    r"""
+    CronJobStatus represents the current state of a cron job.
+
+    Full name: CronJobStatus
+
+    Attributes:
+    lastScheduleTime: Information when was the last time the job was successfully
+        scheduled.
+    active: A list of pointers to currently running jobs.
+    """
+
+    lastScheduleTime: Optional[str] = None
+    active: Optional[List["ObjectReference"]] = field(default_factory=list)
+
+
+@dataclass
 class JobTemplateSpec(HikaruBase):
     r"""
     JobTemplateSpec describes the data a Job should have when created from a template
 
-    Full name: v1beta1.JobTemplateSpec
+    Full name: JobTemplateSpec
 
     Attributes:
     metadata: Standard object's metadata of the jobs created from this template. More
@@ -29035,7 +28846,7 @@ class Endpoint(HikaruBase):
     r"""
     Endpoint represents a single logical "backend" implementing a service.
 
-    Full name: v1beta1.Endpoint
+    Full name: Endpoint
 
     Attributes:
     addresses: addresses of this endpoint. The contents of this field are interpreted
@@ -29073,7 +28884,7 @@ class EndpointConditions(HikaruBase):
     r"""
     EndpointConditions represents the current condition of an endpoint.
 
-    Full name: v1beta1.EndpointConditions
+    Full name: EndpointConditions
 
     Attributes:
     ready: ready indicates that this endpoint is prepared to receive traffic, according to
@@ -29091,7 +28902,7 @@ class EndpointSlice(HikaruDocumentBase):
     given service there may be multiple EndpointSlice objects, selected by labels, which
     must be joined to produce the full set of endpoints.
 
-    Full name: v1beta1.EndpointSlice
+    Full name: EndpointSlice
 
     Attributes:
     addressType: addressType specifies the type of address carried by this EndpointSlice.
@@ -29143,7 +28954,7 @@ class EndpointSlice(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         delete collection of EndpointSlice
 
@@ -29235,7 +29046,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29270,7 +29081,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
     def createNamespacedEndpointSlice(
         self,
@@ -29279,7 +29090,7 @@ class EndpointSlice(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         create an EndpointSlice
 
@@ -29300,7 +29111,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29331,7 +29142,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
     def create(
         self,
@@ -29402,7 +29213,7 @@ class EndpointSlice(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         delete an EndpointSlice
 
@@ -29439,7 +29250,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29467,7 +29278,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -29570,7 +29381,7 @@ class EndpointSlice(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         read the specified EndpointSlice
 
@@ -29590,7 +29401,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29615,7 +29426,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
     def read(
         self,
@@ -29700,7 +29511,7 @@ class EndpointSlice(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         partially update the specified EndpointSlice
 
@@ -29728,7 +29539,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29759,7 +29570,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
     def update(
         self,
@@ -29856,7 +29667,7 @@ class EndpointSlice(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSlice"]:
         r"""
         replace the specified EndpointSlice
 
@@ -29878,7 +29689,7 @@ class EndpointSlice(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -29909,7 +29720,7 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSlice"](result, codes_returning_objects)
 
 
 @dataclass
@@ -29917,7 +29728,7 @@ class EndpointSliceList(HikaruDocumentBase):
     r"""
     EndpointSliceList represents a list of endpoint slices
 
-    Full name: v1beta1.EndpointSliceList
+    Full name: EndpointSliceList
 
     Attributes:
     items: List of endpoint slices
@@ -29954,7 +29765,7 @@ class EndpointSliceList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSliceList"]:
         r"""
         list or watch objects of kind EndpointSlice
 
@@ -30034,7 +29845,7 @@ class EndpointSliceList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30066,7 +29877,7 @@ class EndpointSliceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSliceList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -30090,7 +29901,7 @@ class EndpointSliceList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["EndpointSliceList"]:
         r"""
         list or watch objects of kind EndpointSlice
 
@@ -30171,7 +29982,7 @@ class EndpointSliceList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30202,7 +30013,7 @@ class EndpointSliceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["EndpointSliceList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -30213,11 +30024,868 @@ class EndpointSliceList(HikaruDocumentBase):
 
 
 @dataclass
+class Event_(HikaruDocumentBase):
+    r"""
+    Event is a report of an event somewhere in the cluster. It generally denotes some
+    state change in the system.
+
+    Full name: Event
+
+    Attributes:
+    eventTime: eventTime is the time when this Event was first observed. It is required.
+    action: action is what action was taken/failed regarding to the regarding object. It
+        is machine-readable. This field can have at most 128 characters.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    deprecatedCount: deprecatedCount is the deprecated field assuring backward
+        compatibility with core.v1 Event type.
+    deprecatedFirstTimestamp: deprecatedFirstTimestamp is the deprecated field assuring
+        backward compatibility with core.v1 Event type.
+    deprecatedLastTimestamp: deprecatedLastTimestamp is the deprecated field assuring
+        backward compatibility with core.v1 Event type.
+    deprecatedSource: deprecatedSource is the deprecated field assuring backward
+        compatibility with core.v1 Event type.
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata:
+    note: note is a human-readable description of the status of this operation. Maximal
+        length of the note is 1kB, but libraries should be prepared to handle values up to
+        64kB.
+    reason: reason is why the action was taken. It is human-readable. This field can have
+        at most 128 characters.
+    regarding: regarding contains the object this Event is about. In most cases it's an
+        Object reporting controller implements, e.g. ReplicaSetController implements
+        ReplicaSets and this event is emitted because it acts on some changes in a
+        ReplicaSet object.
+    related: related is the optional secondary object for more complex actions. E.g. when
+        regarding object triggers a creation or deletion of related object.
+    reportingController: reportingController is the name of the controller that emitted
+        this Event, e.g. `kubernetes.io/kubelet`. This field cannot be empty for new
+        Events.
+    reportingInstance: reportingInstance is the ID of the controller instance, e.g.
+        `kubelet-xyzf`. This field cannot be empty for new Events and it can have at most
+        128 characters.
+    series: series is data about the Event series this event represents or nil if it's a
+        singleton Event.
+    type: type is the type of this event (Normal, Warning), new types could be added in
+        the future. It is machine-readable.
+    """
+
+    _version = "v1beta1"
+    eventTime: str
+    action: Optional[str] = None
+    apiVersion: Optional[str] = "events.k8s.io/v1beta1"
+    deprecatedCount: Optional[int] = None
+    deprecatedFirstTimestamp: Optional[str] = None
+    deprecatedLastTimestamp: Optional[str] = None
+    deprecatedSource: Optional["EventSource"] = None
+    kind: Optional[str] = "Event"
+    metadata: Optional["ObjectMeta"] = None
+    note: Optional[str] = None
+    reason: Optional[str] = None
+    regarding: Optional["ObjectReference"] = None
+    related: Optional["ObjectReference"] = None
+    reportingController: Optional[str] = None
+    reportingInstance: Optional[str] = None
+    series: Optional["EventSeries"] = None
+    type: Optional[str] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def deleteCollectionNamespacedEvent(
+        namespace: str,
+        continue_: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        delete collection of Event
+
+        operationID: deleteCollectionNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+        :param namespace: namespace for the resource
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param body:
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_collection_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "delete_collection_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["_continue"] = continue_
+        all_args["dry_run"] = dry_run
+        all_args["field_selector"] = field_selector
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["Event_"](result, codes_returning_objects)
+
+    def createNamespacedEvent(
+        self,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        create an Event
+
+        operationID: createNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+        :param namespace: namespace for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Event_    OK
+          201   Event_    Created
+          202   Event_    Accepted
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "create_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "create_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201, 202)
+        return Response["Event_"](result, codes_returning_objects)
+
+    def create(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Event_":
+        r"""
+            create an Event
+
+            operationID: createNamespacedEvent
+            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events
+
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata or not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to create() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        res = self.createNamespacedEvent(
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    @staticmethod
+    def deleteNamespacedEvent(
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        body: Optional["DeleteOptions"] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        delete an Event
+
+        operationID: deleteNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param grace_period_seconds: The duration in seconds before the object should
+            be deleted. Value must be non-negative integer. The value zero
+            indicates delete immediately. If this value is nil, the default
+            grace period for the specified type will be used. Defaults to a per
+            object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+            field will be deprecated in 1.7. Should the dependent objects be
+            orphaned. If true/false, the "orphan" finalizer will be added
+            to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param propagation_policy: Whether and how garbage collection will be
+            performed. Either this field or OrphanDependents may be set, but not
+            both. The default policy is decided by the existing finalizer set in
+            the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are: 'Orphan' - orphan the dependents;
+            'Background' - allow the garbage collector to delete the dependents
+            in the background; 'Foreground' - a cascading policy that deletes
+            all dependents in the foreground.
+        :param body:
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Status    OK
+          202   Status    Accepted
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "delete_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "delete_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["grace_period_seconds"] = grace_period_seconds
+        all_args["orphan_dependents"] = orphan_dependents
+        all_args["propagation_policy"] = propagation_policy
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 202)
+        return Response["Event_"](result, codes_returning_objects)
+
+    def delete(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        grace_period_seconds: Optional[int] = None,
+        orphan_dependents: Optional[bool] = None,
+        propagation_policy: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Event_":
+        r"""
+            delete an Event
+
+            operationID: deleteNamespacedEvent
+            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param grace_period_seconds: The duration in seconds before the object should
+                be deleted. Value must be non-negative integer. The value zero
+                indicates delete immediately. If this value is nil, the default
+                grace period for the specified type will be used. Defaults to a per
+                object value if not specified. zero means delete immediately.
+            :param orphan_dependents: Deprecated: please use the PropagationPolicy, this
+                field will be deprecated in 1.7. Should the dependent objects be
+                orphaned. If true/false, the "orphan" finalizer will be added
+                to/removed from the object's finalizers list. Either this field or
+                PropagationPolicy may be set, but not both.
+            :param propagation_policy: Whether and how garbage collection will be
+                performed. Either this field or OrphanDependents may be set, but not
+                both. The default policy is decided by the existing finalizer set in
+                the metadata.finalizers and the resource-specific default policy.
+                Acceptable values are: 'Orphan' - orphan the dependents;
+                'Background' - allow the garbage collector to delete the dependents
+                in the background; 'Foreground' - a cascading policy that deletes
+                all dependents in the foreground.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata or not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to delete() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata or not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to delete() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.deleteNamespacedEvent(
+            name=effective_name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            grace_period_seconds=grace_period_seconds,
+            orphan_dependents=orphan_dependents,
+            propagation_policy=propagation_policy,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    @staticmethod
+    def readNamespacedEvent(
+        name: str,
+        namespace: str,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        read the specified Event
+
+        operationID: readNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param exact: Should the export be exact. Exact export maintains
+            cluster-specific fields like 'Namespace'. Deprecated. Planned for
+            removal in 1.18.
+        :param export: Should this value be exported. Export strips fields that a user
+            can not specify. Deprecated. Planned for removal in 1.18.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Event_    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "read_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "read_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["exact"] = exact
+        all_args["export"] = export
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["Event_"](result, codes_returning_objects)
+
+    def read(
+        self,
+        name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        exact: Optional[bool] = None,
+        export: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+    ) -> "Event_":
+        r"""
+            read the specified Event
+
+            operationID: readNamespacedEvent
+            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+            :param name: name for the resource. NOTE: if you leave out the name from the
+                arguments you *must* have filled in the name attribute in the
+                metadata for the resource!
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param exact: Should the export be exact. Exact export maintains
+                cluster-specific fields like 'Namespace'. Deprecated. Planned for
+                removal in 1.18.
+            :param export: Should this value be exported. Export strips fields that a user
+                can not specify. Deprecated. Planned for removal in 1.18.
+            :param pretty: If 'true', then the output is pretty printed.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata or not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to read() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+
+        if name is not None:
+            effective_name = name
+        elif not self.metadata or not self.metadata.name:
+            raise RuntimeError(
+                "There must be a name supplied in either "
+                "the arguments to read() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_name = self.metadata.name
+        res = self.readNamespacedEvent(
+            name=effective_name,
+            namespace=effective_namespace,
+            exact=exact,
+            export=export,
+            pretty=pretty,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    def patchNamespacedEvent(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        partially update the specified Event
+
+        operationID: patchNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+            required for apply requests (application/apply-patch) but optional
+            for non-apply patch types (JsonPatch, MergePatch,
+            StrategicMergePatch).
+        :param force: Force is going to "force" Apply requests. It means user will
+            re-acquire conflicting fields owned by other people. Force flag must
+            be unset for non-apply patch requests.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Event_    OK
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "patch_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "patch_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        all_args["force"] = force
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["Event_"](result, codes_returning_objects)
+
+    def update(
+        self,
+        namespace: Optional[str] = None,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        force: Optional[bool] = None,
+        client: ApiClient = None,
+    ) -> "Event_":
+        r"""
+            partially update the specified Event
+
+            operationID: patchNamespacedEvent
+            path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+            :param namespace: namespace for the resource. NOTE: if you leave out the
+                namespace from the arguments you *must* have filled in the namespace
+                attribute in the metadata for the resource!
+            :param dry_run: When present, indicates that modifications should not be
+                persisted. An invalid or unrecognized dryRun directive will result
+                in an error response and no further processing of the request. Valid
+                values are: - All: all dry run stages will be processed
+            :param field_manager: fieldManager is a name associated with the actor or
+                entity that is making these changes. The value must be less than or
+                128 characters long, and only contain printable characters, as
+                defined by https://golang.org/pkg/unicode/#IsPrint. This field is
+                required for apply requests (application/apply-patch) but optional
+                for non-apply patch types (JsonPatch, MergePatch,
+                StrategicMergePatch).
+            :param force: Force is going to "force" Apply requests. It means user will
+                re-acquire conflicting fields owned by other people. Force flag must
+                be unset for non-apply patch requests.
+            :param client: optional; instance of kubernetes.client.api_client.ApiClient
+            :return: returns self; the state of self may be permuted with a returned
+                HikaruDocumentBase object, whose values will be merged into self
+        (if of the same type).
+            :raises: KubernetesException. Raised only by the CRUD methods to signal
+                that a return code of 400 or higher was returned by the underlying
+                Kubernetes library.
+        """
+
+        # noinspection PyDataclass
+        client = client or self.client
+
+        if namespace is not None:
+            effective_namespace = namespace
+        elif not self.metadata or not self.metadata.namespace:
+            raise RuntimeError(
+                "There must be a namespace supplied in either "
+                "the arguments to update() or in a "
+                "Event_'s metadata"
+            )
+        else:
+            effective_namespace = self.metadata.namespace
+        res = self.patchNamespacedEvent(
+            name=self.metadata.name,
+            namespace=effective_namespace,
+            dry_run=dry_run,
+            field_manager=field_manager,
+            force=force,
+            client=client,
+        )
+        if not 200 <= res.code <= 299:
+            raise KubernetesException("Kubernetes returned error " + str(res.code))
+        if self.__class__.__name__ == res.obj.__class__.__name__:
+            self.merge(res.obj, overwrite=True)
+        return self
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
+        if passed:
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
+
+    def replaceNamespacedEvent(
+        self,
+        name: str,
+        namespace: str,
+        dry_run: Optional[str] = None,
+        field_manager: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["Event_"]:
+        r"""
+        replace the specified Event
+
+        operationID: replaceNamespacedEvent
+        path: /apis/events.k8s.io/v1beta1/namespaces/{namespace}/events/{name}
+
+        :param name: name for the resource
+        :param namespace: namespace for the resource
+        :param dry_run: When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are: - All: all dry run stages will be processed
+        :param field_manager: fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or
+            128 characters long, and only contain printable characters, as
+            defined by https://golang.org/pkg/unicode/#IsPrint.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   Event_    OK
+          201   Event_    Created
+          401   None    Unauthorized
+        """
+        if client is not None:
+            client_to_use = client
+        else:
+            # noinspection PyDataclass
+            client_to_use = self.client
+        inst = EventsV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "replace_namespaced_event_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "replace_namespaced_event_with_http_info "
+                "on EventsV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["name"] = name
+        all_args["namespace"] = namespace
+        all_args["dry_run"] = dry_run
+        all_args["field_manager"] = field_manager
+        body = get_clean_dict(self)
+        all_args["body"] = body
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200, 201)
+        return Response["Event_"](result, codes_returning_objects)
+
+
+@dataclass
 class Overhead(HikaruBase):
     r"""
     Overhead structure represents the resource overhead associated with running a pod.
 
-    Full name: v1beta1.Overhead
+    Full name: Overhead
 
     Attributes:
     podFixed: PodFixed represents the fixed resource overhead associated with running a
@@ -30237,7 +30905,7 @@ class RuntimeClass(HikaruDocumentBase):
     resolving the RuntimeClassName reference before running the pod. For more details, see
     https://git.k8s.io/enhancements/keps/sig-node/runtime-class.md
 
-    Full name: v1beta1.RuntimeClass
+    Full name: RuntimeClass
 
     Attributes:
     handler: Handler specifies the underlying runtime and configuration that the CRI
@@ -30293,7 +30961,7 @@ class RuntimeClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         delete collection of RuntimeClass
 
@@ -30384,7 +31052,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30416,7 +31084,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
     def createRuntimeClass(
         self,
@@ -30424,7 +31092,7 @@ class RuntimeClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         create a RuntimeClass
 
@@ -30444,7 +31112,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30474,7 +31142,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
     def create(
         self,
@@ -30527,7 +31195,7 @@ class RuntimeClass(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         delete a RuntimeClass
 
@@ -30563,7 +31231,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30590,7 +31258,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -30676,7 +31344,7 @@ class RuntimeClass(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         read the specified RuntimeClass
 
@@ -30695,7 +31363,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30719,7 +31387,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
     def read(
         self,
@@ -30787,7 +31455,7 @@ class RuntimeClass(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         partially update the specified RuntimeClass
 
@@ -30814,7 +31482,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30844,7 +31512,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
     def update(
         self,
@@ -30925,7 +31593,7 @@ class RuntimeClass(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClass"]:
         r"""
         replace the specified RuntimeClass
 
@@ -30946,7 +31614,7 @@ class RuntimeClass(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -30976,29 +31644,7 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class Scheduling(HikaruBase):
-    r"""
-    Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
-
-    Full name: v1beta1.Scheduling
-
-    Attributes:
-    nodeSelector: nodeSelector lists labels that must be present on nodes that support
-        this RuntimeClass. Pods using this RuntimeClass can only be scheduled to a node
-        matched by this selector. The RuntimeClass nodeSelector is merged with a pod's
-        existing nodeSelector. Any conflicts will cause the pod to be rejected in
-        admission.
-    tolerations: tolerations are appended (excluding duplicates) to pods running with this
-        RuntimeClass during admission, effectively unioning the set of nodes tolerated by
-        the pod and the RuntimeClass.
-    """
-
-    nodeSelector: Optional[Dict[str, str]] = field(default_factory=dict)
-    tolerations: Optional[List["Toleration"]] = field(default_factory=list)
+        return Response["RuntimeClass"](result, codes_returning_objects)
 
 
 @dataclass
@@ -31006,7 +31652,7 @@ class RuntimeClassList(HikaruDocumentBase):
     r"""
     RuntimeClassList is a list of RuntimeClass objects.
 
-    Full name: v1beta1.RuntimeClassList
+    Full name: RuntimeClassList
 
     Attributes:
     items: Items is a list of schema objects.
@@ -31044,7 +31690,7 @@ class RuntimeClassList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["RuntimeClassList"]:
         r"""
         list or watch objects of kind RuntimeClass
 
@@ -31124,7 +31770,7 @@ class RuntimeClassList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31154,7 +31800,7 @@ class RuntimeClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["RuntimeClassList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -31165,11 +31811,33 @@ class RuntimeClassList(HikaruDocumentBase):
 
 
 @dataclass
+class Scheduling(HikaruBase):
+    r"""
+    Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
+
+    Full name: Scheduling
+
+    Attributes:
+    nodeSelector: nodeSelector lists labels that must be present on nodes that support
+        this RuntimeClass. Pods using this RuntimeClass can only be scheduled to a node
+        matched by this selector. The RuntimeClass nodeSelector is merged with a pod's
+        existing nodeSelector. Any conflicts will cause the pod to be rejected in
+        admission.
+    tolerations: tolerations are appended (excluding duplicates) to pods running with this
+        RuntimeClass during admission, effectively unioning the set of nodes tolerated by
+        the pod and the RuntimeClass.
+    """
+
+    nodeSelector: Optional[Dict[str, str]] = field(default_factory=dict)
+    tolerations: Optional[List["Toleration"]] = field(default_factory=list)
+
+
+@dataclass
 class AllowedCSIDriver(HikaruBase):
     r"""
     AllowedCSIDriver represents a single inline CSI Driver that is allowed to be used.
 
-    Full name: v1beta1.AllowedCSIDriver
+    Full name: AllowedCSIDriver
 
     Attributes:
     name: Name is the registered name of the CSI driver
@@ -31183,7 +31851,7 @@ class AllowedFlexVolume(HikaruBase):
     r"""
     AllowedFlexVolume represents a single Flexvolume that is allowed to be used.
 
-    Full name: v1beta1.AllowedFlexVolume
+    Full name: AllowedFlexVolume
 
     Attributes:
     driver: driver is the name of the Flexvolume driver.
@@ -31198,7 +31866,7 @@ class AllowedHostPath(HikaruBase):
     AllowedHostPath defines the host volume conditions that will be enabled by a policy
     for pods to use. It requires the path prefix to be defined.
 
-    Full name: v1beta1.AllowedHostPath
+    Full name: AllowedHostPath
 
     Attributes:
     pathPrefix: pathPrefix is the path prefix that the host volume must match. It does not
@@ -31220,7 +31888,7 @@ class Eviction(HikaruDocumentBase):
     constraints. This is a subresource of Pod. A request to cause such an eviction is
     created by POSTing to .../pods/<pod name>/evictions.
 
-    Full name: v1beta1.Eviction
+    Full name: Eviction
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -31250,7 +31918,7 @@ class FSGroupStrategyOptions(HikaruBase):
     FSGroupStrategyOptions defines the strategy type and options used to create the
     strategy.
 
-    Full name: v1beta1.FSGroupStrategyOptions
+    Full name: FSGroupStrategyOptions
 
     Attributes:
     rule: rule is the strategy that will dictate what FSGroup is used in the
@@ -31265,11 +31933,12 @@ class FSGroupStrategyOptions(HikaruBase):
 
 
 @dataclass
-class IDRange(HikaruBase):
+class HostPortRange(HikaruBase):
     r"""
-    IDRange provides a min/max of an allowed range of IDs.
+    HostPortRange defines a range of host ports that will be enabled by a policy for pods
+    to use. It requires both the start and end to be defined.
 
-    Full name: v1beta1.IDRange
+    Full name: HostPortRange
 
     Attributes:
     max: max is the end of the range, inclusive.
@@ -31281,12 +31950,11 @@ class IDRange(HikaruBase):
 
 
 @dataclass
-class HostPortRange(HikaruBase):
+class IDRange(HikaruBase):
     r"""
-    HostPortRange defines a range of host ports that will be enabled by a policy for pods
-    to use. It requires both the start and end to be defined.
+    IDRange provides a min/max of an allowed range of IDs.
 
-    Full name: v1beta1.HostPortRange
+    Full name: IDRange
 
     Attributes:
     max: max is the end of the range, inclusive.
@@ -31303,7 +31971,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
     PodDisruptionBudget is an object to define the max disruption that can be caused to a
     collection of pods
 
-    Full name: v1beta1.PodDisruptionBudget
+    Full name: PodDisruptionBudget
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -31345,7 +32013,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         delete collection of PodDisruptionBudget
 
@@ -31437,7 +32105,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31472,7 +32140,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def createNamespacedPodDisruptionBudget(
         self,
@@ -31481,7 +32149,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         create a PodDisruptionBudget
 
@@ -31502,7 +32170,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31535,7 +32203,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def create(
         self,
@@ -31606,7 +32274,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         delete a PodDisruptionBudget
 
@@ -31643,7 +32311,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31673,7 +32341,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -31776,7 +32444,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         read the specified PodDisruptionBudget
 
@@ -31796,7 +32464,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31823,7 +32491,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def read(
         self,
@@ -31908,7 +32576,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         partially update the specified PodDisruptionBudget
 
@@ -31936,7 +32604,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -31969,7 +32637,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def update(
         self,
@@ -32066,7 +32734,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         replace the specified PodDisruptionBudget
 
@@ -32088,7 +32756,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32121,7 +32789,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
     def replaceNamespacedPodDisruptionBudgetStatus(
         self,
@@ -32131,7 +32799,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudget"]:
         r"""
         replace status of the specified PodDisruptionBudget
 
@@ -32153,7 +32821,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32186,68 +32854,7 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
-
-
-@dataclass
-class PodDisruptionBudgetSpec(HikaruBase):
-    r"""
-    PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.
-
-    Full name: v1beta1.PodDisruptionBudgetSpec
-
-    Attributes:
-    selector: Label query over pods whose evictions are managed by the disruption budget.
-    maxUnavailable: An eviction is allowed if at most "maxUnavailable" pods selected by
-        "selector" are unavailable after the eviction, i.e. even in absence of the evicted
-        pod. For example, one can prevent all voluntary evictions by specifying 0. This is
-        a mutually exclusive setting with "minAvailable".
-    minAvailable: An eviction is allowed if at least "minAvailable" pods selected by
-        "selector" will still be available after the eviction, i.e. even in the absence of
-        the evicted pod. So for example you can prevent all voluntary evictions by
-        specifying "100%".
-    """
-
-    selector: Optional["LabelSelector"] = None
-    maxUnavailable: Optional[object] = field(default_factory=dict)
-    minAvailable: Optional[object] = field(default_factory=dict)
-
-
-@dataclass
-class PodDisruptionBudgetStatus(HikaruBase):
-    r"""
-    PodDisruptionBudgetStatus represents information about the status of a
-    PodDisruptionBudget. Status may trail the actual state of a system.
-
-    Full name: v1beta1.PodDisruptionBudgetStatus
-
-    Attributes:
-    currentHealthy: current number of healthy pods
-    desiredHealthy: minimum desired number of healthy pods
-    disruptionsAllowed: Number of pod disruptions that are currently allowed.
-    expectedPods: total number of pods counted by this disruption budget
-    observedGeneration: Most recent generation observed when updating this PDB status.
-        DisruptionsAllowed and other status information is valid only if
-        observedGeneration equals to PDB's object generation.
-    disruptedPods: DisruptedPods contains information about pods whose eviction was
-        processed by the API server eviction subresource handler but has not yet been
-        observed by the PodDisruptionBudget controller. A pod will be in this map from the
-        time when the API server processed the eviction request to the time when the pod
-        is seen by PDB controller as having been marked for deletion (or after a timeout).
-        The key in the map is the name of the pod and the value is the time when the API
-        server processed the eviction request. If the deletion didn't occur and a pod is
-        still there it will be removed from the list automatically by PodDisruptionBudget
-        controller after some time. If everything goes smooth this map should be empty for
-        the most of the time. Large number of entries in the map may indicate problems
-        with pod deletions.
-    """
-
-    currentHealthy: int
-    desiredHealthy: int
-    disruptionsAllowed: int
-    expectedPods: int
-    observedGeneration: Optional[int] = None
-    disruptedPods: Optional[Dict[str, str]] = field(default_factory=dict)
+        return Response["PodDisruptionBudget"](result, codes_returning_objects)
 
 
 @dataclass
@@ -32255,7 +32862,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
     r"""
     PodDisruptionBudgetList is a collection of PodDisruptionBudgets.
 
-    Full name: v1beta1.PodDisruptionBudgetList
+    Full name: PodDisruptionBudgetList
 
     Attributes:
     items:
@@ -32293,7 +32900,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudgetList"]:
         r"""
         list or watch objects of kind PodDisruptionBudget
 
@@ -32374,7 +32981,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32407,7 +33014,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudgetList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -32430,7 +33037,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodDisruptionBudgetList"]:
         r"""
         list or watch objects of kind PodDisruptionBudget
 
@@ -32510,7 +33117,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32542,7 +33149,7 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodDisruptionBudgetList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -32553,12 +33160,73 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
 
 
 @dataclass
+class PodDisruptionBudgetSpec(HikaruBase):
+    r"""
+    PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.
+
+    Full name: PodDisruptionBudgetSpec
+
+    Attributes:
+    selector: Label query over pods whose evictions are managed by the disruption budget.
+    maxUnavailable: An eviction is allowed if at most "maxUnavailable" pods selected by
+        "selector" are unavailable after the eviction, i.e. even in absence of the evicted
+        pod. For example, one can prevent all voluntary evictions by specifying 0. This is
+        a mutually exclusive setting with "minAvailable".
+    minAvailable: An eviction is allowed if at least "minAvailable" pods selected by
+        "selector" will still be available after the eviction, i.e. even in the absence of
+        the evicted pod. So for example you can prevent all voluntary evictions by
+        specifying "100%".
+    """
+
+    selector: Optional["LabelSelector"] = None
+    maxUnavailable: Optional[object] = field(default_factory=dict)
+    minAvailable: Optional[object] = field(default_factory=dict)
+
+
+@dataclass
+class PodDisruptionBudgetStatus(HikaruBase):
+    r"""
+    PodDisruptionBudgetStatus represents information about the status of a
+    PodDisruptionBudget. Status may trail the actual state of a system.
+
+    Full name: PodDisruptionBudgetStatus
+
+    Attributes:
+    currentHealthy: current number of healthy pods
+    desiredHealthy: minimum desired number of healthy pods
+    disruptionsAllowed: Number of pod disruptions that are currently allowed.
+    expectedPods: total number of pods counted by this disruption budget
+    observedGeneration: Most recent generation observed when updating this PDB status.
+        DisruptionsAllowed and other status information is valid only if
+        observedGeneration equals to PDB's object generation.
+    disruptedPods: DisruptedPods contains information about pods whose eviction was
+        processed by the API server eviction subresource handler but has not yet been
+        observed by the PodDisruptionBudget controller. A pod will be in this map from the
+        time when the API server processed the eviction request to the time when the pod
+        is seen by PDB controller as having been marked for deletion (or after a timeout).
+        The key in the map is the name of the pod and the value is the time when the API
+        server processed the eviction request. If the deletion didn't occur and a pod is
+        still there it will be removed from the list automatically by PodDisruptionBudget
+        controller after some time. If everything goes smooth this map should be empty for
+        the most of the time. Large number of entries in the map may indicate problems
+        with pod deletions.
+    """
+
+    currentHealthy: int
+    desiredHealthy: int
+    disruptionsAllowed: int
+    expectedPods: int
+    observedGeneration: Optional[int] = None
+    disruptedPods: Optional[Dict[str, str]] = field(default_factory=dict)
+
+
+@dataclass
 class PodSecurityPolicy(HikaruDocumentBase):
     r"""
     PodSecurityPolicy governs the ability to make requests that affect the Security
     Context that will be applied to a pod and container.
 
-    Full name: v1beta1.PodSecurityPolicy
+    Full name: PodSecurityPolicy
 
     Attributes:
     apiVersion: APIVersion defines the versioned schema of this representation of an
@@ -32598,7 +33266,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         delete collection of PodSecurityPolicy
 
@@ -32689,7 +33357,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32723,7 +33391,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
 
     def createPodSecurityPolicy(
         self,
@@ -32731,7 +33399,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         create a PodSecurityPolicy
 
@@ -32751,7 +33419,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32781,7 +33449,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
 
     def create(
         self,
@@ -32834,7 +33502,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         delete a PodSecurityPolicy
 
@@ -32870,7 +33538,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -32897,7 +33565,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -32983,7 +33651,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         read the specified PodSecurityPolicy
 
@@ -33002,7 +33670,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -33026,7 +33694,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
 
     def read(
         self,
@@ -33094,7 +33762,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         partially update the specified PodSecurityPolicy
 
@@ -33121,7 +33789,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -33151,7 +33819,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
 
     def update(
         self,
@@ -33232,7 +33900,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["PodSecurityPolicy"]:
         r"""
         replace the specified PodSecurityPolicy
 
@@ -33253,7 +33921,7 @@ class PodSecurityPolicy(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -33283,7 +33951,170 @@ class PodSecurityPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["PodSecurityPolicy"](result, codes_returning_objects)
+
+
+@dataclass
+class PodSecurityPolicyList(HikaruDocumentBase):
+    r"""
+    PodSecurityPolicyList is a list of PodSecurityPolicy objects.
+
+    Full name: PodSecurityPolicyList
+
+    Attributes:
+    items: items is a list of schema objects.
+    apiVersion: APIVersion defines the versioned schema of this representation of an
+        object. Servers should convert recognized schemas to the latest internal value,
+        and may reject unrecognized values. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+    kind: Kind is a string value representing the REST resource this object represents.
+        Servers may infer this from the endpoint the client submits requests to. Cannot be
+        updated. In CamelCase. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+    metadata: Standard list metadata. More info:
+        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+    """
+
+    _version = "v1beta1"
+    items: List["PodSecurityPolicy"]
+    apiVersion: Optional[str] = "policy/v1beta1"
+    kind: Optional[str] = "PodSecurityPolicyList"
+    metadata: Optional["ListMeta"] = None
+    # noinspection PyDataclass
+    client: InitVar[Optional[ApiClient]] = None
+
+    @staticmethod
+    def listPodSecurityPolicy(
+        allow_watch_bookmarks: Optional[bool] = None,
+        continue_: Optional[str] = None,
+        field_selector: Optional[str] = None,
+        label_selector: Optional[str] = None,
+        limit: Optional[int] = None,
+        resource_version: Optional[str] = None,
+        resource_version_match: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        watch: Optional[bool] = None,
+        pretty: Optional[str] = None,
+        client: ApiClient = None,
+        async_req: bool = False,
+    ) -> Response["PodSecurityPolicyList"]:
+        r"""
+        list or watch objects of kind PodSecurityPolicy
+
+        operationID: listPodSecurityPolicy
+        path: /apis/policy/v1beta1/podsecuritypolicies
+
+        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
+            type "BOOKMARK". Servers that do not implement bookmarks may ignore
+            this flag and bookmarks are sent at the server's discretion. Clients
+            should not assume bookmarks are returned at any specific interval,
+            nor may they assume the server will send any BOOKMARK event during a
+            session. If this is not a watch, this field is ignored. If the
+            feature gate WatchBookmarks is not enabled in apiserver, this field
+            is ignored.
+        :param continue_: The continue option should be set when retrieving more
+            results from the server. Since this value is server defined, clients
+            may only use the continue value from a previous query result with
+            identical query parameters (except for the value of continue) and
+            the server may reject a continue value it does not recognize. If the
+            specified continue value is no longer valid whether due to
+            expiration (generally five to fifteen minutes) or a configuration
+            change on the server, the server will respond with a 410
+            ResourceExpired error together with a continue token. If the client
+            needs a consistent list, it must restart their list without the
+            continue field. Otherwise, the client may send another list request
+            with the token received with the 410 error, the server will respond
+            with a list starting from the next key, but from the latest
+            snapshot, which is inconsistent from the previous list results -
+            objects that are created, modified, or deleted after the first list
+            request will be included in the response, as long as their keys are
+            after the "next key". This field is not supported when watch is
+            true. Clients may start a watch from the last resourceVersion value
+            returned by the server and not miss any modifications.
+        :param field_selector: A selector to restrict the list of returned objects by
+            their fields. Defaults to everything.
+        :param label_selector: A selector to restrict the list of returned objects by
+            their labels. Defaults to everything.
+        :param limit: limit is a maximum number of responses to return for a list call.
+            If more items exist, the server will set the `continue` field on the
+            list metadata to a value that can be used with the same initial
+            query to retrieve the next set of results. Setting a limit may
+            return fewer than the requested amount of items (up to zero items)
+            in the event all requested objects are filtered out and clients
+            should only use the presence of the continue field to determine
+            whether more results are available. Servers may choose not to
+            support the limit argument and will return all of the available
+            results. If limit is specified and the continue field is empty,
+            clients may assume that no more results are available. This field is
+            not supported if watch is true. The server guarantees that the
+            objects returned when using continue will be identical to issuing a
+            single list call without a limit - that is, no objects created,
+            modified, or deleted after the first request is issued will be
+            included in any subsequent continued requests. This is sometimes
+            referred to as a consistent snapshot, and ensures that a client that
+            is using limit to receive smaller chunks of a very large result can
+            ensure they see all possible objects. If objects are updated during
+            a chunked list the version of the object that was present at the
+            time the first list result was calculated is returned.
+        :param resource_version: resourceVersion sets a constraint on what resource
+            versions a request may be served from. See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param resource_version_match: resourceVersionMatch determines how
+            resourceVersion is applied to list calls. It is highly recommended
+            that resourceVersionMatch be set for list calls where
+            resourceVersion is set See
+            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
+            for details. Defaults to unset
+        :param timeout_seconds: Timeout for the list/watch call. This limits the
+            duration of the call, regardless of any activity or inactivity.
+        :param watch: Watch for changes to the described resources and return them as a
+            stream of add, update, and remove notifications. Specify
+            resourceVersion.
+        :param pretty: If 'true', then the output is pretty printed.
+        :param client: optional; instance of kubernetes.client.api_client.ApiClient
+        :param async_req: bool; if True, call is async and the caller must invoke
+            .get() on the returned Response object. Default is False, which makes
+            the call blocking.
+
+        :return: hikaru.utils.Response[T] instance with the following codes and
+            obj value types:
+          Code  ObjType    Description
+          -----------------------------
+          200   PodSecurityPolicyList    OK
+          401   None    Unauthorized
+        """
+        client_to_use = client
+        inst = PolicyV1beta1Api(api_client=client_to_use)
+        the_method = getattr(inst, "list_pod_security_policy_with_http_info")
+        if the_method is None:  # pragma: no cover
+            raise RuntimeError(
+                "Unable to locate method "
+                "list_pod_security_policy_with_http_info "
+                "on PolicyV1beta1Api; possible release mismatch?"
+            )
+        all_args = dict()
+        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
+        all_args["_continue"] = continue_
+        all_args["field_selector"] = field_selector
+        all_args["label_selector"] = label_selector
+        all_args["limit"] = limit
+        all_args["resource_version"] = resource_version
+        all_args["resource_version_match"] = resource_version_match
+        all_args["timeout_seconds"] = timeout_seconds
+        all_args["watch"] = watch
+        all_args["pretty"] = pretty
+        all_args["async_req"] = async_req
+        result = the_method(**all_args)
+        codes_returning_objects = (200,)
+        return Response["PodSecurityPolicyList"](result, codes_returning_objects)
+
+    _watcher = WatcherDescriptor(
+        "kubernetes.client.api",
+        ".policy_v1beta1_api",
+        "PolicyV1beta1Api",
+        "list_pod_security_policy",
+    )
 
 
 @dataclass
@@ -33291,7 +34122,7 @@ class PodSecurityPolicySpec(HikaruBase):
     r"""
     PodSecurityPolicySpec defines the policy enforced.
 
-    Full name: v1beta1.PodSecurityPolicySpec
+    Full name: PodSecurityPolicySpec
 
     Attributes:
     fsGroup: fsGroup is the strategy that will dictate what fs group is used by the
@@ -33391,175 +34222,12 @@ class PodSecurityPolicySpec(HikaruBase):
 
 
 @dataclass
-class PodSecurityPolicyList(HikaruDocumentBase):
-    r"""
-    PodSecurityPolicyList is a list of PodSecurityPolicy objects.
-
-    Full name: v1beta1.PodSecurityPolicyList
-
-    Attributes:
-    items: items is a list of schema objects.
-    apiVersion: APIVersion defines the versioned schema of this representation of an
-        object. Servers should convert recognized schemas to the latest internal value,
-        and may reject unrecognized values. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-    kind: Kind is a string value representing the REST resource this object represents.
-        Servers may infer this from the endpoint the client submits requests to. Cannot be
-        updated. In CamelCase. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-    metadata: Standard list metadata. More info:
-        https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-    """
-
-    _version = "v1beta1"
-    items: List["PodSecurityPolicy"]
-    apiVersion: Optional[str] = "policy/v1beta1"
-    kind: Optional[str] = "PodSecurityPolicyList"
-    metadata: Optional["ListMeta"] = None
-    # noinspection PyDataclass
-    client: InitVar[Optional[ApiClient]] = None
-
-    @staticmethod
-    def listPodSecurityPolicy(
-        allow_watch_bookmarks: Optional[bool] = None,
-        continue_: Optional[str] = None,
-        field_selector: Optional[str] = None,
-        label_selector: Optional[str] = None,
-        limit: Optional[int] = None,
-        resource_version: Optional[str] = None,
-        resource_version_match: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-        watch: Optional[bool] = None,
-        pretty: Optional[str] = None,
-        client: ApiClient = None,
-        async_req: bool = False,
-    ) -> Response:
-        r"""
-        list or watch objects of kind PodSecurityPolicy
-
-        operationID: listPodSecurityPolicy
-        path: /apis/policy/v1beta1/podsecuritypolicies
-
-        :param allow_watch_bookmarks: allowWatchBookmarks requests watch events with
-            type "BOOKMARK". Servers that do not implement bookmarks may ignore
-            this flag and bookmarks are sent at the server's discretion. Clients
-            should not assume bookmarks are returned at any specific interval,
-            nor may they assume the server will send any BOOKMARK event during a
-            session. If this is not a watch, this field is ignored. If the
-            feature gate WatchBookmarks is not enabled in apiserver, this field
-            is ignored.
-        :param continue_: The continue option should be set when retrieving more
-            results from the server. Since this value is server defined, clients
-            may only use the continue value from a previous query result with
-            identical query parameters (except for the value of continue) and
-            the server may reject a continue value it does not recognize. If the
-            specified continue value is no longer valid whether due to
-            expiration (generally five to fifteen minutes) or a configuration
-            change on the server, the server will respond with a 410
-            ResourceExpired error together with a continue token. If the client
-            needs a consistent list, it must restart their list without the
-            continue field. Otherwise, the client may send another list request
-            with the token received with the 410 error, the server will respond
-            with a list starting from the next key, but from the latest
-            snapshot, which is inconsistent from the previous list results -
-            objects that are created, modified, or deleted after the first list
-            request will be included in the response, as long as their keys are
-            after the "next key". This field is not supported when watch is
-            true. Clients may start a watch from the last resourceVersion value
-            returned by the server and not miss any modifications.
-        :param field_selector: A selector to restrict the list of returned objects by
-            their fields. Defaults to everything.
-        :param label_selector: A selector to restrict the list of returned objects by
-            their labels. Defaults to everything.
-        :param limit: limit is a maximum number of responses to return for a list call.
-            If more items exist, the server will set the `continue` field on the
-            list metadata to a value that can be used with the same initial
-            query to retrieve the next set of results. Setting a limit may
-            return fewer than the requested amount of items (up to zero items)
-            in the event all requested objects are filtered out and clients
-            should only use the presence of the continue field to determine
-            whether more results are available. Servers may choose not to
-            support the limit argument and will return all of the available
-            results. If limit is specified and the continue field is empty,
-            clients may assume that no more results are available. This field is
-            not supported if watch is true. The server guarantees that the
-            objects returned when using continue will be identical to issuing a
-            single list call without a limit - that is, no objects created,
-            modified, or deleted after the first request is issued will be
-            included in any subsequent continued requests. This is sometimes
-            referred to as a consistent snapshot, and ensures that a client that
-            is using limit to receive smaller chunks of a very large result can
-            ensure they see all possible objects. If objects are updated during
-            a chunked list the version of the object that was present at the
-            time the first list result was calculated is returned.
-        :param resource_version: resourceVersion sets a constraint on what resource
-            versions a request may be served from. See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param resource_version_match: resourceVersionMatch determines how
-            resourceVersion is applied to list calls. It is highly recommended
-            that resourceVersionMatch be set for list calls where
-            resourceVersion is set See
-            https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions
-            for details. Defaults to unset
-        :param timeout_seconds: Timeout for the list/watch call. This limits the
-            duration of the call, regardless of any activity or inactivity.
-        :param watch: Watch for changes to the described resources and return them as a
-            stream of add, update, and remove notifications. Specify
-            resourceVersion.
-        :param pretty: If 'true', then the output is pretty printed.
-        :param client: optional; instance of kubernetes.client.api_client.ApiClient
-        :param async_req: bool; if True, call is async and the caller must invoke
-            .get() on the returned Response object. Default is False, which makes
-            the call blocking.
-
-        :return: hikaru.utils.Response instance with the following codes and
-            obj value types:
-          Code  ObjType    Description
-          -----------------------------
-          200   PodSecurityPolicyList    OK
-          401   None    Unauthorized
-        """
-        client_to_use = client
-        inst = PolicyV1beta1Api(api_client=client_to_use)
-        the_method = getattr(inst, "list_pod_security_policy_with_http_info")
-        if the_method is None:  # pragma: no cover
-            raise RuntimeError(
-                "Unable to locate method "
-                "list_pod_security_policy_with_http_info "
-                "on PolicyV1beta1Api; possible release mismatch?"
-            )
-        all_args = dict()
-        all_args["allow_watch_bookmarks"] = allow_watch_bookmarks
-        all_args["_continue"] = continue_
-        all_args["field_selector"] = field_selector
-        all_args["label_selector"] = label_selector
-        all_args["limit"] = limit
-        all_args["resource_version"] = resource_version
-        all_args["resource_version_match"] = resource_version_match
-        all_args["timeout_seconds"] = timeout_seconds
-        all_args["watch"] = watch
-        all_args["pretty"] = pretty
-        all_args["async_req"] = async_req
-        result = the_method(**all_args)
-        codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
-
-    _watcher = WatcherDescriptor(
-        "kubernetes.client.api",
-        ".policy_v1beta1_api",
-        "PolicyV1beta1Api",
-        "list_pod_security_policy",
-    )
-
-
-@dataclass
 class RunAsGroupStrategyOptions(HikaruBase):
     r"""
     RunAsGroupStrategyOptions defines the strategy type and any options used to create the
     strategy.
 
-    Full name: v1beta1.RunAsGroupStrategyOptions
+    Full name: RunAsGroupStrategyOptions
 
     Attributes:
     rule: rule is the strategy that will dictate the allowable RunAsGroup values that may
@@ -33579,7 +34247,7 @@ class RunAsUserStrategyOptions(HikaruBase):
     RunAsUserStrategyOptions defines the strategy type and any options used to create the
     strategy.
 
-    Full name: v1beta1.RunAsUserStrategyOptions
+    Full name: RunAsUserStrategyOptions
 
     Attributes:
     rule: rule is the strategy that will dictate the allowable RunAsUser values that may
@@ -33599,7 +34267,7 @@ class RuntimeClassStrategyOptions(HikaruBase):
     RuntimeClassStrategyOptions define the strategy that will dictate the allowable
     RuntimeClasses for a pod.
 
-    Full name: v1beta1.RuntimeClassStrategyOptions
+    Full name: RuntimeClassStrategyOptions
 
     Attributes:
     allowedRuntimeClassNames: allowedRuntimeClassNames is an allowlist of RuntimeClass
@@ -33621,7 +34289,7 @@ class SELinuxStrategyOptions(HikaruBase):
     SELinuxStrategyOptions defines the strategy type and any options used to create the
     strategy.
 
-    Full name: v1beta1.SELinuxStrategyOptions
+    Full name: SELinuxStrategyOptions
 
     Attributes:
     rule: rule is the strategy that will dictate the allowable labels that may be set.
@@ -33639,7 +34307,7 @@ class SupplementalGroupsStrategyOptions(HikaruBase):
     SupplementalGroupsStrategyOptions defines the strategy type and options used to create
     the strategy.
 
-    Full name: v1beta1.SupplementalGroupsStrategyOptions
+    Full name: SupplementalGroupsStrategyOptions
 
     Attributes:
     rule: rule is the strategy that will dictate what supplemental groups is used in the
@@ -33651,6 +34319,34 @@ class SupplementalGroupsStrategyOptions(HikaruBase):
 
     rule: Optional[str] = None
     ranges: Optional[List["IDRange"]] = field(default_factory=list)
+
+
+@dataclass
+class Subject_(HikaruBase):
+    r"""
+    Subject contains a reference to the object or user identities a role binding applies
+    to. This can either hold a direct API object reference, or a value for non-objects
+    such as user and group names.
+
+    Full name: Subject
+
+    Attributes:
+    kind: Kind of object being referenced. Values defined by this API group are "User",
+        "Group", and "ServiceAccount". If the Authorizer does not recognized the kind
+        value, the Authorizer should report an error.
+    name: Name of the object being referenced.
+    apiGroup: APIGroup holds the API group of the referenced subject. Defaults to "" for
+        ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io" for User and
+        Group subjects.
+    namespace: Namespace of the referenced object. If the object kind is non-namespace,
+        such as "User" or "Group", and this value is not empty the Authorizer should
+        report an error.
+    """
+
+    kind: str
+    name: str
+    apiGroup: Optional[str] = None
+    namespace: Optional[str] = None
 
 
 MutatingWebhookConfiguration._watcher_cls = MutatingWebhookConfigurationList
@@ -33667,7 +34363,6 @@ Lease._watcher_cls = LeaseList
 ComponentStatus._watcher_cls = ComponentStatusList
 ConfigMap._watcher_cls = ConfigMapList
 Endpoints._watcher_cls = EndpointsList
-Event._watcher_cls = EventList
 LimitRange._watcher_cls = LimitRangeList
 Namespace._watcher_cls = NamespaceList
 Node._watcher_cls = NodeList
@@ -33694,6 +34389,7 @@ StorageClass._watcher_cls = StorageClassList
 VolumeAttachment._watcher_cls = VolumeAttachmentList
 CustomResourceDefinition._watcher_cls = CustomResourceDefinitionList
 APIService._watcher_cls = APIServiceList
+Event._watcher_cls = EventList
 CronJob._watcher_cls = CronJobList
 EndpointSlice._watcher_cls = EndpointSliceList
 RuntimeClass._watcher_cls = RuntimeClassList

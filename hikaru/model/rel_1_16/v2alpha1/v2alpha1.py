@@ -10203,7 +10203,7 @@ class CronJob(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         delete collection of CronJob
 
@@ -10292,7 +10292,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10326,7 +10326,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def createNamespacedCronJob(
         self,
@@ -10335,7 +10335,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         create a CronJob
 
@@ -10356,7 +10356,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10387,7 +10387,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def create(
         self,
@@ -10458,7 +10458,7 @@ class CronJob(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         delete a CronJob
 
@@ -10495,7 +10495,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10523,7 +10523,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -10626,7 +10626,7 @@ class CronJob(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         read the specified CronJob
 
@@ -10646,7 +10646,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10671,7 +10671,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def read(
         self,
@@ -10756,7 +10756,7 @@ class CronJob(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         partially update the specified CronJob
 
@@ -10784,7 +10784,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10815,7 +10815,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def update(
         self,
@@ -10912,7 +10912,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         replace the specified CronJob
 
@@ -10934,7 +10934,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10965,7 +10965,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -10975,7 +10975,7 @@ class CronJob(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJob"]:
         r"""
         replace status of the specified CronJob
 
@@ -10997,7 +10997,7 @@ class CronJob(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -11028,7 +11028,7 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["CronJob"](result, codes_returning_objects)
 
 
 @dataclass
@@ -11073,7 +11073,7 @@ class CronJobList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJobList"]:
         r"""
         list or watch objects of kind CronJob
 
@@ -11150,7 +11150,7 @@ class CronJobList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -11179,7 +11179,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJobList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -11202,7 +11202,7 @@ class CronJobList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["CronJobList"]:
         r"""
         list or watch objects of kind CronJob
 
@@ -11280,7 +11280,7 @@ class CronJobList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -11310,7 +11310,7 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["CronJobList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

@@ -46,9 +46,6 @@ class Watchables(object):  # pragma: no cover
     EndpointSliceList = EndpointSliceList
     EndpointSlice = EndpointSlice
     EventList = EventList
-    Event = Event
-    IngressList = IngressList
-    Ingress = Ingress
     IngressClassList = IngressClassList
     IngressClass = IngressClass
     RuntimeClassList = RuntimeClassList
@@ -79,6 +76,8 @@ class Watchables(object):  # pragma: no cover
     CustomResourceDefinition = CustomResourceDefinition
     APIServiceList = APIServiceList
     APIService = APIService
+    IngressList = IngressList
+    Ingress = Ingress
 
 
 watchables = Watchables
@@ -93,18 +92,17 @@ class NamespacedWatchables(object):  # pragma: no cover
     LeaseList = LeaseList
     EndpointSliceList = EndpointSliceList
     EventList = EventList
-    IngressList = IngressList
     PodDisruptionBudgetList = PodDisruptionBudgetList
     RoleBindingList = RoleBindingList
     RoleList = RoleList
+    IngressList = IngressList
     CronJob = CronJob
     Lease = Lease
     EndpointSlice = EndpointSlice
-    Event = Event
-    Ingress = Ingress
     PodDisruptionBudget = PodDisruptionBudget
     RoleBinding = RoleBinding
     Role = Role
+    Ingress = Ingress
 
 
 namespaced_watchables = NamespacedWatchables

@@ -22,12 +22,12 @@ import json
 import keyword
 from dataclasses import asdict
 from io import StringIO
-from typing import List, TextIO, Optional
+from typing import List, TextIO, Optional, Tuple
 
 from ruamel.yaml import YAML
 
 from hikaru.meta import HikaruBase, HikaruDocumentBase
-from hikaru.naming import process_api_version, dprefix
+from hikaru.naming import process_api_version, dprefix, get_default_release
 from hikaru.version_kind import get_version_kind_class
 
 
@@ -314,8 +314,8 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
         Python client; use appropriately.
     :param translate: option bool, default False. Generally not needed by users of
         Hikaru, it instructs whether or not camel case identifiers should be turned
-        into PEP8 identifiers (this only happens when True). If you're going some
-        odd tests and getting complaints about PEP8-style attributes are missing,
+        into PEP8 identifiers (this only happens when True). If you're doing some
+        odd tests and getting complaints that PEP8-style attributes are missing,
         you might want to set this to True.
     :return: list of HikaruDocumentBase subclasses, one for each document in the YAML file
     :raises RuntimeError: if one of the documents in the input YAML has an unrecognized
@@ -325,11 +325,15 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
     for i, doc in enumerate(docs):
-        api_version = doc.get('apiVersion', '--NOPE--')
-        if api_version == '--NOPE--':
-            api_version = doc.get('api_version', '')
-        _, api_version = process_api_version(api_version)
+        initial_api_version = doc.get('apiVersion', '--NOPE--')
+        if initial_api_version == '--NOPE--':
+            initial_api_version = doc.get('api_version', '')
+        _, api_version = process_api_version(initial_api_version)
         kind = doc.get('kind', "")
+        api_version, kind = _vk_mapper(initial_api_version
+                                       if api_version != initial_api_version
+                                       else api_version,
+                                       kind, release)
         klass = get_version_kind_class(api_version, kind, release)
         if klass is None:
             raise RuntimeError(f"Doc number {i} in the supplied YAML has an"
@@ -340,3 +344,33 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
         objs.append(inst)
 
     return objs
+
+
+_deprecation_helper = {
+    'rel_1_19': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+    }
+}
+
+
+def _vk_mapper(api_version: str, kind: str, release: str=None) -> Tuple[str, str]:
+    """
+    May map a version/kind pair to different values to cover some of the deprecation cases
+
+    Not really meant of users at large to access
+    :param api_version: string; an api version string such as 'v1'
+    :param kind: string; value of 'kind' to determine what sort of object to
+        make
+    :param release: optional string; if supplied, indicates which release to load classes
+        from. Must be one of the subpackage of hikaru.model, such as rel_1_16 or
+        rel_unversioned. If unspecified, the release specified from
+        hikaru.naming.set_default_release() is used; if that hasn't been called,
+        then the default from when hikaru was built will be used.
+    :return: 2 tuple of strings: (version, kind) to be used in subsequent lookups
+    """
+    use_release = release if release is not None else get_default_release()
+    mdict = _deprecation_helper.get(use_release)
+    if mdict is None:
+        return api_version, kind
+    api_version, kind = mdict.get((api_version, kind), (api_version, kind))
+    return api_version, kind

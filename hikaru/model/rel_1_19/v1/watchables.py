@@ -61,8 +61,6 @@ class Watchables(object):  # pragma: no cover
     ConfigMap = ConfigMap
     EndpointsList = EndpointsList
     Endpoints = Endpoints
-    EventList = EventList
-    Event = Event
     LimitRangeList = LimitRangeList
     LimitRange = LimitRange
     NamespaceList = NamespaceList
@@ -115,6 +113,8 @@ class Watchables(object):  # pragma: no cover
     CustomResourceDefinition = CustomResourceDefinition
     APIServiceList = APIServiceList
     APIService = APIService
+    EventList = EventList
+    Event = Event
 
 
 watchables = Watchables
@@ -135,7 +135,6 @@ class NamespacedWatchables(object):  # pragma: no cover
     LeaseList = LeaseList
     ConfigMapList = ConfigMapList
     EndpointsList = EndpointsList
-    EventList = EventList
     LimitRangeList = LimitRangeList
     PersistentVolumeClaimList = PersistentVolumeClaimList
     PodList = PodList
@@ -149,6 +148,7 @@ class NamespacedWatchables(object):  # pragma: no cover
     NetworkPolicyList = NetworkPolicyList
     RoleBindingList = RoleBindingList
     RoleList = RoleList
+    EventList = EventList
     ControllerRevision = ControllerRevision
     DaemonSet = DaemonSet
     Deployment = Deployment
@@ -159,7 +159,6 @@ class NamespacedWatchables(object):  # pragma: no cover
     Lease = Lease
     ConfigMap = ConfigMap
     Endpoints = Endpoints
-    Event = Event
     LimitRange = LimitRange
     PersistentVolumeClaim = PersistentVolumeClaim
     Pod = Pod
@@ -173,6 +172,7 @@ class NamespacedWatchables(object):  # pragma: no cover
     NetworkPolicy = NetworkPolicy
     RoleBinding = RoleBinding
     Role = Role
+    Event = Event
 
 
 namespaced_watchables = NamespacedWatchables

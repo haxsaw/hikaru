@@ -1695,6 +1695,19 @@ def test142():
     assert n2.status.daemonEndpoints.kubeletEndpoint.Port == 44
 
 
+def test143():
+    """
+    Ensure that labels keys that contain '_' aren't changed to '-'
+    """
+    m: ObjectMeta = ObjectMeta(labels={'Key_1': 'k1', 'key_2': 'k2'})
+    d = get_clean_dict(m)
+    assert 'Key_1' in d['labels']
+    assert 'key_2' in d['labels']
+    m2: ObjectMeta = from_dict(d, cls=ObjectMeta)
+    assert 'Key_1' in m2.labels
+    assert 'key_2' in m2.labels
+
+
 if __name__ == "__main__":
     setup()
     the_tests = {k: v for k, v in globals().items()
