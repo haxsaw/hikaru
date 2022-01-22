@@ -39,7 +39,14 @@ setup(
               "hikaru.model.rel_1_18.v1beta1",
               "hikaru.model.rel_1_18.v2alpha1",
               "hikaru.model.rel_1_18.v2beta1",
-              "hikaru.model.rel_1_18.v2beta2"
+              "hikaru.model.rel_1_18.v2beta2",
+              "hikaru.model.rel_1_19",
+              "hikaru.model.rel_1_19.v1",
+              "hikaru.model.rel_1_19.v1alpha1",
+              "hikaru.model.rel_1_19.v1beta1",
+              "hikaru.model.rel_1_19.v2alpha1",
+              "hikaru.model.rel_1_19.v2beta1",
+              "hikaru.model.rel_1_19.v2beta2"
               ],
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
@@ -62,6 +69,7 @@ setup(
                  "Programming Language :: Python :: 3.7",
                  "Programming Language :: Python :: 3.8",
                  "Programming Language :: Python :: 3.9",
+                 "Programming Language :: Python :: 3.10",
                  "Programming Language :: Python :: Implementation",
                  "Topic :: Software Development",
                  "Topic :: Software Development :: Code Generators",
