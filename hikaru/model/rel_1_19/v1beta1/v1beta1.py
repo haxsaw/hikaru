@@ -27292,7 +27292,7 @@ class EventList(HikaruDocumentBase):
     """
 
     _version = "v1beta1"
-    items: List["Event_"]
+    items: List["Event_events"]
     apiVersion: Optional[str] = "events.k8s.io/v1beta1"
     kind: Optional[str] = "EventList"
     metadata: Optional["ListMeta"] = None
@@ -30024,7 +30024,7 @@ class EndpointSliceList(HikaruDocumentBase):
 
 
 @dataclass
-class Event_(HikaruDocumentBase):
+class Event_events(HikaruDocumentBase):
     r"""
     Event is a report of an event somewhere in the cluster. It generally denotes some
     state change in the system.
@@ -30113,7 +30113,7 @@ class Event_(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         delete collection of Event
 
@@ -30238,7 +30238,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
     def createNamespacedEvent(
         self,
@@ -30247,7 +30247,7 @@ class Event_(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         create an Event
 
@@ -30272,9 +30272,9 @@ class Event_(HikaruDocumentBase):
             obj value types:
           Code  ObjType    Description
           -----------------------------
-          200   Event_    OK
-          201   Event_    Created
-          202   Event_    Accepted
+          200   Event_events    OK
+          201   Event_events    Created
+          202   Event_events    Accepted
           401   None    Unauthorized
         """
         if client is not None:
@@ -30299,7 +30299,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
     def create(
         self,
@@ -30307,7 +30307,7 @@ class Event_(HikaruDocumentBase):
         dry_run: Optional[str] = None,
         field_manager: Optional[str] = None,
         client: ApiClient = None,
-    ) -> "Event_":
+    ) -> "Event_events":
         r"""
             create an Event
 
@@ -30343,7 +30343,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to create() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_namespace = self.metadata.namespace
@@ -30370,7 +30370,7 @@ class Event_(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         delete an Event
 
@@ -30435,7 +30435,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -30446,7 +30446,7 @@ class Event_(HikaruDocumentBase):
         orphan_dependents: Optional[bool] = None,
         propagation_policy: Optional[str] = None,
         client: ApiClient = None,
-    ) -> "Event_":
+    ) -> "Event_events":
         r"""
             delete an Event
 
@@ -30499,7 +30499,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to delete() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_namespace = self.metadata.namespace
@@ -30510,7 +30510,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to delete() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_name = self.metadata.name
@@ -30538,7 +30538,7 @@ class Event_(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         read the specified Event
 
@@ -30562,7 +30562,7 @@ class Event_(HikaruDocumentBase):
             obj value types:
           Code  ObjType    Description
           -----------------------------
-          200   Event_    OK
+          200   Event_events    OK
           401   None    Unauthorized
         """
         client_to_use = client
@@ -30583,7 +30583,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
     def read(
         self,
@@ -30593,7 +30593,7 @@ class Event_(HikaruDocumentBase):
         export: Optional[bool] = None,
         pretty: Optional[str] = None,
         client: ApiClient = None,
-    ) -> "Event_":
+    ) -> "Event_events":
         r"""
             read the specified Event
 
@@ -30630,7 +30630,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to read() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_namespace = self.metadata.namespace
@@ -30641,7 +30641,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a name supplied in either "
                 "the arguments to read() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_name = self.metadata.name
@@ -30668,7 +30668,7 @@ class Event_(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         partially update the specified Event
 
@@ -30700,7 +30700,7 @@ class Event_(HikaruDocumentBase):
             obj value types:
           Code  ObjType    Description
           -----------------------------
-          200   Event_    OK
+          200   Event_events    OK
           401   None    Unauthorized
         """
         if client is not None:
@@ -30727,7 +30727,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
     def update(
         self,
@@ -30736,7 +30736,7 @@ class Event_(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         force: Optional[bool] = None,
         client: ApiClient = None,
-    ) -> "Event_":
+    ) -> "Event_events":
         r"""
             partially update the specified Event
 
@@ -30778,7 +30778,7 @@ class Event_(HikaruDocumentBase):
             raise RuntimeError(
                 "There must be a namespace supplied in either "
                 "the arguments to update() or in a "
-                "Event_'s metadata"
+                "Event_events's metadata"
             )
         else:
             effective_namespace = self.metadata.namespace
@@ -30824,7 +30824,7 @@ class Event_(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response["Event_"]:
+    ) -> Response["Event_events"]:
         r"""
         replace the specified Event
 
@@ -30850,8 +30850,8 @@ class Event_(HikaruDocumentBase):
             obj value types:
           Code  ObjType    Description
           -----------------------------
-          200   Event_    OK
-          201   Event_    Created
+          200   Event_events    OK
+          201   Event_events    Created
           401   None    Unauthorized
         """
         if client is not None:
@@ -30877,7 +30877,7 @@ class Event_(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Event_"](result, codes_returning_objects)
+        return Response["Event_events"](result, codes_returning_objects)
 
 
 @dataclass

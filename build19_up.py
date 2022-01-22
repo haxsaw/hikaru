@@ -780,7 +780,6 @@ class SyntheticOperation(Operation):
 
     def get_meth_return(self) -> str:
         return f"'{self.base_op.owning_cd.hikaru_name}'"
-        # return f"'{self.base_op.kind}'"
 
     def get_async_param(self) -> List[str]:
         return []
@@ -1043,7 +1042,6 @@ class ClassDescriptor(object):
     _doc_markers = ('apiVersion', 'kind')
 
     def __init__(self, swagger_name: str, swagger: dict):
-        # self.is_document = "x-kubernetes-group-version-kind" in swagger
         self.has_doc_markers = False
         self.has_gvk_dict = "x-kubernetes-group-version-kind" in swagger
         group, version, name = process_swagger_name(swagger_name)
@@ -1092,6 +1090,8 @@ class ClassDescriptor(object):
             else:
                 group = self.group if self.group is not None else ''
                 group = group.split('.')[0]
+                if not group and self.api_version_group:
+                    group = self.api_version_group.split('.')[0]
                 self._hikaru_name = f"{self.name}_{group}"
         return self._hikaru_name
 
@@ -1103,7 +1103,6 @@ class ClassDescriptor(object):
 
     def adjust_special_props(self, fd: PropertyDescriptor):
         if fd.name == 'apiVersion':
-            # first_bit = f'{self.group}/' if self.group not in ('core', '') else ""
             first_bit = (f'{self.api_version_group}/'
                          if self.api_version_group not in ('core', '')
                          else "")
@@ -1286,7 +1285,6 @@ def store_swagger_object(k: str, v: dict):
         group_dict[group_no_dots] = cd
 
 
-
 _mod_classes: Dict[str, Dict[str, List[ClassDescriptor]]] = {}
 
 
@@ -1401,14 +1399,6 @@ def _select_from_candidates(candidates: List[ClassDescriptor],
 
 
 def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
-    # first, look to see if there's a hint for this thing
-    # if op.op_id in _release_hints:
-    #     for hdict in _release_hints[op.op_id]['hints']:
-    #         if (op.version == hdict['version'] and op.group == hdict['group'] and
-    #                 op.kind == hdict['kind']):
-    #             cd: ClassDescriptor = find_cd_by_property_ref(hdict["target_ref"])
-    #             if cd is not None:
-    #                 return cd
     # look for a good class for this op based on the op name
     md: Dict[str, List[ClassDescriptor]] = get_module_def(op.version)
     meth_name = make_method_name(op)
@@ -1818,7 +1808,6 @@ def prep_rel_package(directory: str, deprecated: bool = False) -> Path:
     """
     path = _setup_dir(directory)
     # once here, the directory exists and is a directory; clean it out
-    # _clean_directory(str(path))
     init = path / "__init__.py"
     init.touch()
     f = init.open('w')
@@ -1878,15 +1867,11 @@ class ModuleDef(object):
         all_classes: Dict[str, ClassDescriptor] = {}
         for ext in externals:
             emod = ModuleDef(ext)
-            # emod = _all_module_defs[ext]
-            # assert isinstance(emod, ModuleDef)
             all_classes.update(emod.all_classes)
         all_classes.update(self.all_classes)
         # compute all pairs of objects involved in implementing 'watch' semantics
         watcher_pairs = {}
         for v in all_classes.values():
-            # if v.name.endswith('List') and v.watchable:
-            #     item_name = v.name.replace('List', '')
             if 'List' in v.hikaru_name and v.watchable:
                 item_name = v.hikaru_name.replace('List', '')
                 if item_name in all_classes:
@@ -1992,25 +1977,15 @@ def write_watchables_module(path: Path, md: ModuleDef):
     watchables = {}
     for cd in md.all_classes.values():
         if cd.watchable and cd.is_document:
-            # watchables[cd.short_name] = cd
-            # if cd.short_name.endswith('List'):
             watchables[cd.hikaru_name] = cd
             if 'List' in cd.hikaru_name:
-                # item = md.all_classes.get(cd.short_name.replace('List', ''))
                 item = md.all_classes.get(cd.hikaru_name.replace('List', ''))
                 if item is not None:
-                    # watchables[item.short_name] = item
                     watchables[item.hikaru_name] = item
 
-    # namespaced = {k: v for k, v in watchables.items()
-    #               if v.supports_namespaced_watch() and v.short_name.endswith('List')}
     namespaced = {k: v for k, v in watchables.items()
                   if v.supports_namespaced_watch() and 'List' in v.hikaru_name}
     for cd in list(namespaced.values()):
-        # if cd.short_name.endswith('List'):
-        #     item = md.all_classes.get(cd.short_name.replace('List', ''))
-        #     if item is not None and item.is_document:
-        #         namespaced[item.short_name] = item
         if 'List' in cd.hikaru_name:
             item = md.all_classes.get(cd.hikaru_name.replace('List', ''))
             if item is not None and item.is_document:
@@ -2024,8 +1999,6 @@ def write_watchables_module(path: Path, md: ModuleDef):
         print("\n", file=f)
         print("class Watchables(object):  # pragma: no cover", file=f)
         print(watchables_doc, file=f)
-        # for cd in watchables.values():
-        #     print(f'    {cd.short_name} = {cd.short_name}', file=f)
         for cd in watchables.values():
             print(f'    {cd.hikaru_name} = {cd.hikaru_name}', file=f)
         print("\n\nwatchables = Watchables", file=f)

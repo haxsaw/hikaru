@@ -14,6 +14,13 @@ hikaru/__init__.py: __version__
 hikaru/setup.py: __version__
 hikaru/README.rst
 
+Other build tasks
+-----------------
+- in docs/ create a new reference document for the release (rel-1-XX-v1.rst), and
+  be sure to edit the content to contain all the correct release numbers
+- build the docs to be sure they are correct (make clean/html); check to be sure
+  that the release number is picked up correctly
+
 Building
 --------
 building the package: python setup.py bdist_wheel
