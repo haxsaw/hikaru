@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import json
+import keyword
 from dataclasses import asdict
 from io import StringIO
 from typing import List, TextIO, Optional
@@ -81,8 +82,7 @@ def _clean_dict(d: dict) -> dict:
     for k, v in d.items():
         if k.startswith(dprefix):
             k = f'${k.replace(dprefix, "")}'
-        k = k.replace('_', '-')
-        if k.endswith("-"):
+        if k.endswith("_") and keyword.iskeyword(k[:-1]):
             k = k[:-1]
         if v is None:
             continue

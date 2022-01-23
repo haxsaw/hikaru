@@ -1114,10 +1114,10 @@ def test102():
                         x_kubernetes_list_type='wobble')
     d = get_clean_dict(x)
     assert '$ref' in d
-    assert 'x-kubernetes-list-type' in d
+    assert 'x_kubernetes_list_type' in d
     y = get_yaml(x)
     assert '$ref' in y
-    assert 'x-kubernetes-list-type' in y
+    assert 'x_kubernetes_list_type' in y
 
 
 def test103():
@@ -1694,6 +1694,19 @@ def test142():
     del d['status']['daemonEndpoints']
     n2: Node = Node.from_yaml(d, translate=True)
     assert n2.status.daemonEndpoints.kubeletEndpoint.Port == 44
+
+
+def test143():
+    """
+    Ensure that labels keys that contain '_' aren't changed to '-'
+    """
+    m: ObjectMeta = ObjectMeta(labels={'Key_1': 'k1', 'key_2': 'k2'})
+    d = get_clean_dict(m)
+    assert 'Key_1' in d['labels']
+    assert 'key_2' in d['labels']
+    m2: ObjectMeta = from_dict(d, cls=ObjectMeta)
+    assert 'Key_1' in m2.labels
+    assert 'key_2' in m2.labels
 
 
 if __name__ == "__main__":
