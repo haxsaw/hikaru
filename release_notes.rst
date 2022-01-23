@@ -83,6 +83,10 @@ This release also has the following additional changes:
 
 - Python 3.10 has been added as a supported version of Python.
 
+- The lastest version of the *black* code formatter (21.12b0) has been verified
+  to work with Hikaru and is now accepted as a version that satisfies the package's
+  requirements.
+
 - The Response object has been modified to be a generic type, with the type
   parameter serving as a means to establish a type annotation on the 'obj'
   attribute of this class. This allows the assignment of the
