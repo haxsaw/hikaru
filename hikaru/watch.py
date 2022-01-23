@@ -151,7 +151,7 @@ class Watcher(BaseWatcher):
 
         The arguments here are largely interpreted according to the 'list' operations
         in the K8s API, with the exception of some additional semantics added by
-        Hikaru; these are noted where appropriate. Not all arguments from those funcitons
+        Hikaru; these are noted where appropriate. Not all arguments from those functions
         are carried through here as some make no sense in the context of a watch.
 
         :param cls: A watchable HikaruDocumentBase subclass (NOT instance). This may be
