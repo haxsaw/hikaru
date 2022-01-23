@@ -368,7 +368,7 @@ class StatefulSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         delete collection of StatefulSet
 
@@ -457,7 +457,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -491,7 +491,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def createNamespacedStatefulSet(
         self,
@@ -500,7 +500,7 @@ class StatefulSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         create a StatefulSet
 
@@ -521,7 +521,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -552,7 +552,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def create(
         self,
@@ -623,7 +623,7 @@ class StatefulSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         delete a StatefulSet
 
@@ -660,7 +660,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -688,7 +688,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -791,7 +791,7 @@ class StatefulSet(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         read the specified StatefulSet
 
@@ -811,7 +811,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -836,7 +836,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def read(
         self,
@@ -921,7 +921,7 @@ class StatefulSet(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         partially update the specified StatefulSet
 
@@ -949,7 +949,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -980,7 +980,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def update(
         self,
@@ -1077,7 +1077,7 @@ class StatefulSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         replace the specified StatefulSet
 
@@ -1099,7 +1099,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1130,7 +1130,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetStatus(
         self,
@@ -1140,7 +1140,7 @@ class StatefulSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSet"]:
         r"""
         replace status of the specified StatefulSet
 
@@ -1162,7 +1162,7 @@ class StatefulSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -1195,7 +1195,7 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSet"](result, codes_returning_objects)
 
 
 @dataclass
@@ -7053,7 +7053,7 @@ class ReplicaSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         delete collection of ReplicaSet
 
@@ -7142,7 +7142,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7176,7 +7176,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def createNamespacedReplicaSet(
         self,
@@ -7185,7 +7185,7 @@ class ReplicaSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         create a ReplicaSet
 
@@ -7206,7 +7206,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7237,7 +7237,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def create(
         self,
@@ -7308,7 +7308,7 @@ class ReplicaSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         delete a ReplicaSet
 
@@ -7345,7 +7345,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7373,7 +7373,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -7476,7 +7476,7 @@ class ReplicaSet(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         read the specified ReplicaSet
 
@@ -7496,7 +7496,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7521,7 +7521,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def read(
         self,
@@ -7606,7 +7606,7 @@ class ReplicaSet(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         partially update the specified ReplicaSet
 
@@ -7634,7 +7634,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7665,7 +7665,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def update(
         self,
@@ -7762,7 +7762,7 @@ class ReplicaSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         replace the specified ReplicaSet
 
@@ -7784,7 +7784,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7815,7 +7815,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
     def replaceNamespacedReplicaSetStatus(
         self,
@@ -7825,7 +7825,7 @@ class ReplicaSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSet"]:
         r"""
         replace status of the specified ReplicaSet
 
@@ -7847,7 +7847,7 @@ class ReplicaSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -7880,7 +7880,7 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSet"](result, codes_returning_objects)
 
 
 @dataclass
@@ -7927,7 +7927,7 @@ class ReplicaSetList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSetList"]:
         r"""
         list or watch objects of kind ReplicaSet
 
@@ -8005,7 +8005,7 @@ class ReplicaSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -8035,7 +8035,7 @@ class ReplicaSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSetList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -8057,7 +8057,7 @@ class ReplicaSetList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ReplicaSetList"]:
         r"""
         list or watch objects of kind ReplicaSet
 
@@ -8134,7 +8134,7 @@ class ReplicaSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -8163,7 +8163,7 @@ class ReplicaSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ReplicaSetList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -9245,7 +9245,7 @@ class Deployment(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         delete collection of Deployment
 
@@ -9334,7 +9334,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9368,7 +9368,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def createNamespacedDeployment(
         self,
@@ -9377,7 +9377,7 @@ class Deployment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         create a Deployment
 
@@ -9398,7 +9398,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9429,7 +9429,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def create(
         self,
@@ -9500,7 +9500,7 @@ class Deployment(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         delete a Deployment
 
@@ -9537,7 +9537,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9565,7 +9565,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -9668,7 +9668,7 @@ class Deployment(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         read the specified Deployment
 
@@ -9688,7 +9688,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9713,7 +9713,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def read(
         self,
@@ -9798,7 +9798,7 @@ class Deployment(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         partially update the specified Deployment
 
@@ -9826,7 +9826,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9857,7 +9857,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def update(
         self,
@@ -9954,7 +9954,7 @@ class Deployment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         replace the specified Deployment
 
@@ -9976,7 +9976,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10007,7 +10007,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
     def replaceNamespacedDeploymentStatus(
         self,
@@ -10017,7 +10017,7 @@ class Deployment(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Deployment"]:
         r"""
         replace status of the specified Deployment
 
@@ -10039,7 +10039,7 @@ class Deployment(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10072,7 +10072,7 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Deployment"](result, codes_returning_objects)
 
 
 @dataclass
@@ -10302,7 +10302,7 @@ class DaemonSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         delete collection of DaemonSet
 
@@ -10391,7 +10391,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10425,7 +10425,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def createNamespacedDaemonSet(
         self,
@@ -10434,7 +10434,7 @@ class DaemonSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         create a DaemonSet
 
@@ -10455,7 +10455,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10486,7 +10486,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def create(
         self,
@@ -10557,7 +10557,7 @@ class DaemonSet(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         delete a DaemonSet
 
@@ -10594,7 +10594,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10622,7 +10622,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -10725,7 +10725,7 @@ class DaemonSet(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         read the specified DaemonSet
 
@@ -10745,7 +10745,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10770,7 +10770,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def read(
         self,
@@ -10855,7 +10855,7 @@ class DaemonSet(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         partially update the specified DaemonSet
 
@@ -10883,7 +10883,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10914,7 +10914,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def update(
         self,
@@ -11011,7 +11011,7 @@ class DaemonSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         replace the specified DaemonSet
 
@@ -11033,7 +11033,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -11064,7 +11064,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
     def replaceNamespacedDaemonSetStatus(
         self,
@@ -11074,7 +11074,7 @@ class DaemonSet(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSet"]:
         r"""
         replace status of the specified DaemonSet
 
@@ -11096,7 +11096,7 @@ class DaemonSet(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -11129,7 +11129,7 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSet"](result, codes_returning_objects)
 
 
 @dataclass
@@ -11879,7 +11879,7 @@ class ControllerRevision(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         delete collection of ControllerRevision
 
@@ -11968,7 +11968,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12002,7 +12002,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
     def createNamespacedControllerRevision(
         self,
@@ -12011,7 +12011,7 @@ class ControllerRevision(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         create a ControllerRevision
 
@@ -12032,7 +12032,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12065,7 +12065,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
     def create(
         self,
@@ -12136,7 +12136,7 @@ class ControllerRevision(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         delete a ControllerRevision
 
@@ -12173,7 +12173,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12203,7 +12203,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -12306,7 +12306,7 @@ class ControllerRevision(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         read the specified ControllerRevision
 
@@ -12326,7 +12326,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12351,7 +12351,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
     def read(
         self,
@@ -12436,7 +12436,7 @@ class ControllerRevision(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         partially update the specified ControllerRevision
 
@@ -12464,7 +12464,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12497,7 +12497,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
     def update(
         self,
@@ -12594,7 +12594,7 @@ class ControllerRevision(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevision"]:
         r"""
         replace the specified ControllerRevision
 
@@ -12616,7 +12616,7 @@ class ControllerRevision(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -12649,7 +12649,7 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevision"](result, codes_returning_objects)
 
 
 @dataclass
@@ -13455,7 +13455,7 @@ class StatefulSetList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSetList"]:
         r"""
         list or watch objects of kind StatefulSet
 
@@ -13533,7 +13533,7 @@ class StatefulSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -13563,7 +13563,7 @@ class StatefulSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSetList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -13585,7 +13585,7 @@ class StatefulSetList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["StatefulSetList"]:
         r"""
         list or watch objects of kind StatefulSet
 
@@ -13662,7 +13662,7 @@ class StatefulSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -13693,7 +13693,7 @@ class StatefulSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["StatefulSetList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -14394,7 +14394,7 @@ class DeploymentList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DeploymentList"]:
         r"""
         list or watch objects of kind Deployment
 
@@ -14471,7 +14471,7 @@ class DeploymentList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14500,7 +14500,7 @@ class DeploymentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DeploymentList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -14523,7 +14523,7 @@ class DeploymentList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DeploymentList"]:
         r"""
         list or watch objects of kind Deployment
 
@@ -14601,7 +14601,7 @@ class DeploymentList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -14631,7 +14631,7 @@ class DeploymentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DeploymentList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -14962,7 +14962,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevisionList"]:
         r"""
         list or watch objects of kind ControllerRevision
 
@@ -15039,7 +15039,7 @@ class ControllerRevisionList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15070,7 +15070,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevisionList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15093,7 +15093,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["ControllerRevisionList"]:
         r"""
         list or watch objects of kind ControllerRevision
 
@@ -15171,7 +15171,7 @@ class ControllerRevisionList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15201,7 +15201,7 @@ class ControllerRevisionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["ControllerRevisionList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15369,7 +15369,7 @@ class Scale(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         read scale of the specified Deployment
 
@@ -15384,7 +15384,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15407,7 +15407,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def patchNamespacedDeploymentScale(
         self,
@@ -15418,7 +15418,7 @@ class Scale(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         partially update scale of the specified Deployment
 
@@ -15446,7 +15446,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15477,7 +15477,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def replaceNamespacedDeploymentScale(
         self,
@@ -15487,7 +15487,7 @@ class Scale(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         replace scale of the specified Deployment
 
@@ -15509,7 +15509,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15540,7 +15540,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     @staticmethod
     def readNamespacedReplicaSetScale(
@@ -15549,7 +15549,7 @@ class Scale(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         read scale of the specified ReplicaSet
 
@@ -15564,7 +15564,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15587,7 +15587,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def patchNamespacedReplicaSetScale(
         self,
@@ -15598,7 +15598,7 @@ class Scale(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         partially update scale of the specified ReplicaSet
 
@@ -15626,7 +15626,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15657,7 +15657,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def replaceNamespacedReplicaSetScale(
         self,
@@ -15667,7 +15667,7 @@ class Scale(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         replace scale of the specified ReplicaSet
 
@@ -15689,7 +15689,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15722,7 +15722,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     @staticmethod
     def readNamespacedStatefulSetScale(
@@ -15731,7 +15731,7 @@ class Scale(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         read scale of the specified StatefulSet
 
@@ -15746,7 +15746,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15769,7 +15769,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def patchNamespacedStatefulSetScale(
         self,
@@ -15780,7 +15780,7 @@ class Scale(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         partially update scale of the specified StatefulSet
 
@@ -15808,7 +15808,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15839,7 +15839,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
     def replaceNamespacedStatefulSetScale(
         self,
@@ -15849,7 +15849,7 @@ class Scale(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["Scale"]:
         r"""
         replace scale of the specified StatefulSet
 
@@ -15871,7 +15871,7 @@ class Scale(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -15904,7 +15904,7 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["Scale"](result, codes_returning_objects)
 
 
 @dataclass
@@ -16103,7 +16103,7 @@ class DaemonSetList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSetList"]:
         r"""
         list or watch objects of kind DaemonSet
 
@@ -16180,7 +16180,7 @@ class DaemonSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16209,7 +16209,7 @@ class DaemonSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSetList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -16232,7 +16232,7 @@ class DaemonSetList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["DaemonSetList"]:
         r"""
         list or watch objects of kind DaemonSet
 
@@ -16310,7 +16310,7 @@ class DaemonSetList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -16340,7 +16340,7 @@ class DaemonSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["DaemonSetList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

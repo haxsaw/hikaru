@@ -9162,7 +9162,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         delete collection of HorizontalPodAutoscaler
 
@@ -9251,7 +9251,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9286,7 +9286,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def createNamespacedHorizontalPodAutoscaler(
         self,
@@ -9295,7 +9295,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         create a HorizontalPodAutoscaler
 
@@ -9316,7 +9316,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9349,7 +9349,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def create(
         self,
@@ -9420,7 +9420,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         body: Optional["DeleteOptions"] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         delete a HorizontalPodAutoscaler
 
@@ -9457,7 +9457,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9487,7 +9487,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def delete(
         self,
@@ -9590,7 +9590,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         read the specified HorizontalPodAutoscaler
 
@@ -9610,7 +9610,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9637,7 +9637,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def read(
         self,
@@ -9722,7 +9722,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         force: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         partially update the specified HorizontalPodAutoscaler
 
@@ -9750,7 +9750,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9783,7 +9783,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def update(
         self,
@@ -9880,7 +9880,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         replace the specified HorizontalPodAutoscaler
 
@@ -9902,7 +9902,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -9935,7 +9935,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
         self,
@@ -9945,7 +9945,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         field_manager: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscaler"]:
         r"""
         replace status of the specified HorizontalPodAutoscaler
 
@@ -9967,7 +9967,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10000,7 +10000,7 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
 
 
 @dataclass
@@ -10739,7 +10739,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         watch: Optional[bool] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscalerList"]:
         r"""
         list or watch objects of kind HorizontalPodAutoscaler
 
@@ -10816,7 +10816,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10847,7 +10847,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -10870,7 +10870,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         pretty: Optional[str] = None,
         client: ApiClient = None,
         async_req: bool = False,
-    ) -> Response:
+    ) -> Response["HorizontalPodAutoscalerList"]:
         r"""
         list or watch objects of kind HorizontalPodAutoscaler
 
@@ -10948,7 +10948,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
             .get() on the returned Response object. Default is False, which makes
             the call blocking.
 
-        :return: hikaru.utils.Response instance with the following codes and
+        :return: hikaru.utils.Response[T] instance with the following codes and
             obj value types:
           Code  ObjType    Description
           -----------------------------
@@ -10980,7 +10980,7 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response(result, codes_returning_objects)
+        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

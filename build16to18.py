@@ -96,6 +96,14 @@ try:
 except ImportError:  # pragma: no cover
     pass"""
 
+_deprecation_warning = \
+"""
+warnings.filterwarnings('default', category=PendingDeprecationWarning)
+warnings.warn("Consider migrating from release %s of K8s; this is the last "
+              "Hikaru release that will support it",
+              category=PendingDeprecationWarning)
+warnings.filterwarnings('ignore', category=PendingDeprecationWarning)"""
+
 
 def _setup_dir(directory: str) -> Path:
     path = Path(directory)
@@ -124,20 +132,24 @@ def make_root_init(directory: str, default_rel: str):
     f.close()
 
 
-def prep_rel_package(directory: str) -> Path:
+def prep_rel_package(directory: str, deprecated: bool = False) -> Path:
     """
     This function empties the directory named 'directory', creating it if needed
     :param directory: string; name of an empty directory to create. Creates it
         if needed, and removes any existing content if it's already there.
+    :param deprecated: True if the package should be marked as deprecated and
+        prints a warning if imported.
     """
     path = _setup_dir(directory)
-    # once here, the directory exists and is a directory; clean it out
-    # _clean_directory(str(path))
     init = path / "__init__.py"
     init.touch()
     f = init.open('w')
     print(_module_docstring, file=f)
+    if deprecated:
+        print("import warnings", file=f)
     print(_package_init_code, file=f)
+    if deprecated:
+        print(_deprecation_warning % path.name, file=f)
     print(file=f)
     output_footer(stream=f)
     return path
@@ -332,7 +344,7 @@ all_args['{body_key}'] = body
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response(result, codes_returning_objects)
+return Response['{returned_type}'](result, codes_returning_objects)
 """
 
 _static_method_body_template = \
@@ -351,7 +363,7 @@ all_args['{body_key}'] = body
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response(result, codes_returning_objects)
+return Response['{returned_type}'](result, codes_returning_objects)
 """
 
 _static_method_nobody_template = \
@@ -367,7 +379,7 @@ all_args = dict()
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response(result, codes_returning_objects)
+return Response['{returned_type}'](result, codes_returning_objects)
 """
 
 
@@ -388,6 +400,7 @@ class Operation(object):
 
     def __init__(self, verb: str, op_path: str, op_id: str, description: str,
                  gvk_dict: dict):
+        self.owning_cd: Optional['ClassDescriptor'] = None
         self.should_render = True
         self.verb = verb
         self.op_path = op_path
@@ -433,6 +446,9 @@ class Operation(object):
         else:
             version = version.replace('v', 'V')
         self.meth_name = self.op_id.replace(version, '') if self.op_id else None
+
+    def set_owning_cd(self, cd: 'ClassDescriptor'):
+        self.owning_cd = cd
 
     def depends_on(self) -> list:
         deps = [p.ptype for p in self.parameters if isinstance(p.ptype, ClassDescriptor)]
@@ -489,7 +505,10 @@ class Operation(object):
                                                           arg_assignment_lines="\n".join(
                                                              arg_assignment_lines),
                                                           codes_returning_objects=
-                                                          codes_returning_objects)
+                                                          codes_returning_objects,
+                                                          returned_type=
+                                                          self.owning_cd.short_name
+                                                          )
             else:
                 rez = _static_method_nobody_template.format(k8s_class_name=
                                                             k8s_class_name,
@@ -499,7 +518,9 @@ class Operation(object):
                                                             "\n".join(
                                                                arg_assignment_lines),
                                                             codes_returning_objects=
-                                                            codes_returning_objects)
+                                                            codes_returning_objects,
+                                                            returned_type=
+                                                            self.owning_cd.short_name)
         else:
             rez = _method_body_template.format(k8s_class_name=k8s_class_name,
                                                k8s_method_name=k8s_method_name,
@@ -507,7 +528,9 @@ class Operation(object):
                                                arg_assignment_lines="\n".join(
                                                     arg_assignment_lines),
                                                codes_returning_objects=
-                                               codes_returning_objects)
+                                               codes_returning_objects,
+                                               returned_type=
+                                               self.owning_cd.short_name)
         return rez.split("\n")
 
     # this prefix is used to detect methods in rel_1_15 for DeleteOptions
@@ -543,7 +566,7 @@ class Operation(object):
         docstring_parts = []
         if self.returns:
             docstring_parts.append("")
-            docstring_parts.append("    :return: hikaru.utils.Response instance with "
+            docstring_parts.append("    :return: hikaru.utils.Response[T] instance with "
                                    "the following codes and ")
             docstring_parts.append("        obj value types:")
             docstring_parts.append('      Code  ObjType    Description')
@@ -627,7 +650,7 @@ class Operation(object):
         return ['async_req: bool = False']
 
     def get_meth_return(self) -> str:
-        return 'Response'
+        return f'Response["{self.owning_cd.short_name}"]'
 
     def get_meth_body(self, parameters: Optional[List['OpParameter']] = None,
                       cd: Optional['ClassDescriptor'] = None) -> List[str]:
@@ -1091,6 +1114,7 @@ class ClassDescriptor(object):
         if op.supports_watch:
             self.watchable = True
         self.operations[op.op_id] = op
+        op.set_owning_cd(self)
 
     def has_properties(self) -> bool:
         return len(self.all_properties) > 0
@@ -2021,7 +2045,7 @@ def reset_all():
 _release_in_process = None
 
 
-def build_it(swagger_file: str, main_rel: bool):
+def build_it(swagger_file: str, main_rel: bool, deprecate: bool):
     """
     Initiate the swagger-file-driven model package build
 
@@ -2035,7 +2059,7 @@ def build_it(swagger_file: str, main_rel: bool):
     _release_in_process = relname
     path = prep_model_root(model_package)
     relpath = path / relname
-    prep_rel_package(str(relpath))
+    prep_rel_package(str(relpath), deprecated=deprecate)
     write_modules(str(relpath))
     if main_rel:
         # this is the main release; make the root package default to it
@@ -2045,8 +2069,19 @@ def build_it(swagger_file: str, main_rel: bool):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"usage: {sys.argv[0]} <swagger-json-file> {{<main-rel-flag>}}")
+        print(f"usage: {sys.argv[0]} <swagger-json-file> {{d}}|{{m}}")
+        print("\twhere d means to mark the version deprecated, and "
+              "m means to mark the release as the main release")
         sys.exit(1)
-    main_rel = True if len(sys.argv) == 3 else False
+    if len(sys.argv) > 3:
+        print("you can only specify one of d or m")
+        sys.exit(1)
+    if len(sys.argv) == 3:
+        if sys.argv[2] not in ('d', 'm'):
+            print(f"unrecognized argument {sys.argv[2]}")
+        main_rel = 'm' == sys.argv[2]
+        deprecate = 'd' == sys.argv[2]
+    else:
+        main_rel = deprecate = False
     print(f">>>Processing {sys.argv[1]}")
-    build_it(sys.argv[1], main_rel)
+    build_it(sys.argv[1], main_rel, deprecate)

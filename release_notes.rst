@@ -2,6 +2,121 @@
 Release Notes
 *************
 
+v0.9.0b
+-------
+
+This release may produce some breaking changes due to changes in the K8s swagger.
+
+This release has taken a while as the 1.19 version of the K8s Python client is
+based on a swagger file that breaks some of the build system's assumptions.
+This has required consideration as to how to address the changes as well as a
+rebuild of the build system for Hikaru, a non-trivia task.
+
+The changes that have caused the breakage is the emergence of identically-named
+resources in different groups but within the same version. It has appeared that up
+to this K8s release resources with the same names only appeared in different
+versions, and hence Hikaru was able disregard group names, offering a single
+namespace per version so that it is easier to find the resource classes required.
+
+Release 1.19 of the K8s Python client is based on a swagger file that introduces
+a small number of resource definitions with the same name in the same version,
+but in different groups. Since we don't want to introduce the concept of 'group'
+into Hikaru at this point due to the disruption it would cause existing users,
+options for addressing this problem had to be weighed along with implementation
+impact.
+
+In the end, a new build system was created that allows for the manual
+specification of a single resource class to be the 'primary' resource with that
+name, and all other resources with the same name are renamed to have the
+conflicting name, followed by '_', followed by the group name (if it can be
+determined).
+
+The following table summarizes the resource classes that have gone through this
+renaming process, showing what versions of the API are affected, and the names
+that have been generated for each of these versions:
+
++----------+----------------------------------+--------------+---------------------+
+|          | ServiceReference                 | Event        | Subject             |
++==========+==================================+==============+=====================+
+| v1       | ServiceReference                 | Event        |                     |
+|          | ServiceReference_apiextensions   | Event_core   |                     |
+|          | ServiceReference_apiregistration |              |                     |
++----------+----------------------------------+--------------+---------------------+
+| v1alpha1 | ServiceReference                 | Event        | Subject             |
+|          | ServiceReference_apiextensions   | Event_core   | Subject_flowcontrol |
+|          | ServiceReference_apiregistration |              | Subject_rbac        |
++----------+----------------------------------+--------------+---------------------+
+| v1beta1  | ServiceReference                 | Event        | Subject             |
+|          | ServiceReference_apiextensions   | Event_core   | Subject_*           |
+|          | ServiceReference_apiregistration | Event_events |                     |
++----------+----------------------------------+--------------+---------------------+
+| v2alpha1 | ServiceReference                 | Event        |                     |
+|          | ServiceReference_apiextensions   | Event_core   |                     |
+|          | ServiceReference_apiregistration |              |                     |
++----------+----------------------------------+--------------+---------------------+
+| v2beta1  | ServiceReference                 | Event        |                     |
+|          | ServiceReference_apiextensions   | Event_core   |                     |
+|          | ServiceReference_apiregistration |              |                     |
++----------+----------------------------------+--------------+---------------------+
+| v2beta2  | ServiceReference                 | Event        |                     |
+|          | ServiceReference_apiextensions   | Event_core   |                     |
+|          | ServiceReference_apiregistration |              |                     |
++----------+----------------------------------+--------------+---------------------+
+
+\* The builder could not locate a group in the swagger, hence the class name ends in '_'.
+
+All references to the appropriate variation of each resource class will use this
+new name for the desired variation of the resource, so type hints in IDEs
+will be able to guide the user in selecting the correct variation. It was
+admittedly a bit of a guess as to the proper class to make the primary, so
+feedback about making a different choice would be appreciated.
+
+Only the rel_1_19 package is built using this new approach; rel_1_18 and earlier
+releases continue to use the old build system in order to maintain a stable API
+for users.
+
+Given the potential disruption this may cause, the 'default release' is being
+held at 1.18 instead of being advanced to 1.19. Users can access the 1.19 code
+in the normal way by importing from 'hikaru.model.rel_1_19'.
+
+This release also has the following additional changes:
+
+- Python 3.10 has been added as a supported version of Python.
+
+- The lastest version of the *black* code formatter (21.12b0) has been verified
+  to work with Hikaru and is now accepted as a version that satisfies the package's
+  requirements.
+
+- The Response object has been modified to be a generic type, with the type
+  parameter serving as a means to establish a type annotation on the 'obj'
+  attribute of this class. This allows the assignment of the
+  attribute's value to an appropriately typed variable without a cast. This
+  applies to all K8s versions supported in this Hikaru release.
+
+- A policy of only supporting four releases of the underlying K8s Python client
+  has been established; this is because the generated code is getting quite
+  large, making the overall package grow substantially with each new supported
+  K8s release. Given that most of the previous K8s releases no longer have
+  support, this seems a reasonable constraint. The oldest supported release
+  will output a deprecation warning when imported, instructing the user that
+  the imported version will be dropped in the next release of Hikaru and
+  encouraging the migration to a newer release. In 0.9.0b, this message is
+  output if rel_1_16 is imported.
+
+*Known bugs*
+
+The 1.19 release of the K8s Python client has a bug that was reported here:
+https://github.com/kubernetes-client/python/issues/1616. The problem appears
+to be a regression in properly handling turing off client side validation for
+the EventList resource; an exception is thrown in the K8s Python client code
+upon receipt of data from Kubernetes saying that 'event_time' must not be None.
+Trying to change default client configs, or specifying a different client
+config for the APIClient doesn't seem to have any effect, and the K8s maintainers
+acknowledge this is a regression. This bug impacts the *listNamespacedEvent()*
+and *listEventForAllNamespaces()* methods of the EventList class. We haven't
+been able to find a workaround for this bug, and hopefully it will be addressed
+in upcoming K8s client releases.
+
 v0.8.1b
 -------
 

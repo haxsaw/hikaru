@@ -21,7 +21,6 @@
 """
 Exercising CRUD methods
 """
-import time
 from os import getcwd
 from pathlib import Path
 from typing import cast
