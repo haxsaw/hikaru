@@ -22,10 +22,23 @@ Other build tasks
   ref docs
 - build the docs to be sure they are correct (make clean/html); check to be sure
   that the release number is picked up correctly
+- Edit setup.py to include the new model packages and remove any deprecated ones (if any)
 
 Building
 --------
 building the package: python setup.py bdist_wheel
+
+Build testing process
+---------------------
+For each supported version of Python:
+    create a virtual env 'ht' (use virtualenv for 3.8, venv for the rest)
+    activate ht
+    pip install the installation package
+    pip install the maintainers requirements
+    cd into hikaru/tests; DO NOT set PYTHONPATH so you will use the installed package!
+    execute ./runall.bsh, note results
+    deactivate the virtual env
+    rm -rf ht
 
 Publishing to PyPI
 ------------------
