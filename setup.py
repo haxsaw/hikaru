@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = "0.9.0b"
+__version__ = "0.10.0b"
 
 
 def get_long_desc():

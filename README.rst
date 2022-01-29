@@ -1,6 +1,6 @@
 
 .. |travis| image:: https://travis-ci.com/haxsaw/hikaru.svg?branch=dev
-    :target: https://travis-ci.com/haxsaw/hikaru
+    :target: https://app.travis-ci.com/github/haxsaw/hikaru
 
 .. |license| image:: https://img.shields.io/github/license/haxsaw/hikaru
    :alt: GitHub license   :target: https://github.com/haxsaw/hikaru/blob/main/LICENSE
@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 0.9.0b
+Version 0.10.0b
 
 |travis|   |license|   |versions|   |coverage|
 

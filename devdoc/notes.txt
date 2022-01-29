@@ -1,6 +1,6 @@
-=============================
-Dumb things you always forget
-=============================
+==================================================
+Dumb things you always forget for a release build
+==================================================
 
 Make a method/class map snapshot
 --------------------------------
@@ -18,6 +18,8 @@ Other build tasks
 -----------------
 - in docs/ create a new reference document for the release (rel-1-XX-v1.rst), and
   be sure to edit the content to contain all the correct release numbers
+- update docs/index.rst to include the new ref docs and remove any deprecated
+  ref docs
 - build the docs to be sure they are correct (make clean/html); check to be sure
   that the release number is picked up correctly
 

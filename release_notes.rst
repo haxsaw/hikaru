@@ -58,6 +58,20 @@ names and their variants in Hikaru 0.10:
 
 \* The builder was unable to find a group name for this resource in the source swagger, so there is no suffix
 
+*Method deletions from 0.9*
+
+The release comparison report shows some methods have been removed from some classes
+between release 1.19 and 1.20 of the K8s Python client; these deletions are reflected
+in the methods exposed in Hikaru. As these deletions are all in the **v1alpha1**
+version of
+1.19, there's a good chance that only very early adopters will be impacted by these
+deletions.
+
+The deletions are too long for this note; please see `rel_0-9_to_0-10_diffs.csv
+<https://github
+.com/haxsaw/hikaru/blob/main/devtools/rel_0-9_to_0-10_diffs.csv>`_ for a full accounting
+of the methods that were deleted from objects in v1alpha1.
+
 *Known bugs*
 
 The K8s Python client's support for some EventList operations remains broken, and hence exceptions are
