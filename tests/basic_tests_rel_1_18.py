@@ -1142,7 +1142,7 @@ def test105():
     """
     ensure that you can acquire a version of the v1alpha1 Pod class
     """
-    from hikaru.model.rel_1_16 import v1alpha1
+    from hikaru.model.rel_1_18 import v1alpha1
     pod = get_version_kind_class('v1alpha1', 'Pod')
     assert pod is not None
 
@@ -1253,7 +1253,7 @@ def test116():
 
 
 # this block of code computes the params for test117
-from hikaru.model.rel_1_16.versions import versions
+from hikaru.model.rel_1_18.versions import versions
 
 
 @pytest.mark.parametrize('rel_version', versions)
@@ -1262,7 +1262,7 @@ def test117(rel_version: str):
     ensure there are no issues in importing the documents module for each version
     :param rel_version: string; name of the version module use when getting documents
     """
-    mod = import_module(".documents", f"hikaru.model.rel_1_16.{rel_version}")
+    mod = import_module(".documents", f"hikaru.model.rel_1_18.{rel_version}")
     assert mod
 
 

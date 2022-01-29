@@ -1,4 +1,48 @@
 {
+  "rel_1_20": {
+      "preferred_versions": [
+        {
+        "class_name": "ServiceReference",
+        "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "admissionregistration"
+            },
+            {
+              "colliding_version": "v1beta1",
+              "preferred_group": "admissionregistration"
+            }
+          ]
+        },
+        {
+          "class_name": "Event",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "events"
+            }
+          ]
+        },
+        {
+          "class_name": "Subject",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": ""
+            }
+          ]
+        },
+        {
+          "class_name": "TokenRequest",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "authentication"
+            }
+          ]
+        }
+      ]
+    },
   "rel_1_19":
     {
       "preferred_versions": [

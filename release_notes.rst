@@ -2,6 +2,70 @@
 Release Notes
 *************
 
+v0.10.0b
+--------
+
+*Default K8s release:* 1.20
+
+*Deprecated K8s release:* 1.17
+
+Hikaru 0.10.0b is largely a catch-up release to bring support for Kubernetes 1.20 Python client to Hikaru.
+As such, no significant new features are in this release-- it is focused on providing an update on the
+models so that K8s 1.20 Python client code can safely be used.
+
+In line with the deprecation policy introduced with Hikaru 0.9, support for the K8s 1.16 Python client has
+been dropped with this release: these models will no longer be included nor supported by Hikaru, so if you
+require support for K8s 1.16 you should pin your dependencies on Hikaru 0.9, as that's the last release of
+Hikaru with support for that version of the K8s Python client.
+
+Also in line with this policy, we are now marking release 1.17 models as deprecated in Hikaru 0.10.0b, and
+support for K8s 1.17 will be dropped when Hikaru 0.11 is released.
+
+As was introduced in Hikaru 0.9, an implementation choice was made to address the name collisions that have
+emerged within a single version of K8s resources that are are made distinct in K8s by the colliding resources
+existing in separate groups (see the release notes for 0.9 for more details). Hikaru's solution to this problem
+has been to identify a 'primary' variation of the resource name, and then to add the group name as a suffix to
+the other variations to reflect which group the variation comes from. The following table shows all colliding
+names and their variants in Hikaru 0.10:
+
++----------+----------------------------------+----------------------+--------------+---------------------+
+|          | ServiceReference                 | TokenRequest         | Event        | Subject             |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1       | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1alpha1 | ServiceReference                 | TokenRequest         | Event        | Subject             |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   | Subject_flowcontrol |
+|          | ServiceReference_apiregistration |                      |              | Subject_rbac        |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1beta1  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration | TokenRequest\_\*     | Event_events |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2alpha1 | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta1  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta2  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+
+\* The builder was unable to find a group name for this resource in the source swagger, so there is no suffix
+
+*Known bugs*
+
+The K8s Python client's support for some EventList operations remains broken, and hence exceptions are
+raised in Hikaru in some circumstances when this object is used. The underlying bug is documented here
+https://github.com/kubernetes-client/python/issues/1616, and has been identified as a K8s Python client
+regression. We'll roll out patch releases for past supported versions if/when past K8s Python clients are
+patched.
+
 v0.9.0b
 -------
 
@@ -47,7 +111,7 @@ that have been generated for each of these versions:
 |          | ServiceReference_apiregistration |              | Subject_rbac        |
 +----------+----------------------------------+--------------+---------------------+
 | v1beta1  | ServiceReference                 | Event        | Subject             |
-|          | ServiceReference_apiextensions   | Event_core   | Subject_*           |
+|          | ServiceReference_apiextensions   | Event_core   | Subject\_*          |
 |          | ServiceReference_apiregistration | Event_events |                     |
 +----------+----------------------------------+--------------+---------------------+
 | v2alpha1 | ServiceReference                 | Event        |                     |

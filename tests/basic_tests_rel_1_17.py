@@ -1142,7 +1142,7 @@ def test105():
     """
     ensure that you can acquire a version of the v1alpha1 Pod class
     """
-    from hikaru.model.rel_1_16 import v1alpha1
+    from hikaru.model.rel_1_17 import v1alpha1
     pod = get_version_kind_class('v1alpha1', 'Pod')
     assert pod is not None
 
@@ -1252,7 +1252,7 @@ def test116():
 
 
 # this block of code computes the params for test117
-from hikaru.model.rel_1_16.versions import versions
+from hikaru.model.rel_1_17.versions import versions
 
 
 @pytest.mark.parametrize('rel_version', versions)
@@ -1261,7 +1261,7 @@ def test117(rel_version: str):
     ensure there are no issues in importing the documents module for each version
     :param rel_version: string; name of the version module use when getting documents
     """
-    mod = import_module(".documents", f"hikaru.model.rel_1_16.{rel_version}")
+    mod = import_module(".documents", f"hikaru.model.rel_1_17.{rel_version}")
     assert mod
 
 
@@ -1410,7 +1410,7 @@ def test124():
     """
     Check merging different versions of the same object fails with enforce_version
     """
-    from hikaru.model.rel_1_16.v1beta2 import Pod as Podv1beta2
+    from hikaru.model.rel_1_17.v1beta2 import Pod as Podv1beta2
     pv1: Pod = Pod()
     pv1beta2: Podv1beta2 = Podv1beta2()
     try:
@@ -1437,7 +1437,7 @@ def test126():
     """
     Check that we can merge different version objects with the same name
     """
-    from hikaru.model.rel_1_16.v1beta2 import Pod as Podv1beta2
+    from hikaru.model.rel_1_17.v1beta2 import Pod as Podv1beta2
     pv1: Pod = Pod()
     pv1beta2: Podv1beta2 = Podv1beta2()
     pv1.merge(pv1beta2)

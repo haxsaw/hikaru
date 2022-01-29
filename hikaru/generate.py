@@ -345,9 +345,13 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
 
     return objs
 
-
+#
+# this
 _deprecation_helper = {
     'rel_1_19': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+    },
+    'rel_1_20': {
         ('v1', 'Event'): ('v1', 'Event_core'),
     }
 }
