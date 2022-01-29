@@ -68,8 +68,7 @@ version of
 deletions.
 
 The deletions are too long for this note; please see `rel_0-9_to_0-10_diffs.csv
-<https://github
-.com/haxsaw/hikaru/blob/main/devtools/rel_0-9_to_0-10_diffs.csv>`_ for a full accounting
+<https://github.com/haxsaw/hikaru/blob/main/devtools/rel_0_9_to_0_10_diffs.csv>`_ for a full accounting
 of the methods that were deleted from objects in v1alpha1.
 
 *Known bugs*
