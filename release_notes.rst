@@ -2,6 +2,78 @@
 Release Notes
 *************
 
+v0.11.0b
+--------
+
+*Default K8s release:* 1.21
+
+*Deprecated K8s release:* 1.18
+
+Hikaru 0.11.0b is another catch-up release that had to wait for the rewrite of
+Hikaru's build system. The Kubernetes Python client went through serveral releases
+during this rewrite and so we're just now getting caught up on the releases put out
+by the K8s team in the interim. As of this writing, support of 1.21 is the last
+official release as part of this catch-up, however an alpha pre-release of 1.22
+is currently available so the Hikaru project will be working to support that
+once it is official.
+
+In line with the deprecation policy introduced with Hikaru 0.9.0b, this release of
+Hikaru drops support for release 1.17 of the K8s Python client, and marks the support
+of 1.18 as now deprecated.
+
+Version 1.21 appears to have dropped the definition of objects in the v2alpha1 version
+of the K8s swagger file, and consequently Hikaru no longer has support for v2alpha1
+objects in the 1.21 models. This shouldn't cause any particular hardships.
+
+As first started in Hikaru 0.9.0b, we've introduced a naming convention for classes
+that have the same base name across different groups in the original swagger. Since
+Hikaru doesn't use groups, it has to distinguish these name collisions by appending
+the group name as a suffix to the class where the name collisions lie. The table below
+Illustrates the collisions in the various K8s version modules in Hikaru 0.11.0b:
+
++----------+----------------------------------+----------------------+--------------+---------------------+
+|          | ServiceReference                 | TokenRequest         | Event        | Subject             |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1       | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1alpha1 | ServiceReference                 | TokenRequest         | Event        | Subject             |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   | Subject\_\*         |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1beta1  | ServiceReference                 | TokenRequest         | Event        | Subject             |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   | Subject_flowcontrol |
+|          | ServiceReference_apiregistration | TokenRequest\_\*     | Event_events | Subject_rbac        |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta1  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta2  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+
+\* The builder was unable to find a group name for this resource in the source swagger, so there is no suffix
+
+*Method deletions from 0.10*
+
+There have been no movements of methods to correct mis-associations from v0.10, however with the deletion
+of support for v2alpha1, all those objects and their methods are no longer available. This probably
+impact just about no one, but you can find the detailed changes here:
+`rel_0-10_to_0-11_diffs.csv
+<https://github.com/haxsaw/hikaru/blob/main/devtools/rel_0_10_to_0_11_diffs.csv>`_
+
+
+*Known bugs*
+
+The K8s Python client's support for some EventList operations remains broken, and hence exceptions are
+raised in Hikaru in some circumstances when this object is used. The underlying bug is documented here
+https://github.com/kubernetes-client/python/issues/1616, and has been identified as a K8s Python client
+regression. We'll roll out patch releases for past supported versions if/when past K8s Python clients are
+patched.
+
 v0.10.0b
 --------
 

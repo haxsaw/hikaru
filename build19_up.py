@@ -2068,12 +2068,26 @@ def write_modules(pkgpath: str):
     f.close()
 
 
+def make_root_init(directory: str, default_rel: str):
+    path = Path(directory)
+    init = path / "__init__.py"
+    if init.exists():
+        init.unlink()
+    f = init.open('w')
+    f.write(_module_docstring)
+    f.write(f"default_release = '{default_rel}'\n")
+    f.close()
+
+
 def build_it(swagger_file: str, is_main_rel: bool, deprecated=False):
     load_swagger(swagger_file)
     path = prep_model_root(model_package)
     relpath = path / _release_in_process
     prep_rel_package(str(relpath), deprecated=deprecated)
     write_modules(str(relpath))
+    if main_rel:
+        # this is the main release; make the root package default to it
+        make_root_init(model_package, _release_in_process)
 
 
 _release_in_process = None
