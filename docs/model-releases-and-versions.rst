@@ -13,7 +13,7 @@ release of the Python client then you may need to specify what release and/or ve
 Releases
 ========
 
-Kubernetes release nubmers the the corresponding Python client release numbers used to not
+Kubernetes release numbers the the corresponding Python client release numbers used to not
 match up, but it appears this has been fixed with release 1.17:
 
 +-------+-------------+
@@ -24,6 +24,14 @@ match up, but it appears this has been fixed with release 1.17:
 |1.16   |1.12         |
 +-------+-------------+
 |1.17   |1.17         |
++-------+-------------+
+|1.18   |1.18         |
++-------+-------------+
+|1.19   |1.19         |
++-------+-------------+
+|1.20   |1.20         |
++-------+-------------+
+|1.21   |1.21         |
 +-------+-------------+
 
 In Hikaru, the differences in releases are reflected in the subpackages of the ``model`` package, which follows the naming for the actual underlying K8s release, not the number
