@@ -40,6 +40,7 @@ Other build tasks
 - build the docs to be sure they are correct (make clean/html); check to be sure
   that the release number is picked up correctly
 - Edit setup.py to include the new model packages and remove any deprecated ones (if any)
+- Update the table in docs/model-releases-and-versions.rst
 
 Building
 --------
