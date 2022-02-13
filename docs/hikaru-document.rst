@@ -28,8 +28,8 @@ Methods are associated with a class based on one of three criteria:
 
 - The class is an input parameter to the underlying API call; these become instance methods.
 - The class is a result value from the underlying API call; these become ``staticmethods``.
-- The method name seems to indicate that it would be better suited to be associated with different
-- class than the one used in either the input parameters or the responses; these also become ``staticmethods``.
+- The method name seems to indicate that it would be better suited to be associated with a different
+  class than the one used in either the input parameters or the responses; these also become ``staticmethods``.
 
 So for example, the ``createNamespacedPod()`` method requires a Pod as an input parameter, so this is
 treated as an instance method on the Pod class. The Pod object itself provides the values for the input
@@ -37,7 +37,8 @@ parameter.
 
 In another example, ``deleteNamespacedPod()`` doesn't require a Pod as input, only a few select fields
 from a Pod object. The the Swagger spec indicates that a Status object is the result of this call, but
-Hikaru determines that Pod is a better home for this method, and so it attaches this as a ``staticmethod`` to the Pod class rather than a method on the Status class.
+Hikaru determines that Pod is a better home for this method, and so it attaches this as a ``staticmethod``
+to the Pod class rather than a method on the Status class.
 
 In this fashion, Hikaru associates all actions that impact a particular object to the object itself,
 which can make it easier to find the action that you are looking for, especially since it ignores the
@@ -65,4 +66,9 @@ from the response.
 
 An example of how to use these objects and their methods when interacting with Kubernetes is shown
 in the section :ref:`Using Hikaru with Kubernetes<Using Hikaru with Kubernetes>`.
+
+The Response class uses Python type annotations to designate it as a generic type. The type parameter
+is used to establish a type on the ``obj`` attribute of instances of Response, which then allows this
+to be assigned to a type-annotated variable without casting. All methods that return Response objects
+now add in the expected type for ``obj`` as part of theirs signature.
 
