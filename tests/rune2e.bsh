@@ -14,3 +14,6 @@ sleep 5
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_e2e_1_21.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_e2e_1_22.bsh a

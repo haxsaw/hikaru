@@ -357,6 +357,9 @@ _deprecation_helper = {
     },
     'rel_1_21': {
         ('v1', 'Event'): ('v1', 'Event_core'),
+    },
+    'rel_1_22': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
     }
 }
 
