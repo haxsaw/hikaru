@@ -164,6 +164,10 @@ class HikaruBase(object):
 
     @classmethod
     def _get_hints(cls) -> dict:
+        # Use cached hints if available
+        cached_hints = getattr(cls, "cached_hints", None)
+        if cached_hints:
+            return cached_hints
         mro = cls.mro()
         mro.reverse()
         hints = {}
@@ -171,6 +175,8 @@ class HikaruBase(object):
         for c in mro:
             if is_dataclass(c):
                 hints.update(get_type_hints(c, globs))
+        # Caching the class hints for later use
+        cls.cached_hints = hints
         return hints
 
     def _capture_catalog(self, catalog_depth_first=False):
@@ -468,6 +474,10 @@ class HikaruBase(object):
             all collection attrs set to an appropriate empty collection
         """
         kw_args = {}
+        # Use cached arguments to create the empty class instance, if available
+        cached_args = getattr(cls, "cached_args", None)
+        if cached_args:
+            return cls(**cached_args)
         sig = signature(cls.__init__)
         init_var_hints = {k for k, v in get_type_hints(cls).items()
                           if isinstance(v, InitVar) or v is InitVar}
@@ -529,6 +539,8 @@ class HikaruBase(object):
                                               f" {cls.__name__}. Please file a"
                                               f" bug report.")  # pragma: no cover
         new_inst = cls(**kw_args)
+        # Caching the empty instance creation args, to use next time we want to create an empty instance
+        cls.cached_args = kw_args
         return new_inst
 
     @classmethod
