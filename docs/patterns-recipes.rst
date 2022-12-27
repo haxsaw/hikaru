@@ -32,8 +32,8 @@ and business unit:
     and interact with each other. These would be managed by the dev or devops teams.
   - The environment domain is used to indicate where the application is running, such as
     dev, test, prod, etc. This may entail different monitoring labels or provide different
-    names for finding common services used by the application. These would be managed by
-    the infrastructure teams.
+    names for finding common services used by the application. These labels would be
+    managed by the infrastructure teams.
   - The business unit domain is used to identify components of a business unit function.
     There may be a number of applications that go into a function, and hence this is an
     additional dimension to provide a function-centric view of resources, one that show
@@ -84,7 +84,8 @@ final YAML file to submit to Kubernetes. A simple version of that processing app
     import sys
     from hikaru import *
 
-    def add_labels(label_file_paths, inyaml_file, outyaml_file):
+    def add_labels(label_file_paths: List[str], inyaml_file: TextIO, outyaml_file:
+TextIO):
         # get_processors() returns a list of processed YAML
         # we get the first since there's only one ([0] on the end)
         labels = []
@@ -118,7 +119,7 @@ Finding out the version of a loaded document
 Hikaru's `load_full_yaml()` can determine which model version of a document and
 its objects to create while parsing, but you may want to be able to determine this
 yourself if you want to customize processing for different versions. Often, you
-can simply look to `object.apiVersion`, but sometimes this is addtionally coded with
+can simply look to `object.apiVersion`, but sometimes this is additionally coded with
 the Kubernetes API group that the object is part of, which means you need to know
 which group any object belongs to.
 
@@ -140,7 +141,7 @@ Shutting up the linter
 
 Your IDE or linter may complain about the types of objects coming from ``load_full_yaml()``
 when you assign them to a variable, especially if you use type annotations on the variable
-so that you get the benefits of Hikaru's dataclasses. If you have a some code like the
+so that you get the benefits of Hikaru's dataclasses. If you have some code like the
 following:
 
 .. code:: python
@@ -223,7 +224,7 @@ which yields something like:
 
 .. code:: 
 
-    [DiffDetail(diff_type=<DiffType.ATTRIBUTE_ADDED: 0>, cls=<class 'hikaru.model.rel_1_16.v1.v1.ObjectMeta'>, formatted_path="ObjectMeta.labels['b']", path=['labels', 'b'], report="Key added: self.ObjectMeta.labels['b'] is 2 but does not exist in other", value='2', other_value=None)]
+    [DiffDetail(diff_type=<DiffType.ATTRIBUTE_ADDED: 0>, cls=<class 'hikaru.model.rel_1_22.v1.v1.ObjectMeta'>, formatted_path="ObjectMeta.labels['b']", path=['labels', 'b'], report="Key added: self.ObjectMeta.labels['b'] is 2 but does not exist in other", value='2', other_value=None)]
 
 The report says 'Incompatible:self is a Deployment while other is a Deployment'? Wait, are they the same or not?
 
@@ -245,7 +246,8 @@ happening?
 
 When you use `load_full_yaml()`, it looks at the kind/apiVersion information in the document and
 loads the proper module and class from what it finds in those properties. However, the import
-statement `from hikaru.model.rel_1_16 import *` loads the v1 model objects *by default* into whatever
+statement `from hikaru.model.rel_1_22 import *` loads the v1 model objects *by default*
+into whatever
 scope the statement is in, in this case the global scope. So when you use `eval()` to execute
 the Python, it looks first to the local and then the global scope for the definition of
 `Deployment`, and what it finds is the one from the wild import, **not** the one named in the
@@ -257,8 +259,8 @@ the proper import statement; in this case it would be:
 
 .. code:: python
 
-    from hikaru.model.rel_1_16.v1beta1 import *
-    # and don't do an 'from hikaru.rel_1_16 import *' here; if you want other
+    from hikaru.model.rel_1_22.v1beta1 import *
+    # and don't do an 'from hikaru.rel_1_22 import *' here; if you want other
     # names import them specifically
     # ...and then the generated code goes here
 
@@ -270,8 +272,8 @@ way to provide the local namespace. So first you import all the model modules
 .. code:: python
 
     from hikaru import load_full_yaml, process_api_version, get_python_source
-    from hikaru.model.rel_1_16 import v1
-    from hikaru.model.rel_1_16 import v1beta1
+    from hikaru.model.rel_1_22 import v1
+    from hikaru.model.rel_1_22 import v1beta1
     # and the same for the rest of the model version modules
 
 Then make a mapping of version numbers to modules:
@@ -301,7 +303,7 @@ fragments, you'll already be using the specific class's `from_yaml()` method, so
 just need to be sure of which version of that class to use.
 
 Regardless of the approach, the important point to remember here is that
-if you use the `from hikaru.model.rel_1_16 import *` form, you will default to all `v1` objects,
+if you use the `from hikaru.model22 import *` form, you will default to all `v1` objects,
 so you should be mindful of when you might actually want to make instances of 
 a different version.
 
@@ -309,7 +311,7 @@ Mass migrating YAML to Hikaru
 -----------------------------------
 
 If you have a large body of Kubernetes YAML that you'd like to convert to Hikaru, perhaps
-to run an analysis on it or to migrate away from YAML, it's a pretty simple matter use
+to run an analysis on it or to migrate away from YAML, it's a pretty simple matter to use
 Python's pathlib to iterate over a directory of YAML and turn it into Hikaru Python source
 (this example ignores different apiVersions):
 
@@ -334,7 +336,8 @@ Python's pathlib to iterate over a directory of YAML and turn it into Hikaru Pyt
             print("\n\n", file=f)
         f.close()
 
-This creates Python files with the same name as their YAML source files, and sequentially assigns each YAML document to 'obj1', 'obj2', etc. Once verified, you can easily separate
+This creates Python files with the same name as their YAML source files, and sequentially
+assigns each YAML document to 'obj1', 'obj2', etc. Once verified, you can easily separate
 out the Python from YAML.
 
 Checking types on a Hikaru model
@@ -359,8 +362,8 @@ Checking resource limits on a config
 While this example focuses on resources, this style can be used for any sort of automated
 checks you'd care to perform.
 
-Suppose you wanted to ensure that resource limitss were always running within certain bands or
-followed certain standard configuration. You could use pre-defined objects for resources that
+Suppose you wanted to ensure that resource limits were always running within certain bands or
+followed certain conventions. You could use pre-defined objects for resources that
 are just plugged into a Hikaru config model, but you can also use the `find_by_name()`
 method to locate resources in any model print them out:
 

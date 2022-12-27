@@ -18,11 +18,11 @@ for your classes to work properly within Hikaru:
    if you wanted to create a subclass of ``Pod``, you will run into errors if the module that
    contains your ``Pod`` subclass has an import statement like the following:
 
-    ``from hikaru.model.rel_1_16.v1 import Pod``
+    ``from hikaru.model.rel_1_21.v1 import Pod``
 
    Instead, you must import all of the symbols from that release/version:
 
-    ``from hikaru.model.rel_1_16.v1 import *``
+    ``from hikaru.model.rel_1_21.v1 import *``
 
 2. All of your custom classes must be defined at the top-level within your module, otherwise
    Hikaru won't be able to find them when needed.
@@ -51,7 +51,7 @@ that is a subclass of ``Pod``, you can use ``Pod's`` class attributes to supply 
 
     register_version_kind_class(MyPod, Pod.apiVersion, Pod.kind)
 
-Now, when Hikaru sees this particular comibination of ``apiVersion`` and ``kind``, it will create
+Now, when Hikaru sees this particular combination of ``apiVersion`` and ``kind``, it will create
 an instance of the ``MyPod`` class instead of the ``Pod`` class as before.
 
 Use Case: Adding Only Methods to Hikaru Classes
@@ -68,16 +68,19 @@ define the methods you wish, and then register this class using the
 create instances of this class whenever it sees the need for an instance that matches Pod's
 ``apiVersion`` and ``kind`` values.
 
-As a simple example, here's a Pod subclass that provides a CRUD-like *create* method on the
-Pod class, and hides the actual create method name:
+As a simple example, here's a Pod subclass that provides a *create* method on the Pod class that takes the namespace 
+as a parameter, and hides the actual create method name:
 
 .. code:: python
 
     from hikaru import register_version_kind_class
-    from hikaru.model.rel_1_16 import *
+    from hikaru.model.rel_1_21 import *
 
     class CRUDPod(Pod):
-        def create(self):
+        def create_in_namespace(self, namespace: str):
+            if self.metadata is None:
+                self.metadata = ObjectMeta()
+            self.metadata.namespace = namespace
             return self.createNamespacedPod(self.metadata.namespace)
 
     register_version_kind_class(CRUDPod, Pod.apiVersion, Pod.kind)
@@ -104,7 +107,7 @@ a ``__post_init__()`` method like the following:
 
     from typing import Any
     from hikaru import register_version_kind_class
-    from hikaru.model.rel_1_16 import *
+    from hikaru.model.rel_1_21 import *
 
     class DictPod(Pod):
         def __post_init__(self, client: Any = None):  # NOTE THE PARAMETERS!
@@ -133,10 +136,10 @@ Use Case: Adding Instance Attributes That Are Passed In
 .. note::
 
     The next two use cases involve more direct use of Python dataclass features. If not familiar
-    with them, the reader is advised to consult Python documentation on the ``dataclasses``
+    with them, the reader is advised to consult the Python documentation on the ``dataclasses``
     module to understand the constraints involved in dataclass use.
 
-If you want additional instance attributes but want the caller to provide these to you, you can
+If you want additional instance attributes and want the caller to provide these to you, you can
 use the special ``dataclasses`` field type ``InitVar`` to designate new fields that are only
 part of the initialization process and are not stored as a dataclass field. This is the proper
 way to add fields that must be passed in. The use of InitVar is important because, without it,
@@ -156,7 +159,7 @@ can create a new dataclass that makes provision for passing in this data like so
 
 .. code:: python
 
-    from hikaru.model.rel_1_17 import *
+    from hikaru.model.rel_1_22 import *
     from dataclasses import dataclass, InitVar
     from typing import Any, Optional, Dict
     from hikaru import register_version_kind_class
@@ -177,8 +180,8 @@ can create a new dataclass that makes provision for passing in this data like so
     register_version_kind_class(PodPlus, Pod.apiVersion, Pod.kind)
 
 Note that every field supplied either has a default or is optional with a default; this is because the parent
-class already has a defaulted field, and dataclasses can not have fields that don't have defaults
-follow fields that do those that do.
+class already has a defaulted field and dataclasses that are subclasses can not have fields that don't have defaults
+follow fields that do.
 
 If you're familiar with dataclasses, you might wonder why the ``my_dict`` field doesn't use
 a ``field()`` default specifier with a ``default_factory``. This is because ``default_factory``
@@ -200,7 +203,7 @@ from ``HikaruDocumentBase`` rather than one of its subclasses, and then provide 
 the fields required to hold the data for your operator. You **must** include ``apiVersion``
 and ``kind`` fields in your class definition, but you do not need to implement a
 ``__post_init__()`` method unless you have other class attributes that you want to add that
-aren't part of those that from the official document defintiion.
+aren't part of those that come from the official document definition.
 
 As an example, let's suppose we have an operator that we want to define that will have a YAML
 representation that looks like the following:
@@ -228,7 +231,7 @@ Here is an example implementation of the classes that can consume this YAML:
     from typing import Optional
     from dataclasses import dataclass
     from hikaru import HikaruBase, HikaruDocumentBase
-    from hikaru.model.rel_1_16 import *
+    from hikaru.model.rel_1_21 import *
 
     @dataclass
     class Inner(HikaruBase):

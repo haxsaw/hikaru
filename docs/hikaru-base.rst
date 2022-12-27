@@ -2,9 +2,9 @@
 The HikaruBase class
 ********************
 
-All Hikaru model objects are based on the HikaruBase class, and the model objects
-only add data; there are no additional behaviours. All operations that you can do
-on Hikaru objects are defined on the HikaruBase class.
+All Hikaru model objects are based on the HikaruBase class. Most Hikaru operations that you can do
+on Hikaru model objects are defined on the HikaruBase class. Derived classes will support class-specific
+methods as defined by the underlying Kubernetes API.
 
 :ref:`Full documentation for the class<HikaruBase doc>` can be found in the
 :ref:`Reference` section, but some of the key methods are discussed here.
@@ -22,7 +22,7 @@ load a specific Hikaru class:
 .. code:: python
 
     from ruamel.yaml import YAML
-    from hikaru.model.rel_1_16 import Pod
+    from hikaru.model.rel_1_21 import Pod
     yaml = YAML()
     f = open("<path to yaml file containing a pod>", "r")
     doc = yaml.load(f)
@@ -40,9 +40,9 @@ allow you to load it:
 .. code:: python
 
     from ruamel.yaml import YAML
-    from hikaru.model.rel_1_16 import Container
+    from hikaru.model.rel_1_21 import Container
     yaml = YAML()
-    f = open("<path to yaml ficontaining a container>", "r")
+    f = open("<path to yaml file containing a container>", "r")
     doc = yaml.load(f)
     c = Container.from_yaml(doc)
     assert isinstance(c, Container)
@@ -56,7 +56,7 @@ to pass into ``from_yaml()``:
 .. code:: python
 
     from hikaru import get_processors
-    from hikaru.model.rel_1_16 import Container
+    from hikaru.model.rel_1_21 import Container
     docs = get_processors(path="<path to Container yaml file>")
     c = Container.from_yaml(docs[0])
     assert isinstance(c, Container)
@@ -69,7 +69,8 @@ get_empty_instance()
 This classmethod provides you an empty instance of the class on which you invoke it.
 Otherwise, you have to ensure that you provide the correct required number of the non-
 optional parameters to the usual object creation call. This method takes care of that
-for you, giving you an empty instance that you can then populate as you wish.
+for you, giving you an empty instance that you can then populate as you wish. This includes
+any contained objects and their required parameters.
 
 as_python_source()
 *************************
@@ -81,13 +82,13 @@ The rendered code will
 re-create the state of the original object. The source is unformatted with respect to PEP8,
 and may in fact be quite difficult to read. However, it is legal Python and will execute properly.
 It is better to use the ``get_python_source()`` function for this, as it will
-also run the PEP8 formatter to make the code more readable.
+also run a PEP8 formatter to make the code more readable.
 
 Support for ==
 *************************
 
 Instances of models can be checked for equality using '=='. HikaruBase understands how to
-inspect subclasses and recursivly ensure that all field values, dict keys, list entries,
+inspect subclasses and recursively ensure that all field values, dict keys, list entries,
 etc are the same.
 
 dup()
@@ -97,7 +98,7 @@ dup()
 
 Any HikaruBase instance can generate a duplicate of itself, a deep copy. This is especially
 useful in cases where pre-made components are loaded from a library and a particular
-component is used mutliple times within the same containing object, but where you may wish
+component is used multiple times within the same containing object but where you may wish
 to tweak the values in each use. Since these are all object references, tweaking the values
 in one place will be seen in another unless a full copy is used in each location so the
 same group of objects are all being operated on from different places.
@@ -107,7 +108,7 @@ find_by_name()
 
 :py:meth:`Documentation<hikaru.HikaruBase.find_by_name>`
 
-As HikaruBase objects are populated via processing YAML or by being created with Python
+As HikaruBase instance objects are populated via processing YAML or by being created with Python
 code, an internal search catalog is created on each object that provides assistance in
 searching through the object hierarchy for specific fields or nested objects. This provides
 significant assistance in constructing automated reviewing tools that can locate and
@@ -118,7 +119,7 @@ This catalog is used by the ``find_by_name()`` method, which returns a list of
 and their location in the model that satisfy the query arguments to the method.
 
 The simplest use of this method is to supply a name to find; in this case, ``find_by_name()``
-will return every attribute called name wherever it is in the model. For example, here is
+will return every attribute called 'name' wherever it is in the model. For example, here is
 the result when querying for the 'name' attribute against a Pod (p) in one of Hikaru's test
 cases:
 
@@ -187,7 +188,7 @@ The attributes of the returned CatalogEntry namedtuples are:
 
   - cls: the class object for the value of the item that was named
   - attrname: the name of the attribute found
-  - path: a list of strings that will take you from object where you did the search to the located item
+  - path: a list of strings (or integer indices) that will take you from object where you did the search to the located item
 
 get_type_warnings()
 *******************
@@ -213,7 +214,8 @@ interpretation:
   - warning: a string that contains a message describing the type error that was found
 
 If the returned list is empty, then all types are correct. However, there may be other usage
-conventions are make an object incorrect, for example suppling three different sub-objects
+conventions are make an object incorrect, for example supplying three different
+sub-objects
 when you are supposed to choose only one. ``get_type_warnings()`` doesn't find those kinds
 of errors, just when types are incorrect.
 

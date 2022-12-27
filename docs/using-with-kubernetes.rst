@@ -12,7 +12,8 @@ Hikaru provides two levels of interface to the underlying Kubernetes client:
 
 - A higher-level `CRUD`-style set of instance methods that have consistent names and
   behaviours across all top-level Hikaru objects (that is, subclasses of
-  :ref:`HikaruDocumentBase<HikaruDocumentBase doc>`) but which hide some of the details of the underlying operations, and
+  :ref:`HikaruDocumentBase<HikaruDocumentBase doc>`) but which hide some of the details
+  of the underlying operations, and
 - A lower-level (but not much lower) set of instance and class methods that are direct
   analogs of the operations defined in the K8s swagger file; the names of these methods
   follow the operationIDs in the swagger file, and expose return codes, headers, and allow
@@ -102,7 +103,7 @@ namespace in the Pod is None or the same value as provided in the arguments.
 
 As mentioned above in the section on ``create()``, you generally are advised to invoke read prior
 to any update operations to ensure you are only trying to make changes on the latest version of
-the pod.
+the object.
 
 update()
 ********
@@ -135,23 +136,24 @@ When the ``with`` block that the object manages closes, the object automatically
 
 .. code:: python
 
-	with Pod().read(name='thename', namespace='the-namespace') as p:
-		p.labels['new-label'] = 'value'
-		# and other actions that change the content of the Pod p
-		
-	# once here, the Pod p has automatically invoked update()
-	
+    with Pod().read(name='thename', namespace='the-namespace') as p:
+        p.labels['new-label'] = 'value'
+        # and other actions that change the content of the Pod p
+
+    # once here, the Pod p has automatically invoked update()
+
 The instance that serves as the context manager can come from any usual source. So if a
 previously created Pod was stored as YAML, you can load it and use that to manage the
 context:
 
 .. code:: python
 
-	p = load_full_yaml(path="/some/path")[0]
-	with p.read() as pod:  # always read before update to make sure you have the latest rev!
-		# and carry on modifying pod here...
-		
-There is also a helper function, :ref:`rollback_cm()<rollback_cm doc>`, which sets up the context manager to roll
+    p = load_full_yaml(path="/some/path")[0]
+    with p.read() as pod:  # always read before update to make sure you have the latest rev!
+        # and carry on modifying pod here...
+
+There is also a helper function, :ref:`rollback_cm()<rollback_cm doc>`, which sets up
+the context manager to roll
 back to the original state of the object if an exception is raised inside the ``with`` block.
 This allows you to restore your object to the original condition from when the with block
 started in the case of an error. Applying this function to the example from above, we'd then
@@ -159,12 +161,12 @@ have:
 
 .. code:: python
 
-	p = load_full_yaml(path="/some/path")[0]
-	try:
-		with rollback_cm(p.read()) as pod:
-			# and carry on modifying pod here...
-	except:
-		# pod (p) will have the same content as at the start of the with block
+    p = load_full_yaml(path="/some/path")[0]
+    try:
+        with rollback_cm(p.read()) as pod:
+            # and carry on modifying pod here...
+    except:
+        # pod (p) will have the same content as at the start of the with block
 
 delete()
 ********
@@ -172,30 +174,30 @@ delete()
 The ``delete()`` method allows you to delete the modelled resource in Kubernetes. This does
 not delete the Hikaru object; it simply gets rid of the underlying Kubernetes resource.
 
-Unlike ``update()``, ``delete()`` doesn't need the lastest version of the object to perform
+Unlike ``update()``, ``delete()`` doesn't need the latest version of the object to perform
 its actions; in general, all is necessary are the name and namespace (if applicable) for the
 resource in question. That allows issuing a ``delete()`` from an anonymous object:
 
 .. code:: python
 
-	Pod().delete(name='podname', namespace='podnamespace')
-	
+    Pod().delete(name='podname', namespace='podnamespace')
+
 ...as well as deleting from a resource that has metadata with both name and namespace filled in:
 
 .. code:: python
 
-	# let's assume we previously persisted a Pod that we had created with its name
-	# and namespace we can then load and delete it
-	p = load_full_yaml(path='/path/to/saved/pod')[0]
-	p.delete()
-	
-...or the uselessly verbose:
+    # let's assume we previously persisted a Pod that we had created with its name
+    # and namespace we can then load and delete it
+    p = load_full_yaml(path='/path/to/saved/pod')[0]
+    p.delete()
+
+...or the unhelpfully verbose:
 
 .. code:: python
 
-	p = Pod(metadata=ObjectMeta(name='podname', namespace='podnamespace'))
-	p.delete()
-	
+    p = Pod(metadata=ObjectMeta(name='podname', namespace='podnamespace'))
+    p.delete()
+
 
 
 
@@ -223,7 +225,8 @@ responds to your request. When get() returns, the code, object, and header field
 filled out in the Response object. The ``get()`` call also returns a three-tuple
 containing this same data.
 
-To illustrate this, we'll start with a fully explicit verion with commented interaction and
+To illustrate this, we'll start with a fully explicit version with commented
+interaction and
 then show how you can pare it down based on defaults. In this example,
 we'll create and delete a Pod using the K3s lightweight Kubernetes package.
 
@@ -255,7 +258,7 @@ we'll create and delete a Pod using the K3s lightweight Kubernetes package.
         newpod: Pod = result.obj
         time.sleep(5)  # smoke 'em if ya got 'em...
         print("deleting")
-        # use the static method deleteNamespacedPos() to delete the
+        # use the static method deleteNamespacedPod() to delete the
         # previously created Pod, passing the API client object into
         # the call
         fres: Response = Pod.deleteNamespacedPod(newpod.metadata.name, 'default',

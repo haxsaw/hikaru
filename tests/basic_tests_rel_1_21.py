@@ -1175,7 +1175,7 @@ def test109():
     """
     ensure that you can acquire a version of the v1beta2 Pod class
     """
-    raise SkipTest("there is no v1beta2 in rel 1_18")
+    raise SkipTest("there is no v1beta2 in rel 1_21")
     pod = get_version_kind_class('v1beta2', 'Pod')
     assert pod is not None
 
@@ -1399,7 +1399,7 @@ def test124():
     """
     Check merging different versions of the same object fails with enforce_version
     """
-    from hikaru.model.rel_1_18.v1beta1 import Pod as Podv1beta1
+    from hikaru.model.rel_1_21.v1beta1 import Pod as Podv1beta1
     pv1: Pod = Pod()
     pv1beta1: Podv1beta1 = Podv1beta1()
     try:
@@ -1426,7 +1426,7 @@ def test126():
     """
     Check that we can merge different version objects with the same name
     """
-    from hikaru.model.rel_1_18.v1beta1 import Pod as Podv1beta1
+    from hikaru.model.rel_1_21.v1beta1 import Pod as Podv1beta1
     pv1: Pod = Pod()
     pv1beta1: Podv1beta1 = Podv1beta1()
     pv1.merge(pv1beta1)

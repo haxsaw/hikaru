@@ -46,7 +46,7 @@ Fix the version number as above
 Add the new model packages to the 'packages' key
 Delete any newly obsolescent packages
 
-Removing a deprecated support for a K8s release
+Removing deprecated support for a K8s release
 ------------------------------------------------
 Remove all tests that have the release number in them
 Remove all test run scripts that have the release number in them

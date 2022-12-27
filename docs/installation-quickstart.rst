@@ -25,11 +25,13 @@ Normally, you would begin with:
     from hikaru import *
 
 ...to load in all the functions and classes you need, except any Hikaru K8s objects. If you
-need to use the default version's object in a specific release, you'd add the following line:
+need to use the objects in a specific release, you'd add in import of ``from hikaru.model_rel_1_XX import *``, 
+and that will import all the K8s class from that specific release (replacing the XX with the minor release number).
+So for example, to import all the classes from the 1.22 release, you'd add:
 
 .. code:: python
 
-    from hikaru.model.rel_1_16 import *
+    from hikaru.model.rel_1_22 import *
 
 You can of
 course load in just the bits you want to work with, as shown below. The following are
@@ -44,7 +46,7 @@ For loading Kubernetes YAML documents into live Hikaru Python objects, use the
 .. code:: python
 
     from hikaru import load_full_yaml, set_default_release
-    set_default_release('rel_1_16')   # loaded objects will be from the 1.16 release
+    set_default_release('rel_1_22')   # loaded objects will be from the 1.22 release
     docs = load_full_yaml(path="<path to yaml file>")
     # 'docs' is a list of different doc 'kinds' such
     # as Pod, Deployment, etc
@@ -78,7 +80,7 @@ the :ref:`get_python_source()` function:
 .. code:: python
 
     from hikaru import get_python_source, load_full_yaml, set_default_release
-    set_default_release('rel_1_17')  # create objects from the 1.17 release
+    set_default_release('rel_1_21')  # create objects from the 1.21 release
     docs = load_full_yaml(path="<path to yaml>")
     p = docs[0]
     # when rendering the Python source, you can indicate a
@@ -87,4 +89,5 @@ the :ref:`get_python_source()` function:
 
 This will output a PEP8-compliant set of Python. Generation may take a short while
 depending on how many deeply nested the Python objects involved are.
+
 

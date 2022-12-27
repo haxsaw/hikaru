@@ -210,7 +210,6 @@ def test05():
     assert expected == pod_seen, f'Not enough pod events: {expected-pod_seen}'
 
 
-
 if __name__ == "__main__":
     for k, v in dict(globals()).items():
         if callable(v) and k.startswith('test'):

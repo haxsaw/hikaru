@@ -1,3 +1,5 @@
+.. _watchers:
+
 *******************************************
 Watchers: Monitoring Kubernetes Activity
 *******************************************
@@ -44,7 +46,7 @@ namespaces:
 .. code:: python
 
     from kubernetes import config
-    from hikaru.model.rel_1_17 import Pod
+    from hikaru.model.rel_1_22 import Pod
     from hikaru.watch import Watcher
     
     def pod_watcher():
@@ -79,7 +81,7 @@ currently existing Pods in the k3s system I use; these look like the following:
 
 These same three lines appear repeatedly because of the default values of the keyword
 arguments to ``Watcher`` and the initiation of the `stream()`. We'll go into
-these details below, but we can change one to stop this behaviour by providing the
+these details below, but we can change the code to stop this behaviour by providing the
 Watcher a ``timeout_seconds`` argument with a value of ``None``:
 
 .. code::
@@ -148,7 +150,7 @@ method. This method has two arguments that govern its operation:
 - The ``manage_resource_version`` argument is a bool that tells the Watcher if you want it to
   manage the underlying watch in terms of what values to set for resource_version as the ``Watcher``
   operates the watch. This defaults to `False`, so a ``Watcher`` normally does nothing
-  about managing the resourceVersion of events, and just takes whatever is sent from K8s.
+  about managing the resource_version of events, and just takes whatever is sent from K8s.
 - The ``quit_on_timeout`` argument is a bool that tells the ``Watcher`` how to behave if the
   underlying watch times out. The default, `False`, tells the ``Watcher`` to restart the
   watch if it times out. This is what contributed to the initial example from above
@@ -177,8 +179,10 @@ column isn't too wide):
 Stopping a ``Watcher``
 -----------------------
 
-Once ``stream()`` is activated, it will continue to emit events subject it how its timeouts and
-resourceVersion management have been configured as discussed above. To stop the stream, you should
+Once ``stream()`` is activated, it will continue to emit events subject to how its
+timeouts and
+resource_version management have been configured as discussed above. To stop the stream,
+you should
 invoke the ``Watcher``'s ``stop()`` method. This method can be invoked while processing
 an event received from the ``stream()`` generator, or may be invoked from another thread.
 
@@ -196,7 +200,7 @@ Managing the resource_version yourself
 ---------------------------------------
 
 You can do the resource_version value management yourself if you don't want the
-``Watcher`` doing it for you. You can capture and persist the resourceVersion value from
+``Watcher`` doing it for you. You can capture and persist the resource_version value from
 each Hikaru model object's ``ObjectMeta`` object (the value of the `metadata` attribute on
 the top-level object in the ``WatchEvent`` instance) and remember to supply that back to
 the creation of any ``Watcher``.
@@ -245,7 +249,7 @@ will result in a ``TypeError``:
 .. code:: python
 
     >>> from hikaru.watch import Watcher
-    >>> from hikaru.model.rel_1_17.v1 import ObjectMeta
+    >>> from hikaru.model.rel_1_22.v1 import ObjectMeta
     >>> w = Watcher(ObjectMeta)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -256,7 +260,7 @@ Additionally, the class must support watches:
 
 .. code:: python
 
-    >>> from hikaru.model.rel_1_17.v1 import SelfSubjectRulesReview
+    >>> from hikaru.model.rel_1_22.v1 import SelfSubjectRulesReview
     >>> w = Watcher(SelfSubjectRulesReview)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -269,7 +273,7 @@ unnamespaced watches:
 
 .. code:: python
 
-    >>> from hikaru.model.rel_1_17.v1 import Node
+    >>> from hikaru.model.rel_1_22.v1 import Node
     >>> w = Watcher(Node, namespace='will-it-blend')
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -285,7 +289,7 @@ for the ``namespace`` argument:
 
 .. code:: python
 
-    >>> from hikaru.model.rel_1_17.v1 import Pod
+    >>> from hikaru.model.rel_1_22.v1 import Pod
     >>> w = Watcher(Pod, namespace='some-business-unit')
     >>>
 
@@ -298,7 +302,7 @@ using the ``watchables`` module:
 .. code:: python
 
     >>> from hikaru.watch import Watcher
-    >>> from hikaru.model.rel_1_17.v1 import watchables
+    >>> from hikaru.model.rel_1_22.v1 import watchables
     >>> w = Watcher(watchables.Watchables.Pod)
     >>> # or, for a namespaced Watcher
     >>> w = Watcher(watchables.NamespacedWatchables.Pod,
@@ -378,12 +382,12 @@ Below is some example code that looks for events on Namespaces and Pods using a
 
     from kubernetes import config
     from hikaru import set_global_default_release
-    from hikaru.model.rel_1_17 import Pod, Namespace
+    from hikaru.model.rel_1_22 import Pod, Namespace
     from hikaru.watch import Watcher, MultiplexingWatcher
     
     def muxing_watcher():
         # be sure to set the default release first!
-        set_global_default_release("rel_1_17")
+        set_global_default_release("rel_1_22")
         # config file location on my dev system:
         config.load_kube_config(config_file='/etc/rancher/k3s/k3s.yaml')
         # make each Watcher:

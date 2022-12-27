@@ -2091,7 +2091,7 @@ def build_it(swagger_file: str, is_main_rel: bool, deprecated=False):
 
 
 _release_in_process = None
-_release_hints: Optional[dict] = {}
+_release_hints = {}
 
 
 if __name__ == "__main__":

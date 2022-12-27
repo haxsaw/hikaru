@@ -37,7 +37,7 @@ get_yaml()
 :ref:`Documentation<get_yaml doc>`
 
 This function returns a string containing YAML that can re-create the object it is called
-with. The YAML that is output is preceeded by a start of document marker (---), and the top
+with. The YAML that is output is preceded by a start of document marker (---), and the top
 level object in the YAML file will be the Hikaru object that is passed in. The
 Hikaru object can be a Kubernetes document object such as Pod, Deployment, etc,
 but it can also be any Hikaru modeling object; all will be rendered as YAML.
@@ -52,8 +52,6 @@ get_json()
 :ref:`Documentation<get_json doc>`
 
 This function works like ``get_yaml()`` but returns JSON that represents the object instead.
-This is currently a one-way operation; there is no current ability to load a Hikaru object
-from JSON, but this is may change in the future.
 
 A JSON form of a Kubernetes document may be a useful form to employ for creating a record of 
 executed Kubernetes commands in a document database.
@@ -67,7 +65,7 @@ This function is the inverse of ``get_json()``; it takes a string of JSON that w
 by ``get_json()`` and returns a HikaruBase subclass that has been filled with the JSON's
 content.
 
-If processing JSON that represents a full Kubernetes object (that is, there are `apiVersion`
+If processing JSON that represents a top-level Kubernetes object (that is, there are `apiVersion`
 and `kind` keys), then ``from_json()`` is able to work out which class needs to be
 instantiated and populated. If this is any other Kubernetes object in JSON, then you must
 supply the optional ``cls`` argument informing ``from_json()`` which class to instantiate
@@ -82,8 +80,7 @@ All Hikaru model classes are Python dataclasses, which can automatically be rend
 a dict. However, the resultant dict will contain every attribute of every object, even
 optional ones that weren't provided values (they will have None). The ``get_clean_dict()``
 function takes that dict and prunes out all None values it contains, returning a minimal
-dict that represents the state of the object. This also is currently a one-way trip, but
-future releases will enable round-trips back to Hikaru objects.
+dict that represents the state of the object.
 
 from_dict()
 ***********
@@ -94,10 +91,10 @@ This function is the inverse of ``get_clean_dict()``; it takes a Python dict pro
 ``get_clean_dict()`` and returns a HikaruBase subclass that has been
 filled with the dict's content.
 
-If processing full a Kubernetes documents (that is, there are `apiVersion` and `kind` keys),
+If processing a top-level Kubernetes document (that is, there are `apiVersion` and `kind` keys),
 ``from_dict()`` is able to work out the proper class to instantiate and fill. If the dict
 is of another Kubernetes object that doesn't have these keys, you can supply
-the ``cls`` keyword argument to indicate what class should be instatiated and filled.
+the ``cls`` keyword argument to indicate what class should be instantiated and filled.
 
 get_python_source()
 *******************
@@ -105,8 +102,8 @@ get_python_source()
 :ref:`Documentation<get_python_source doc>`
 
 This function returns a PEP8-compliant string containing Python source code that will
-re-create the object that was passed to it. By default, this code simply calls a model
-class with all necessary arguments, but as there's no assignment running this code will
+re-create the object that was passed to it. By default, the resultant code simply calls a model
+class with all necessary arguments, but as there's no assignment in the generated code running it will
 cause an object to be created and then immediately destroyed. If you wish to have code
 that will assign the created object to a variable, use the `assign_to` keyword argument:
 
@@ -168,7 +165,7 @@ desired release:
 
 .. code:: python
 
-    from hikaru.model.release_1_16 import *
+    from hikaru.model.release_1_22 import *
 
 ...before the generated code as appropriate.
 
@@ -179,7 +176,7 @@ process_api_version()
 
 The ``apiVersion`` attribute of any top-level Kubernetes object may have encoded
 both the object group and the version of the API that the object is to respect.
-This function takes the value of this attibute and splits it out into its parts,
+This function takes the value of this attribute and splits it out into its parts,
 the API object group and the version. This is returned as a 2-tuple of strings,
 (group, version).
 
@@ -198,18 +195,18 @@ hierarchies, but you are free to use these as you wish.
 get_default_release()
 *********************
 
-:ref:`Documentaion<get_default_release doc>`
+:ref:`Documentation<get_default_release doc>`
 
 Returns a string that is the name of the default release that Hikaru will use when creating
-objects from YAML, JSON, or a dict. The release name returned will be the release set for
-the calling thread (if there is one), or else it will be the global default release for
+objects from YAML, JSON, or a dict. The release name returned will be the release **set for the calling thread**
+(if there is one), or else it will be the global default release for
 the entire process. A more thorough discussion of using this function can be found
 :ref:`here<Kubernetes API Releases and Versions>`.
 
 set_default_release()
 *********************
 
-:ref:`Documentaion<set_default_release doc>`
+:ref:`Documentation<set_default_release doc>`
 
 Sets the default string name of the release for Hikaru to use when creating objects from YAML, JSON or a dict.
 This value is set only for the calling thread, hence each thread can have its own default
@@ -220,7 +217,7 @@ A more thorough discussion of using this function can be found
 set_global_default_release()
 ****************************
 
-:ref:`Documentaion<set_global_default_release doc>`
+:ref:`Documentation<set_global_default_release doc>`
 
 Sets the default string name of the release to use for the entire program; this supplies a fallback
 release name to use in case an individual thread doesn't set a release name for itself. The supplied
@@ -241,7 +238,8 @@ register_version_kind_class()
 
 :ref:`Documentation<register_version_kind_class doc>`
 
-Registered the class to create when Hikaru encounters the specified version and kind values.
+Registers the class to create when Hikaru encounters the specified version and kind
+values.
 Use of this function is part of advanced Hikaru usage, which is documented
 :ref:`here<Advanced Hikaru: Defining Your Own Classes>`.
 

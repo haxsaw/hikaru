@@ -35,15 +35,22 @@ Limited correctness checking
 
 Hikaru does little to check the correctness of parsed YAML, nor does it have any support to ensure
 that API constraints such as "only one of these three alternative objects can be supplied here".
-Hikaru will detect when required fields are absent, it will not complain if semantically an optional
-field has not been supplied. It will also ignore any field that is not part of the API spec when
+Hikaru will detect when required fields are absent, but it will not complain if semantically an optional
+field has not been supplied.
+
+It will also ignore any field that is not part of the API spec when
 processing supplied YAML, and if re-generating YAML from Python objects that were originally created
-by such YAML, the out-of-spec fields will not be part of the output YAML. While all attributes in
+by such YAML, the out-of-spec fields will not be part of the output YAML.
+
+While all attributes in
 the model objects are typed and IDEs will provide help to the author to select the proper type for
 each keyword argument (or warn when the wrong one is provided), Python doesn't require this, and
 will happily generate YAML for improperly constructed Hikaru objects. You can now use `get_type_warnings()`
 to double-check that your object has been filled out properly according to specified types and
 required fields, but currently there is no check for other usage constraints.
+
+Finally, comments are not retained by the current version of Hikaru. So if you round-trip YAML through
+Hikaru and back to YAML, the comments will be lost.
 
 ruamel.yaml vs PyYAML
 ---------------------
@@ -58,7 +65,3 @@ Hikaru.
 However, there is a lower-level method where you pass a ruamel.yaml object
 to create a particular subclass of HikaruBase. These objects can be acquired using
 the ``get_processors`` function, or alternatively you can create them yourself.
-
-The ruamel.yaml package was used due to its support for newer YAML standards.
-However, since ruamel.yaml is based on PyYAML, parsed-out YAML dictionaries from either
-package work with Hikaru.
