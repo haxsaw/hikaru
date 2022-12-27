@@ -2,6 +2,67 @@
 Release Notes
 *************
 
+v0.12.0b
+--------
+
+*Default K8s release:* 22.x
+
+*Deprecated K8s release:* 19.x
+
+Hikaru 0.12.0b is focused on helping bring Hikaru up-to-date with the current releases
+of the Python Kubernetes client. It has been delayed for two major reasons: an odd
+bug that caused support for Kubernetes 21.x to fail in various tests, and life in
+general.
+Both are now in hand, and we're shooting for a series of Hikaru releases to catch up with
+the Kubernetes client.
+
+Besides adding support for Kubernetes 22.x, this release of Hikaru enjoys a document
+update and tidy-up.
+
+In line with Hikaru's deprecation policy, 0.12.0b drops support for Kubernetes 18.x.
+Support for 19.x is now deprecated, and the next release of Hikaru will drop support for
+this release.
+
+Kubernetes 22.x client appears to have dropped support for quite a few classes in the
+v1beta1 model package. If you're using version of the model, it's a good idea to
+consult the
+devtools/rel_0_11_0_12_diffs.csv document to see what is no longer found in Hikaru
+0.12.0b.
+
+As with past releases, Hikaru 0.12.0b applies a naming convention to differentiate
+identical
+object names that are in different groups in the Kubernetes API spec, leaving what Hikaru
+considers the 'primary' name as-is and applying a suffix (the group name) to the
+alternatives. The table below shows which classes this processing has been performed on
+for each version of the model in the 22.x spec. Note that previously v1beta1 had more
+variations on the Subject class than it does in this release.
+
++----------+----------------------------------+----------------------+--------------+---------------------+
+|          | ServiceReference                 | TokenRequest         | Event        | Subject             |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1       | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1alpha1 | ServiceReference                 | TokenRequest         | Event        | Subject             |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   | Subject\_\*         |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v1beta1  | ServiceReference                 | TokenRequest         | Event        | Subject             |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   | Subject\_\*         |
+|          | ServiceReference_apiregistration | TokenRequest\_\*     | Event_events |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta1  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+| v2beta2  | ServiceReference                 | TokenRequest         | Event        |                     |
+|          | ServiceReference_apiextensions   | TokenRequest_storage | Event_core   |                     |
+|          | ServiceReference_apiregistration |                      |              |                     |
++----------+----------------------------------+----------------------+--------------+---------------------+
+
+
+
 v0.11.0b
 --------
 
@@ -10,7 +71,7 @@ v0.11.0b
 *Deprecated K8s release:* 1.18
 
 Hikaru 0.11.0b is another catch-up release that had to wait for the rewrite of
-Hikaru's build system. The Kubernetes Python client went through serveral releases
+Hikaru's build system. The Kubernetes Python client went through several releases
 during this rewrite and so we're just now getting caught up on the releases put out
 by the K8s team in the interim. As of this writing, support of 1.21 is the last
 official release as part of this catch-up, however an alpha pre-release of 1.22
