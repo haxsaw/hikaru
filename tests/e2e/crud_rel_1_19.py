@@ -106,7 +106,7 @@ def test02():
     p.create()
     try:
         p.read()
-        time.sleep(0.1)
+        time.sleep(0.2)
         p.read()
         p.read()
         p.metadata.labels['test'] = 'test02'

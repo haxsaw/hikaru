@@ -86,8 +86,8 @@ For each supported version of Python:
 
 Publishing to PyPI
 ------------------
-publishing to official PyPI: twine upload dist/*
 publishing to test PyPI: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+publishing to official PyPI: twine upload dist/*
 
 CLA assistant at:  https://cla-assistant.io/
 Assistant repo: https://github.com/cla-assistant/cla-assistant
