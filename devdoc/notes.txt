@@ -53,6 +53,8 @@ Remove all test run scripts that have the release number in them
 Update the whole test run script to no longer run those other scripts/tests
 Remove all build tools that have the release number in them
 Adjust the build tools to create a new default and deprecated release
+Re-build the release that is now deprecated
+Build the new release to be the default
 Adjust setup.py as above
 Remove the model modules from hikaru.model
 

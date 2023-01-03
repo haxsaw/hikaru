@@ -1,0 +1,142 @@
+---
+apiVersion: apps/v2
+kind: Pod
+metadata:
+  name: hello-kiamol-3
+  labels:
+      lab1: wibble
+      lab2: wobble
+spec:
+  # 1st line of spec block
+  # 2nd line of spec block
+  containers:
+    - name: web  # web comment
+      image: kiamol/ch02-hello-kiamol
+      ports:
+        - containerPort: 3306
+        - containerPort: 3307
+    - name: db
+      image: hibbie-forward-shake
+      env:
+        - name: HOME
+          value: here
+        - name: WIBBLE
+          valueFrom:
+            configMapKeyRef:
+              key: thekey
+      envFrom:
+        - configMapRef:
+            name: test-map
+            optional: True
+          prefix: gabagabahey
+          secretRef:
+            name: seecrit
+            optional: False
+      volumeMounts:
+        - mountPath: /opt
+          name: opt-mount
+          mountPropagation: wibble
+          readOnly: True
+          subPath: ""
+          subPathExpr: ""
+      volumeDevices:
+        - devicePath: /dev/sd0a
+          name: root-disk
+      resources:
+        limits:
+          cores: 4
+          mem-mb: 500
+        requests:
+          cores: 3
+          mem-mb: 400
+      lifecycle:
+        postStart:  # normally you only have one of these
+          exec:
+            command: [cmd, arg1, arg2]
+          httpGet:
+            port: "80"
+            host: localhost
+            httpHeaders:
+              - name: Content-Disposition
+                value: whatever
+            path: /home
+            scheme: https
+          tcpSocket:
+            port: "1025"
+            host: devnull
+        preStop:
+          exec:
+            command:
+              - cmd
+              - arg1
+              - arg2
+      terminationMessagePath: /goodbye/cruel/world.txt
+      terminationMessagePolicy: File
+      livenessProbe:
+        exec:
+          command: [probe-cmd, arg1, arg2]
+        initialDelaySeconds: 30
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 4
+        successThreshold: 2
+      readinessProbe:
+        exec:
+          command: [probe-cmd2, arg1, arg2, arg3]
+        initialDelaySeconds: 31
+        periodSeconds: 4
+        timeoutSeconds: 2
+        failureThreshold: 3
+        successThreshold: 1
+      securityContext:
+        runAsUser: 1001
+        runAsNonRoot: True
+        runAsGroup: 55
+        readOnlyRootFilesystem: False
+        procMount: DefaultProcMount
+        privileged: False
+        allowPrivilegeEscalation: True
+        capabilities:
+          add: [create, read, update]
+          drop: [delete]
+        seccompProfile:
+          type: summat
+          localhostProfile: nada
+        seLinuxOptions:
+          level: uno
+          role: dos
+          type: tres
+          user: quattro
+        windowsOptions:
+          gmsaCredentialSpec: horrible
+          gmsaCredentialSpecName: awful
+          runAsUserName: icky
+  imagePullSecrets:
+    - name: one
+    - name: two
+  enableServiceLinks: False
+  nodeSelector:
+    key1: wibble
+    key2: wobble
+  nodeName: maxwell
+  schedulerName: cecil
+  runtimeClassName: classless
+
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-kiamol-4
+spec:
+  selector:
+    matchLabels:
+      app: hello-kiamol-4
+  template:
+    metadata:
+      labels:
+        app: hello-kiamol-4
+    spec:
+      containers:
+        - name: web
+          image: kiamol/ch02-hello-kiamol

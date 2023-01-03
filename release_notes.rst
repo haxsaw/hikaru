@@ -2,6 +2,57 @@
 Release Notes
 *************
 
+v0.13.0a
+--------
+
+*Default K8s release:* 23.x
+
+*Deprecated K8s release:* 20.x
+
+*PLEASE NOTE THIS IS AN ALPHA RELEASE!*
+
+Hikaru 0.13.0a is meant to provide an early look at support for the v23.x Python
+Kubernetes client. Given that this is an alpha, the notes here are going to focus more
+on the issues surrounding the alpha nature or the release rather than a full accounting
+of all the changes.
+
+This version of the K8s client is based on an OpenAPI spec file that names a full-blown
+'v2' API for Kubernetes, the first that I've seen. Given the appearance of this version,
+some additional tests that focused on what is expected to be v2 functionality were
+created. These didn't run as expected, and upon investigation it appears that there may
+be some changes required in the code generator, but a deeper dive into the OpenAPI spec
+will be required to fully determine this. However, v1 objects and methods all seem to be
+passing their tests. Given this, it seemed worthwhile to create an alpha release that
+has the v1 support in place for users to have a tinker with while the v2 issues are being
+investigated further.
+
+So the main advice for this alpha release is: _stick with the v1 model objects_ as they
+are passing the existing tests. You should be safe to develop against those, but I'd
+recommend steering clear of the v2 objects until the beta release comes out.
+
+Other things worth mentioning:
+
+User @arikalon1 found a performance issue when performing a lot of operations that
+call get_empty_instance() a lot, and suggested a caching scheme that would speed up
+the intermediate results this call uses to get an instance. This has been implemented
+in the alpha code.
+
+The OpenAPI JSON file contain a number of references to types that aren't defined
+in the spec file. These references are for types and are used as arguments to various
+methhods, but there is no definition for the type in the swagger file. When hikaru's
+builder encounters such items, the method itself is skipped from code generation since
+it isn't clear what's needed here. The list of these undefined types is:
+
+- PodAttachOptions
+- PodExecOptions
+- PodPortForwardOptions
+- PodProxyOptions
+- ServiceProxyOptions
+- NodeProxyOptions
+
+If anyone can point me in the direction of where I can find info to resolves these it
+would be helpful.
+
 v0.12.0b
 --------
 

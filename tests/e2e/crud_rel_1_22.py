@@ -209,6 +209,7 @@ def test08():
     path = base_path / "api-service-1_22.yaml"
     api: APIService = cast(APIService, load_full_yaml(path=str(path))[0])
     api.metadata.namespace = crud_namespace
+    api.spec.service.namespace = crud_namespace
     api.create()
     try:
         api.read()

@@ -4,7 +4,7 @@
 # installing/removing packages
 #
 chmod 755 run_all_*.bsh
-/bin/bash ./run_unit_1_19.bsh
 /bin/bash ./run_unit_1_20.bsh a
 /bin/bash ./run_unit_1_21.bsh a
 /bin/bash ./run_unit_1_22.bsh a
+/bin/bash ./run_unit_1_23.bsh a

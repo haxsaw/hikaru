@@ -25,11 +25,18 @@ This module is automatically generated using the Hikaru build program that turns
 a Kubernetes swagger spec into the code for the hikaru.model package.
 """
 
+import warnings
 
 try:
     from .v1 import *
 except ImportError:  # pragma: no cover
     pass
+
+warnings.filterwarnings('default', category=PendingDeprecationWarning)
+warnings.warn("Consider migrating from release rel_1_20 of K8s; this is the last "
+              "Hikaru release that will support it",
+              category=PendingDeprecationWarning)
+warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
 
 globs = dict(globals())
 __all__ = [c.__name__ for c in globs.values()

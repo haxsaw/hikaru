@@ -50,6 +50,18 @@ except ImportError:  # pragma: no cover
 NoneType = type(None)
 
 
+# These next two dicts, _cached_hints and _cached_args, are private stores
+# for data computed from calls to get_empty_instance() and _get_hints().
+# one or hikaru's intrepid users found computing these items to be costly  as
+# his application entailed calling them repeatedly. Since the results
+# won't be changing for a single program's execution, he put forth the idea
+# of simply caching the results in dicts that map a class to the computed result.
+# That's what these dicts are used for.
+_cached_hints = {}
+
+_cached_args = {}
+
+
 class KubernetesException(Exception):
     pass
 
@@ -164,6 +176,9 @@ class HikaruBase(object):
 
     @classmethod
     def _get_hints(cls) -> dict:
+        cached_hints = _cached_hints.get(cls, None)
+        if cached_hints is not None:
+            return cached_hints
         mro = cls.mro()
         mro.reverse()
         hints = {}
@@ -171,6 +186,7 @@ class HikaruBase(object):
         for c in mro:
             if is_dataclass(c):
                 hints.update(get_type_hints(c, globs))
+        _cached_hints[cls] = hints
         return hints
 
     def _capture_catalog(self, catalog_depth_first=False):
@@ -467,6 +483,9 @@ class HikaruBase(object):
         :return: and instance of 'cls' with all scalar attrs set to None and
             all collection attrs set to an appropriate empty collection
         """
+        cached_args = _cached_args.get(cls, None)
+        if cached_args is not None:
+            return cls(**cached_args)
         kw_args = {}
         sig = signature(cls.__init__)
         init_var_hints = {k for k, v in get_type_hints(cls).items()
@@ -528,6 +547,7 @@ class HikaruBase(object):
                                               f" for parameter {p.name} in"
                                               f" {cls.__name__}. Please file a"
                                               f" bug report.")  # pragma: no cover
+        _cached_args[cls] = kw_args
         new_inst = cls(**kw_args)
         return new_inst
 

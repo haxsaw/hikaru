@@ -2003,13 +2003,17 @@ def write_watchables_module(path: Path, md: ModuleDef):
             print(f'    {cd.hikaru_name} = {cd.hikaru_name}', file=f)
         print("\n\nwatchables = Watchables", file=f)
 
+        # now the support for namespaced watchables, whether there are
+        # any or not
+        print('\n', file=f)
+        print("class NamespacedWatchables(object):  # pragma: no cover", file=f)
+        print(namespaced_watchables_doc, file=f)
         if namespaced:
-            print('\n', file=f)
-            print("class NamespacedWatchables(object):  # pragma: no cover", file=f)
-            print(namespaced_watchables_doc, file=f)
             for cd in namespaced.values():
                 print(f'    {cd.hikaru_name} = {cd.hikaru_name}', file=f)
-            print("\n\nnamespaced_watchables = NamespacedWatchables", file=f)
+        else:  # put an empty class in here just to keep the module API consistent
+            print('    pass', file=f)
+        print("\n\nnamespaced_watchables = NamespacedWatchables", file=f)
 
 
 _documents_init_code = \

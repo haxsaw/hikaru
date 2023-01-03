@@ -1086,11 +1086,12 @@ def test56():
         _ = PersistentVolume.deletePersistentVolume(pv.metadata.name)
 
 
-def make_sa57() -> ServiceAccount:
+def make_sa57(ns: Optional[str] = None) -> ServiceAccount:
     sa = ServiceAccount(
         metadata=ObjectMeta(
             name='user-cert-generator',
-            labels={'kiamol': 'ch17'}
+            labels={'kiamol': 'ch17'},
+            namespace=ns
         )
     )
     return sa
@@ -1655,9 +1656,9 @@ def test71():
     """
     test token request
     """
-    sa = make_sa57()
+    sa = make_sa57(ns=e2e_namespace)
     tr = TokenRequest(
-        metadata=ObjectMeta(namespace='test71-tokenrequest'),
+        metadata=ObjectMeta(namespace=e2e_namespace),
         spec=TokenRequestSpec(
             audiences=[sa.metadata.name],
             expirationSeconds=60*10

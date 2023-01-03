@@ -33,6 +33,15 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 
+K8s V1.23 v1 Documents Doc
+--------------------------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: 1.23v1 ref docs
+
+   rel-1-23-v1
+
 K8s V1.22 v1 Documents Doc
 --------------------------
 
@@ -59,12 +68,3 @@ K8s V1.20 v1 Documents Doc
    :caption: 1.20v1 ref docs
 
    rel-1-20-v1
-
-K8s V1.19 v1 Documents Doc
---------------------------
-
-.. toctree::
-   :maxdepth: 1
-   :caption: 1.19v1 ref docs
-
-   rel-1-19-v1

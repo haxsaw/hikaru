@@ -360,6 +360,10 @@ _deprecation_helper = {
     },
     'rel_1_22': {
         ('v1', 'Event'): ('v1', 'Event_core'),
+    },
+    'rel_1_23': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+        ('v2', 'Event'): ('v2', 'Event_core'),
     }
 }
 
