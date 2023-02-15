@@ -38,6 +38,7 @@ class Watchables(object):  # pragma: no cover
     EndpointSliceList = EndpointSliceList
     EndpointSlice = EndpointSlice
     EventList = EventList
+    Event = Event
     FlowSchemaList = FlowSchemaList
     FlowSchema = FlowSchema
     PriorityLevelConfigurationList = PriorityLevelConfigurationList
@@ -67,6 +68,7 @@ class NamespacedWatchables(object):  # pragma: no cover
     CSIStorageCapacityList = CSIStorageCapacityList
     CronJob = CronJob
     EndpointSlice = EndpointSlice
+    Event = Event
     PodDisruptionBudget = PodDisruptionBudget
     CSIStorageCapacity = CSIStorageCapacity
 

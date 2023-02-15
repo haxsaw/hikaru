@@ -1141,6 +1141,7 @@ def test105():
     """
     ensure that you can acquire a version of the v1alpha1 Pod class
     """
+    raise SkipTest("No longer a Pod in this module")
     from hikaru.model.rel_1_23 import v1alpha1
     pod = get_version_kind_class('v1alpha1', 'Pod')
     assert pod is not None
@@ -1150,6 +1151,7 @@ def test106():
     """
     ensure that you can acquire a version of the v1beta1 Pod class
     """
+    raise SkipTest("No longer a Pod in this module")
     pod = get_version_kind_class('v1beta1', 'Pod')
     assert pod is not None
 
@@ -1158,6 +1160,7 @@ def test107():
     """
     ensure that you can acquire a version of the v2beta1 Pod class
     """
+    raise SkipTest("No longer a Pod in this module")
     pod = get_version_kind_class('v2beta1', 'Pod')
     assert pod is not None
 
@@ -1166,6 +1169,7 @@ def test108():
     """
     ensure that you can acquire a version of the v2beta2 Pod class
     """
+    raise SkipTest("No longer a Pod in this module")
     pod = get_version_kind_class('v2beta2', 'Pod')
     assert pod is not None
 
@@ -1398,14 +1402,15 @@ def test124():
     """
     Check merging different versions of the same object fails with enforce_version
     """
-    from hikaru.model.rel_1_23.v1beta1 import Pod as Podv1beta1
-    pv1: Pod = Pod()
-    pv1beta1: Podv1beta1 = Podv1beta1()
-    try:
-        pv1.merge(pv1beta1, enforce_version=True)
-        assert False, "Should have raised a type error of enforce_version"
-    except TypeError:
-        pass
+    raise SkipTest("No longer a Pod in this module")
+    # from hikaru.model.rel_1_23.v1beta1 import Pod as Podv1beta1
+    # pv1: Pod = Pod()
+    # pv1beta1: Podv1beta1 = Podv1beta1()
+    # try:
+    #     pv1.merge(pv1beta1, enforce_version=True)
+    #     assert False, "Should have raised a type error of enforce_version"
+    # except TypeError:
+    #     pass
 
 
 def test125():
@@ -1425,10 +1430,11 @@ def test126():
     """
     Check that we can merge different version objects with the same name
     """
-    from hikaru.model.rel_1_23.v1beta1 import Pod as Podv1beta1
-    pv1: Pod = Pod()
-    pv1beta1: Podv1beta1 = Podv1beta1()
-    pv1.merge(pv1beta1)
+    raise SkipTest("No longer a Pod in this module")
+    # from hikaru.model.rel_1_23.v1beta1 import Pod as Podv1beta1
+    # pv1: Pod = Pod()
+    # pv1beta1: Podv1beta1 = Podv1beta1()
+    # pv1.merge(pv1beta1)
 
 
 def test127():

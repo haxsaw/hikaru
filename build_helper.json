@@ -186,15 +186,6 @@
           ]
         },
         {
-          "class_name": "Event",
-          "preferred_group_by_version": [
-            {
-              "colliding_version": "v1",
-              "preferred_group": "events"
-            }
-          ]
-        },
-        {
           "class_name": "Subject",
           "preferred_group_by_version": [
             {

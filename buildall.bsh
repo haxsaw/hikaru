@@ -5,13 +5,13 @@
 #
 pip uninstall --yes kubernetes
 pip install kubernetes==20.13.0
-python build19_up.py openapi/swagger_1-20.json d
+python build19to22.py openapi/swagger_1-20.json d
 pip uninstall --yes kubernetes
 pip install kubernetes==21.7.0
-python build19_up.py openapi/swagger_1-21.json
+python build19to22.py openapi/swagger_1-21.json
 pip uninstall --yes kubernetes
 pip install kubernetes==22.6.0
-python build19_up.py openapi/swagger_1-22.json
+python build19to22.py openapi/swagger_1-22.json
 pip uninstall --yes kubernetes
 pip install kubernetes==23.6.0
-python build19_up.py openapi/swagger_1-23.json m
+python build23_up.py openapi/swagger_1-23.json m
