@@ -186,15 +186,6 @@
           ]
         },
         {
-          "class_name": "Subject",
-          "preferred_group_by_version": [
-            {
-              "colliding_version": "v1",
-              "preferred_group": ""
-            }
-          ]
-        },
-        {
           "class_name": "TokenRequest",
           "preferred_group_by_version": [
             {

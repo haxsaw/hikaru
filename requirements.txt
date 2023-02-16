@@ -1,5 +1,5 @@
 ruamel.yaml>=0.16.12
 autopep8>=1.5.5
 # we'll narrow down the black versions as we're using unofficial APIs
-black >=20.8b1,<=22.1.0
+black >=20.8b1,<=23.1.0
 kubernetes >=19.15.0,<=23.6.0

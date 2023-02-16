@@ -5063,7 +5063,7 @@ class PolicyRulesWithSubjects(HikaruBase):
         `resourceRules` and `nonResourceRules` has to be non-empty.
     """
 
-    subjects: List["Subject_"]
+    subjects: List["Subject"]
     nonResourceRules: Optional[List["NonResourcePolicyRule"]] = field(
         default_factory=list
     )
@@ -6256,7 +6256,7 @@ class ServiceAccountSubject(HikaruBase):
 
 
 @dataclass
-class Subject_(HikaruBase):
+class Subject(HikaruBase):
     r"""
     Subject matches the originator of a request, as identified by the request
     authentication system. There are three ways of matching an originator; by user, group,

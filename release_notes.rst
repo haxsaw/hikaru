@@ -2,6 +2,96 @@
 Release Notes
 *************
 
+v0.13.0b
+--------
+
+*Default K8s release:* 23.x
+
+*Deprecated K8s release:* 20.x
+
+Hikaru 0.13.0b provides support for the v23.x Python Kubernetes client.
+
+The biggest change in this release is in the builder. The emergence of a v2 set of
+model objects has occasioned me to review both the input swagger and the code generation
+logic, as I felt that a v2 GA release should receive a bit of extra scrutiny. A good
+thing too, since practices that were adopted in the earlier, less mature days of the
+swagger spec file were becoming less desirable with some of the newer spec files.
+
+Without getting too bogged down into detail the net result is this: starting in this
+release and only with package hikaru.model.rel_1_23, version modules will only contain
+the classes defined for that version, and will import classes from other versions as
+needed. Previously, for a variety of reasons, if a class in one version required a
+class from another version, the builder just replicated the class in the referencing
+class's module. Now, instead of duplicating the code, import statements are generated
+to pull the needed classes into the referencing module. This results in much smaller
+generated code files in the hikaru.model subpackages, which will in turn make Hikaru
+a smaller package to download an install as additional new releases of the K8s swagger
+are supported. Interestingly, it turns out that there isn't a lot of stuff in the v2
+module with this new practice put into place.
+
+Most of the rest here is 'keeping the lights on' stuff:
+
+- @arikalon1's performance enhancement change from the 0.13a release comes forward; this
+  caches certain repeatable results internally increasing the speed of certain object
+  creation operations.
+
+- @R0ll1ngSt0ne noted that the black release was pinned to a pretty old version of that
+  package in the requirements.txt file. Since hikaru is dependent on an unofficial API
+  suggested by the black team, this has been updated to the newest black which also
+  happily supports this. So a range of black releases are now supported, but we still
+  retain an upper bound. I'm sure I'll be having this conversation again in the future
+  ;-).
+
+- One of the classes that have the same name across different K8s API groups has
+  finally gone, so I'm happy to report that we now only have a single Event class
+  in the v1 model module.
+
+- As in the alpha release, we still have some dangling type references in the swagger.
+  The swagger contains some operations (paths) that name some parameters with types
+  that the same swagger doesn't provide definitions for. It's worth repeating that list
+  here:
+    - PodAttachOptions
+    - PodExecOptions
+    - PodPortForwardOptions
+    - PodProxyOptions
+    - ServiceProxyOptions
+    - NodeProxyOptions
+  The builder skips generating methods that have parameters that reference these types
+  since they can't be tied out. If they are really needed, we could look into just
+  allowing a dict for them and leave it to the user to structure them properly. But as
+  that is in conflict with Hikaru's base philosophy they have been discarded in this
+  release.
+
+Finally, like all past hikaru releases this one has a few classes that Hikaru gives
+customized names. This is because same class name appears in multiple groups in the
+K8s API, but Hikaru uses a single name space per version. To avoid collisions, this
+short list of classes has the group name added to the class name. This release sports
+fewer of these collisions, probably reflecting the deprecation of some duplicates in
+the swagger spec. Here are the collisions for this release:
+
++----------+----------------------------------+----------------------+
+|          | ServiceReference                 | TokenRequest         |
++----------+----------------------------------+----------------------+
+| v1       | ServiceReference                 | TokenRequest         |
+|          | ServiceReference_apiextensions   | TokenRequest_storage |
+|          | ServiceReference_apiregistration |                      |
++----------+----------------------------------+----------------------+
+| v1alpha1 |                                  |                      |
++----------+----------------------------------+----------------------+
+| v1beta1  |                                  |                      |
++----------+----------------------------------+----------------------+
+| v1beta2  |                                  |                      |
++----------+----------------------------------+----------------------+
+| v2       |                                  |                      |
++----------+----------------------------------+----------------------+
+| v2beta1  |                                  |                      |
++----------+----------------------------------+----------------------+
+| v2beta2  |                                  |                      |
++----------+----------------------------------+----------------------+
+
+This simplification is due to both the maturity of the swagger spec as well as the
+changes noted regarding the improved reuse of classes across version packages.
+
 v0.13.0a
 --------
 
@@ -39,7 +129,7 @@ in the alpha code.
 
 The OpenAPI JSON file contain a number of references to types that aren't defined
 in the spec file. These references are for types and are used as arguments to various
-methhods, but there is no definition for the type in the swagger file. When hikaru's
+methods, but there is no definition for the type in the swagger file. When hikaru's
 builder encounters such items, the method itself is skipped from code generation since
 it isn't clear what's needed here. The list of these undefined types is:
 
@@ -50,7 +140,7 @@ it isn't clear what's needed here. The list of these undefined types is:
 - ServiceProxyOptions
 - NodeProxyOptions
 
-If anyone can point me in the direction of where I can find info to resolves these it
+If anyone can point me in the direction of where I can find info to resolve these it
 would be helpful.
 
 v0.12.0b
