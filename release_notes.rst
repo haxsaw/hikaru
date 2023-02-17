@@ -2,6 +2,40 @@
 Release Notes
 *************
 
+v0.16.0b
+--------
+
+*Default K8s release:* 26.x
+
+*Deprecated K8s release:* 23.x
+
+Hikaru 0.16.0b is a catch-up release that adds support for three K8s releases,
+24.x, 25.x, and 26.x. The release used by Hikaru by default is 26.x; that is, unless
+configured otherwise with a call to *set_default_release()*, a program using 0.16.0b
+will expect to be working with a 26.x K8s installation, will install the 26.x Python
+client, and will create objects from the rel_1_26 package in hikaru.model.
+
+As a variety of circumstances have caused Hikaru to fall behind the official Python K8s
+client, it was decided that it would be faster to deliver support for these three K8s
+releases in a single Hikaru release, rather than creating a different Hikaru release
+for each K8s client release.
+
+Hikaru's requirements.txt is set up to allow a range of K8s clients, so you can install a
+release
+earlier then 26.x for use with Hikaru by installing the desired release first and then
+installing Hikaru (it can also be done afterwards by uninstalling/installing the
+desired release with pip). The associated PyPI packages for K8s Python client packages
+supported by 0.16.0b are:
+
+- for 23.x, use kubernetes==23.6.0
+- for 24.x, use kubernetes==24.2.0
+- for 25.x, use kubernetes==25.3.0
+- for 26.x, use kubernetes==26.1.0
+
+Besides adjustments for changes in the swagger from 23.x, no new functionality is included
+in this release over what was added in 0.13.0b. Additionally, the definitions that were
+noted as missing in the 0.13.0b release notes are still missing in the 26.x swagger.
+
 v0.13.0b
 --------
 
