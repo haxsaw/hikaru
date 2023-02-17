@@ -1446,7 +1446,7 @@ def stop_when_true(test_expr, result_expr, seq):
     return result
 
 
-_dont_remove_groups = {"storage", "policy"}
+_dont_remove_groups = {"storage", "policy", "resource"}
 
 
 def make_method_name(op: Operation, cd: ClassDescriptor=None) -> str:

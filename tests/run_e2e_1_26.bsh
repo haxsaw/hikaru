@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# this needs to run within a properly configured environment as it will be
+# installing/removing packages
+#
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+pip uninstall --yes kubernetes
+pip install kubernetes==26.1.0
+APPEND=""
+if [ $# -gt 0 ]
+then
+  if [ $1 == "a" ]
+  then
+    APPEND="--cov-append"
+  fi
+fi
+pytest --cov=hikaru --cov-report=term-missing ${APPEND} e2e/*1_26.py
