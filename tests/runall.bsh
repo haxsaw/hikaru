@@ -4,7 +4,7 @@
 # installing/removing packages
 #
 chmod 755 run_all_*.bsh
-/bin/bash ./run_all_1_20.bsh a
+/bin/bash ./run_all_1_20.bsh
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_all_1_21.bsh a
@@ -14,3 +14,9 @@ sleep 5
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_all_1_23.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_all_1_24.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_all_1_25.bsh a
