@@ -34,7 +34,7 @@ model_classes = [k for k, v in globals().items()
                  if type(v) == type and
                  k != HikaruBase]
 
-__version__ = "0.13.0b"
+__version__ = "0.16.0b"
 
 __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_source",
            "get_clean_dict", "load_full_yaml", "get_processors", "TypeWarning",

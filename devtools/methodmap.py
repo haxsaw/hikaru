@@ -36,7 +36,7 @@ def map_em(docsmod, release: str, version: str) -> dict:
 
 if __name__ == "__main__":
     rel_version_method_class = {}
-    for release in ['rel_1_20', 'rel_1_21', 'rel_1_22', 'rel_1_23']:
+    for release in ['rel_1_23', 'rel_1_24', 'rel_1_25', 'rel_1_26']:
         rel_version_method_class[release] = version_method_class = {}
         version_mod = importlib.import_module('.versions',
                                               f'hikaru.model.{release}')

@@ -13,32 +13,39 @@ release of the Python client then you may need to specify what release and/or ve
 Releases
 ========
 
-Kubernetes release numbers and the corresponding Python client release numbers used do not
-match up, but it appears this has been fixed with release 1.17:
+Kubernetes release number are kind of a headache; numbering approaches used in the swagger
+text (such as 1.22) don't agree in approach to those used with the Python client (22.x),
+and so there is some confusion about how to map through all of these things to Hikaru
+release numbers. However, Hikaru has moved along far enough that it's become pretty easy
+to see the relationships between swagger, Python client, and Hikaru release, with the
+exception of release 0.16b:
 
-+-------+-------------+----------------------+
-|K8s Rel|Py Client Rel| Currently Supported? |
-+=======+=============+======================+
-|1.15   |1.11         |          No          |
-+-------+-------------+----------------------+
-|1.16   |1.12         |          No          |
-+-------+-------------+----------------------+
-|1.17   |1.17         |          No          |
-+-------+-------------+----------------------+
-|1.18   |1.18         |          No          |
-+-------+-------------+----------------------+
-|1.19   |1.19         |          No          |
-+-------+-------------+----------------------+
-|1.20   |1.20         |          No          |
-+-------+-------------+----------------------+
-|1.21   |21.x         |        **Yes**       |
-+-------+-------------+----------------------+
-|1.22   |22.x         |        **Yes**       |
-+-------+-------------+----------------------+
-|1.23   |23.x         |        **Yes**       |
-+-------+-------------+----------------------+
-|1.24   |24.x         |        **Yes**       |
-+-------+-------------+----------------------+
++-----------------+-------------+----------------+----------------------+
+|K8s Swagger lease|Py Client Rel| Hikaru release | Currently Supported? |
++=================+=============+================+======================+
+|1.22             |22.x         |  0.12b         |      **No**          |
++-----------------+-------------+----------------+----------------------+
+|1.23             |23.x         |  0.13b         |      **Yes**         |
++-----------------+-------------+----------------+----------------------+
+|1.24             |24.x         |  0.16b         |      **Yes**         |
++-----------------+-------------+----------------+----------------------+
+|1.25             |25.x         |  0.16b         |      **Yes**         |
++-----------------+-------------+----------------+----------------------+
+|1.26             |26.x         |  0.16b         |      **Yes**         |
++-----------------+-------------+----------------+----------------------+
+
+Instead of separate releases for each of 24.x, 25.x, and 26.x of the Python K8s client,
+Hikaru 0.16b rolls together support for all of these releases with support for
+23.x. That means 0.16b works with 23.x-26.x of the K8s client and the associated K8s
+system. This was largely done for the convenience of Hikaru's maintainer: each release
+takes a fair amount of work, and due to personal circumstances and rapid arrival of Python
+client releases the Python client got ahead of Hikaru, so it was easier to create a new
+release that supported the remaining unsupported Python client release than to create
+unique Hikaru releases for each. Hikaru allows you to specify which should be your default
+release, so users my use 0.16b with any of the supported underlying K8s releases and it
+will work properly (if unspecified, the default is the highest numbered supported release,
+which for 0.16b is 26.x/1.26).
+
 
 .. note::
 

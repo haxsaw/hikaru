@@ -349,22 +349,18 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
 # this helps get around problems when classes from different groups
 # have the same name
 _deprecation_helper = {
-    'rel_1_19': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_20': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_21': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_22': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
     'rel_1_23': {
         ('v1', 'Event'): ('v1', 'Event_core'),
-        ('v2', 'Event'): ('v2', 'Event_core'),
-    }
+    },
+    'rel_1_24': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+    },
+    'rel_1_25': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+    },
+    'rel_1_26': {
+        ('v1', 'Event'): ('v1', 'Event_core'),
+    },
 }
 
 
