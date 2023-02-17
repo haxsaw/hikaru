@@ -195,5 +195,32 @@
           ]
         }
       ]
+    },
+  "rel_1_24":
+    {
+      "preferred_versions": [
+        {
+        "class_name": "ServiceReference",
+        "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "admissionregistration"
+            },
+            {
+              "colliding_version": "v1beta1",
+              "preferred_group": "admissionregistration"
+            }
+          ]
+        },
+        {
+          "class_name": "TokenRequest",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "authentication"
+            }
+          ]
+        }
+      ]
     }
 }
