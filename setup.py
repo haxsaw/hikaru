@@ -47,7 +47,7 @@ setup(
               "hikaru.model.rel_1_26.v1beta1",
               "hikaru.model.rel_1_26.v1beta2",
               "hikaru.model.rel_1_26.v1beta3",
-              "hikaru.model.rel_1_25.v2",
+              "hikaru.model.rel_1_26.v2",
               ],
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
