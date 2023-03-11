@@ -19,6 +19,14 @@
 # SOFTWARE.
 from typing import Optional, TypeVar, Generic
 from multiprocessing.pool import ApplyResult
+try:
+    from typing import get_args, get_origin
+except ImportError:  # pragma: no cover
+    def get_args(tp):
+        return tp.__args__ if hasattr(tp, "__args__") else ()
+
+    def get_origin(tp):
+        return tp.__origin__ if hasattr(tp, "__origin__") else None
 
 
 T = TypeVar('T')

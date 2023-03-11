@@ -19,19 +19,90 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from dataclasses import dataclass, is_dataclass
+from inspect import isclass, signature, Signature, Parameter
+from dataclasses import dataclass, is_dataclass, Field, fields
 from functools import partial
-from typing import Optional, Dict
-from .meta import HikaruDocumentBase
+from typing import Optional, Dict, Union, List
+from .meta import HikaruDocumentBase, HikaruBase
+from .utils import get_origin, get_args
 from hikaru.version_kind import register_version_kind_class
+from hikaru.model.rel_1_23 import JSONSchemaProps, CustomResourceValidation
 
 
+@dataclass
 class CRDMixin(object):
+    ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
+    type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
+
     @classmethod
-    def get_crd_schema(cls):
-        # this may need to get templatized to allow for different
-        # schema classes from different releases
-        pass
+    def get_crd_schema(cls, jsp_class):
+        """
+        Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
+
+        Only works with a dataclass!
+
+        Limitations:
+
+        - Cannot handle recursively defined classes (yet), neither direct nor indirect
+
+        """
+        schema = CRDMixin.process_cls(cls)
+        jsp = jsp_class(**schema)
+        return jsp
+
+    @staticmethod
+    def process_cls(cls) -> dict:
+        if not is_dataclass(cls):
+            raise TypeError(f"The class {cls.__name__} is not a dataclass; Hikaru can't generate "
+                            f"a schema for it.")
+        props = {}
+        jsp_args = {"type": "object", "properties": props}
+        required = []
+        sig = signature(cls)
+        p: Parameter
+        for p in sig.parameters.values():
+            if p.name in CRDMixin.ignorable:
+                continue
+            if p.default is Parameter.empty:
+                required.append(p.name)
+            if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
+                if not is_dataclass(p.annotation):
+                    raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
+                                    f"a schema for it.")
+                props[p.name] = CRDMixin.process_cls(p.annotation)
+            elif p.annotation in CRDMixin.type_map:
+                props[p.name] = {"type": CRDMixin.type_map[p.annotation]}
+            else:
+                props[p.name] = {}  # may be a number of parts
+                initial_type = p.annotation
+                origin = get_origin(initial_type)
+                if origin is Union:
+                    type_args = get_args(p.annotation)
+                    initial_type = type_args[0]
+                    if initial_type in CRDMixin.type_map:
+                        props[p.name]["type"] = CRDMixin.type_map[initial_type]
+                        continue
+                origin = get_origin(initial_type)
+                if origin in (list, List):
+                    props[p.name]["type"] = "array"
+                    list_of_type = get_args(initial_type)[0]
+                    if list_of_type in CRDMixin.type_map:
+                        props[p.name]["items"] = {"type": CRDMixin.type_map[list_of_type]}
+                    elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
+                        if not is_dataclass(list_of_type):
+                            raise TypeError(f"The list item type of attribute {p.name} is a subclass "
+                                            f"of HikaruBase but is not a dataclass")
+                        props[p.name]["items"] = CRDMixin.process_cls(list_of_type)
+                    else:
+                        print(f"Don't know how to process {p.name}'s type {p.annotation}; "
+                              f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
+                else:
+                    print(f"Don't know how to process type {p.name}'s {p.annotation}; "
+                          f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
+        if required:
+            jsp_args["required"] = required
+
+        return jsp_args
 
 
 @dataclass
@@ -82,14 +153,20 @@ class APICall(object):
     DELETE = 'delete'
     OP = 'op'
 
-    def __init__(self, verb, url: str):
-        self.verb = verb
+    def __init__(self, method, url: str):
+        self.method = method
         self.url = url
         self.prop: Optional[APICallProp] = None
 
     def __call__(self, m):
         self.prop = APICallProp(self, m)
         return self.prop
+
+
+_method_map = {APICall.CREATE: 'put',
+               APICall.READ: 'get',
+               APICall.UPDATE: 'post',
+               APICall.DELETE: 'delete'}
 
 
 def crd_create(f):

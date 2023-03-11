@@ -1,5 +1,5 @@
 from hikaru import *
-from hikaru.model.rel_1_26.v1 import *
+from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
 from hikaru.crd import (register_crd, HikaruCRDDocumentBase, crd_create,
                         crd_read, crd_update, crd_delete)
@@ -7,6 +7,7 @@ from hikaru.crd import HikaruCRDDocumentBase
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 
+set_default_release("rel_1_23")
 
 # defining a CRD
 @dataclass
@@ -23,7 +24,7 @@ class MyResource(HikaruCRDDocumentBase):
     meta: ObjectMeta
     spec: Optional[MyResourceSpec]
 
-    @crd_create("/myresource/{namespace}/create")
+    @crd_create("/myresource/{namespace}")
     def create(self, namespace, dry_run, connection):
         pass
 
@@ -95,3 +96,62 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 #   So there's a Watch object and we pass the method name of the particular watch K8s method
 #   to use when streaming events. We'll need to provde our own version of this, hopefully a
 #   generic one that can be shared by all classes.
+#
+# - create a JSONSchemaProps object
+#
+# from:
+# https://www.techtarget.com/searchitoperations/tip/Learn-to-use-Kubernetes-CRDs-in-this-tutorial-example
+CustomResourceDefinition(
+    spec=CustomResourceDefinitionSpec(
+        group="contoso.com",
+        names=CustomResourceDefinitionNames(
+            kind="MyPlatform",
+            plural="myplatforms",
+            singular="myplatform",
+            shortNames=["myp"],
+        ),
+        scope="Namespaced",
+        versions=[
+            CustomResourceDefinitionVersion(
+                name="v1alpha1",
+                served=True,
+                storage=True,
+                schema=CustomResourceValidation(
+                    openAPIV3Schema=JSONSchemaProps(
+                        type="object",
+                        properties={
+                            "spec": {
+                                "type": "object",
+                                "properties": {
+                                    "appId": {"type": "string"},
+                                    "language": {
+                                        "type": "string",
+                                        "enum": ["csharp", "python", "go"],
+                                    },
+                                    "os": {
+                                        "type": "string",
+                                        "enum": ["windows", "linux"],
+                                    },
+                                    "instanceSize": {
+                                        "type": "string",
+                                        "enum": ["small", "medium", "large"],
+                                    },
+                                    "environmentType": {
+                                        "type": "string",
+                                        "enum": ["dev", "test", "prod"],
+                                    },
+                                    "replicas": {"type": "integer", "minimum": 1},
+                                },
+                                "required": ["appId", "language", "environmentType"],
+                            }
+                        },
+                        required=["spec"],
+                    )
+                ),
+            )
+        ],
+    ),
+    apiVersion="apiextensions.k8s.io/v1",
+    kind="CustomResourceDefinition",
+    metadata=ObjectMeta(name="myplatforms.contoso.com"),
+)

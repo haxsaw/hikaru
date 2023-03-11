@@ -37,15 +37,8 @@ from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 from hikaru.naming import camel_to_pep8
 from hikaru.tweaks import h2kc_translate
+from hikaru.utils import get_origin, get_args
 
-try:
-    from typing import get_args, get_origin
-except ImportError:  # pragma: no cover
-    def get_args(tp):
-        return tp.__args__ if hasattr(tp, "__args__") else ()
-
-    def get_origin(tp):
-        return tp.__origin__ if hasattr(tp, "__origin__") else None
 
 NoneType = type(None)
 
