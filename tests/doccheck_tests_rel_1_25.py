@@ -22,6 +22,8 @@ import importlib
 import pytest
 from hikaru import HikaruDocumentBase, set_default_release
 from hikaru.model.rel_1_25.versions import versions
+from hikaru.model.rel_1_25.v1 import JSONSchemaProps
+from hikaru.crd import get_crd_schema
 
 
 def beginning():
@@ -54,6 +56,16 @@ def test_docclass(cls):
     assert cls.apiVersion, f"Class {cls.__name__} has no value for apiVersion"
     assert hasattr(cls, 'kind'), f"Class {cls.__name__} doesn't have kind"
     assert cls.kind, f"Class {cls.__name__} has no value for kind"
+
+
+@pytest.mark.parametrize('cls', test_classes)
+def test_crd_processing(cls):
+    try:
+        get_crd_schema(cls, JSONSchemaProps)
+    except RecursionError:
+        # there are a couple of recursively defined classes that we can't process
+        # right now, so we just ignore them
+        pass
 
 
 if __name__ == "__main__":

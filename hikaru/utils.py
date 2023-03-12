@@ -17,7 +17,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import Optional, TypeVar, Generic
+from inspect import isclass, signature, Signature, Parameter
+from typing import Optional, TypeVar, Generic, get_type_hints, Dict, List
 from multiprocessing.pool import ApplyResult
 try:
     from typing import get_args, get_origin
@@ -27,6 +28,64 @@ except ImportError:  # pragma: no cover
 
     def get_origin(tp):
         return tp.__origin__ if hasattr(tp, "__origin__") else None
+
+
+class ParamSpec(object):
+    def __init__(self, param: Parameter, hint_type):
+        self.param: Parameter = param
+        self.hint_type = hint_type
+
+    def get_name(self):
+        return self.param.name
+
+    @property
+    def name(self):
+        return self.param.name
+
+    def has_default(self):
+        return self.param.default is not Parameter.empty
+
+    def get_default(self):
+        return self.param.default
+
+    @property
+    def default(self):
+        return self.param.default
+
+    def get_type(self):
+        return self.hint_type
+
+    @property
+    def annotation(self):
+        return self.hint_type
+
+
+class HikaruCallableTyper(object):
+
+    def __init__(self, cls):
+        self.signature: Signature = signature(cls)
+        self.hints: dict = get_type_hints(cls)
+        self.params: Dict[str, ParamSpec] = {}
+        p: Parameter
+        for p in self.signature.parameters.values():
+            hint = self.hints[p.name]
+            ps: ParamSpec = ParamSpec(p, hint)
+            self.params[p.name] = ps
+
+    def values(self) -> List[ParamSpec]:
+        return list(self.params.values())
+
+
+_inst_cache = {}
+
+
+def get_hct(cls) -> HikaruCallableTyper:
+    result: HikaruCallableTyper
+    if cls in _inst_cache:
+        result = _inst_cache[cls]
+    else:
+        result = _inst_cache[cls] = HikaruCallableTyper(cls)
+    return result
 
 
 T = TypeVar('T')

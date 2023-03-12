@@ -1,9 +1,8 @@
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
-from hikaru.crd import (register_crd, HikaruCRDDocumentBase, crd_create,
+from hikaru.crd import (register_crd, crd_create,
                         crd_read, crd_update, crd_delete)
-from hikaru.crd import HikaruCRDDocumentBase
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 
@@ -16,7 +15,7 @@ class MyResourceSpec(HikaruBase):
 
 
 @dataclass
-class MyResource(HikaruCRDDocumentBase):
+class MyResource(HikaruDocumentBase):
     kind = "myresource"
     apiVersion = "v1"
     group = "incisivetech.co.uk"
@@ -101,6 +100,21 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 #
 # from:
 # https://www.techtarget.com/searchitoperations/tip/Learn-to-use-Kubernetes-CRDs-in-this-tutorial-example
+#
+#
+# Metadata on the field() call; include:
+# - enums
+# - format
+# - description
+# - consider adding the key "x-kubernetes-group-version-kind" with group/version/kind data
+# - consider adding x-kubernetes-patch-strategy
+# - consider adding x-kubernetes-patch-merge-key
+#
+# elif origin in (dict, Dict) or initial_type is object TODO crd.py
+# We need to use metadata in the field() to determine how to resolve the issue
+# indentified at this TODO ; we may wan to consider modifying the newest build
+# to include the use of field() metadata too, just so we can process all the classes
+# we generate from the build.
 CustomResourceDefinition(
     spec=CustomResourceDefinitionSpec(
         group="contoso.com",

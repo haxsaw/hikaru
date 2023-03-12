@@ -20,99 +20,106 @@
 # SOFTWARE.
 
 from inspect import isclass, signature, Signature, Parameter
-from dataclasses import dataclass, is_dataclass, Field, fields
+from dataclasses import dataclass, is_dataclass, Field, fields, InitVar
 from functools import partial
-from typing import Optional, Dict, Union, List
+from typing import Optional, Dict, Union, List, get_type_hints
 from .meta import HikaruDocumentBase, HikaruBase
-from .utils import get_origin, get_args
+from .utils import get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct
 from hikaru.version_kind import register_version_kind_class
-from hikaru.model.rel_1_23 import JSONSchemaProps, CustomResourceValidation
+
+ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
+type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
 
 
-@dataclass
-class CRDMixin(object):
-    ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
-    type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
+def get_crd_schema(cls, jsp_class: type):
+    """
+    Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
 
-    @classmethod
-    def get_crd_schema(cls, jsp_class):
-        """
-        Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
+    Only works with a dataclass!
 
-        Only works with a dataclass!
+    Limitations:
 
-        Limitations:
+    - Cannot handle recursively defined classes (yet), neither direct nor indirect
 
-        - Cannot handle recursively defined classes (yet), neither direct nor indirect
+    """
+    if jsp_class.__name__ != "JSONSchemaProps":
+        raise TypeError("The jsp_class parameter must be one of the JSONSchemaProps classes for "
+                        "one of the supported releases under hikaru.model")
+    schema = _process_cls(cls)
+    jsp = jsp_class(**schema)
+    return jsp
 
-        """
-        schema = CRDMixin.process_cls(cls)
-        jsp = jsp_class(**schema)
-        return jsp
 
-    @staticmethod
-    def process_cls(cls) -> dict:
-        if not is_dataclass(cls):
-            raise TypeError(f"The class {cls.__name__} is not a dataclass; Hikaru can't generate "
-                            f"a schema for it.")
-        props = {}
-        jsp_args = {"type": "object", "properties": props}
-        required = []
-        sig = signature(cls)
-        p: Parameter
-        for p in sig.parameters.values():
-            if p.name in CRDMixin.ignorable:
-                continue
-            if p.default is Parameter.empty:
-                required.append(p.name)
-            if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
-                if not is_dataclass(p.annotation):
-                    raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
-                                    f"a schema for it.")
-                props[p.name] = CRDMixin.process_cls(p.annotation)
-            elif p.annotation in CRDMixin.type_map:
-                props[p.name] = {"type": CRDMixin.type_map[p.annotation]}
-            else:
-                props[p.name] = {}  # may be a number of parts
-                initial_type = p.annotation
-                origin = get_origin(initial_type)
-                if origin is Union:
-                    type_args = get_args(p.annotation)
-                    initial_type = type_args[0]
-                    if initial_type in CRDMixin.type_map:
-                        props[p.name]["type"] = CRDMixin.type_map[initial_type]
-                        continue
-                origin = get_origin(initial_type)
-                if origin in (list, List):
-                    props[p.name]["type"] = "array"
-                    list_of_type = get_args(initial_type)[0]
-                    if list_of_type in CRDMixin.type_map:
-                        props[p.name]["items"] = {"type": CRDMixin.type_map[list_of_type]}
-                    elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
-                        if not is_dataclass(list_of_type):
-                            raise TypeError(f"The list item type of attribute {p.name} is a subclass "
-                                            f"of HikaruBase but is not a dataclass")
-                        props[p.name]["items"] = CRDMixin.process_cls(list_of_type)
-                    else:
-                        print(f"Don't know how to process {p.name}'s type {p.annotation}; "
-                              f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
+def _process_cls(cls) -> dict:
+    if not is_dataclass(cls):
+        raise TypeError(f"The class {cls.__name__} is not a dataclass; Hikaru can't generate "
+                        f"a schema for it.")
+    props = {}
+    jsp_args = {"type": "object", "properties": props}
+    required = []
+    # sig: Signature = signature(cls)
+    # p: Parameter
+    hct: HikaruCallableTyper = get_hct(cls)
+    p: ParamSpec
+    for p in hct.values():
+        if p.name in ignorable:
+            continue
+        if isinstance(p.hint_type, InitVar):
+            continue
+        if p.default is Parameter.empty:
+            required.append(p.name)
+        if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
+            if not is_dataclass(p.annotation):
+                raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
+                                f"a schema for it.")
+            props[p.name] = _process_cls(p.annotation)
+        elif p.annotation in type_map:
+            props[p.name] = {"type": type_map[p.annotation]}
+        else:
+            props[p.name] = {}  # may be a number of parts
+            initial_type = p.annotation
+            origin = get_origin(initial_type)
+            if origin is Union:
+                type_args = get_args(p.annotation)
+                initial_type = type_args[0]
+                if initial_type in type_map:
+                    props[p.name]["type"] = type_map[initial_type]
+                    continue
+            origin = get_origin(initial_type)
+            if origin in (list, List):
+                props[p.name]["type"] = "array"
+                list_of_type = get_args(initial_type)[0]
+                if list_of_type in type_map:
+                    props[p.name]["items"] = {"type": type_map[list_of_type]}
+                elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
+                    if not is_dataclass(list_of_type):
+                        raise TypeError(f"The list item type of attribute {p.name} is a subclass "
+                                        f"of HikaruBase but is not a dataclass")
+                    props[p.name]["items"] = _process_cls(list_of_type)
                 else:
-                    print(f"Don't know how to process type {p.name}'s {p.annotation}; "
-                          f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
-        if required:
-            jsp_args["required"] = required
+                    raise TypeError(f"Don't know how to process {p.name}'s type {p.annotation}; "
+                                    f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
+            elif isclass(initial_type) and issubclass(initial_type, HikaruBase):
+                if not is_dataclass(initial_type):
+                    raise TypeError(f"The type of {p.name} is a subclass of HikaruBase "
+                                    f"but is not a dataclass")
+                props[p.name] = _process_cls(initial_type)
+            elif origin in (dict, Dict) or initial_type is object:
+                props[p.name]["type"] = "object"
+                # @TODO we currently don't have enough data to exactly how to output
+                # this; we've lost some info if it came from K8s swagger. While this is
+                # certainly an object, it's rendering can either involve key/value
+                # pairs or a single string in a particular format. This is something
+                # we can eventually clarify, but for now we'll just treat it as a k/v
+                # pairs collection
+                props[p.name]["additionalProperties"] = {"type": "string"}
+            else:
+                raise TypeError(f"Don't know how to process type {p.name}'s {p.annotation}; "
+                                f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
+    if required:
+        jsp_args["required"] = required
 
-        return jsp_args
-
-
-@dataclass
-class HikaruCRDDocumentBase(HikaruDocumentBase, CRDMixin):
-    pass
-
-
-@dataclass
-class HikaruCRDListDocumentBase(HikaruDocumentBase, CRDMixin):
-    pass
+    return jsp_args
 
 
 class _RegisterCRD(object):
@@ -120,11 +127,11 @@ class _RegisterCRD(object):
         self.is_namespaced = is_namespaced
 
 
-_crd_registration_details: Dict[type(HikaruCRDListDocumentBase), _RegisterCRD] = {}
+_crd_registration_details: Dict[type(HikaruDocumentBase), _RegisterCRD] = {}
 
 
 def register_crd(crd_cls, is_namespaced: bool = True):
-    if not issubclass(crd_cls, HikaruCRDDocumentBase):
+    if not issubclass(crd_cls, HikaruDocumentBase):
         raise TypeError("The decorated class must be a subclass of HikaruCRDDocumentBase")
     if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
         raise TypeError("The decorated class must have both an apiVersion and kind attribute")
