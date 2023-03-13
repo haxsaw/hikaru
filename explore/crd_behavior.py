@@ -1,7 +1,7 @@
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
-from hikaru.crd import (register_crd, crd_create,
+from hikaru.crd import (register_crd_schema, crd_create,
                         crd_read, crd_update, crd_delete)
 from dataclasses import dataclass
 from typing import Optional, List, Dict
@@ -29,7 +29,7 @@ class MyResource(HikaruDocumentBase):
 
     # @crd_read("/myresource/{namespace}")
 
-register_crd(MyResource)
+register_crd_schema(MyResource)
 
 
 m = ObjectMeta(name='me')

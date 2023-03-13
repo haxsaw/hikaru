@@ -3,7 +3,7 @@ from inspect import signature
 from pprint import pprint as pp
 from typing import List, Dict, Optional, get_type_hints
 from hikaru import *
-from hikaru.crd import get_crd_schema
+from hikaru.crd import get_crd_schema, register_crd_schema
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.utils import FieldMetadata as fm
 
@@ -38,7 +38,7 @@ class Resource(HikaruDocumentBase):
     kind: str = "Resource"
 
 
-register_version_kind_class(Resource, "v1", "Resource")
+register_crd_schema(Resource)
 
 
 if __name__ == "__main__":

@@ -71,6 +71,9 @@ def _process_cls(cls) -> dict:
         description = metadata.get(fm.DESCRIPTION_KEY)
         if description is not None:
             prop['description'] = description
+        enums = metadata.get(fm.ENUM_KEY)
+        if enums is not None:
+            prop['enum'] = enums
         if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
             if not is_dataclass(p.annotation):
                 raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
@@ -132,7 +135,7 @@ class _RegisterCRD(object):
 _crd_registration_details: Dict[type(HikaruDocumentBase), _RegisterCRD] = {}
 
 
-def register_crd(crd_cls, is_namespaced: bool = True):
+def register_crd_schema(crd_cls, is_namespaced: bool = True):
     if not issubclass(crd_cls, HikaruDocumentBase):
         raise TypeError("The decorated class must be a subclass of HikaruCRDDocumentBase")
     if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):

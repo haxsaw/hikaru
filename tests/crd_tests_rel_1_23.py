@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import (HikaruCRDDocumentBase, register_crd, crd_read)
+from hikaru.crd import (register_crd_schema, crd_read)
 
 
 set_default_release("rel_1_23")
@@ -10,14 +10,14 @@ set_default_release("rel_1_23")
 
 # test01 stuff
 @dataclass
-class Resource01(HikaruCRDDocumentBase):
+class Resource01(HikaruDocumentBase):
     metadata: ObjectMeta
     kind: str = "resource01"
     apiVersion: str = "v1"
     group: str = "incisivetech.co.uk"
 
 
-register_crd(Resource01, is_namespaced=True)
+register_crd_schema(Resource01, is_namespaced=True)
 
 
 def test01():
@@ -95,7 +95,7 @@ class Subunit02(HikaruBase):
 
 
 @dataclass
-class Resource02(HikaruCRDDocumentBase):
+class Resource02(HikaruDocumentBase):
     metadata: ObjectMeta
     subunit: Subunit02
     kind: str = "resource02"
@@ -103,7 +103,7 @@ class Resource02(HikaruCRDDocumentBase):
     group: str = "incisivetech.co.uk"
 
 
-register_crd(Resource02, is_namespaced=True)
+register_crd_schema(Resource02, is_namespaced=True)
 
 
 def test07():
