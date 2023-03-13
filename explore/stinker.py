@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, get_type_hints
 from hikaru import *
 from hikaru.crd import get_crd_schema
 from hikaru.model.rel_1_23.v1 import *
+from hikaru.utils import FieldMetadata as fm
 
 set_default_release("rel_1_23")
 
@@ -25,9 +26,10 @@ class Resource(HikaruDocumentBase):
     spec: Spec
     f5: bool
     f8: List['Spec']
-    # f8: List[Spec]
+    f13: str = field(metadata=fm(description="will this even work??"))
     f6: Optional[float] = None
-    f7: Optional[List[int]] = None
+    f7: Optional[List[int]] = field(default_factory=list,
+                                    metadata=fm(description="Optional list of int field"))
     f9: Optional[Spec] = None
     f10: InitVar[Optional[Spec]] = None
     f11: InitVar[Optional[int]] = None

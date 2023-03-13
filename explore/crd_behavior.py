@@ -47,7 +47,7 @@ watcher: Watcher = Watcher(MyResource)
 watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 
 # API Issues
-# - Registration will need to be changed
+# - Registration will need to be changed  DONE
 #   So registering a class can be done in the decorator, but what's needed here is a superset
 #   of the data needed to allow users to register their own versions of thing like Pod with
 #   Hikaru. Probably we need to inject some differences in the back end to default away the
@@ -96,16 +96,22 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 #   to use when streaming events. We'll need to provde our own version of this, hopefully a
 #   generic one that can be shared by all classes.
 #
-# - create a JSONSchemaProps object
+# - create a JSONSchemaProps object  DONE
 #
 # from:
 # https://www.techtarget.com/searchitoperations/tip/Learn-to-use-Kubernetes-CRDs-in-this-tutorial-example
 #
 #
 # Metadata on the field() call; include:
-# - enums
+# - enum
 # - format
 # - description
+# - additionalProperties @TODO this renders differently depending on the kind of thing that this describes
+#   - if an object, then you add {"type": <typename>} as the value of additionalProperties
+#   - if an array, then you add {"items": {"type": <typename>}} as the value of additionalProperties
+#   also, additionalProperties and format flag how to render; is it an object or not. Check the swagger
+#   for examples
+
 # - consider adding the key "x-kubernetes-group-version-kind" with group/version/kind data
 # - consider adding x-kubernetes-patch-strategy
 # - consider adding x-kubernetes-patch-merge-key
@@ -115,6 +121,8 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 # indentified at this TODO ; we may wan to consider modifying the newest build
 # to include the use of field() metadata too, just so we can process all the classes
 # we generate from the build.
+#
+# To create a CRD, the opid is createCustomResourceDefinition. you can find the path in the swagger
 CustomResourceDefinition(
     spec=CustomResourceDefinitionSpec(
         group="contoso.com",

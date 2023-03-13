@@ -17,8 +17,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from dataclasses import fields, Field
 from inspect import isclass, signature, Signature, Parameter
-from typing import Optional, TypeVar, Generic, get_type_hints, Dict, List
+from typing import Optional, TypeVar, Generic, get_type_hints, Dict, List, Union
 from multiprocessing.pool import ApplyResult
 try:
     from typing import get_args, get_origin
@@ -30,10 +31,45 @@ except ImportError:  # pragma: no cover
         return tp.__origin__ if hasattr(tp, "__origin__") else None
 
 
+class FieldMetadata(dict):
+    domain = "hikaru"
+    DESCRIPTION_KEY = "description"
+    ENUM_KEY = "enum"
+    FORMAT_KEY = "format"
+    ADDITIONAL_PROPS_KEY = "additional_props_type"
+    MIN_KEY = "minimum"
+    MAX_KEY = "maximum"
+
+    def __init__(self, *args,
+                 description: Optional[str] = None,
+                 enum: Optional[List[str]] = None,
+                 format: Optional[str] = None,
+                 additional_props_type: Optional[str] = None,
+                 minimum: Optional[Union[int, float]] = None,
+                 maximum: Optional[Union[int, float]] =None, **kwargs):
+        super(FieldMetadata, self).__init__(*args, **kwargs)
+        self[self.domain] = {}
+        if description is not None:
+            self[self.domain][self.DESCRIPTION_KEY] = description
+        if enum is not None:
+            if type(enum) is not list:
+                raise TypeError("The enum argument must be a list of strings")
+            self[self.domain][self.ENUM_KEY] = list(enum)
+        if format is not None:
+            self[self.domain][self.FORMAT_KEY] = format
+        if additional_props_type is not None:
+            self[self.domain][self.ADDITIONAL_PROPS_KEY] = additional_props_type
+        if minimum is not None:
+            self[self.domain][self.MIN_KEY] = minimum
+        if maximum is not None:
+            self[self.domain][self.MAX_KEY] = maximum
+
+
 class ParamSpec(object):
-    def __init__(self, param: Parameter, hint_type):
+    def __init__(self, param: Parameter, hint_type, field: Optional[Field]):
         self.param: Parameter = param
         self.hint_type = hint_type
+        self.field = field
 
     def get_name(self):
         return self.param.name
@@ -59,6 +95,10 @@ class ParamSpec(object):
     def annotation(self):
         return self.hint_type
 
+    @property
+    def metadata(self):
+        return self.field.metadata.get(FieldMetadata.domain, {}) if self.field is not None else {}
+
 
 class HikaruCallableTyper(object):
 
@@ -67,9 +107,10 @@ class HikaruCallableTyper(object):
         self.hints: dict = get_type_hints(cls)
         self.params: Dict[str, ParamSpec] = {}
         p: Parameter
+        field_dict: Dict[str, Field] = {f.name: f for f in fields(cls)}
         for p in self.signature.parameters.values():
             hint = self.hints[p.name]
-            ps: ParamSpec = ParamSpec(p, hint)
+            ps: ParamSpec = ParamSpec(p, hint, field_dict.get(p.name))
             self.params[p.name] = ps
 
     def values(self) -> List[ParamSpec]:

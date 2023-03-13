@@ -24,7 +24,7 @@ from dataclasses import dataclass, is_dataclass, Field, fields, InitVar
 from functools import partial
 from typing import Optional, Dict, Union, List, get_type_hints
 from .meta import HikaruDocumentBase, HikaruBase
-from .utils import get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct
+from .utils import get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct, FieldMetadata as fm
 from hikaru.version_kind import register_version_kind_class
 
 ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
@@ -57,8 +57,6 @@ def _process_cls(cls) -> dict:
     props = {}
     jsp_args = {"type": "object", "properties": props}
     required = []
-    # sig: Signature = signature(cls)
-    # p: Parameter
     hct: HikaruCallableTyper = get_hct(cls)
     p: ParamSpec
     for p in hct.values():
@@ -68,34 +66,38 @@ def _process_cls(cls) -> dict:
             continue
         if p.default is Parameter.empty:
             required.append(p.name)
+        prop = props[p.name] = {}
+        metadata = p.metadata
+        description = metadata.get(fm.DESCRIPTION_KEY)
+        if description is not None:
+            prop['description'] = description
         if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
             if not is_dataclass(p.annotation):
                 raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
                                 f"a schema for it.")
-            props[p.name] = _process_cls(p.annotation)
+            prop.update(_process_cls(p.annotation))
         elif p.annotation in type_map:
-            props[p.name] = {"type": type_map[p.annotation]}
+            prop.update({"type": type_map[p.annotation]})
         else:
-            props[p.name] = {}  # may be a number of parts
             initial_type = p.annotation
             origin = get_origin(initial_type)
             if origin is Union:
                 type_args = get_args(p.annotation)
                 initial_type = type_args[0]
                 if initial_type in type_map:
-                    props[p.name]["type"] = type_map[initial_type]
+                    prop["type"] = type_map[initial_type]
                     continue
             origin = get_origin(initial_type)
             if origin in (list, List):
-                props[p.name]["type"] = "array"
+                prop["type"] = "array"
                 list_of_type = get_args(initial_type)[0]
                 if list_of_type in type_map:
-                    props[p.name]["items"] = {"type": type_map[list_of_type]}
+                    prop["items"] = {"type": type_map[list_of_type]}
                 elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
                     if not is_dataclass(list_of_type):
                         raise TypeError(f"The list item type of attribute {p.name} is a subclass "
                                         f"of HikaruBase but is not a dataclass")
-                    props[p.name]["items"] = _process_cls(list_of_type)
+                    prop["items"] = _process_cls(list_of_type)
                 else:
                     raise TypeError(f"Don't know how to process {p.name}'s type {p.annotation}; "
                                     f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
@@ -103,16 +105,16 @@ def _process_cls(cls) -> dict:
                 if not is_dataclass(initial_type):
                     raise TypeError(f"The type of {p.name} is a subclass of HikaruBase "
                                     f"but is not a dataclass")
-                props[p.name] = _process_cls(initial_type)
+                prop.update(_process_cls(initial_type))
             elif origin in (dict, Dict) or initial_type is object:
-                props[p.name]["type"] = "object"
+                prop["type"] = "object"
                 # @TODO we currently don't have enough data to exactly how to output
                 # this; we've lost some info if it came from K8s swagger. While this is
                 # certainly an object, it's rendering can either involve key/value
                 # pairs or a single string in a particular format. This is something
                 # we can eventually clarify, but for now we'll just treat it as a k/v
                 # pairs collection
-                props[p.name]["additionalProperties"] = {"type": "string"}
+                prop["additionalProperties"] = {"type": "string"}
             else:
                 raise TypeError(f"Don't know how to process type {p.name}'s {p.annotation}; "
                                 f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")
