@@ -1237,5 +1237,9 @@ class HikaruDocumentBase(HikaruBase):
         calls to K8s.
 
         :param client: instance of kubernetes.client.api_client.ApiClient
+
+        :return self: returns self so setting the client can be chained from
+            object creation and still allow assignment
         """
         self.client = client
+        return self

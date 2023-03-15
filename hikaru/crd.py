@@ -19,13 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from inspect import isclass, signature, Signature, Parameter
-from dataclasses import dataclass, is_dataclass, Field, fields, InitVar
-from functools import partial
-from typing import Optional, Dict, Union, List, get_type_hints
+from importlib import import_module
+from inspect import isclass, Parameter
+from dataclasses import is_dataclass, InitVar, dataclass
+from typing import Optional, Dict, Union, List
 from .meta import HikaruDocumentBase, HikaruBase
-from .utils import get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct, FieldMetadata as fm
+from .utils import (get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct,
+                    FieldMetadata as fm, Response)
+from .naming import get_default_release
 from hikaru.version_kind import register_version_kind_class
+from hikaru import get_clean_dict
+from kubernetes.client.api_client import ApiClient
 
 ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
 type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
@@ -128,14 +132,15 @@ def _process_cls(cls) -> dict:
 
 
 class _RegisterCRD(object):
-    def __init__(self, is_namespaced: bool = True):
+    def __init__(self, plural_name: str, is_namespaced: bool = True):
+        self.plural_name = plural_name
         self.is_namespaced = is_namespaced
 
 
 _crd_registration_details: Dict[type(HikaruDocumentBase), _RegisterCRD] = {}
 
 
-def register_crd_schema(crd_cls, is_namespaced: bool = True):
+def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
     if not issubclass(crd_cls, HikaruDocumentBase):
         raise TypeError("The decorated class must be a subclass of HikaruCRDDocumentBase")
     if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
@@ -143,59 +148,182 @@ def register_crd_schema(crd_cls, is_namespaced: bool = True):
     if not is_dataclass(crd_cls):
         raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")
     register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)
-    crdr = _RegisterCRD(is_namespaced=is_namespaced)
+    crdr = _RegisterCRD(plural_name, is_namespaced=is_namespaced)
     _crd_registration_details[crd_cls] = crdr
     return crd_cls
 
 
-class APICallProp(object):
-    def __init__(self, o: object, m):
-        self.o = o
-        self.m = m
+class HikaruCRDCRUDDocumentMixin(object):
+    """
+    HikaruDocumentBase mixin to add support for CRUD methods
 
-    def __call__(self, *args, **kwargs):
-        # this is probably where all the work to call the K8s API will happen
-        pass
+    This class provides adjust capabilities to subclasses of HikaruDocumentBase,
+    specifically for generalized CRUD operations on CRD-based resources.
 
+    Add this class to the list of bases for classes meant to be used as the basis
+    for custom resource definitions. It will provide create(), read(), update(),
+    and delete() methods, as well as a generalized API call for supporting
+    additional related methods.
 
-class APICall(object):
-    CREATE = 'create'
-    READ = 'read'
-    UPDATE = 'update'
-    DELETE = 'delete'
-    OP = 'op'
+    NOTE: this mixin only works properly when used with HikaruDocumentBase as
+        a sibling base class
+    """
 
-    def __init__(self, method, url: str):
-        self.method = method
-        self.url = url
-        self.prop: Optional[APICallProp] = None
+    def __post_init__(self, *args, **kwargs):
+        super(HikaruCRDCRUDDocumentMixin, self).__post_init__(*args, **kwargs)
+        client = kwargs.get('client')
+        if client is None:
+            client = ApiClient()
+        self.client: ApiClient = client
 
-    def __call__(self, m):
-        self.prop = APICallProp(self, m)
-        return self.prop
+    def api_call(self, method: str, url: str,
+                 alt_body: Optional[HikaruDocumentBase] = None,
+                 field_manager: Optional[str] = None,
+                 field_validation: Optional[str] = None,
+                 pretty: Optional[bool] = None,
+                 dry_run: Optional[str] = None,
+                 async_req: bool = False,):
+        # things that won't get filled out further
+        form_params = []
+        local_var_files = {}
+        collection_formats = {}
+        path_params = {}
+        response_type = object
 
+        # now stuff driven by the request
+        if alt_body is not None:
+            body = get_clean_dict(alt_body)
+        else:
+            body = get_clean_dict(self)
+        query_params = []
+        if pretty is not None:  # noqa: E501
+            query_params.append(('pretty', pretty))
+        if dry_run is not None:  # noqa: E501
+            query_params.append(('dryRun', dry_run))  # noqa: E501
+        if field_manager is not None:  # noqa: E501
+            query_params.append(('fieldManager', field_manager))  # noqa: E501
+        if field_validation is not None:  # noqa: E501
+            query_params.append(('fieldValidation', field_validation))  # noqa: E501
 
-_method_map = {APICall.CREATE: 'put',
-               APICall.READ: 'get',
-               APICall.UPDATE: 'post',
-               APICall.DELETE: 'delete'}
+        header_params = dict()
+        header_params['Accept'] = self.client.select_header_accept(
+            ['application/json', 'application/yaml', 'application/vnd.kubernetes.protobuf'])  # noqa: E501
+        auth_settings = ['BearerToken']  # noqa: E501
+        result = self.client.call_api(url,
+                                      method,
+                                      path_params,
+                                      header_params,
+                                      body=body,
+                                      post_params=form_params,
+                                      files=local_var_files,
+                                      response_type=response_type,
+                                      auth_settings=auth_settings,
+                                      async_req=async_req,
+                                      collection_formats=collection_formats)
+        codes_returning_objects = (200, 201, 202)
+        return Response[self.__class__](result, codes_returning_objects)
 
+    def create(self, field_manager: Optional[str] = None,
+               field_validation: Optional[str] = None,
+               pretty: Optional[bool] = None,
+               dry_run: Optional[str] = None,
+               async_req: bool = False):
+        method: str = "POST"
+        reg_details: _RegisterCRD = _crd_registration_details.get(self.__class__)
+        if reg_details is None:
+            raise TypeError(f"The class {self.__class__.__name__} has not been registered "
+                            f"with register_crd_schema()")
+        parts = self.apiVersion.split("/")
+        if len(parts) != 2:
+            raise TypeError(f"The apiVersion does not appear to have exactly two parts "
+                            f"(group/version) split with a '/'")
+        group, version = parts
+        if reg_details.is_namespaced:
+            namespace = self.metadata.namespace
+            if not namespace:
+                namespace = "default"
+            url: str = f"/apis/{group}/{version}/namespaces/{namespace}/{reg_details.plural_name}"
+        else:
+            url: str = f"/apis/{group}/{version}/{reg_details.plural_name}"
+        return self.api_call(method, url, field_manager=field_manager,
+                             field_validation=field_validation,
+                             pretty=pretty,
+                             dry_run=dry_run,
+                             async_req=async_req)
 
-def crd_create(f):
-    return partial(APICall, APICall.CREATE)
+    def _get_existing_url(self) -> str:
+        reg_details: _RegisterCRD = _crd_registration_details.get(self.__class__)
+        if reg_details is None:
+            raise TypeError(f"The class {self.__class__.__name__} has not been registered "
+                            f"with register_crd_schema()")
+        parts = self.apiVersion.split("/")
+        if len(parts) != 2:
+            raise TypeError(f"The apiVersion does not appear to have exactly two parts "
+                            f"(group/version) split with a '/'")
+        group, version = parts
+        if reg_details.is_namespaced:
+            namespace = self.metadata.namespace
+            if not namespace:
+                namespace = "default"
+            url: str = f"/apis/{group}/{version}/namespaces/{namespace}/{reg_details.plural_name}/{self.metadata.name}"
+        else:
+            url: str = f"/apis/{group}/{version}/{reg_details.plural_name}/{self.metadata.name}"
+        return url
 
+    def read(self, field_manager: Optional[str] = None,
+             field_validation: Optional[str] = None,
+             pretty: Optional[bool] = None,
+             dry_run: Optional[str] = None,
+             async_req: bool = False):
+        method: str = "GET"
+        url = self._get_existing_url()
+        return self.api_call(method, url, field_manager=field_manager,
+                             field_validation=field_validation,
+                             pretty=pretty,
+                             dry_run=dry_run,
+                             async_req=async_req)
 
-def crd_read(f):
-    return partial(APICall, APICall.READ)
+    def update(self, field_manager: Optional[str] = None,
+               field_validation: Optional[str] = None,
+               pretty: Optional[bool] = None,
+               dry_run: Optional[str] = None,
+               async_req: bool = False):
+        method: str = "PUT"
+        url: str = self._get_existing_url()
+        return self.api_call(method, url, field_manager=field_manager,
+                             field_validation=field_validation,
+                             pretty=pretty,
+                             dry_run=dry_run,
+                             async_req=async_req)
 
+    def delete(self, field_manager: Optional[str] = None,
+               field_validation: Optional[str] = None,
+               pretty: Optional[bool] = None,
+               dry_run: Optional[str] = None,
+               async_req: bool = False):
+        """
+        Delete the resource using the DeleteOptions from the current release.
 
-def crd_update(f):
-    return partial(APICall, APICall.UPDATE)
+        :param field_manager:
+        :param field_validation:
+        :param pretty:
+        :param dry_run:
+        :param async_req:
+        :return:
+        """
+        def_release = get_default_release()
+        try:
+            mod = import_module(".v1", f"hikaru.model.{def_release}")
+        except ImportError as e:
+            raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
 
-
-def crd_delete(f):
-    return partial(APICall, APICall.DELETE)
-
-
-def op_operation(f):
-    return partial(APICall, APICall.OP)
+        DeleteOptions = getattr(mod, "DeleteOptions")
+        method: str = "DELETE"
+        url: str = self._get_existing_url()
+        do: DeleteOptions = DeleteOptions()
+        return self.api_call(method, url, field_manager=field_manager,
+                             alt_body=do,
+                             field_validation=field_validation,
+                             pretty=pretty,
+                             dry_run=dry_run,
+                             async_req=async_req)

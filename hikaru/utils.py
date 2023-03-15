@@ -17,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from importlib import import_module
 from dataclasses import fields, Field
 from inspect import isclass, signature, Signature, Parameter
 from typing import Optional, TypeVar, Generic, get_type_hints, Dict, List, Union
@@ -198,10 +199,15 @@ class Response(Generic[T]):
         self.code = result[1]
         self.headers = result[2]
         if self.code in self.codes_with_objects:
-            self.obj = (from_dict(self.obj.to_dict(),
-                                  translate=self.set_false_for_internal_tests)
-                        if self.obj is not None and hasattr(self.obj, 'to_dict')
-                        else self.obj)
+            if type(self.obj) is dict:
+                # these are CRDs (most likely), so we don't want to translate
+                # to PEP8 forms for attributes
+                self.obj = from_dict(self.obj, translate=False)
+            else:
+                self.obj = (from_dict(self.obj.to_dict(),
+                                      translate=self.set_false_for_internal_tests)
+                            if self.obj is not None and hasattr(self.obj, 'to_dict')
+                            else self.obj)
 
     def ready(self):
         return self._thread.ready()

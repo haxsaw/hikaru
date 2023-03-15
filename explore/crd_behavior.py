@@ -47,6 +47,7 @@ watcher: Watcher = Watcher(MyResource)
 watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 
 # API Issues
+#
 # - Registration will need to be changed  DONE
 #   So registering a class can be done in the decorator, but what's needed here is a superset
 #   of the data needed to allow users to register their own versions of thing like Pod with
@@ -54,19 +55,32 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 #   deets used for the currently exposed method and allow the collection of more deets for the
 #   CRD classes
 #
+#   REMEMBER: in the CRD message, the name MUST be:
+#       spec-names-plural.spec-group
+#   ...and in instances of the CRD class, apiVersion MUST be:
+#       group/version
+#
 # - Defining URLs for methods
-#   Decorators are the most obvious choice, but what to decorate? We actually provide the
-#   implementations of the CRUD methods, so the user doesn't write any methods and hence
-#   there's nothing to decorate. We could establish some standard non-annotated class attrs
-#   that supply URLs but that seems ugly to me. We *could* add them as kw args to the
-#   _RegisterCRD class, so that when someone registers a class they can optionally supply
-#   each of the URLs. That may be the best of the options.
 #
-#   Solution part 1: for CRUD methods, we'll use arguments to the register_crd decorator
-#       to supply the CRUD urls. Anything beyond that will need to use the unique method
-#       decorators (see below) that allows additional operations.
+#   URL forms--
+
+#   Namespaced:
+#   POST
+#   https://<host>:<port>/apis/<group-name>/<version>/namespaces/<namespace>/<crd-plural-name>
+#   GET (DEL/PATCH/UPDATE too?)
+#   https://<host>:<port>/apis/<group-name>/<version>/namespaces/<namespace>/<crd-plural-name>/<instance-name>
 #
-# - What about the verb for the method? Should there be a default one for each CRUD method?
+#   Notes: <group-name> must be DNS compatible?
+#          if <namespace> isn't specified, it defaults to the value "default"
+#          <rsrc-name> comes from the ObjectMeta for the resource
+#
+#   Unnamespaced (Cluster scope):
+#   POST
+#   https://<host>:<port>/apis/<group-name>/<version>/<plural-crd-name>
+#   GET (DEL/PATCH/UPDATE too?)
+#   https://<host>:<port>/apis/<group-name>/<version>/<plural-crd-name>/<instance-name>
+#
+#
 #
 # - Primary vs List operations
 #   It seems best to follow the example of K8s and encourage the separate creation of a
@@ -96,7 +110,6 @@ watcher.stream(manage_resource_version=True, quit_on_timeout=True)
 #   to use when streaming events. We'll need to provde our own version of this, hopefully a
 #   generic one that can be shared by all classes.
 #
-# - create a JSONSchemaProps object  DONE
 #
 # from:
 # https://www.techtarget.com/searchitoperations/tip/Learn-to-use-Kubernetes-CRDs-in-this-tutorial-example
