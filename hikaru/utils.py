@@ -199,15 +199,13 @@ class Response(Generic[T]):
         self.code = result[1]
         self.headers = result[2]
         if self.code in self.codes_with_objects:
-            if type(self.obj) is dict:
-                # these are CRDs (most likely), so we don't want to translate
-                # to PEP8 forms for attributes
+            if hasattr(self.obj, 'to_dict'):
+                self.obj = from_dict(self.obj.to_dict(),
+                                     translate=self.set_false_for_internal_tests)
+            elif isinstance(self.obj, dict) and len(self.obj):
+                # these are CRDs; don't do a translation
+                # TODO; see about controlling translate for CRDs
                 self.obj = from_dict(self.obj, translate=False)
-            else:
-                self.obj = (from_dict(self.obj.to_dict(),
-                                      translate=self.set_false_for_internal_tests)
-                            if self.obj is not None and hasattr(self.obj, 'to_dict')
-                            else self.obj)
 
     def ready(self):
         return self._thread.ready()

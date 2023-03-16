@@ -1,21 +1,22 @@
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
-from hikaru.crd import (register_crd_schema, crd_create,
-                        crd_read, crd_update, crd_delete)
+from hikaru.crd import (register_crd_schema, HikaruCRDCRUDDocumentMixin,
+                        get_crd_schema)
 from dataclasses import dataclass
-from typing import Optional, List, Dict
+from typing import Optional
+from kubernetes.watch import Watch
 
 set_default_release("rel_1_23")
 
-# defining a CRD
+
 @dataclass
 class MyResourceSpec(HikaruBase):
     pass
 
 
 @dataclass
-class MyResource(HikaruDocumentBase):
+class MyResource(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
     kind = "myresource"
     apiVersion = "v1"
     group = "incisivetech.co.uk"
@@ -23,13 +24,8 @@ class MyResource(HikaruDocumentBase):
     meta: ObjectMeta
     spec: Optional[MyResourceSpec]
 
-    @crd_create("/myresource/{namespace}")
-    def create(self, namespace, dry_run, connection):
-        pass
 
-    # @crd_read("/myresource/{namespace}")
-
-register_crd_schema(MyResource)
+register_crd_schema(MyResource, "myresources")
 
 
 m = ObjectMeta(name='me')
@@ -39,7 +35,7 @@ mr.create()
 
 # defining the CRD to Kubernetes
 
-schema: CustomResourceValidation = MyResource.get_crd_schema()
+schema: CustomResourceValidation = get_crd_schema(MyResource)
 
 
 # watching for messages for the defined CRD
@@ -151,38 +147,7 @@ CustomResourceDefinition(
                 name="v1alpha1",
                 served=True,
                 storage=True,
-                schema=CustomResourceValidation(
-                    openAPIV3Schema=JSONSchemaProps(
-                        type="object",
-                        properties={
-                            "spec": {
-                                "type": "object",
-                                "properties": {
-                                    "appId": {"type": "string"},
-                                    "language": {
-                                        "type": "string",
-                                        "enum": ["csharp", "python", "go"],
-                                    },
-                                    "os": {
-                                        "type": "string",
-                                        "enum": ["windows", "linux"],
-                                    },
-                                    "instanceSize": {
-                                        "type": "string",
-                                        "enum": ["small", "medium", "large"],
-                                    },
-                                    "environmentType": {
-                                        "type": "string",
-                                        "enum": ["dev", "test", "prod"],
-                                    },
-                                    "replicas": {"type": "integer", "minimum": 1},
-                                },
-                                "required": ["appId", "language", "environmentType"],
-                            }
-                        },
-                        required=["spec"],
-                    )
-                ),
+                schema=schema,
             )
         ],
     ),

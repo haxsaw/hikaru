@@ -38,7 +38,7 @@ register_crd_schema(MyPlatform)
 
 if __name__ == "__main__":
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
-    schema: JSONSchemaProps = get_crd_schema(MyPlatform, JSONSchemaProps)
+    schema: JSONSchemaProps = get_crd_schema(MyPlatform)
     # print(get_yaml(schema))
 
     # now make the CRD object with the schema

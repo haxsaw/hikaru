@@ -23,10 +23,10 @@ from importlib import import_module
 from inspect import isclass, Parameter
 from dataclasses import is_dataclass, InitVar, dataclass
 from typing import Optional, Dict, Union, List
-from .meta import HikaruDocumentBase, HikaruBase
+from .meta import HikaruDocumentBase, HikaruBase, WatcherDescriptor
 from .utils import (get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct,
                     FieldMetadata as fm, Response)
-from .naming import get_default_release
+from .naming import get_default_release, process_api_version
 from hikaru.version_kind import register_version_kind_class
 from hikaru import get_clean_dict
 from kubernetes.client.api_client import ApiClient
@@ -35,7 +35,7 @@ ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
 type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
 
 
-def get_crd_schema(cls, jsp_class: type):
+def get_crd_schema(cls, jsp_class: Optional[type] = None):
     """
     Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
 
@@ -46,9 +46,21 @@ def get_crd_schema(cls, jsp_class: type):
     - Cannot handle recursively defined classes (yet), neither direct nor indirect
 
     """
-    if jsp_class.__name__ != "JSONSchemaProps":
-        raise TypeError("The jsp_class parameter must be one of the JSONSchemaProps classes for "
-                        "one of the supported releases under hikaru.model")
+    if jsp_class is not None:
+        if jsp_class.__name__ != "JSONSchemaProps":
+            raise TypeError("The jsp_class parameter must be one of the JSONSchemaProps classes for "
+                            "one of the supported releases under hikaru.model")
+    else:
+        def_release = get_default_release()
+        try:
+            mod = import_module(".v1", f"hikaru.model.{def_release}")
+        except ImportError as e:
+            raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
+        jsp_class = getattr(mod, "JSONSchemaProps")
+        if jsp_class is None:
+            raise RuntimeError("No JSONSchemaProps class supplied, and one can't be found "
+                               "in the v1 module of the default release")
+
     schema = _process_cls(cls)
     jsp = jsp_class(**schema)
     return jsp
@@ -132,25 +144,15 @@ def _process_cls(cls) -> dict:
 
 
 class _RegisterCRD(object):
-    def __init__(self, plural_name: str, is_namespaced: bool = True):
-        self.plural_name = plural_name
-        self.is_namespaced = is_namespaced
+    def __init__(self, plural_name: str, api_version: str, is_namespaced: bool = True):
+        group, version = process_api_version(api_version)
+        self.group: str = group
+        self.version: str = version
+        self.plural_name: str = plural_name
+        self.is_namespaced: bool = is_namespaced
 
 
 _crd_registration_details: Dict[type(HikaruDocumentBase), _RegisterCRD] = {}
-
-
-def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
-    if not issubclass(crd_cls, HikaruDocumentBase):
-        raise TypeError("The decorated class must be a subclass of HikaruCRDDocumentBase")
-    if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
-        raise TypeError("The decorated class must have both an apiVersion and kind attribute")
-    if not is_dataclass(crd_cls):
-        raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")
-    register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)
-    crdr = _RegisterCRD(plural_name, is_namespaced=is_namespaced)
-    _crd_registration_details[crd_cls] = crdr
-    return crd_cls
 
 
 class HikaruCRDCRUDDocumentMixin(object):
@@ -175,6 +177,16 @@ class HikaruCRDCRUDDocumentMixin(object):
         if client is None:
             client = ApiClient()
         self.client: ApiClient = client
+
+    @classmethod
+    def get_additional_watch_args(cls) -> dict:
+        reg: _RegisterCRD = _crd_registration_details.get(cls)
+        if reg is None:
+            raise RuntimeError(f"Class {cls.__name__} has not been registered as "
+                               f"a CRD with register_crd_schema()")
+        return {'plural': reg.plural_name,
+                'version': reg.version,
+                'group': reg.group}
 
     def api_call(self, method: str, url: str,
                  alt_body: Optional[HikaruDocumentBase] = None,
@@ -327,3 +339,34 @@ class HikaruCRDCRUDDocumentMixin(object):
                              pretty=pretty,
                              dry_run=dry_run,
                              async_req=async_req)
+
+
+def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
+    if not issubclass(crd_cls, HikaruDocumentBase) or not issubclass(crd_cls, HikaruCRDCRUDDocumentMixin):
+        raise TypeError("A CRD registered class must be a subclass of both "
+                        "HikaruCRDDocumentBase and HikaruDocumentBase")
+    if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
+        raise TypeError("The decorated class must have both an apiVersion and kind attribute")
+    if not is_dataclass(crd_cls):
+        raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")
+    # _, version = process_api_version(crd_cls.apiVersion)
+    # register_version_kind_class(crd_cls, version, crd_cls.kind)
+    register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)
+    crdr = _RegisterCRD(plural_name, crd_cls.apiVersion, is_namespaced=is_namespaced)
+    _crd_registration_details[crd_cls] = crdr
+    # set the proper watcher
+    if is_namespaced:
+        crd_cls._namespaced_watcher = WatcherDescriptor(
+            "kubernetes",
+            ".client",
+            "CustomObjectsApi",
+            "list_namespaced_custom_object_with_http_info")
+    else:
+        crd_cls._watcher = WatcherDescriptor(
+            "kubernetes",
+            ".client",
+            "CustomObjectsApi",
+            "list_cluster_custom_object")
+    return crd_cls
+
+

@@ -59,7 +59,7 @@ def register_version_kind_class(cls: type, version: str, kind: str,
 
     **Requirements of the 'cls' parameter**
 
-    Besides being a subclass of HikaurDocumentBase, when defining a new
+    Besides being a subclass of HikaruDocumentBase, when defining a new
     class for Hikaru to instantiate, there are a few variations
     on what you define that are available to you, however there are two constraints
     that must always be followed:

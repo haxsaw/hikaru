@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from typing import Optional
 from hikaru import get_yaml, set_default_release
 from kubernetes import config
-from time import sleep
 
 
 set_default_release("rel_1_23")
@@ -39,7 +38,7 @@ register_crd_schema(MyCluster, plural_name="myclusters", is_namespaced=False)
 
 if __name__ == "__main__":
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
-    schema: JSONSchemaProps = get_crd_schema(MyCluster, JSONSchemaProps)
+    schema: JSONSchemaProps = get_crd_schema(MyCluster)
     # print(get_yaml(schema))
 
     # now make the CRD object with the schema

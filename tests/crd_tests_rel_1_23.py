@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import (register_crd_schema, crd_read)
+from hikaru.crd import (register_crd_schema, HikaruCRDCRUDDocumentMixin)
 
 
 set_default_release("rel_1_23")
@@ -10,14 +10,14 @@ set_default_release("rel_1_23")
 
 # test01 stuff
 @dataclass
-class Resource01(HikaruDocumentBase):
+class Resource01(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
     metadata: ObjectMeta
-    kind: str = "resource01"
+    kind: str = "Resource01"
     apiVersion: str = "v1"
     group: str = "incisivetech.co.uk"
 
 
-register_crd_schema(Resource01, is_namespaced=True)
+register_crd_schema(Resource01, "resource01s", is_namespaced=True)
 
 
 def test01():
@@ -26,7 +26,7 @@ def test01():
     """
     i: Resource01 = Resource01.get_empty_instance()
     assert i.metadata is not None, "No meta object in the automatically generated instance"
-    assert i.kind == 'resource01', f'kind is {i.kind}'
+    assert i.kind == 'Resource01', f'kind is {i.kind}'
     assert i.apiVersion == 'v1', f'apiVersion is {i.apiVersion}'
 
 
@@ -95,15 +95,15 @@ class Subunit02(HikaruBase):
 
 
 @dataclass
-class Resource02(HikaruDocumentBase):
+class Resource02(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
     metadata: ObjectMeta
     subunit: Subunit02
-    kind: str = "resource02"
+    kind: str = "Resource02"
     apiVersion: str = 'v1'
     group: str = "incisivetech.co.uk"
 
 
-register_crd_schema(Resource02, is_namespaced=True)
+register_crd_schema(Resource02, "resource02s", is_namespaced=True)
 
 
 def test07():

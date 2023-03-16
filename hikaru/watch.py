@@ -50,7 +50,7 @@ For further details, see the doc for each class.
 import importlib
 import re
 import threading
-from typing import cast, Generator, Union
+from typing import cast, Generator, Union, Optional
 import queue
 
 from kubernetes.client import ApiClient, ApiException
@@ -139,7 +139,8 @@ class Watcher(BaseWatcher):
                  label_selector: str = None,
                  resource_version: Union[str, int] = None,
                  timeout_seconds: Union[int, None] = 1,
-                 client: ApiClient = None):
+                 client: ApiClient = None,
+                 should_translate: Optional[bool] = None):
         r"""
         Create a watch object for the specified class.
 
@@ -229,6 +230,8 @@ class Watcher(BaseWatcher):
                                             if resource_version is not None
                                             else resource_version),
                        'timeout_seconds': timeout_seconds}
+        if hasattr(cls, "get_additional_watch_args"):
+            self.kwargs.update(cls.get_additional_watch_args())
         if namespace is not None:
             self.kwargs['namespace'] = namespace
         self.client = client
@@ -237,6 +240,10 @@ class Watcher(BaseWatcher):
         inst = apicls(api_client=self.client)
         self.meth = getattr(inst, self.wd.methname)
         self.highest_resource_version = self._starting_resource_version
+        if should_translate is None:
+            self.should_translate = _should_translate
+        else:
+            self.should_translate = should_translate
 
     def update_resource_version(self, new_resource_version: Union[str, int]):
         """
@@ -341,9 +348,11 @@ class Watcher(BaseWatcher):
                 for e in self.k8s_watcher.stream(self.meth, **self.kwargs):
                     if not self.isrunning():
                         break  # pragma: no cover
+                    eobj = e['object']
+                    d = eobj if isinstance(eobj, dict) else eobj.to_dict()
                     o: HikaruDocumentBase = cast(HikaruDocumentBase,
-                                                 from_dict(e['object'].to_dict(),
-                                                           translate=_should_translate))
+                                                 from_dict(d,
+                                                           translate=self.should_translate))
                     new_rv = int(o.metadata.resourceVersion)
                     if new_rv > self.highest_resource_version:
                         self.highest_resource_version = new_rv
