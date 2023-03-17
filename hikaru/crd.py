@@ -21,18 +21,18 @@
 
 from importlib import import_module
 from inspect import isclass, Parameter
-from dataclasses import is_dataclass, InitVar, dataclass
+from dataclasses import is_dataclass, InitVar
 from typing import Optional, Dict, Union, List
-from .meta import HikaruDocumentBase, HikaruBase, WatcherDescriptor
+from .meta import HikaruDocumentBase, HikaruBase, WatcherDescriptor, FieldMetadata as fm
 from .utils import (get_origin, get_args, HikaruCallableTyper, ParamSpec, get_hct,
-                    FieldMetadata as fm, Response)
+                    Response)
 from .naming import get_default_release, process_api_version
 from hikaru.version_kind import register_version_kind_class
 from hikaru import get_clean_dict
 from kubernetes.client.api_client import ApiClient
 
 ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
-type_map = {str: "string", int: "integer", float: "float", bool: "boolean"}
+type_map = {str: "string", int: "integer", float: "number", bool: "boolean"}
 
 
 def get_crd_schema(cls, jsp_class: Optional[type] = None):
@@ -66,6 +66,34 @@ def get_crd_schema(cls, jsp_class: Optional[type] = None):
     return jsp
 
 
+def _set_if_non_null(metadata: dict, mkey: str, prop: dict, pkey: str):
+    val = metadata.get(mkey)
+    if val is not None:
+        prop[pkey] = val
+
+
+NoneType = type(None)
+
+
+def _check_simple_type_modifiers(ptype: type, metadata: dict, prop: dict):
+    _set_if_non_null(metadata, fm.FORMAT_KEY, prop, 'format')
+    if ptype in (int, float):
+        _set_if_non_null(metadata, fm.MIN_KEY, prop, 'minimum')
+        _set_if_non_null(metadata, fm.EX_MIN_KEY, prop, 'exclusiveMinimum')
+        _set_if_non_null(metadata, fm.MAX_KEY, prop, 'maximum')
+        _set_if_non_null(metadata, fm.EX_MAX_KEY, prop, 'exclusiveMaximum')
+        _set_if_non_null(metadata, fm.MULTIPLE_OF_KEY, prop, 'multipleOf')
+    elif ptype is str:
+        _set_if_non_null(metadata, fm.PATTERN_KEY, prop, 'pattern')
+    return
+
+
+def _check_array_modifiers(metadata: dict, prop: dict):
+    _set_if_non_null(metadata, fm.MIN_ITEMS_KEY, prop, 'minItems')
+    _set_if_non_null(metadata, fm.MAX_ITEMS_KEY, prop, 'maxItems')
+    _set_if_non_null(metadata, fm.UNIQUE_ITEMS_KEY, prop, 'uniqueItems')
+
+
 def _process_cls(cls) -> dict:
     if not is_dataclass(cls):
         raise TypeError(f"The class {cls.__name__} is not a dataclass; Hikaru can't generate "
@@ -76,20 +104,19 @@ def _process_cls(cls) -> dict:
     hct: HikaruCallableTyper = get_hct(cls)
     p: ParamSpec
     for p in hct.values():
-        if p.name in ignorable:
+        # can we skip this one?
+        if p.name in ignorable or isinstance(p.hint_type, InitVar):
             continue
-        if isinstance(p.hint_type, InitVar):
-            continue
+        # if no default, then the param is required
         if p.default is Parameter.empty:
             required.append(p.name)
+
+        # ok, we need to process it. set up the prop dict and get the field metadata
         prop = props[p.name] = {}
         metadata = p.metadata
-        description = metadata.get(fm.DESCRIPTION_KEY)
-        if description is not None:
-            prop['description'] = description
-        enums = metadata.get(fm.ENUM_KEY)
-        if enums is not None:
-            prop['enum'] = enums
+        _set_if_non_null(metadata, fm.DESCRIPTION_KEY, prop, "description")
+        _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
+
         if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
             if not is_dataclass(p.annotation):
                 raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
@@ -97,21 +124,47 @@ def _process_cls(cls) -> dict:
             prop.update(_process_cls(p.annotation))
         elif p.annotation in type_map:
             prop.update({"type": type_map[p.annotation]})
+            _check_simple_type_modifiers(p.annotation, metadata, prop)
         else:
             initial_type = p.annotation
             origin = get_origin(initial_type)
             if origin is Union:
-                type_args = get_args(p.annotation)
-                initial_type = type_args[0]
-                if initial_type in type_map:
-                    prop["type"] = type_map[initial_type]
-                    continue
+                type_args = [a for a in get_args(p.annotation) if a is not NoneType]
+                type_args_len = len(type_args)
+                if type_args_len == 1:   # then this was an Optional
+                    # we have an edge case where a field() doesn't have a default
+                    # specificed, but the type annotation is Optional. In this case
+                    # we'd normally treat it as required due to the lack of default,
+                    # but if optional then it should also not be required. So we'll
+                    # just fish this item out of 'required' if it's in there
+                    if p.default is Parameter.empty:  # normally would be required
+                        try:
+                            required.remove(p.name)
+                        except ValueError:
+                            pass
+                    initial_type = type_args[0]
+                    if initial_type in type_map:
+                        prop["type"] = type_map[initial_type]
+                        _check_simple_type_modifiers(initial_type, metadata, prop)
+                        continue
+                    # else we'll drop down below and look at what's in the Optional
+                elif type_args_len == 0:
+                    continue   # weird edge case I guess
+                else:
+                    raise NotImplemented("Multiple types in a oneOf not implemented yet")
+                    # we have multiple allowed types; out put a oneOf
+                    # oneOf = prop['oneOf'] = []
+                    # for ptype in type_args:
+                    #     alternative = {}
+
             origin = get_origin(initial_type)
             if origin in (list, List):
                 prop["type"] = "array"
                 list_of_type = get_args(initial_type)[0]
+                _check_array_modifiers(metadata, prop)
                 if list_of_type in type_map:
                     prop["items"] = {"type": type_map[list_of_type]}
+                    _check_simple_type_modifiers(list_of_type, metadata, prop["items"])
                 elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
                     if not is_dataclass(list_of_type):
                         raise TypeError(f"The list item type of attribute {p.name} is a subclass "
@@ -308,7 +361,11 @@ class HikaruCRDCRUDDocumentMixin(object):
                              dry_run=dry_run,
                              async_req=async_req)
 
-    def delete(self, field_manager: Optional[str] = None,
+    def delete(self, grace_period_seconds: Optional[int] = None,
+               orphan_dependents: Optional[bool] = None,
+               preconditions = None,
+               propagation_policy: Optional[str] = None,
+               field_manager: Optional[str] = None,
                field_validation: Optional[str] = None,
                pretty: Optional[bool] = None,
                dry_run: Optional[str] = None,
@@ -332,7 +389,13 @@ class HikaruCRDCRUDDocumentMixin(object):
         DeleteOptions = getattr(mod, "DeleteOptions")
         method: str = "DELETE"
         url: str = self._get_existing_url()
-        do: DeleteOptions = DeleteOptions()
+        delops_args = dict()
+        delops_args['gracePeriodSeconds'] = grace_period_seconds
+        delops_args['orphanDependents'] = orphan_dependents
+        delops_args['preconditions'] = preconditions
+        delops_args["propagationPolicy"] = propagation_policy
+        delops_args['dryRun']= dry_run
+        do: DeleteOptions = DeleteOptions(**delops_args)
         return self.api_call(method, url, field_manager=field_manager,
                              alt_body=do,
                              field_validation=field_validation,
@@ -368,5 +431,3 @@ def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
             "CustomObjectsApi",
             "list_cluster_custom_object")
     return crd_cls
-
-

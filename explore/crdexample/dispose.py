@@ -4,6 +4,7 @@ from hikaru.crd import get_crd_schema
 from resource import MyCluster
 from kubernetes import config
 
+
 if __name__ == "__main__":
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
     schema: JSONSchemaProps = get_crd_schema(MyCluster)
@@ -29,6 +30,5 @@ if __name__ == "__main__":
         metadata=ObjectMeta(name="myclusters.example.com")
     )
 
-    print(get_yaml(crd))
-    create_result = crd.create()
-    print(get_yaml(create_result))
+    res = crd.delete()
+    print(get_yaml(res))

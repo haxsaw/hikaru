@@ -31,13 +31,13 @@ import datetime
 from ast import literal_eval
 from enum import Enum
 from inspect import getmodule
-from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints
+from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints, Optional
 from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
 from hikaru.naming import camel_to_pep8
 from hikaru.tweaks import h2kc_translate
-from hikaru.utils import get_origin, get_args
+from hikaru.utils import get_origin, get_args, field_metadata_domain
 
 
 NoneType = type(None)
@@ -1243,3 +1243,75 @@ class HikaruDocumentBase(HikaruBase):
         """
         self.client = client
         return self
+
+
+class FieldMetadata(dict):
+    domain = field_metadata_domain
+    DESCRIPTION_KEY = "description"
+    ENUM_KEY = "enum"
+    FORMAT_KEY = "format"
+    ADDITIONAL_PROPS_KEY = "additional_props_type"
+    MIN_KEY = "minimum"
+    EX_MIN_KEY = "exclusiveMinimum"
+    MAX_KEY = "maximum"
+    EX_MAX_KEY = "exclusiveMaximum"
+    PATTERN_KEY = "pattern"
+    MULTIPLE_OF_KEY = "multipleOf"
+    MIN_ITEMS_KEY = "minItems"
+    MAX_ITEMS_KEY = "maxItems"
+    UNIQUE_ITEMS_KEY = "uniqueItems"
+    MIN_PROPS_KEY = "minProperties"
+    MAX_PROPS_KEY = "maxProperties"
+    # oneOf is detected due to the use of the Union[] type annotation
+
+    def __init__(self, *args,
+                 description: Optional[str] = None,
+                 enum: Optional[List[str]] = None,
+                 format: Optional[str] = None,
+                 additional_props_type: Optional[str] = None,
+                 minimum: Optional[Union[int, float]] = None,
+                 exclusive_minimum: Optional[bool] = None,
+                 maximum: Optional[Union[int, float]] = None,
+                 exclusive_maximum: Optional[bool] = None,
+                 pattern: Optional[str] = None,
+                 multiple_of: Optional[Union[int, float]] = None,
+                 min_items: Optional[int] = None,
+                 max_items: Optional[int] = None,
+                 unique_items: Optional[bool] = None,
+                 min_properties: Optional[int] = None,
+                 max_properties: Optional[int] = None,
+                 **kwargs):
+        super(FieldMetadata, self).__init__(*args, **kwargs)
+        self[self.domain] = {}
+        if description is not None:
+            self[self.domain][self.DESCRIPTION_KEY] = description
+        if enum is not None:
+            if type(enum) is not list:
+                raise TypeError("The enum argument must be a list of strings")
+            self[self.domain][self.ENUM_KEY] = list(enum)
+        if format is not None:
+            self[self.domain][self.FORMAT_KEY] = format
+        if additional_props_type is not None:
+            self[self.domain][self.ADDITIONAL_PROPS_KEY] = additional_props_type
+        if minimum is not None:
+            self[self.domain][self.MIN_KEY] = minimum
+        if exclusive_minimum is not None:
+            self[self.domain][self.EX_MIN_KEY] = exclusive_minimum
+        if maximum is not None:
+            self[self.domain][self.MAX_KEY] = maximum
+        if exclusive_maximum is not None:
+            self[self.domain][self.EX_MAX_KEY] = exclusive_maximum
+        if pattern is not None:
+            self[self.domain][self.PATTERN_KEY] = pattern
+        if multiple_of is not None:
+            self[self.domain][self.MULTIPLE_OF_KEY] = multiple_of
+        if min_items is not None:
+            self[self.domain][self.MIN_ITEMS_KEY] = min_items
+        if max_items is not None:
+            self[self.domain][self.MAX_ITEMS_KEY] = max_items
+        if unique_items is not None:
+            self[self.domain][self.UNIQUE_ITEMS_KEY] = unique_items
+        if min_properties is not None:
+            self[self.domain][self.MIN_PROPS_KEY] = min_properties
+        if max_properties is not None:
+            self[self.domain][self.MAX_PROPS_KEY] = max_properties

@@ -1,6 +1,6 @@
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.crd import register_crd_schema, get_crd_schema
-from hikaru.utils import FieldMetadata as fm
+from hikaru.meta import FieldMetadata as fm
 from dataclasses import dataclass, field
 from typing import Optional
 from hikaru import get_yaml, set_default_release
