@@ -1,6 +1,6 @@
 from hikaru.model.rel_1_23.v1 import ObjectMeta
 from hikaru import HikaruBase, HikaruDocumentBase, set_default_release
-from hikaru.crd import register_crd_schema, HikaruCRDCRUDDocumentMixin
+from hikaru.crd import register_crd_schema, HikaruCRDDocumentMixin
 from hikaru.meta import FieldMetadata as fm
 from typing import Optional
 from dataclasses import dataclass, field
@@ -24,7 +24,7 @@ class MyClusterSpec(HikaruBase):
 
 
 @dataclass
-class MyCluster(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
+class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: MyClusterSpec
     metadata: ObjectMeta
     apiVersion: str = "example.com/v1"

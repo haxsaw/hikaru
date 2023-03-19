@@ -32,3 +32,4 @@ if __name__ == "__main__":
 
     res = crd.delete()
     print(get_yaml(res))
+    print(get_yaml(res.get_status()) if res.get_status() else "NO STATUS")

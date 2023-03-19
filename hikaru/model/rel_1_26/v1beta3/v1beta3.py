@@ -36,6 +36,7 @@ from ..unversioned import *
 
 from kubernetes.client import ApiClient
 from kubernetes.client import FlowcontrolApiserverV1beta3Api
+from ..v1 import Status
 from ..v1 import ObjectMeta
 from ..v1 import DeleteOptions
 from ..v1 import ListMeta
@@ -230,7 +231,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createFlowSchema(
         self,
@@ -308,7 +312,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -446,7 +453,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -522,6 +532,8 @@ class FlowSchema(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -566,7 +578,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -611,6 +626,8 @@ class FlowSchema(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchFlowSchema(
@@ -699,7 +716,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -871,7 +891,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceFlowSchemaStatus(
         self,
@@ -951,7 +974,10 @@ class FlowSchema(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["FlowSchema"](result, codes_returning_objects)
+        resp: Response["FlowSchema"] = Response["FlowSchema"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -1131,7 +1157,10 @@ class FlowSchemaList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["FlowSchemaList"](result, codes_returning_objects)
+        resp: Response["FlowSchemaList"] = Response["FlowSchemaList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1497,7 +1526,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def createPriorityLevelConfiguration(
         self,
@@ -1575,7 +1607,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -1713,7 +1748,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -1789,6 +1827,8 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -1833,7 +1873,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -1880,6 +1923,8 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchPriorityLevelConfiguration(
@@ -1968,7 +2013,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -2142,7 +2190,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def replacePriorityLevelConfigurationStatus(
         self,
@@ -2224,7 +2275,10 @@ class PriorityLevelConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PriorityLevelConfiguration"](result, codes_returning_objects)
+        resp: Response["PriorityLevelConfiguration"] = Response[
+            "PriorityLevelConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -2404,9 +2458,10 @@ class PriorityLevelConfigurationList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityLevelConfigurationList"](
-            result, codes_returning_objects
-        )
+        resp: Response["PriorityLevelConfigurationList"] = Response[
+            "PriorityLevelConfigurationList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",

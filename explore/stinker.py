@@ -43,7 +43,7 @@ register_crd_schema(Resource)
 
 if __name__ == "__main__":
     print("\nJSONSchemaProps:")
-    schema: JSONSchemaProps = get_crd_schema(Resource, JSONSchemaProps)
+    schema: JSONSchemaProps = get_crd_schema(Resource)
     pp(schema)
     print(get_yaml(schema))
     crd = CustomResourceDefinition(

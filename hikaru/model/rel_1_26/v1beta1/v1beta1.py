@@ -36,6 +36,7 @@ from ..unversioned import *
 
 from kubernetes.client import ApiClient
 from kubernetes.client import StorageV1beta1Api
+from ..v1 import Status
 from ..v1 import ObjectMeta
 from ..v1 import LabelSelector
 from ..v1 import DeleteOptions
@@ -257,7 +258,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedCSIStorageCapacity(
         self,
@@ -340,7 +344,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -498,7 +505,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -590,6 +600,8 @@ class CSIStorageCapacity(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -639,7 +651,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -704,6 +719,8 @@ class CSIStorageCapacity(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedCSIStorageCapacity(
@@ -797,7 +814,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -989,7 +1009,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -1145,7 +1168,10 @@ class CSIStorageCapacityList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacityList"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacityList"] = Response["CSIStorageCapacityList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1281,7 +1307,10 @@ class CSIStorageCapacityList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacityList"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacityList"] = Response["CSIStorageCapacityList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

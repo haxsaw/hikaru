@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import (register_crd_schema, HikaruCRDCRUDDocumentMixin)
+from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin)
 
 
 set_default_release("rel_1_23")
@@ -10,7 +10,7 @@ set_default_release("rel_1_23")
 
 # test01 stuff
 @dataclass
-class Resource01(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
+class Resource01(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
     kind: str = "Resource01"
     apiVersion: str = "v1"
@@ -95,7 +95,7 @@ class Subunit02(HikaruBase):
 
 
 @dataclass
-class Resource02(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
+class Resource02(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
     subunit: Subunit02
     kind: str = "Resource02"

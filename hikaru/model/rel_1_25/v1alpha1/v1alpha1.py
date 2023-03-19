@@ -37,6 +37,7 @@ from ..unversioned import *
 from kubernetes.client import ApiClient
 from kubernetes.client import InternalApiserverV1alpha1Api
 from kubernetes.client import NetworkingV1alpha1Api
+from ..v1 import Status
 from ..v1 import ObjectMeta
 from ..v1 import DeleteOptions
 from ..v1 import ListMeta
@@ -234,7 +235,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createStorageVersion(
         self,
@@ -312,7 +316,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -450,7 +457,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -526,6 +536,8 @@ class StorageVersion(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -570,7 +582,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -615,6 +630,8 @@ class StorageVersion(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchStorageVersion(
@@ -703,7 +720,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -875,7 +895,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceStorageVersionStatus(
         self,
@@ -955,7 +978,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -1134,7 +1160,10 @@ class StorageVersionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersionList"](result, codes_returning_objects)
+        resp: Response["StorageVersionList"] = Response["StorageVersionList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1344,7 +1373,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createClusterCIDR(
         self,
@@ -1422,7 +1454,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -1560,7 +1595,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -1636,6 +1674,8 @@ class ClusterCIDR(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -1680,7 +1720,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -1725,6 +1768,8 @@ class ClusterCIDR(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchClusterCIDR(
@@ -1813,7 +1858,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -1985,7 +2033,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -2139,7 +2190,10 @@ class ClusterCIDRList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDRList"](result, codes_returning_objects)
+        resp: Response["ClusterCIDRList"] = Response["ClusterCIDRList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",

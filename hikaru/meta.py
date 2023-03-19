@@ -1228,21 +1228,10 @@ class HikaruDocumentBase(HikaruBase):
     def __post_init__(self, client: Any = None):
         super(HikaruDocumentBase, self).__post_init__()
         self.client = client
+        self._status = None
 
-    def set_client(self, client: Any):
-        """
-        Set the k8s ApiClient on an already created Hikaru instance
-
-        Sets the client that will be used if this object is involved in
-        calls to K8s.
-
-        :param client: instance of kubernetes.client.api_client.ApiClient
-
-        :return self: returns self so setting the client can be chained from
-            object creation and still allow assignment
-        """
-        self.client = client
-        return self
+    def get_status(self):
+        return self._status
 
 
 class FieldMetadata(dict):

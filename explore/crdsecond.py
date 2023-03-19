@@ -1,5 +1,5 @@
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import register_crd_schema, get_crd_schema, HikaruCRDCRUDDocumentMixin
+from hikaru.crd import register_crd_schema, get_crd_schema, HikaruCRDDocumentMixin
 from hikaru.meta import FieldMetadata as fm
 from dataclasses import dataclass, field
 from typing import Optional
@@ -26,7 +26,7 @@ class MyClusterSpec(HikaruBase):
 
 
 @dataclass
-class MyCluster(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
+class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: MyClusterSpec
     metadata: ObjectMeta
     apiVersion: str = "incisivetech.co.uk/v1"
@@ -82,16 +82,15 @@ if __name__ == "__main__":
             environmentType="dev",
             instanceSize="small"
         )
-    ).set_client(client)
+    )
     res = mc.create()
-    print(get_yaml(res.obj))
-    new_mc: MyCluster = res.obj
+    print(get_yaml(res))
+    new_mc: MyCluster = res
 
     print("...reading...")
-    new_mc.set_client(client)
     res = new_mc.read()
-    print(get_yaml(res.obj))
+    print(get_yaml(res))
 
     print("...deleting...")
     res = new_mc.delete()
-    print(get_yaml(res.obj))
+    print(get_yaml(res))

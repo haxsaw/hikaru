@@ -36,6 +36,7 @@ from ..unversioned import *
 
 from kubernetes.client import ApiClient
 from kubernetes.client import AutoscalingV2beta1Api
+from ..v1 import Status
 from ..v1 import LabelSelector
 from ..v1 import ObjectMeta
 from ..v1 import DeleteOptions
@@ -349,7 +350,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedHorizontalPodAutoscaler(
         self,
@@ -432,7 +436,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -590,7 +597,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -682,6 +692,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -731,7 +743,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -796,6 +811,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedHorizontalPodAutoscaler(
@@ -889,7 +906,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -1081,7 +1101,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
         self,
@@ -1166,7 +1189,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -1346,7 +1372,10 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscalerList"] = Response[
+            "HorizontalPodAutoscalerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1482,7 +1511,10 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscalerList"] = Response[
+            "HorizontalPodAutoscalerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

@@ -21,6 +21,8 @@ from dataclasses import fields, Field
 from inspect import signature, Signature, Parameter
 from typing import Optional, TypeVar, Generic, get_type_hints, Dict, List
 from multiprocessing.pool import ApplyResult
+from kubernetes.client.models.v1_status import V1Status
+from importlib import import_module
 
 try:
     from typing import get_args, get_origin
@@ -169,6 +171,31 @@ class Response(Generic[T]):
         self.headers = result[2]
         if self.code in self.codes_with_objects:
             if hasattr(self.obj, 'to_dict'):
+                # OK, this is a patch over what I think to be a problem with the
+                # K8s API spec. For delete operations it appears a K8s V1Status
+                # object is returned, however, the kind and apiVersion attributes
+                # are set to the values that would be involved with returning an
+                # object of the type that was deleted. So for example, if you
+                # delete a Pod, the kind/apiVersion values are for Pod, even
+                # though the object returned is a V1Status. This works in lots of
+                # cases since, for the most part, detail data for the object is
+                # kept in an Optional 'spec' sub-object, and if it isn't in the
+                # V1Status message, no one is the wiser. However, after poking
+                # into some of the advanced corners of K8s it turns out there
+                # are required spec sub-objects, and that results in an exception
+                # when processing. So what we'll try doing here is detect if
+                # we've got a V1Status, and if so, we'll change the kind/apiVersion
+                # to the proper values for a Status object and that will pass
+                # through. However, this may break some code that looks to
+                # the return from a delete and expects to find the object that
+                # was deleted. We'll also need to update the builder to change
+                # what the class is showing as being returned.
+                if isinstance(self.obj, V1Status):
+                    from .naming import get_default_release
+                    drel = get_default_release()
+                    mod = import_module(".v1", f"hikaru.model.{drel}")
+                    self.obj.api_version = mod.Status.apiVersion
+                    self.obj.kind = mod.Status.kind
                 self.obj = from_dict(self.obj.to_dict(),
                                      translate=self.set_false_for_internal_tests)
             elif isinstance(self.obj, dict) and len(self.obj):

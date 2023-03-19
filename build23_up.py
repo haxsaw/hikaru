@@ -434,7 +434,9 @@ all_args['{body_key}'] = body
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response['{returned_type}'](result, codes_returning_objects)
+resp: Response['{returned_type}'] = Response['{returned_type}'](result,
+                                                                codes_returning_objects)
+return resp
 """
 
 _static_method_body_template = \
@@ -453,7 +455,9 @@ all_args['{body_key}'] = body
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response['{returned_type}'](result, codes_returning_objects)
+resp: Response['{returned_type}'] = Response['{returned_type}'](result,
+                                                                codes_returning_objects)
+return resp
 """
 
 _static_method_nobody_template = \
@@ -469,7 +473,9 @@ all_args = dict()
 all_args['async_req'] = async_req
 result = the_method(**all_args)
 codes_returning_objects = {codes_returning_objects}
-return Response['{returned_type}'](result, codes_returning_objects)
+resp: Response['{returned_type}'] = Response['{returned_type}'](result,
+                                                                codes_returning_objects)
+return resp
 """
 
 
@@ -1037,6 +1043,8 @@ _delete_body_with_namespace = \
         raise KubernetesException("Kubernetes returned error " + str(res.code))
     if self.__class__.__name__ == res.obj.__class__.__name__:
         self.merge(res.obj, overwrite=True)
+    elif isinstance(res.obj, Status):
+        self._status = res.obj
     return self
 """
 
@@ -1058,6 +1066,8 @@ _delete_body_without_namespace = \
         raise KubernetesException("Kubernetes returned error " + str(res.code))
     if self.__class__.__name__ == res.obj.__class__.__name__:
         self.merge(res.obj, overwrite=True)
+    elif isinstance(res.obj, Status):
+        self._status = res.obj
     return self
 """
 
@@ -1821,12 +1831,7 @@ def load_swagger(swagger_file_path: str):
             last_opid = op_id
 
     # finally, we sort out the definitions into modules, taking into account
-    # dependencies between versions of classes. We've opted to ensure that
-    # each version's module is self-contained: there are no imports of one
-    # versions classes into another. Rather, we will instead duplicate a class
-    # in multiple modules to ensure all dependent definitions are locally
-    # available. This makes for more code but gets around some of the annoying
-    # cyclic references we ran into when trying to only write each class out once
+    # dependencies between versions of classes.
     for ver in _all_classes.keys():
         mod = ModuleDef(ver)
         for cd in mod.all_classes.values():
@@ -1987,6 +1992,10 @@ class ModuleDef(object):
         for k8s_class in k8s_imports:
             print(f"from kubernetes.client import {k8s_class}", file=stream)
         # print import classes from other Hikaru sister modules
+        # first, if not v1, the import Status from v1 as we'll be writing code
+        # in methods that depend on it
+        if self.version not in ("v1", None):
+            print("from ..v1 import Status", file=stream)
         for cd in classes_to_import.values():
             print(f"from ..{cd.version} import {cd.hikaru_name}", file=stream)
         print("\n", file=stream)

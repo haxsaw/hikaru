@@ -1,7 +1,7 @@
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
-from hikaru.crd import (register_crd_schema, HikaruCRDCRUDDocumentMixin,
+from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin,
                         get_crd_schema)
 from dataclasses import dataclass
 from typing import Optional
@@ -16,7 +16,7 @@ class MyResourceSpec(HikaruBase):
 
 
 @dataclass
-class MyResource(HikaruDocumentBase, HikaruCRDCRUDDocumentMixin):
+class MyResource(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind = "myresource"
     apiVersion = "v1"
     group = "incisivetech.co.uk"

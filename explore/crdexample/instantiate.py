@@ -15,17 +15,16 @@ if __name__ == "__main__":
             environmentType="dev",
             instanceSize="small"
         )
-    ).set_client(client)
+    )
 
     # create
     result = mc.create()
-    print(get_yaml(result.obj))
+    print(get_yaml(result))
 
     # read
     result = mc.read()
-    print(get_yaml(result.obj))
+    print(get_yaml(result))
 
     # delete
-    result.obj.set_client(client)
-    result = result.obj.delete()
-    print(result.obj)
+    result = result.delete()
+    print(get_yaml(result))

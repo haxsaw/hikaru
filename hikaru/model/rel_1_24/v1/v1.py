@@ -334,7 +334,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def createMutatingWebhookConfiguration(
         self,
@@ -414,7 +417,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -554,7 +560,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -630,6 +639,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -674,7 +685,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -721,6 +735,8 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchMutatingWebhookConfiguration(
@@ -811,7 +827,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -985,7 +1004,10 @@ class MutatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["MutatingWebhookConfiguration"](result, codes_returning_objects)
+        resp: Response["MutatingWebhookConfiguration"] = Response[
+            "MutatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -1139,9 +1161,10 @@ class MutatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["MutatingWebhookConfigurationList"](
-            result, codes_returning_objects
-        )
+        resp: Response["MutatingWebhookConfigurationList"] = Response[
+            "MutatingWebhookConfigurationList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -1451,9 +1474,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def createValidatingWebhookConfiguration(
         self,
@@ -1533,9 +1557,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -1675,9 +1700,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -1753,6 +1779,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -1799,9 +1827,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -1848,6 +1877,8 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchValidatingWebhookConfiguration(
@@ -1938,9 +1969,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -2114,9 +2146,10 @@ class ValidatingWebhookConfiguration(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingWebhookConfiguration"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfiguration"] = Response[
+            "ValidatingWebhookConfiguration"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -2272,9 +2305,10 @@ class ValidatingWebhookConfigurationList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingWebhookConfigurationList"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingWebhookConfigurationList"] = Response[
+            "ValidatingWebhookConfigurationList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -2467,7 +2501,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedControllerRevision(
         self,
@@ -2550,7 +2587,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -2708,7 +2748,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -2800,6 +2843,8 @@ class ControllerRevision(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -2847,7 +2892,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -2912,6 +2960,8 @@ class ControllerRevision(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedControllerRevision(
@@ -3005,7 +3055,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -3197,7 +3250,10 @@ class ControllerRevision(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ControllerRevision"](result, codes_returning_objects)
+        resp: Response["ControllerRevision"] = Response["ControllerRevision"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -3353,7 +3409,10 @@ class ControllerRevisionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ControllerRevisionList"](result, codes_returning_objects)
+        resp: Response["ControllerRevisionList"] = Response["ControllerRevisionList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -3487,7 +3546,10 @@ class ControllerRevisionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ControllerRevisionList"](result, codes_returning_objects)
+        resp: Response["ControllerRevisionList"] = Response["ControllerRevisionList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -3675,7 +3737,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedDaemonSet(
         self,
@@ -3756,7 +3821,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -3912,7 +3980,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -4004,6 +4075,8 @@ class DaemonSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -4051,7 +4124,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -4116,6 +4192,8 @@ class DaemonSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedDaemonSet(
@@ -4207,7 +4285,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -4397,7 +4478,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedDaemonSetStatus(
         self,
@@ -4482,7 +4566,10 @@ class DaemonSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["DaemonSet"](result, codes_returning_objects)
+        resp: Response["DaemonSet"] = Response["DaemonSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -4658,7 +4745,10 @@ class DaemonSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DaemonSetList"](result, codes_returning_objects)
+        resp: Response["DaemonSetList"] = Response["DaemonSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -4792,7 +4882,10 @@ class DaemonSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DaemonSetList"](result, codes_returning_objects)
+        resp: Response["DaemonSetList"] = Response["DaemonSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -5072,7 +5165,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedDeployment(
         self,
@@ -5153,7 +5249,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -5309,7 +5408,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -5401,6 +5503,8 @@ class Deployment(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -5448,7 +5552,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -5513,6 +5620,8 @@ class Deployment(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedDeployment(
@@ -5604,7 +5713,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -5794,7 +5906,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedDeploymentStatus(
         self,
@@ -5879,7 +5994,10 @@ class Deployment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Deployment"](result, codes_returning_objects)
+        resp: Response["Deployment"] = Response["Deployment"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -6056,7 +6174,10 @@ class DeploymentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DeploymentList"](result, codes_returning_objects)
+        resp: Response["DeploymentList"] = Response["DeploymentList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -6190,7 +6311,10 @@ class DeploymentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["DeploymentList"](result, codes_returning_objects)
+        resp: Response["DeploymentList"] = Response["DeploymentList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -6477,7 +6601,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedReplicaSet(
         self,
@@ -6558,7 +6685,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -6714,7 +6844,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -6806,6 +6939,8 @@ class ReplicaSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -6853,7 +6988,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -6918,6 +7056,8 @@ class ReplicaSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedReplicaSet(
@@ -7009,7 +7149,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -7199,7 +7342,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedReplicaSetStatus(
         self,
@@ -7284,7 +7430,10 @@ class ReplicaSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicaSet"](result, codes_returning_objects)
+        resp: Response["ReplicaSet"] = Response["ReplicaSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -7465,7 +7614,10 @@ class ReplicaSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicaSetList"](result, codes_returning_objects)
+        resp: Response["ReplicaSetList"] = Response["ReplicaSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -7596,7 +7748,10 @@ class ReplicaSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicaSetList"](result, codes_returning_objects)
+        resp: Response["ReplicaSetList"] = Response["ReplicaSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -7944,7 +8099,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedStatefulSet(
         self,
@@ -8025,7 +8183,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -8181,7 +8342,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -8273,6 +8437,8 @@ class StatefulSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -8320,7 +8486,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -8385,6 +8554,8 @@ class StatefulSet(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedStatefulSet(
@@ -8476,7 +8647,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -8666,7 +8840,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedStatefulSetStatus(
         self,
@@ -8751,7 +8928,10 @@ class StatefulSet(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StatefulSet"](result, codes_returning_objects)
+        resp: Response["StatefulSet"] = Response["StatefulSet"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -8930,7 +9110,10 @@ class StatefulSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StatefulSetList"](result, codes_returning_objects)
+        resp: Response["StatefulSetList"] = Response["StatefulSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -9063,7 +9246,10 @@ class StatefulSetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StatefulSetList"](result, codes_returning_objects)
+        resp: Response["StatefulSetList"] = Response["StatefulSetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -9373,7 +9559,10 @@ class TokenReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["TokenReview"](result, codes_returning_objects)
+        resp: Response["TokenReview"] = Response["TokenReview"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(self, client: ApiClient = None) -> "TokenReview":
         r"""
@@ -9552,7 +9741,10 @@ class LocalSubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["LocalSubjectAccessReview"](result, codes_returning_objects)
+        resp: Response["LocalSubjectAccessReview"] = Response[
+            "LocalSubjectAccessReview"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self, namespace: Optional[str] = None, client: ApiClient = None
@@ -9772,7 +9964,10 @@ class SelfSubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["SelfSubjectAccessReview"](result, codes_returning_objects)
+        resp: Response["SelfSubjectAccessReview"] = Response["SelfSubjectAccessReview"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(self, client: ApiClient = None) -> "SelfSubjectAccessReview":
         r"""
@@ -9901,7 +10096,10 @@ class SelfSubjectRulesReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["SelfSubjectRulesReview"](result, codes_returning_objects)
+        resp: Response["SelfSubjectRulesReview"] = Response["SelfSubjectRulesReview"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(self, client: ApiClient = None) -> "SelfSubjectRulesReview":
         r"""
@@ -10017,7 +10215,10 @@ class SubjectAccessReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["SubjectAccessReview"](result, codes_returning_objects)
+        resp: Response["SubjectAccessReview"] = Response["SubjectAccessReview"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(self, client: ApiClient = None) -> "SubjectAccessReview":
         r"""
@@ -10330,7 +10531,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedHorizontalPodAutoscaler(
         self,
@@ -10413,7 +10617,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -10571,7 +10778,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -10663,6 +10873,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -10712,7 +10924,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -10777,6 +10992,8 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedHorizontalPodAutoscaler(
@@ -10870,7 +11087,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -11062,7 +11282,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedHorizontalPodAutoscalerStatus(
         self,
@@ -11147,7 +11370,10 @@ class HorizontalPodAutoscaler(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["HorizontalPodAutoscaler"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscaler"] = Response["HorizontalPodAutoscaler"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -11302,7 +11528,10 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscalerList"] = Response[
+            "HorizontalPodAutoscalerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -11438,7 +11667,10 @@ class HorizontalPodAutoscalerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["HorizontalPodAutoscalerList"](result, codes_returning_objects)
+        resp: Response["HorizontalPodAutoscalerList"] = Response[
+            "HorizontalPodAutoscalerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -11583,7 +11815,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def patchNamespacedReplicationControllerScale(
         self,
@@ -11676,7 +11909,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedReplicationControllerScale(
         self,
@@ -11761,7 +11995,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readNamespacedDeploymentScale(
@@ -11808,7 +12043,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def patchNamespacedDeploymentScale(
         self,
@@ -11899,7 +12135,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedDeploymentScale(
         self,
@@ -11982,7 +12219,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readNamespacedReplicaSetScale(
@@ -12029,7 +12267,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def patchNamespacedReplicaSetScale(
         self,
@@ -12120,7 +12359,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedReplicaSetScale(
         self,
@@ -12205,7 +12445,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readNamespacedStatefulSetScale(
@@ -12252,7 +12493,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def patchNamespacedStatefulSetScale(
         self,
@@ -12343,7 +12585,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedStatefulSetScale(
         self,
@@ -12428,7 +12671,8 @@ class Scale(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Scale"](result, codes_returning_objects)
+        resp: Response["Scale"] = Response["Scale"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -12642,7 +12886,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedCronJob(
         self,
@@ -12723,7 +12968,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -12879,7 +13125,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -12971,6 +13218,8 @@ class CronJob(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -13018,7 +13267,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -13083,6 +13333,8 @@ class CronJob(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedCronJob(
@@ -13174,7 +13426,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -13364,7 +13617,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedCronJobStatus(
         self,
@@ -13447,7 +13701,8 @@ class CronJob(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CronJob"](result, codes_returning_objects)
+        resp: Response["CronJob"] = Response["CronJob"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -13601,7 +13856,10 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CronJobList"](result, codes_returning_objects)
+        resp: Response["CronJobList"] = Response["CronJobList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -13735,7 +13993,10 @@ class CronJobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CronJobList"](result, codes_returning_objects)
+        resp: Response["CronJobList"] = Response["CronJobList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -13979,7 +14240,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedJob(
         self,
@@ -14060,7 +14322,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -14216,7 +14479,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -14308,6 +14572,8 @@ class Job(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -14355,7 +14621,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -14420,6 +14687,8 @@ class Job(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedJob(
@@ -14511,7 +14780,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -14701,7 +14971,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedJobStatus(
         self,
@@ -14784,7 +15055,8 @@ class Job(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Job"](result, codes_returning_objects)
+        resp: Response["Job"] = Response["Job"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -14962,7 +15234,8 @@ class JobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["JobList"](result, codes_returning_objects)
+        resp: Response["JobList"] = Response["JobList"](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -15096,7 +15369,8 @@ class JobList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["JobList"](result, codes_returning_objects)
+        resp: Response["JobList"] = Response["JobList"](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api", ".batch_v1_api", "BatchV1Api", "list_namespaced_job"
@@ -15459,7 +15733,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def createCertificateSigningRequest(
         self,
@@ -15537,7 +15814,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -15675,7 +15955,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -15751,6 +16034,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -15795,7 +16080,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -15842,6 +16130,8 @@ class CertificateSigningRequest(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchCertificateSigningRequest(
@@ -15930,7 +16220,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -16102,7 +16395,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readCertificateSigningRequestApproval(
@@ -16148,7 +16444,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def patchCertificateSigningRequestApproval(
         self,
@@ -16238,7 +16537,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def replaceCertificateSigningRequestApproval(
         self,
@@ -16320,7 +16622,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
     def replaceCertificateSigningRequestStatus(
         self,
@@ -16402,7 +16707,10 @@ class CertificateSigningRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CertificateSigningRequest"](result, codes_returning_objects)
+        resp: Response["CertificateSigningRequest"] = Response[
+            "CertificateSigningRequest"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -16592,9 +16900,10 @@ class CertificateSigningRequestList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CertificateSigningRequestList"](
-            result, codes_returning_objects
-        )
+        resp: Response["CertificateSigningRequestList"] = Response[
+            "CertificateSigningRequestList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -16891,7 +17200,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedLease(
         self,
@@ -16972,7 +17282,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -17128,7 +17439,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -17220,6 +17532,8 @@ class Lease(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -17267,7 +17581,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -17332,6 +17647,8 @@ class Lease(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedLease(
@@ -17423,7 +17740,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -17613,7 +17931,8 @@ class Lease(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Lease"](result, codes_returning_objects)
+        resp: Response["Lease"] = Response["Lease"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -17767,7 +18086,10 @@ class LeaseList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LeaseList"](result, codes_returning_objects)
+        resp: Response["LeaseList"] = Response["LeaseList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -17901,7 +18223,10 @@ class LeaseList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LeaseList"](result, codes_returning_objects)
+        resp: Response["LeaseList"] = Response["LeaseList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -18154,7 +18479,8 @@ class Binding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Binding"](result, codes_returning_objects)
+        resp: Response["Binding"] = Response["Binding"](result, codes_returning_objects)
+        return resp
 
     def create(
         self, namespace: Optional[str] = None, client: ApiClient = None
@@ -18247,7 +18573,8 @@ class Binding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Binding"](result, codes_returning_objects)
+        resp: Response["Binding"] = Response["Binding"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -18583,7 +18910,10 @@ class ComponentStatus(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ComponentStatus"](result, codes_returning_objects)
+        resp: Response["ComponentStatus"] = Response["ComponentStatus"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -18630,6 +18960,8 @@ class ComponentStatus(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
 
@@ -18785,7 +19117,10 @@ class ComponentStatusList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ComponentStatusList"](result, codes_returning_objects)
+        resp: Response["ComponentStatusList"] = Response["ComponentStatusList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_component_status"
@@ -18978,7 +19313,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedConfigMap(
         self,
@@ -19059,7 +19397,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -19215,7 +19556,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -19307,6 +19651,8 @@ class ConfigMap(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -19354,7 +19700,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -19419,6 +19768,8 @@ class ConfigMap(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedConfigMap(
@@ -19510,7 +19861,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -19700,7 +20054,10 @@ class ConfigMap(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ConfigMap"](result, codes_returning_objects)
+        resp: Response["ConfigMap"] = Response["ConfigMap"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -19892,7 +20249,10 @@ class ConfigMapList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ConfigMapList"](result, codes_returning_objects)
+        resp: Response["ConfigMapList"] = Response["ConfigMapList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -20026,7 +20386,10 @@ class ConfigMapList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ConfigMapList"](result, codes_returning_objects)
+        resp: Response["ConfigMapList"] = Response["ConfigMapList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -20746,7 +21109,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedEndpoints(
         self,
@@ -20827,7 +21193,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -20983,7 +21352,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -21075,6 +21447,8 @@ class Endpoints(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -21122,7 +21496,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -21187,6 +21564,8 @@ class Endpoints(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedEndpoints(
@@ -21278,7 +21657,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -21468,7 +21850,10 @@ class Endpoints(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Endpoints"](result, codes_returning_objects)
+        resp: Response["Endpoints"] = Response["Endpoints"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -21622,7 +22007,10 @@ class EndpointsList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointsList"](result, codes_returning_objects)
+        resp: Response["EndpointsList"] = Response["EndpointsList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -21756,7 +22144,10 @@ class EndpointsList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointsList"](result, codes_returning_objects)
+        resp: Response["EndpointsList"] = Response["EndpointsList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -22667,7 +23058,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedLimitRange(
         self,
@@ -22748,7 +23142,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -22904,7 +23301,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -22996,6 +23396,8 @@ class LimitRange(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -23043,7 +23445,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -23108,6 +23513,8 @@ class LimitRange(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedLimitRange(
@@ -23199,7 +23606,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -23389,7 +23799,10 @@ class LimitRange(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["LimitRange"](result, codes_returning_objects)
+        resp: Response["LimitRange"] = Response["LimitRange"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -23573,7 +23986,10 @@ class LimitRangeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LimitRangeList"](result, codes_returning_objects)
+        resp: Response["LimitRangeList"] = Response["LimitRangeList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -23707,7 +24123,10 @@ class LimitRangeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["LimitRangeList"](result, codes_returning_objects)
+        resp: Response["LimitRangeList"] = Response["LimitRangeList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -23936,7 +24355,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -24074,7 +24496,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -24150,6 +24575,8 @@ class Namespace(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -24194,7 +24621,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -24239,6 +24669,8 @@ class Namespace(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespace(
@@ -24327,7 +24759,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -24499,7 +24934,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespaceFinalize(
         self, name: str, client: ApiClient = None, async_req: bool = False
@@ -24544,7 +24982,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespaceStatus(
         self,
@@ -24624,7 +25065,10 @@ class Namespace(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Namespace"](result, codes_returning_objects)
+        resp: Response["Namespace"] = Response["Namespace"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -24803,7 +25247,10 @@ class NamespaceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NamespaceList"](result, codes_returning_objects)
+        resp: Response["NamespaceList"] = Response["NamespaceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespace"
@@ -25018,7 +25465,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def createNode(
         self,
@@ -25096,7 +25544,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -25234,7 +25683,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -25310,6 +25760,8 @@ class Node(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -25354,7 +25806,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -25399,6 +25852,8 @@ class Node(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNode(
@@ -25487,7 +25942,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -25659,7 +26115,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
     def replaceNodeStatus(
         self,
@@ -25739,7 +26196,8 @@ class Node(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Node"](result, codes_returning_objects)
+        resp: Response["Node"] = Response["Node"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -26045,7 +26503,10 @@ class NodeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NodeList"](result, codes_returning_objects)
+        resp: Response["NodeList"] = Response["NodeList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_node"
@@ -26462,7 +26923,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createPersistentVolume(
         self,
@@ -26540,7 +27004,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -26678,7 +27145,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -26754,6 +27224,8 @@ class PersistentVolume(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -26798,7 +27270,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -26845,6 +27320,8 @@ class PersistentVolume(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchPersistentVolume(
@@ -26933,7 +27410,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -27105,7 +27585,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replacePersistentVolumeStatus(
         self,
@@ -27185,7 +27668,10 @@ class PersistentVolume(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolume"](result, codes_returning_objects)
+        resp: Response["PersistentVolume"] = Response["PersistentVolume"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -27367,7 +27853,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedPersistentVolumeClaim(
         self,
@@ -27450,7 +27939,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -27608,7 +28100,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -27700,6 +28195,8 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -27749,7 +28246,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -27814,6 +28314,8 @@ class PersistentVolumeClaim(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedPersistentVolumeClaim(
@@ -27907,7 +28409,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -28099,7 +28604,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedPersistentVolumeClaimStatus(
         self,
@@ -28184,7 +28692,10 @@ class PersistentVolumeClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PersistentVolumeClaim"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaim"] = Response["PersistentVolumeClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -28372,7 +28883,10 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolumeClaimList"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaimList"] = Response[
+            "PersistentVolumeClaimList"
+        ](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -28505,7 +29019,10 @@ class PersistentVolumeClaimList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolumeClaimList"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeClaimList"] = Response[
+            "PersistentVolumeClaimList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -28807,7 +29324,10 @@ class PersistentVolumeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PersistentVolumeList"](result, codes_returning_objects)
+        resp: Response["PersistentVolumeList"] = Response["PersistentVolumeList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_persistent_volume"
@@ -29147,7 +29667,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedPod(
         self,
@@ -29228,7 +29749,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -29384,7 +29906,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -29476,6 +29999,8 @@ class Pod(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -29523,7 +30048,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -29588,6 +30114,8 @@ class Pod(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedPod(
@@ -29679,7 +30207,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -29869,7 +30398,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readNamespacedPodEphemeralcontainers(
@@ -29918,7 +30448,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def patchNamespacedPodEphemeralcontainers(
         self,
@@ -30011,7 +30542,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedPodEphemeralcontainers(
         self,
@@ -30096,7 +30628,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     @staticmethod
     def readNamespacedPodLog(
@@ -30187,7 +30720,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = ()
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedPodStatus(
         self,
@@ -30270,7 +30804,8 @@ class Pod(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Pod"](result, codes_returning_objects)
+        resp: Response["Pod"] = Response["Pod"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -30611,7 +31146,8 @@ class PodList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodList"](result, codes_returning_objects)
+        resp: Response["PodList"] = Response["PodList"](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_pod"
@@ -30739,7 +31275,8 @@ class PodList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodList"](result, codes_returning_objects)
+        resp: Response["PodList"] = Response["PodList"](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -31316,7 +31853,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedPodTemplate(
         self,
@@ -31397,7 +31937,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -31553,7 +32096,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -31645,6 +32191,8 @@ class PodTemplate(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -31692,7 +32240,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -31757,6 +32308,8 @@ class PodTemplate(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedPodTemplate(
@@ -31848,7 +32401,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -32038,7 +32594,10 @@ class PodTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodTemplate"](result, codes_returning_objects)
+        resp: Response["PodTemplate"] = Response["PodTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -32195,7 +32754,10 @@ class PodTemplateList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodTemplateList"](result, codes_returning_objects)
+        resp: Response["PodTemplateList"] = Response["PodTemplateList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -32328,7 +32890,10 @@ class PodTemplateList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodTemplateList"](result, codes_returning_objects)
+        resp: Response["PodTemplateList"] = Response["PodTemplateList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -32781,7 +33346,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedReplicationController(
         self,
@@ -32864,7 +33432,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -33022,7 +33593,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -33114,6 +33688,8 @@ class ReplicationController(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -33163,7 +33739,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -33228,6 +33807,8 @@ class ReplicationController(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedReplicationController(
@@ -33321,7 +33902,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -33513,7 +34097,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedReplicationControllerStatus(
         self,
@@ -33598,7 +34185,10 @@ class ReplicationController(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ReplicationController"](result, codes_returning_objects)
+        resp: Response["ReplicationController"] = Response["ReplicationController"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -33782,7 +34372,10 @@ class ReplicationControllerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicationControllerList"](result, codes_returning_objects)
+        resp: Response["ReplicationControllerList"] = Response[
+            "ReplicationControllerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -33915,7 +34508,10 @@ class ReplicationControllerList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ReplicationControllerList"](result, codes_returning_objects)
+        resp: Response["ReplicationControllerList"] = Response[
+            "ReplicationControllerList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -34183,7 +34779,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedResourceQuota(
         self,
@@ -34264,7 +34863,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -34420,7 +35022,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -34512,6 +35117,8 @@ class ResourceQuota(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -34559,7 +35166,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -34624,6 +35234,8 @@ class ResourceQuota(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedResourceQuota(
@@ -34715,7 +35327,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -34905,7 +35520,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedResourceQuotaStatus(
         self,
@@ -34990,7 +35608,10 @@ class ResourceQuota(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceQuota"](result, codes_returning_objects)
+        resp: Response["ResourceQuota"] = Response["ResourceQuota"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -35148,7 +35769,10 @@ class ResourceQuotaList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceQuotaList"](result, codes_returning_objects)
+        resp: Response["ResourceQuotaList"] = Response["ResourceQuotaList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -35281,7 +35905,10 @@ class ResourceQuotaList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceQuotaList"](result, codes_returning_objects)
+        resp: Response["ResourceQuotaList"] = Response["ResourceQuotaList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -35700,7 +36327,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedSecret(
         self,
@@ -35781,7 +36409,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -35937,7 +36566,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -36029,6 +36659,8 @@ class Secret(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -36076,7 +36708,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -36141,6 +36774,8 @@ class Secret(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedSecret(
@@ -36232,7 +36867,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -36422,7 +37058,8 @@ class Secret(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Secret"](result, codes_returning_objects)
+        resp: Response["Secret"] = Response["Secret"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -36618,7 +37255,10 @@ class SecretList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["SecretList"](result, codes_returning_objects)
+        resp: Response["SecretList"] = Response["SecretList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_secret"
@@ -36746,7 +37386,10 @@ class SecretList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["SecretList"](result, codes_returning_objects)
+        resp: Response["SecretList"] = Response["SecretList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -37084,7 +37727,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedService(
         self,
@@ -37165,7 +37809,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -37321,7 +37966,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -37413,6 +38059,8 @@ class Service(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -37460,7 +38108,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -37525,6 +38174,8 @@ class Service(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedService(
@@ -37616,7 +38267,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -37806,7 +38458,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedServiceStatus(
         self,
@@ -37889,7 +38542,8 @@ class Service(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Service"](result, codes_returning_objects)
+        resp: Response["Service"] = Response["Service"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -38087,7 +38741,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedServiceAccount(
         self,
@@ -38168,7 +38825,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -38324,7 +38984,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -38416,6 +39079,8 @@ class ServiceAccount(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -38463,7 +39128,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -38528,6 +39196,8 @@ class ServiceAccount(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedServiceAccount(
@@ -38619,7 +39289,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -38809,7 +39482,10 @@ class ServiceAccount(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ServiceAccount"](result, codes_returning_objects)
+        resp: Response["ServiceAccount"] = Response["ServiceAccount"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -38967,7 +39643,10 @@ class ServiceAccountList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceAccountList"](result, codes_returning_objects)
+        resp: Response["ServiceAccountList"] = Response["ServiceAccountList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -39100,7 +39779,10 @@ class ServiceAccountList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceAccountList"](result, codes_returning_objects)
+        resp: Response["ServiceAccountList"] = Response["ServiceAccountList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -39293,7 +39975,10 @@ class ServiceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceList"](result, codes_returning_objects)
+        resp: Response["ServiceList"] = Response["ServiceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api", ".core_v1_api", "CoreV1Api", "list_namespaced_service"
@@ -39421,7 +40106,10 @@ class ServiceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ServiceList"](result, codes_returning_objects)
+        resp: Response["ServiceList"] = Response["ServiceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -40523,7 +41211,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedEndpointSlice(
         self,
@@ -40604,7 +41295,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -40760,7 +41454,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -40852,6 +41549,8 @@ class EndpointSlice(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -40899,7 +41598,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -40964,6 +41666,8 @@ class EndpointSlice(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedEndpointSlice(
@@ -41055,7 +41759,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -41245,7 +41952,10 @@ class EndpointSlice(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["EndpointSlice"](result, codes_returning_objects)
+        resp: Response["EndpointSlice"] = Response["EndpointSlice"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -41400,7 +42110,10 @@ class EndpointSliceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointSliceList"](result, codes_returning_objects)
+        resp: Response["EndpointSliceList"] = Response["EndpointSliceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -41534,7 +42247,10 @@ class EndpointSliceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EndpointSliceList"](result, codes_returning_objects)
+        resp: Response["EndpointSliceList"] = Response["EndpointSliceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -41810,7 +42526,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedIngress(
         self,
@@ -41891,7 +42608,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -42047,7 +42765,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -42139,6 +42858,8 @@ class Ingress(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -42186,7 +42907,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -42251,6 +42973,8 @@ class Ingress(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedIngress(
@@ -42342,7 +43066,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -42532,7 +43257,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
     def replaceNamespacedIngressStatus(
         self,
@@ -42615,7 +43341,8 @@ class Ingress(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Ingress"](result, codes_returning_objects)
+        resp: Response["Ingress"] = Response["Ingress"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -42810,7 +43537,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createIngressClass(
         self,
@@ -42888,7 +43618,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -43026,7 +43759,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -43102,6 +43838,8 @@ class IngressClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -43146,7 +43884,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -43191,6 +43932,8 @@ class IngressClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchIngressClass(
@@ -43279,7 +44022,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -43451,7 +44197,10 @@ class IngressClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["IngressClass"](result, codes_returning_objects)
+        resp: Response["IngressClass"] = Response["IngressClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -43604,7 +44353,10 @@ class IngressClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["IngressClassList"](result, codes_returning_objects)
+        resp: Response["IngressClassList"] = Response["IngressClassList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -43816,7 +44568,10 @@ class IngressList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["IngressList"](result, codes_returning_objects)
+        resp: Response["IngressList"] = Response["IngressList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -43950,7 +44705,10 @@ class IngressList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["IngressList"](result, codes_returning_objects)
+        resp: Response["IngressList"] = Response["IngressList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -44261,7 +45019,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedNetworkPolicy(
         self,
@@ -44342,7 +45103,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -44498,7 +45262,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -44590,6 +45357,8 @@ class NetworkPolicy(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -44637,7 +45406,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -44702,6 +45474,8 @@ class NetworkPolicy(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedNetworkPolicy(
@@ -44793,7 +45567,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -44983,7 +45760,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedNetworkPolicyStatus(
         self,
@@ -45068,7 +45848,10 @@ class NetworkPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["NetworkPolicy"](result, codes_returning_objects)
+        resp: Response["NetworkPolicy"] = Response["NetworkPolicy"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -45277,7 +46060,10 @@ class NetworkPolicyList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NetworkPolicyList"](result, codes_returning_objects)
+        resp: Response["NetworkPolicyList"] = Response["NetworkPolicyList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -45410,7 +46196,10 @@ class NetworkPolicyList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["NetworkPolicyList"](result, codes_returning_objects)
+        resp: Response["NetworkPolicyList"] = Response["NetworkPolicyList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -45755,7 +46544,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createRuntimeClass(
         self,
@@ -45833,7 +46625,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -45971,7 +46766,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -46047,6 +46845,8 @@ class RuntimeClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -46091,7 +46891,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -46136,6 +46939,8 @@ class RuntimeClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchRuntimeClass(
@@ -46224,7 +47029,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -46396,7 +47204,10 @@ class RuntimeClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["RuntimeClass"](result, codes_returning_objects)
+        resp: Response["RuntimeClass"] = Response["RuntimeClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -46550,7 +47361,10 @@ class RuntimeClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RuntimeClassList"](result, codes_returning_objects)
+        resp: Response["RuntimeClassList"] = Response["RuntimeClassList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".node_v1_api", "NodeV1Api", "list_runtime_class"
@@ -46659,7 +47473,10 @@ class Eviction(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Eviction"](result, codes_returning_objects)
+        resp: Response["Eviction"] = Response["Eviction"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self, namespace: Optional[str] = None, client: ApiClient = None
@@ -46881,7 +47698,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedPodDisruptionBudget(
         self,
@@ -46964,7 +47784,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -47122,7 +47945,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -47214,6 +48040,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -47263,7 +48091,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -47328,6 +48159,8 @@ class PodDisruptionBudget(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedPodDisruptionBudget(
@@ -47421,7 +48254,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -47613,7 +48449,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedPodDisruptionBudgetStatus(
         self,
@@ -47698,7 +48537,10 @@ class PodDisruptionBudget(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodDisruptionBudget"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudget"] = Response["PodDisruptionBudget"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -47857,7 +48699,10 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodDisruptionBudgetList"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudgetList"] = Response["PodDisruptionBudgetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -47990,7 +48835,10 @@ class PodDisruptionBudgetList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodDisruptionBudgetList"](result, codes_returning_objects)
+        resp: Response["PodDisruptionBudgetList"] = Response["PodDisruptionBudgetList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -48262,7 +49110,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createClusterRole(
         self,
@@ -48340,7 +49191,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -48478,7 +49332,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -48554,6 +49411,8 @@ class ClusterRole(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -48598,7 +49457,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -48643,6 +49505,8 @@ class ClusterRole(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchClusterRole(
@@ -48731,7 +49595,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -48903,7 +49770,10 @@ class ClusterRole(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterRole"](result, codes_returning_objects)
+        resp: Response["ClusterRole"] = Response["ClusterRole"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -49079,7 +49949,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createClusterRoleBinding(
         self,
@@ -49157,7 +50030,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -49295,7 +50171,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -49371,6 +50250,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -49415,7 +50296,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -49462,6 +50346,8 @@ class ClusterRoleBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchClusterRoleBinding(
@@ -49550,7 +50436,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -49722,7 +50611,10 @@ class ClusterRoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterRoleBinding"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBinding"] = Response["ClusterRoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -49875,7 +50767,10 @@ class ClusterRoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRoleBindingList"](result, codes_returning_objects)
+        resp: Response["ClusterRoleBindingList"] = Response["ClusterRoleBindingList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -50035,7 +50930,10 @@ class ClusterRoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterRoleList"](result, codes_returning_objects)
+        resp: Response["ClusterRoleList"] = Response["ClusterRoleList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -50249,7 +51147,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedRole(
         self,
@@ -50330,7 +51229,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -50486,7 +51386,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -50578,6 +51479,8 @@ class Role(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -50625,7 +51528,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -50690,6 +51594,8 @@ class Role(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedRole(
@@ -50781,7 +51687,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -50971,7 +51878,8 @@ class Role(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Role"](result, codes_returning_objects)
+        resp: Response["Role"] = Response["Role"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -51153,7 +52061,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedRoleBinding(
         self,
@@ -51234,7 +52145,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -51390,7 +52304,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -51482,6 +52399,8 @@ class RoleBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -51529,7 +52448,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -51594,6 +52516,8 @@ class RoleBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedRoleBinding(
@@ -51685,7 +52609,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -51875,7 +52802,10 @@ class RoleBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["RoleBinding"](result, codes_returning_objects)
+        resp: Response["RoleBinding"] = Response["RoleBinding"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -52031,7 +52961,10 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleBindingList"](result, codes_returning_objects)
+        resp: Response["RoleBindingList"] = Response["RoleBindingList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -52164,7 +53097,10 @@ class RoleBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleBindingList"](result, codes_returning_objects)
+        resp: Response["RoleBindingList"] = Response["RoleBindingList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -52327,7 +53263,10 @@ class RoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleList"](result, codes_returning_objects)
+        resp: Response["RoleList"] = Response["RoleList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -52458,7 +53397,10 @@ class RoleList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["RoleList"](result, codes_returning_objects)
+        resp: Response["RoleList"] = Response["RoleList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -52697,7 +53639,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createPriorityClass(
         self,
@@ -52775,7 +53720,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -52913,7 +53861,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -52989,6 +53940,8 @@ class PriorityClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -53033,7 +53986,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -53078,6 +54034,8 @@ class PriorityClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchPriorityClass(
@@ -53166,7 +54124,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -53338,7 +54299,10 @@ class PriorityClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PriorityClass"](result, codes_returning_objects)
+        resp: Response["PriorityClass"] = Response["PriorityClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -53492,7 +54456,10 @@ class PriorityClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PriorityClassList"](result, codes_returning_objects)
+        resp: Response["PriorityClassList"] = Response["PriorityClassList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -53677,7 +54644,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createCSIDriver(
         self,
@@ -53755,7 +54725,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -53893,7 +54866,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -53969,6 +54945,8 @@ class CSIDriver(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -54013,7 +54991,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -54058,6 +55039,8 @@ class CSIDriver(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchCSIDriver(
@@ -54146,7 +55129,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -54318,7 +55304,10 @@ class CSIDriver(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIDriver"](result, codes_returning_objects)
+        resp: Response["CSIDriver"] = Response["CSIDriver"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -54472,7 +55461,10 @@ class CSIDriverList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIDriverList"](result, codes_returning_objects)
+        resp: Response["CSIDriverList"] = Response["CSIDriverList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".storage_v1_api", "StorageV1Api", "list_csi_driver"
@@ -54742,7 +55734,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
     def createCSINode(
         self,
@@ -54820,7 +55813,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -54958,7 +55952,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -55034,6 +56029,8 @@ class CSINode(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -55078,7 +56075,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -55123,6 +56121,8 @@ class CSINode(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchCSINode(
@@ -55211,7 +56211,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -55383,7 +56384,8 @@ class CSINode(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSINode"](result, codes_returning_objects)
+        resp: Response["CSINode"] = Response["CSINode"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -55575,7 +56577,10 @@ class CSINodeList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSINodeList"](result, codes_returning_objects)
+        resp: Response["CSINodeList"] = Response["CSINodeList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".storage_v1_api", "StorageV1Api", "list_csi_node"
@@ -55813,7 +56818,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedCSIStorageCapacity(
         self,
@@ -55896,7 +56904,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -56054,7 +57065,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -56146,6 +57160,8 @@ class CSIStorageCapacity(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -56195,7 +57211,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -56260,6 +57279,8 @@ class CSIStorageCapacity(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedCSIStorageCapacity(
@@ -56353,7 +57374,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -56545,7 +57569,10 @@ class CSIStorageCapacity(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CSIStorageCapacity"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacity"] = Response["CSIStorageCapacity"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -56701,7 +57728,10 @@ class CSIStorageCapacityList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacityList"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacityList"] = Response["CSIStorageCapacityList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -56837,7 +57867,10 @@ class CSIStorageCapacityList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CSIStorageCapacityList"](result, codes_returning_objects)
+        resp: Response["CSIStorageCapacityList"] = Response["CSIStorageCapacityList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -57041,7 +58074,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createStorageClass(
         self,
@@ -57119,7 +58155,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -57257,7 +58296,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -57333,6 +58375,8 @@ class StorageClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -57377,7 +58421,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -57422,6 +58469,8 @@ class StorageClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchStorageClass(
@@ -57510,7 +58559,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -57682,7 +58734,10 @@ class StorageClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageClass"](result, codes_returning_objects)
+        resp: Response["StorageClass"] = Response["StorageClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -57836,7 +58891,10 @@ class StorageClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageClassList"](result, codes_returning_objects)
+        resp: Response["StorageClassList"] = Response["StorageClassList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api", ".storage_v1_api", "StorageV1Api", "list_storage_class"
@@ -58016,7 +59074,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createVolumeAttachment(
         self,
@@ -58094,7 +59155,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -58232,7 +59296,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -58308,6 +59375,8 @@ class VolumeAttachment(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -58352,7 +59421,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -58399,6 +59471,8 @@ class VolumeAttachment(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchVolumeAttachment(
@@ -58487,7 +59561,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -58659,7 +59736,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceVolumeAttachmentStatus(
         self,
@@ -58739,7 +59819,10 @@ class VolumeAttachment(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["VolumeAttachment"](result, codes_returning_objects)
+        resp: Response["VolumeAttachment"] = Response["VolumeAttachment"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -58893,7 +59976,10 @@ class VolumeAttachmentList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["VolumeAttachmentList"](result, codes_returning_objects)
+        resp: Response["VolumeAttachmentList"] = Response["VolumeAttachmentList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -59235,7 +60321,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def createCustomResourceDefinition(
         self,
@@ -59313,7 +60402,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -59451,7 +60543,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -59527,6 +60622,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -59571,7 +60668,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -59618,6 +60718,8 @@ class CustomResourceDefinition(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchCustomResourceDefinition(
@@ -59706,7 +60808,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -59878,7 +60983,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
     def replaceCustomResourceDefinitionStatus(
         self,
@@ -59960,7 +61068,10 @@ class CustomResourceDefinition(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["CustomResourceDefinition"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinition"] = Response[
+            "CustomResourceDefinition"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -60140,7 +61251,10 @@ class CustomResourceDefinitionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["CustomResourceDefinitionList"](result, codes_returning_objects)
+        resp: Response["CustomResourceDefinitionList"] = Response[
+            "CustomResourceDefinitionList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -61559,7 +62673,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createAPIService(
         self,
@@ -61637,7 +62754,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -61775,7 +62895,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -61851,6 +62974,8 @@ class APIService(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -61895,7 +63020,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -61940,6 +63068,8 @@ class APIService(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchAPIService(
@@ -62028,7 +63158,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -62200,7 +63333,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceAPIServiceStatus(
         self,
@@ -62280,7 +63416,10 @@ class APIService(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["APIService"](result, codes_returning_objects)
+        resp: Response["APIService"] = Response["APIService"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -62456,7 +63595,10 @@ class APIServiceList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["APIServiceList"](result, codes_returning_objects)
+        resp: Response["APIServiceList"] = Response["APIServiceList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -62717,7 +63859,10 @@ class TokenRequest(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["TokenRequest"](result, codes_returning_objects)
+        resp: Response["TokenRequest"] = Response["TokenRequest"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self, namespace: Optional[str] = None, client: ApiClient = None
@@ -63033,7 +64178,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
     def createNamespacedEvent(
         self,
@@ -63114,7 +64260,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -63270,7 +64417,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -63362,6 +64510,8 @@ class Event(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -63409,7 +64559,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -63474,6 +64625,8 @@ class Event(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedEvent(
@@ -63565,7 +64718,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -63755,7 +64909,8 @@ class Event(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["Event"](result, codes_returning_objects)
+        resp: Response["Event"] = Response["Event"](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -63909,7 +65064,10 @@ class EventList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EventList"](result, codes_returning_objects)
+        resp: Response["EventList"] = Response["EventList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -64043,7 +65201,10 @@ class EventList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["EventList"](result, codes_returning_objects)
+        resp: Response["EventList"] = Response["EventList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",

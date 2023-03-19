@@ -40,6 +40,7 @@ from kubernetes.client import AuthenticationV1alpha1Api
 from kubernetes.client import InternalApiserverV1alpha1Api
 from kubernetes.client import NetworkingV1alpha1Api
 from kubernetes.client import ResourceV1alpha1Api
+from ..v1 import Status
 from ..v1 import LabelSelector
 from ..v1 import ObjectMeta
 from ..v1 import DeleteOptions
@@ -361,7 +362,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
     def createValidatingAdmissionPolicy(
         self,
@@ -439,7 +443,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -577,7 +584,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -653,6 +663,8 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -697,7 +709,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -744,6 +759,8 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchValidatingAdmissionPolicy(
@@ -832,7 +849,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -1004,7 +1024,10 @@ class ValidatingAdmissionPolicy(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingAdmissionPolicy"](result, codes_returning_objects)
+        resp: Response["ValidatingAdmissionPolicy"] = Response[
+            "ValidatingAdmissionPolicy"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -1179,9 +1202,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
     def createValidatingAdmissionPolicyBinding(
         self,
@@ -1261,9 +1285,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
     def create(
         self,
@@ -1403,9 +1428,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
     def delete(
         self,
@@ -1481,6 +1507,8 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -1527,9 +1555,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
     def read(
         self,
@@ -1576,6 +1605,8 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchValidatingAdmissionPolicyBinding(
@@ -1666,9 +1697,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
     def update(
         self,
@@ -1842,9 +1874,10 @@ class ValidatingAdmissionPolicyBinding(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ValidatingAdmissionPolicyBinding"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBinding"] = Response[
+            "ValidatingAdmissionPolicyBinding"
+        ](result, codes_returning_objects)
+        return resp
 
 
 @dataclass
@@ -2002,9 +2035,10 @@ class ValidatingAdmissionPolicyBindingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicyBindingList"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyBindingList"] = Response[
+            "ValidatingAdmissionPolicyBindingList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -2197,9 +2231,10 @@ class ValidatingAdmissionPolicyList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ValidatingAdmissionPolicyList"](
-            result, codes_returning_objects
-        )
+        resp: Response["ValidatingAdmissionPolicyList"] = Response[
+            "ValidatingAdmissionPolicyList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -2493,7 +2528,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createStorageVersion(
         self,
@@ -2571,7 +2609,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -2709,7 +2750,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -2785,6 +2829,8 @@ class StorageVersion(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -2829,7 +2875,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -2874,6 +2923,8 @@ class StorageVersion(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchStorageVersion(
@@ -2962,7 +3013,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -3134,7 +3188,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceStorageVersionStatus(
         self,
@@ -3214,7 +3271,10 @@ class StorageVersion(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["StorageVersion"](result, codes_returning_objects)
+        resp: Response["StorageVersion"] = Response["StorageVersion"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -3393,7 +3453,10 @@ class StorageVersionList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["StorageVersionList"](result, codes_returning_objects)
+        resp: Response["StorageVersionList"] = Response["StorageVersionList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -3500,7 +3563,10 @@ class SelfSubjectReview(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["SelfSubjectReview"](result, codes_returning_objects)
+        resp: Response["SelfSubjectReview"] = Response["SelfSubjectReview"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(self, client: ApiClient = None) -> "SelfSubjectReview":
         r"""
@@ -3718,7 +3784,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createClusterCIDR(
         self,
@@ -3796,7 +3865,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -3934,7 +4006,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -4010,6 +4085,8 @@ class ClusterCIDR(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -4054,7 +4131,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -4099,6 +4179,8 @@ class ClusterCIDR(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchClusterCIDR(
@@ -4187,7 +4269,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -4359,7 +4444,10 @@ class ClusterCIDR(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ClusterCIDR"](result, codes_returning_objects)
+        resp: Response["ClusterCIDR"] = Response["ClusterCIDR"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -4513,7 +4601,10 @@ class ClusterCIDRList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ClusterCIDRList"](result, codes_returning_objects)
+        resp: Response["ClusterCIDRList"] = Response["ClusterCIDRList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -4752,7 +4843,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedPodScheduling(
         self,
@@ -4833,7 +4927,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -4989,7 +5086,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -5081,6 +5181,8 @@ class PodScheduling(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -5128,7 +5230,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -5193,6 +5298,8 @@ class PodScheduling(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedPodScheduling(
@@ -5284,7 +5391,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -5474,7 +5584,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedPodSchedulingStatus(
         self,
@@ -5559,7 +5672,10 @@ class PodScheduling(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["PodScheduling"](result, codes_returning_objects)
+        resp: Response["PodScheduling"] = Response["PodScheduling"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -5715,7 +5831,10 @@ class PodSchedulingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodSchedulingList"](result, codes_returning_objects)
+        resp: Response["PodSchedulingList"] = Response["PodSchedulingList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -5848,7 +5967,10 @@ class PodSchedulingList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["PodSchedulingList"](result, codes_returning_objects)
+        resp: Response["PodSchedulingList"] = Response["PodSchedulingList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -6075,7 +6197,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedResourceClaim(
         self,
@@ -6156,7 +6281,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -6312,7 +6440,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -6404,6 +6535,8 @@ class ResourceClaim(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -6451,7 +6584,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -6516,6 +6652,8 @@ class ResourceClaim(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedResourceClaim(
@@ -6607,7 +6745,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -6797,7 +6938,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def replaceNamespacedResourceClaimStatus(
         self,
@@ -6882,7 +7026,10 @@ class ResourceClaim(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClaim"](result, codes_returning_objects)
+        resp: Response["ResourceClaim"] = Response["ResourceClaim"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -7062,7 +7209,10 @@ class ResourceClaimList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimList"](result, codes_returning_objects)
+        resp: Response["ResourceClaimList"] = Response["ResourceClaimList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -7195,7 +7345,10 @@ class ResourceClaimList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimList"](result, codes_returning_objects)
+        resp: Response["ResourceClaimList"] = Response["ResourceClaimList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -7476,7 +7629,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createNamespacedResourceClaimTemplate(
         self,
@@ -7559,7 +7715,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -7717,7 +7876,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -7809,6 +7971,8 @@ class ResourceClaimTemplate(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -7858,7 +8022,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -7923,6 +8090,8 @@ class ResourceClaimTemplate(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchNamespacedResourceClaimTemplate(
@@ -8016,7 +8185,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -8208,7 +8380,10 @@ class ResourceClaimTemplate(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClaimTemplate"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplate"] = Response["ResourceClaimTemplate"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -8366,7 +8541,10 @@ class ResourceClaimTemplateList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimTemplateList"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplateList"] = Response[
+            "ResourceClaimTemplateList"
+        ](result, codes_returning_objects)
+        return resp
 
     _namespaced_watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -8499,7 +8677,10 @@ class ResourceClaimTemplateList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClaimTemplateList"](result, codes_returning_objects)
+        resp: Response["ResourceClaimTemplateList"] = Response[
+            "ResourceClaimTemplateList"
+        ](result, codes_returning_objects)
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",
@@ -8709,7 +8890,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def createResourceClass(
         self,
@@ -8787,7 +8971,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201, 202)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def create(
         self,
@@ -8925,7 +9112,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 202)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def delete(
         self,
@@ -9001,6 +9191,8 @@ class ResourceClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     @staticmethod
@@ -9045,7 +9237,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def read(
         self,
@@ -9090,6 +9285,8 @@ class ResourceClass(HikaruDocumentBase):
             raise KubernetesException("Kubernetes returned error " + str(res.code))
         if self.__class__.__name__ == res.obj.__class__.__name__:
             self.merge(res.obj, overwrite=True)
+        elif isinstance(res.obj, Status):
+            self._status = res.obj
         return self
 
     def patchResourceClass(
@@ -9178,7 +9375,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
     def update(
         self,
@@ -9350,7 +9550,10 @@ class ResourceClass(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200, 201)
-        return Response["ResourceClass"](result, codes_returning_objects)
+        resp: Response["ResourceClass"] = Response["ResourceClass"](
+            result, codes_returning_objects
+        )
+        return resp
 
 
 @dataclass
@@ -9503,7 +9706,10 @@ class ResourceClassList(HikaruDocumentBase):
         all_args["async_req"] = async_req
         result = the_method(**all_args)
         codes_returning_objects = (200,)
-        return Response["ResourceClassList"](result, codes_returning_objects)
+        resp: Response["ResourceClassList"] = Response["ResourceClassList"](
+            result, codes_returning_objects
+        )
+        return resp
 
     _watcher = WatcherDescriptor(
         "kubernetes.client.api",

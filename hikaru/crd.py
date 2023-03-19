@@ -208,7 +208,7 @@ class _RegisterCRD(object):
 _crd_registration_details: Dict[type(HikaruDocumentBase), _RegisterCRD] = {}
 
 
-class HikaruCRDCRUDDocumentMixin(object):
+class HikaruCRDDocumentMixin(object):
     """
     HikaruDocumentBase mixin to add support for CRUD methods
 
@@ -225,7 +225,7 @@ class HikaruCRDCRUDDocumentMixin(object):
     """
 
     def __post_init__(self, *args, **kwargs):
-        super(HikaruCRDCRUDDocumentMixin, self).__post_init__(*args, **kwargs)
+        super(HikaruCRDDocumentMixin, self).__post_init__(*args, **kwargs)
         client = kwargs.get('client')
         if client is None:
             client = ApiClient()
@@ -247,7 +247,9 @@ class HikaruCRDCRUDDocumentMixin(object):
                  field_validation: Optional[str] = None,
                  pretty: Optional[bool] = None,
                  dry_run: Optional[str] = None,
-                 async_req: bool = False,):
+                 async_req: bool = False):
+        if not self.client:
+            self.client = ApiClient()
         # things that won't get filled out further
         form_params = []
         local_var_files = {}
@@ -310,11 +312,15 @@ class HikaruCRDCRUDDocumentMixin(object):
             url: str = f"/apis/{group}/{version}/namespaces/{namespace}/{reg_details.plural_name}"
         else:
             url: str = f"/apis/{group}/{version}/{reg_details.plural_name}"
-        return self.api_call(method, url, field_manager=field_manager,
+        resp = self.api_call(method, url, field_manager=field_manager,
                              field_validation=field_validation,
                              pretty=pretty,
                              dry_run=dry_run,
                              async_req=async_req)
+        if async_req:
+            return resp
+        else:
+            return resp.obj
 
     def _get_existing_url(self) -> str:
         reg_details: _RegisterCRD = _crd_registration_details.get(self.__class__)
@@ -342,11 +348,15 @@ class HikaruCRDCRUDDocumentMixin(object):
              async_req: bool = False):
         method: str = "GET"
         url = self._get_existing_url()
-        return self.api_call(method, url, field_manager=field_manager,
+        resp = self.api_call(method, url, field_manager=field_manager,
                              field_validation=field_validation,
                              pretty=pretty,
                              dry_run=dry_run,
                              async_req=async_req)
+        if async_req:
+            return resp
+        else:
+            return resp.obj
 
     def update(self, field_manager: Optional[str] = None,
                field_validation: Optional[str] = None,
@@ -355,13 +365,18 @@ class HikaruCRDCRUDDocumentMixin(object):
                async_req: bool = False):
         method: str = "PUT"
         url: str = self._get_existing_url()
-        return self.api_call(method, url, field_manager=field_manager,
+        resp = self.api_call(method, url, field_manager=field_manager,
                              field_validation=field_validation,
                              pretty=pretty,
                              dry_run=dry_run,
                              async_req=async_req)
+        if async_req:
+            return resp
+        else:
+            return resp.obj
 
-    def delete(self, grace_period_seconds: Optional[int] = None,
+    def delete(self,
+               grace_period_seconds: Optional[int] = None,
                orphan_dependents: Optional[bool] = None,
                preconditions = None,
                propagation_policy: Optional[str] = None,
@@ -396,24 +411,26 @@ class HikaruCRDCRUDDocumentMixin(object):
         delops_args["propagationPolicy"] = propagation_policy
         delops_args['dryRun']= dry_run
         do: DeleteOptions = DeleteOptions(**delops_args)
-        return self.api_call(method, url, field_manager=field_manager,
+        resp = self.api_call(method, url, field_manager=field_manager,
                              alt_body=do,
                              field_validation=field_validation,
                              pretty=pretty,
                              dry_run=dry_run,
                              async_req=async_req)
+        if async_req:
+            return resp
+        else:
+            return self
 
 
 def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
-    if not issubclass(crd_cls, HikaruDocumentBase) or not issubclass(crd_cls, HikaruCRDCRUDDocumentMixin):
+    if not issubclass(crd_cls, HikaruDocumentBase) or not issubclass(crd_cls, HikaruCRDDocumentMixin):
         raise TypeError("A CRD registered class must be a subclass of both "
                         "HikaruCRDDocumentBase and HikaruDocumentBase")
     if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
         raise TypeError("The decorated class must have both an apiVersion and kind attribute")
     if not is_dataclass(crd_cls):
         raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")
-    # _, version = process_api_version(crd_cls.apiVersion)
-    # register_version_kind_class(crd_cls, version, crd_cls.kind)
     register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)
     crdr = _RegisterCRD(plural_name, crd_cls.apiVersion, is_namespaced=is_namespaced)
     _crd_registration_details[crd_cls] = crdr

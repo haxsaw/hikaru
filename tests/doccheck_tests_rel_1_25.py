@@ -61,7 +61,7 @@ def test_docclass(cls):
 @pytest.mark.parametrize('cls', test_classes)
 def test_crd_processing(cls):
     try:
-        get_crd_schema(cls, JSONSchemaProps)
+        get_crd_schema(cls)
     except RecursionError:
         # there are a couple of recursively defined classes that we can't process
         # right now, so we just ignore them
