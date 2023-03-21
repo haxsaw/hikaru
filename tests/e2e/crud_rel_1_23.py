@@ -46,7 +46,10 @@ def beginning():
     set_default_release('rel_1_23')
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
     ns = Namespace(metadata=ObjectMeta(name=crud_namespace))
-    res = ns.createNamespace()
+    try:
+        res = ns.read()
+    except:
+        res = ns.createNamespace()
     return res
 
 

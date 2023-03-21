@@ -58,9 +58,9 @@ def get_crd_schema(cls, jsp_class: Optional[type] = None):
         except ImportError as e:  # pragma: no cover
             raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
         jsp_class = getattr(mod, "JSONSchemaProps")
-    if jsp_class is None: # pragma: no cover
-        raise RuntimeError("No JSONSchemaProps class supplied, and one can't be found "
-                           "in the v1 module of the default release")
+    if jsp_class is None:  # pragma: no cover
+        raise ValueError("No JSONSchemaProps class supplied, and one can't be found "
+                         "in the v1 module of the default release")
 
     schema = _process_cls(cls)
     jsp = jsp_class(**schema)
@@ -237,8 +237,8 @@ class HikaruCRDDocumentMixin(object):
     def get_additional_watch_args(cls) -> dict:
         reg: _RegisterCRD = _crd_registration_details.get(cls)
         if reg is None:
-            raise RuntimeError(f"Class {cls.__name__} has not been registered as "
-                               f"a CRD with register_crd_schema()")
+            raise ValueError(f"Class {cls.__name__} has not been registered as "
+                             f"a CRD with register_crd_schema()")
         return {'plural': reg.plural_name,
                 'version': reg.version,
                 'group': reg.group}
