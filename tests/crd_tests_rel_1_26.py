@@ -1,5 +1,5 @@
 from hikaru import *
-from hikaru.model.rel_1_23.v1 import *
+from hikaru.model.rel_1_26.v1 import *
 from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin, get_crd_schema)
 from hikaru.meta import FieldMetadata as FM
 from dataclasses import dataclass, field
@@ -7,7 +7,7 @@ from typing import Optional, List, Union, Dict
 import pytest
 
 
-set_default_release("rel_1_23")
+set_default_release("rel_1_26")
 
 
 def beginning():

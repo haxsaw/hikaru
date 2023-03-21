@@ -51,15 +51,16 @@ def get_crd_schema(cls, jsp_class: Optional[type] = None):
             raise TypeError("The jsp_class parameter must be one of the JSONSchemaProps classes for "
                             "one of the supported releases under hikaru.model")
     else:
+        # pragma: no cover
         def_release = get_default_release()
         try:
             mod = import_module(".v1", f"hikaru.model.{def_release}")
-        except ImportError as e:
+        except ImportError as e:  # pragma: no cover
             raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
         jsp_class = getattr(mod, "JSONSchemaProps")
-        if jsp_class is None:
-            raise RuntimeError("No JSONSchemaProps class supplied, and one can't be found "
-                               "in the v1 module of the default release")
+    if jsp_class is None: # pragma: no cover
+        raise RuntimeError("No JSONSchemaProps class supplied, and one can't be found "
+                           "in the v1 module of the default release")
 
     schema = _process_cls(cls)
     jsp = jsp_class(**schema)
@@ -115,15 +116,16 @@ def _process_cls(cls) -> dict:
         prop = props[p.name] = {}
         metadata = p.metadata
         _set_if_non_null(metadata, fm.DESCRIPTION_KEY, prop, "description")
-        _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
 
         if isclass(p.annotation) and issubclass(p.annotation, HikaruBase):
             if not is_dataclass(p.annotation):
                 raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
-                                f"a schema for it.")
+                                f"a schema for it.")  # pragma: no cover
             prop.update(_process_cls(p.annotation))
         elif p.annotation in type_map:
             prop.update({"type": type_map[p.annotation]})
+            if prop['type'] != 'boolean':
+                _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
             _check_simple_type_modifiers(p.annotation, metadata, prop)
         else:
             initial_type = p.annotation
@@ -133,29 +135,27 @@ def _process_cls(cls) -> dict:
                 type_args_len = len(type_args)
                 if type_args_len == 1:   # then this was an Optional
                     # we have an edge case where a field() doesn't have a default
-                    # specificed, but the type annotation is Optional. In this case
+                    # specified, but the type annotation is Optional. In this case
                     # we'd normally treat it as required due to the lack of default,
                     # but if optional then it should also not be required. So we'll
                     # just fish this item out of 'required' if it's in there
                     if p.default is Parameter.empty:  # normally would be required
                         try:
                             required.remove(p.name)
-                        except ValueError:
+                        except ValueError:  # pragma: no cover
                             pass
                     initial_type = type_args[0]
                     if initial_type in type_map:
                         prop["type"] = type_map[initial_type]
+                        if prop['type'] != 'boolean':
+                            _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
                         _check_simple_type_modifiers(initial_type, metadata, prop)
                         continue
                     # else we'll drop down below and look at what's in the Optional
-                elif type_args_len == 0:
+                elif type_args_len == 0:  # pragma: no cover
                     continue   # weird edge case I guess
                 else:
-                    raise NotImplemented("Multiple types in a oneOf not implemented yet")
-                    # we have multiple allowed types; out put a oneOf
-                    # oneOf = prop['oneOf'] = []
-                    # for ptype in type_args:
-                    #     alternative = {}
+                    raise NotImplementedError("Multiple types in a oneOf not implemented yet")
 
             origin = get_origin(initial_type)
             if origin in (list, List):
@@ -164,11 +164,13 @@ def _process_cls(cls) -> dict:
                 _check_array_modifiers(metadata, prop)
                 if list_of_type in type_map:
                     prop["items"] = {"type": type_map[list_of_type]}
+                    if prop['type'] != 'boolean':
+                        _set_if_non_null(metadata, fm.ENUM_KEY, prop["items"], 'enum')
                     _check_simple_type_modifiers(list_of_type, metadata, prop["items"])
                 elif isclass(list_of_type) and issubclass(list_of_type, HikaruBase):
                     if not is_dataclass(list_of_type):
                         raise TypeError(f"The list item type of attribute {p.name} is a subclass "
-                                        f"of HikaruBase but is not a dataclass")
+                                        f"of HikaruBase but is not a dataclass")  # pragma: no cover
                     prop["items"] = _process_cls(list_of_type)
                 else:
                     raise TypeError(f"Don't know how to process {p.name}'s type {p.annotation}; "
@@ -176,7 +178,7 @@ def _process_cls(cls) -> dict:
             elif isclass(initial_type) and issubclass(initial_type, HikaruBase):
                 if not is_dataclass(initial_type):
                     raise TypeError(f"The type of {p.name} is a subclass of HikaruBase "
-                                    f"but is not a dataclass")
+                                    f"but is not a dataclass")  # pragma: no cover
                 prop.update(_process_cls(initial_type))
             elif origin in (dict, Dict) or initial_type is object:
                 prop["type"] = "object"
@@ -224,7 +226,7 @@ class HikaruCRDDocumentMixin(object):
         a sibling base class
     """
 
-    def __post_init__(self, *args, **kwargs):
+    def __post_init__(self, *args, **kwargs):  # pragma: no cover
         super(HikaruCRDDocumentMixin, self).__post_init__(*args, **kwargs)
         client = kwargs.get('client')
         if client is None:
@@ -263,19 +265,19 @@ class HikaruCRDDocumentMixin(object):
         else:
             body = get_clean_dict(self)
         query_params = []
-        if pretty is not None:  # noqa: E501
+        if pretty is not None:  # pragma: no cover
             query_params.append(('pretty', pretty))
-        if dry_run is not None:  # noqa: E501
-            query_params.append(('dryRun', dry_run))  # noqa: E501
-        if field_manager is not None:  # noqa: E501
-            query_params.append(('fieldManager', field_manager))  # noqa: E501
-        if field_validation is not None:  # noqa: E501
-            query_params.append(('fieldValidation', field_validation))  # noqa: E501
+        if dry_run is not None:  # pragma: no cover
+            query_params.append(('dryRun', dry_run))
+        if field_manager is not None:  # pragma: no cover
+            query_params.append(('fieldManager', field_manager))
+        if field_validation is not None:  # pragma: no cover
+            query_params.append(('fieldValidation', field_validation))
 
         header_params = dict()
         header_params['Accept'] = self.client.select_header_accept(
             ['application/json', 'application/yaml', 'application/vnd.kubernetes.protobuf'])  # noqa: E501
-        auth_settings = ['BearerToken']  # noqa: E501
+        auth_settings = ['BearerToken']
         result = self.client.call_api(url,
                                       method,
                                       path_params,
@@ -326,11 +328,11 @@ class HikaruCRDDocumentMixin(object):
         reg_details: _RegisterCRD = _crd_registration_details.get(self.__class__)
         if reg_details is None:
             raise TypeError(f"The class {self.__class__.__name__} has not been registered "
-                            f"with register_crd_schema()")
+                            f"with register_crd_schema()")  # pragma: no cover
         parts = self.apiVersion.split("/")
         if len(parts) != 2:
             raise TypeError(f"The apiVersion does not appear to have exactly two parts "
-                            f"(group/version) split with a '/'")
+                            f"(group/version) split with a '/'")  # pragma: no cover
         group, version = parts
         if reg_details.is_namespaced:
             namespace = self.metadata.namespace
@@ -398,7 +400,7 @@ class HikaruCRDDocumentMixin(object):
         def_release = get_default_release()
         try:
             mod = import_module(".v1", f"hikaru.model.{def_release}")
-        except ImportError as e:
+        except ImportError as e:  # pragma: no cover
             raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
 
         DeleteOptions = getattr(mod, "DeleteOptions")
@@ -409,7 +411,7 @@ class HikaruCRDDocumentMixin(object):
         delops_args['orphanDependents'] = orphan_dependents
         delops_args['preconditions'] = preconditions
         delops_args["propagationPolicy"] = propagation_policy
-        delops_args['dryRun']= dry_run
+        delops_args['dryRun'] = dry_run
         do: DeleteOptions = DeleteOptions(**delops_args)
         resp = self.api_call(method, url, field_manager=field_manager,
                              alt_body=do,
@@ -422,6 +424,26 @@ class HikaruCRDDocumentMixin(object):
         else:
             return self
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, ex_traceback):
+        passed = ex_type is None and ex_value is None and ex_traceback is None
+        has_rollback = hasattr(self, "__rollback")
+        if passed:
+            try:
+                self.update()
+            except Exception:
+                if has_rollback:
+                    self.merge(getattr(self, "__rollback"), overwrite=True)
+                    delattr(self, "__rollback")
+                raise
+        if has_rollback:
+            if not passed:
+                self.merge(getattr(self, "__rollback"), overwrite=True)
+            delattr(self, "__rollback")
+        return False
+
 
 def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
     if not issubclass(crd_cls, HikaruDocumentBase) or not issubclass(crd_cls, HikaruCRDDocumentMixin):
@@ -430,7 +452,7 @@ def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
     if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
         raise TypeError("The decorated class must have both an apiVersion and kind attribute")
     if not is_dataclass(crd_cls):
-        raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")
+        raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")  # pragma: no cover
     register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)
     crdr = _RegisterCRD(plural_name, crd_cls.apiVersion, is_namespaced=is_namespaced)
     _crd_registration_details[crd_cls] = crdr

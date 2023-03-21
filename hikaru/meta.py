@@ -1249,15 +1249,15 @@ class FieldMetadata(dict):
     MIN_ITEMS_KEY = "minItems"
     MAX_ITEMS_KEY = "maxItems"
     UNIQUE_ITEMS_KEY = "uniqueItems"
-    MIN_PROPS_KEY = "minProperties"
-    MAX_PROPS_KEY = "maxProperties"
+    # MIN_PROPS_KEY = "minProperties"
+    # MAX_PROPS_KEY = "maxProperties"
     # oneOf is detected due to the use of the Union[] type annotation
 
     def __init__(self, *args,
                  description: Optional[str] = None,
-                 enum: Optional[List[str]] = None,
+                 enum: Optional[List[Any]] = None,
                  format: Optional[str] = None,
-                 additional_props_type: Optional[str] = None,
+                 additional_props_type: Optional[Any] = None,
                  minimum: Optional[Union[int, float]] = None,
                  exclusive_minimum: Optional[bool] = None,
                  maximum: Optional[Union[int, float]] = None,
@@ -1267,8 +1267,9 @@ class FieldMetadata(dict):
                  min_items: Optional[int] = None,
                  max_items: Optional[int] = None,
                  unique_items: Optional[bool] = None,
-                 min_properties: Optional[int] = None,
-                 max_properties: Optional[int] = None,
+                 # Not yet for these
+                 # min_properties: Optional[int] = None,
+                 # max_properties: Optional[int] = None,
                  **kwargs):
         super(FieldMetadata, self).__init__(*args, **kwargs)
         self[self.domain] = {}
@@ -1300,7 +1301,7 @@ class FieldMetadata(dict):
             self[self.domain][self.MAX_ITEMS_KEY] = max_items
         if unique_items is not None:
             self[self.domain][self.UNIQUE_ITEMS_KEY] = unique_items
-        if min_properties is not None:
-            self[self.domain][self.MIN_PROPS_KEY] = min_properties
-        if max_properties is not None:
-            self[self.domain][self.MAX_PROPS_KEY] = max_properties
+        # if min_properties is not None:
+        #     self[self.domain][self.MIN_PROPS_KEY] = min_properties
+        # if max_properties is not None:
+        #     self[self.domain][self.MAX_PROPS_KEY] = max_properties
