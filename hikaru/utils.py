@@ -88,6 +88,9 @@ class HikaruCallableTyper(object):
     def values(self) -> List[ParamSpec]:
         return list(self.params.values())
 
+    def has_param(self, param_name: str):
+        return param_name in self.params
+
 
 _inst_cache = {}
 

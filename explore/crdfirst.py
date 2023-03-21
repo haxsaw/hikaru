@@ -1,5 +1,5 @@
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import register_crd_schema, get_crd_schema
+from hikaru.crd import register_crd_class, get_crd_schema
 from hikaru.meta import FieldMetadata as fm
 from dataclasses import dataclass, field
 from typing import Optional
@@ -33,7 +33,7 @@ class MyPlatform(HikaruDocumentBase):
     kind: str = "MyPlatform"
 
 
-register_crd_schema(MyPlatform)
+register_crd_class(MyPlatform)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from hikaru.model.rel_1_26.v1 import *
 from hikaru import HikaruBase, HikaruDocumentBase, set_default_release
-from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin,
+from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin,
                         get_crd_schema)
 from hikaru.meta import FieldMetadata as fm
 from typing import Optional
@@ -52,7 +52,7 @@ class MyPlatform(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind: str = "MyPlatform"
 
 
-register_crd_schema(MyPlatform, plural_name="myplatforms", is_namespaced=True)
+register_crd_class(MyPlatform, plural_name="myplatforms", is_namespaced=True)
 config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
 
 crd_defined: bool = False

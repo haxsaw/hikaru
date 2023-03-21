@@ -1,7 +1,7 @@
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.watch import Watcher
-from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin,
+from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin,
                         get_crd_schema)
 from dataclasses import dataclass
 from typing import Optional
@@ -25,7 +25,7 @@ class MyResource(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: Optional[MyResourceSpec]
 
 
-register_crd_schema(MyResource, "myresources")
+register_crd_class(MyResource, "myresources")
 
 
 m = ObjectMeta(name='me')

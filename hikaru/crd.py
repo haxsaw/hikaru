@@ -31,20 +31,34 @@ from hikaru.version_kind import register_version_kind_class
 from hikaru import get_clean_dict
 from kubernetes.client.api_client import ApiClient
 
-ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
-type_map = {str: "string", int: "integer", float: "number", bool: "boolean"}
+_ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
+_type_map = {str: "string", int: "integer", float: "number", bool: "boolean"}
 
 
 def get_crd_schema(cls, jsp_class: Optional[type] = None):
     """
     Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
 
-    Only works with a dataclass!
+    This function takes a HikaruBase/HikaruDocumentBase subclass (not instance!) and returns a JSONSchemaProps
+    object that describes a schema that reflects the class. The function uses get_default_release() to determine
+    which release to acquire the JSONSchemaProps class from. The user may also manually supply the JSONSchemaProps
+    class to use to return the schema. The returned JSONSchemaProps object can then be used in creating a
+    CustomResourceDefinition.
+
+    Only works with a dataclass that is derived from HikaruBase!
 
     Limitations:
 
-    - Cannot handle recursively defined classes (yet), neither direct nor indirect
+    - Cannot handle recursively defined classes (yet), neither direct nor indirect.
+    - Cannot handle dicts whose values are anything but strings; if you need more complex types
+      then use a nested class.
+    - Cannot handle Unions of multiple types.
 
+    :param cls: a class object, derived from at least HikaruBase. A schema for this class will be
+        generated and returned as the value of the function.
+    :param jsp_class: optional type; should be a JSONSchemaProps class object (not instance). By default, this
+        function uses get_default_release() to determine which of the currently supported JSONSchemaProps classes
+        to use to return the schema. This parameter allows the caller to specify a particular release's class.
     """
     if jsp_class is not None:
         if jsp_class.__name__ != "JSONSchemaProps":
@@ -106,7 +120,7 @@ def _process_cls(cls) -> dict:
     p: ParamSpec
     for p in hct.values():
         # can we skip this one?
-        if p.name in ignorable or isinstance(p.hint_type, InitVar):
+        if p.name in _ignorable or isinstance(p.hint_type, InitVar):
             continue
         # if no default, then the param is required
         if p.default is Parameter.empty:
@@ -122,8 +136,8 @@ def _process_cls(cls) -> dict:
                 raise TypeError(f"The class {p.annotation.__name__} is not a dataclass; Hikaru can't generate "
                                 f"a schema for it.")  # pragma: no cover
             prop.update(_process_cls(p.annotation))
-        elif p.annotation in type_map:
-            prop.update({"type": type_map[p.annotation]})
+        elif p.annotation in _type_map:
+            prop.update({"type": _type_map[p.annotation]})
             if prop['type'] != 'boolean':
                 _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
             _check_simple_type_modifiers(p.annotation, metadata, prop)
@@ -145,8 +159,8 @@ def _process_cls(cls) -> dict:
                         except ValueError:  # pragma: no cover
                             pass
                     initial_type = type_args[0]
-                    if initial_type in type_map:
-                        prop["type"] = type_map[initial_type]
+                    if initial_type in _type_map:
+                        prop["type"] = _type_map[initial_type]
                         if prop['type'] != 'boolean':
                             _set_if_non_null(metadata, fm.ENUM_KEY, prop, 'enum')
                         _check_simple_type_modifiers(initial_type, metadata, prop)
@@ -162,8 +176,8 @@ def _process_cls(cls) -> dict:
                 prop["type"] = "array"
                 list_of_type = get_args(initial_type)[0]
                 _check_array_modifiers(metadata, prop)
-                if list_of_type in type_map:
-                    prop["items"] = {"type": type_map[list_of_type]}
+                if list_of_type in _type_map:
+                    prop["items"] = {"type": _type_map[list_of_type]}
                     if prop['type'] != 'boolean':
                         _set_if_non_null(metadata, fm.ENUM_KEY, prop["items"], 'enum')
                     _check_simple_type_modifiers(list_of_type, metadata, prop["items"])
@@ -214,16 +228,18 @@ class HikaruCRDDocumentMixin(object):
     """
     HikaruDocumentBase mixin to add support for CRUD methods
 
-    This class provides adjust capabilities to subclasses of HikaruDocumentBase,
-    specifically for generalized CRUD operations on CRD-based resources.
+    This class provides adjunct capabilities to subclasses of HikaruDocumentBase,
+    specifically for generalized CRUD operations on CRD resources.
 
     Add this class to the list of bases for classes meant to be used as the basis
-    for custom resource definitions. It will provide create(), read(), update(),
-    and delete() methods, as well as a generalized API call for supporting
-    additional related methods.
+    for a custom resource definitions. It will provide:
+
+    - create(), read(), update(), delete() methods,
+    - context manager capabilities,
+    - enable using the CRD class in a Watch()
 
     NOTE: this mixin only works properly when used with HikaruDocumentBase as
-        a sibling base class
+        a sibling base class; it shouldn't be used with HikaruBase
     """
 
     def __post_init__(self, *args, **kwargs):  # pragma: no cover
@@ -250,6 +266,48 @@ class HikaruCRDDocumentMixin(object):
                  pretty: Optional[bool] = None,
                  dry_run: Optional[str] = None,
                  async_req: bool = False):
+        """
+        Generalized method for calling into the K8s client API for custom objects
+
+        This is the generalized call for K8s custom objects. All of the CRD CRUD methods use this
+        method to access the underlying functionality of K8s; all behaviors are specified via the
+        parameters. You probably don't need to access this directly
+
+        :param method: str; HTTP method for the call (GET, POST, PUT, etc)
+        :param url: str; the path portion of the URL for the resource to operate on. The host portion
+            will be supplied by the underlying library based on the configuration supplied to K8s.
+        :param alt_body: optional HikaruDocumentBase instance. If supplied, it becomes the body o of the
+            request instead of self which is the default.
+        :param field_manager: optional str; fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or 128 characters long,
+            and only contain printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param field_validation: optional str; fieldValidation instructs the server on how to handle
+            objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
+            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            - Ignore: This will ignore any unknown fields that are silently dropped from the object,
+              and will ignore all but the last duplicate field that the decoder encounters. This is
+              the default behavior prior to v1.23 and is the default behavior when the
+              `ServerSideFieldValidation` feature gate is disabled.
+            - Warn: This will send a warning via the standard warning response header for each unknown
+              field that is dropped from the object, and for each duplicate field that is encountered. The
+              request will still succeed if there are no other errors, and will only persist the last of
+              any duplicate fields. This is the default when the `ServerSideFieldValidation` feature
+              gate is enabled.
+            - Strict: This will fail the request with a BadRequest error if any unknown fields would be
+              dropped from the object, or if any duplicate fields are present. The error returned from
+              the server will contain all unknown and duplicate fields encountered.
+        :param pretty: optional str; if True then the output is pretty printed.
+        :param dry_run: optional str; When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are:
+            - All: all dry run stages will be processed.
+        :param async_req: optional bool; if True, the call is async and the result requires the caller
+            to invoke get() on the returned Response object. Default is False, making the call blocking.
+        :return Response: if the call was sync, then Response.obj will contain the result, if async, then
+            you must call Response.get() to get the result.
+        """
         if not self.client:
             self.client = ApiClient()
         # things that won't get filled out further
@@ -297,6 +355,48 @@ class HikaruCRDDocumentMixin(object):
                pretty: Optional[bool] = None,
                dry_run: Optional[str] = None,
                async_req: bool = False):
+        """
+        Creates a new instance of the CRD embodied by self.
+
+        Results in a call to K8s to create a new instance of the CRD containing the data in 'self'. This
+        requires first that the CRD has been defined to K8s with a CustomResourceDefinition object (or by
+        some other means such as sending the appropriate YAML into K8s). The instance will be created as
+        long as another instance with the same name/scope doesn't already exist.
+
+        Returns a new instance of the resource with additional data filled by K8s. If an async call is done,
+        then a Response object is returned and the new instance can be acquired by calling .get() on that
+        object.
+
+        If this object already exists, and ApiError is raised by the K8s libraries.
+
+        :param field_manager: optional str; fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or 128 characters long,
+            and only contain printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param field_validation: optional str; fieldValidation instructs the server on how to handle
+            objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
+            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            - Ignore: This will ignore any unknown fields that are silently dropped from the object,
+              and will ignore all but the last duplicate field that the decoder encounters. This is
+              the default behavior prior to v1.23 and is the default behavior when the
+              `ServerSideFieldValidation` feature gate is disabled.
+            - Warn: This will send a warning via the standard warning response header for each unknown
+              field that is dropped from the object, and for each duplicate field that is encountered. The
+              request will still succeed if there are no other errors, and will only persist the last of
+              any duplicate fields. This is the default when the `ServerSideFieldValidation` feature
+              gate is enabled.
+            - Strict: This will fail the request with a BadRequest error if any unknown fields would be
+              dropped from the object, or if any duplicate fields are present. The error returned from
+              the server will contain all unknown and duplicate fields encountered.
+        :param pretty: optional str; if True then the output is pretty printed.
+        :param dry_run: optional str; When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are:
+            - All: all dry run stages will be processed.
+        :param async_req: optional bool; if True, the call is async and the result requires the caller
+            to invoke get() on the returned Response object. Default is False, making the call blocking.
+        """
         method: str = "POST"
         reg_details: _RegisterCRD = _crd_registration_details.get(self.__class__)
         if reg_details is None:
@@ -348,6 +448,41 @@ class HikaruCRDDocumentMixin(object):
              pretty: Optional[bool] = None,
              dry_run: Optional[str] = None,
              async_req: bool = False):
+        """
+        Reads an existing K8s CRD resource and retuns a populated object
+
+        Sends a read request to K8s for an existing CRD based on the data in self. If it doesn't exist,
+        the K8s libraries raise an error. If it doesn't returns a new instance that contains all the details
+        of the resource.
+
+        :param field_manager: optional str; fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or 128 characters long,
+            and only contain printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param field_validation: optional str; fieldValidation instructs the server on how to handle
+            objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
+            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            - Ignore: This will ignore any unknown fields that are silently dropped from the object,
+              and will ignore all but the last duplicate field that the decoder encounters. This is
+              the default behavior prior to v1.23 and is the default behavior when the
+              `ServerSideFieldValidation` feature gate is disabled.
+            - Warn: This will send a warning via the standard warning response header for each unknown
+              field that is dropped from the object, and for each duplicate field that is encountered. The
+              request will still succeed if there are no other errors, and will only persist the last of
+              any duplicate fields. This is the default when the `ServerSideFieldValidation` feature
+              gate is enabled.
+            - Strict: This will fail the request with a BadRequest error if any unknown fields would be
+              dropped from the object, or if any duplicate fields are present. The error returned from
+              the server will contain all unknown and duplicate fields encountered.
+        :param pretty: optional str; if True then the output is pretty printed.
+        :param dry_run: optional str; When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are:
+            - All: all dry run stages will be processed.
+        :param async_req: optional bool; if True, the call is async and the result requires the caller
+            to invoke get() on the returned Response object. Default is False, making the call blocking.
+        """
         method: str = "GET"
         url = self._get_existing_url()
         resp = self.api_call(method, url, field_manager=field_manager,
@@ -365,6 +500,40 @@ class HikaruCRDDocumentMixin(object):
                pretty: Optional[bool] = None,
                dry_run: Optional[str] = None,
                async_req: bool = False):
+        """
+        Updates an existing CRD resource.
+
+        Takes the data from self and generates and update message to K8s. The updated instance is returned
+        as a new object. If the instance doesn't exist, the K8s library raises and ApiError.
+
+        :param field_manager: optional str; fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or 128 characters long,
+            and only contain printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param field_validation: optional str; fieldValidation instructs the server on how to handle
+            objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
+            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            - Ignore: This will ignore any unknown fields that are silently dropped from the object,
+              and will ignore all but the last duplicate field that the decoder encounters. This is
+              the default behavior prior to v1.23 and is the default behavior when the
+              `ServerSideFieldValidation` feature gate is disabled.
+            - Warn: This will send a warning via the standard warning response header for each unknown
+              field that is dropped from the object, and for each duplicate field that is encountered. The
+              request will still succeed if there are no other errors, and will only persist the last of
+              any duplicate fields. This is the default when the `ServerSideFieldValidation` feature
+              gate is enabled.
+            - Strict: This will fail the request with a BadRequest error if any unknown fields would be
+              dropped from the object, or if any duplicate fields are present. The error returned from
+              the server will contain all unknown and duplicate fields encountered.
+        :param pretty: optional str; if True then the output is pretty printed.
+        :param dry_run: optional str; When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are:
+            - All: all dry run stages will be processed.
+        :param async_req: optional bool; if True, the call is async and the result requires the caller
+            to invoke get() on the returned Response object. Default is False, making the call blocking.
+        """
         method: str = "PUT"
         url: str = self._get_existing_url()
         resp = self.api_call(method, url, field_manager=field_manager,
@@ -390,12 +559,53 @@ class HikaruCRDDocumentMixin(object):
         """
         Delete the resource using the DeleteOptions from the current release.
 
-        :param field_manager:
-        :param field_validation:
-        :param pretty:
-        :param dry_run:
-        :param async_req:
-        :return:
+        :param grace_period_seconds: The duration in seconds before the object should be deleted.
+            Value must be non-negative integer. The value zero indicates delete immediately. If
+            this value is nil, the default grace period for the specified type will be used.
+            Defaults to a per object value if not specified. zero means delete immediately.
+        :param orphan_dependents: Deprecated: please use the PropagationPolicy, this field will be
+            deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the "orphan"
+            finalizer will be added to/removed from the object's finalizers list. Either this field or
+            PropagationPolicy may be set, but not both.
+        :param preconditions: optional Preconditions instances. Must be fulfilled before a deletion
+            is carried out. If not possible, a 409 Conflict status will be returned.
+        :param propagation_policy: Whether and how garbage collection will be performed. Either this
+            field or OrphanDependents may be set, but not both. The default policy is decided by the
+            existing finalizer set in the metadata.finalizers and the resource-specific default policy.
+            Acceptable values are:
+            - 'Orphan' - orphan the dependents;
+            - 'Background' - allow the garbage collector to delete the dependents
+              in the background;
+            - 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+        :param field_manager: optional str; fieldManager is a name associated with the actor or
+            entity that is making these changes. The value must be less than or 128 characters long,
+            and only contain printable characters, as defined by
+            https://golang.org/pkg/unicode/#IsPrint.
+        :param field_validation: optional str; fieldValidation instructs the server on how to handle
+            objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
+            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            - Ignore: This will ignore any unknown fields that are silently dropped from the object,
+              and will ignore all but the last duplicate field that the decoder encounters. This is
+              the default behavior prior to v1.23 and is the default behavior when the
+              `ServerSideFieldValidation` feature gate is disabled.
+            - Warn: This will send a warning via the standard warning response header for each unknown
+              field that is dropped from the object, and for each duplicate field that is encountered. The
+              request will still succeed if there are no other errors, and will only persist the last of
+              any duplicate fields. This is the default when the `ServerSideFieldValidation` feature
+              gate is enabled.
+            - Strict: This will fail the request with a BadRequest error if any unknown fields would be
+              dropped from the object, or if any duplicate fields are present. The error returned from
+              the server will contain all unknown and duplicate fields encountered.
+        :param pretty: optional str; if True then the output is pretty printed.
+        :param dry_run: optional str; When present, indicates that modifications should not be
+            persisted. An invalid or unrecognized dryRun directive will result
+            in an error response and no further processing of the request. Valid
+            values are:
+            - All: all dry run stages will be processed.
+        :param async_req: optional bool; if True, the call is async and the result requires the caller
+            to invoke get() on the returned Response object. Default is False, making the call blocking.
+        :return: Depends on the resource. Often it is an instance of the deleted resource, but may also
+            be a instance of the Status object; what is returned is defined by the swagger spec.
         """
         def_release = get_default_release()
         try:
@@ -445,12 +655,39 @@ class HikaruCRDDocumentMixin(object):
         return False
 
 
-def register_crd_schema(crd_cls, plural_name: str, is_namespaced: bool = True):
+def register_crd_class(crd_cls, plural_name: str, is_namespaced: bool = True):
+    """
+    Registers a CRD class with Hikaru, so it can find the proper class to instantiate on message receipt
+
+    Registers your CRD class with Hikaru's class tracking code so that when a message is received that
+    is associated with your CRD, Hikaru knows what class to instantiate.
+
+    The supplied class must be a subclass of HikaruDocumentBase and HikaruCRDDocumentMixin for all features
+    to work properly. Additionally, the class must contain the string attributes apiVersion and kind, as
+    well as a metadata attribute of type ObjectMeta; these are used both by Hikaru and K8s to direct
+    processing of entities sent to/from K8s.
+
+    If all requirements are met, after this call CRUD operations and Watch() objects can be used.
+
+    NOTE: for CRD classes, you should be using register_crd_schema() instead of
+        register_version_kind_class() as you normally would for custom classes.
+
+    :param crd_cls: A class object that has both HikaruDocumentBase and HikaruCRDDocumentMixin as base
+        classes.
+    :param plural_name: str; a plural name for your resource in all lower case. This should match the plural
+        entry in the CustomResourceDefinitionNames object inside your CustomResourceDefintion.
+    :param is_namespaced: bool, defaults to True. If True, then the resource's instances will be created
+        within a namespace (rather than cluster-wide), and hence the namespace attribute of ObjectMeta
+        must name an existing namespace. If False, no namespace is required, and the resource's instances
+        will be created within the cluster as a whole.
+    :return: the crd_cls value is returned to the caller.
+    """
     if not issubclass(crd_cls, HikaruDocumentBase) or not issubclass(crd_cls, HikaruCRDDocumentMixin):
         raise TypeError("A CRD registered class must be a subclass of both "
                         "HikaruCRDDocumentBase and HikaruDocumentBase")
-    if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind'):
-        raise TypeError("The decorated class must have both an apiVersion and kind attribute")
+    hct: HikaruCallableTyper = HikaruCallableTyper(crd_cls)
+    if not hasattr(crd_cls, 'apiVersion') or not hasattr(crd_cls, 'kind') or not hct.has_param('metadata'):
+        raise TypeError("The decorated class must have apiVersion, kind, and metadata attributes")
     if not is_dataclass(crd_cls):
         raise TypeError(f"The class {crd_cls.__name__} must be a dataclass")  # pragma: no cover
     register_version_kind_class(crd_cls, crd_cls.apiVersion, crd_cls.kind)

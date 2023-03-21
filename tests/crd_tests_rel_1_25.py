@@ -1,6 +1,6 @@
 from hikaru import *
 from hikaru.model.rel_1_25.v1 import *
-from hikaru.crd import (register_crd_schema, HikaruCRDDocumentMixin, get_crd_schema)
+from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin, get_crd_schema)
 from hikaru.meta import FieldMetadata as FM
 from dataclasses import dataclass, field
 from typing import Optional, List, Union, Dict
@@ -79,10 +79,10 @@ class MockApiClient(object):
 class Resource01(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
     kind: str = "Resource01"
-    apiVersion: str = "incisivetech.co.uk/v1"
+    apiVersion: str = "example.com/v1"
 
 
-register_crd_schema(Resource01, "resource01s", is_namespaced=True)
+register_crd_class(Resource01, "resource01s", is_namespaced=True)
 
 
 def test01():
@@ -92,7 +92,7 @@ def test01():
     i: Resource01 = Resource01.get_empty_instance()
     assert i.metadata is not None, "No meta object in the automatically generated instance"
     assert i.kind == 'Resource01', f'kind is {i.kind}'
-    assert i.apiVersion == 'incisivetech.co.uk/v1', f'apiVersion is {i.apiVersion}'
+    assert i.apiVersion == 'example.com/v1', f'apiVersion is {i.apiVersion}'
 
 
 def test02():
@@ -164,11 +164,11 @@ class Resource02(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
     subunit: Subunit02
     kind: str = "Resource02"
-    apiVersion: str = 'v1'
-    group: str = "incisivetech.co.uk"
+    apiVersion: str = 'example.com/v1'
+    group: str = "example.com"
 
 
-register_crd_schema(Resource02, "resource02s", is_namespaced=True)
+register_crd_class(Resource02, "resource02s", is_namespaced=True)
 
 
 def test07():
@@ -226,13 +226,14 @@ class IntCheck(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                 exclusive_maximum=False,
                                 multiple_of=5,
                                 pattern=r"shouldn't be in there"))
+    metadata: Optional[ObjectMeta] = None
     i3: int = field(default=-1)
     i5: Optional[int] = 10
     apiVersion: str = "example.com/v1"
     kind: str = "IntCheck"
 
 
-register_crd_schema(IntCheck, "intchecks")
+register_crd_class(IntCheck, "intchecks")
 
 
 def test10():
@@ -270,13 +271,14 @@ class FloatCheck(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                   exclusive_maximum=True,
                                   multiple_of=.5,
                                   pattern=r"shouldn't be in there"))
+    metadata: Optional[ObjectMeta] = None
     f3: float = field(default=-1.1)
     f5: Optional[float] = 10
     apiVersion: str = "example.com/v1"
     kind: str = "FloatCheck"
 
 
-register_crd_schema(FloatCheck, "floatchecks")
+register_crd_class(FloatCheck, "floatchecks")
 
 
 def test11():
@@ -310,13 +312,14 @@ class StrCheck(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                 pattern=r"[a-z0-9]+wibble",
                                 format="ip4",
                                 minimum=5))
+    metadata: Optional[ObjectMeta] = None
     s3: str = field(default="wibble")
     s5: Optional[str] = 10
     apiVersion: str = "example.com/v1"
     kind: str = "StrCheck"
 
 
-register_crd_schema(StrCheck, "strchecks")
+register_crd_class(StrCheck, "strchecks")
 
 
 def test12():
@@ -347,13 +350,14 @@ class BoolCheck(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                  format='01',
                                  minimum=5,
                                  min_items=1))
+    metadata: Optional[ObjectMeta] = None
     b3: bool = field(default=True)
     b5: Optional[bool] = False
     apiVersion: str = 'example.com/v1'
     kind: str = "BoolCheck"
 
 
-register_crd_schema(BoolCheck, 'boolchecks')
+register_crd_class(BoolCheck, 'boolchecks')
 
 
 def test13():
@@ -396,11 +400,12 @@ class ListCheck(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                       pattern=r"[a-j]",
                                       exclusive_maximum=True,
                                       maximum=5))
+    metadata: Optional[ObjectMeta] = None
     apiVersion: str = 'example.com/v1'
     kind: str = "ListCheck"
 
 
-register_crd_schema(ListCheck, 'listchecks')
+register_crd_class(ListCheck, 'listchecks')
 
 
 def test14():
@@ -447,11 +452,12 @@ class SimpleInnerSpec(HikaruBase):
 class SimpleInner(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: SimpleInnerSpec
     option: Optional[str]
+    metadata: Optional[ObjectMeta] = None
     kind: str = "SimpleInner"
     apiVersion: str = "example.com/v1"
 
 
-register_crd_schema(SimpleInner, "simpleinners")
+register_crd_class(SimpleInner, "simpleinners")
 
 
 @dataclass
@@ -463,11 +469,12 @@ class SimpleMiddleSpec(HikaruBase):
 @dataclass
 class SimpleMiddle(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: SimpleMiddleSpec
+    metadata: Optional[ObjectMeta] = None
     kind: str = "SimpleMiddle"
     apiVersion: str = 'example.com/v1'
 
 
-register_crd_schema(SimpleMiddle, "simplemiddles")
+register_crd_class(SimpleMiddle, "simplemiddles")
 
 
 @dataclass
@@ -479,11 +486,12 @@ class SimpleOuterSpec(HikaruBase):
 @dataclass
 class SimpleOuter(HikaruDocumentBase, HikaruCRDDocumentMixin):
     spec: Optional[SimpleOuterSpec] = field(metadata=FM(description="spec in SimpleOuter"))
+    metadata: Optional[ObjectMeta] = None
     kind: str = "SimpleOuter"
     apiVersion: str = "example.com/v1"
 
 
-register_crd_schema(SimpleOuter, "simpleouters")
+register_crd_class(SimpleOuter, "simpleouters")
 
 
 def test15():
@@ -533,12 +541,13 @@ class ListOuter(HikaruDocumentBase, HikaruCRDDocumentMixin):
                                                 min_items=1,
                                                 max_items=10,
                                                 unique_items=True))
+    metadata: Optional[ObjectMeta] = None
     l2: Optional[List[ListInnerSpec]] = None
     kind: str = "ListOuter"
     apiVersion: str = "example.com/v1"
 
 
-register_crd_schema(ListOuter, 'listouters')
+register_crd_class(ListOuter, 'listouters')
 
 
 def test17():
@@ -742,7 +751,7 @@ class ExampleResource(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind: str = "ExampleResource"
 
 
-register_crd_schema(ExampleResource, "exampleresources")
+register_crd_class(ExampleResource, "exampleresources")
 
 
 def test28():
@@ -785,16 +794,18 @@ def test29():
 
 @dataclass
 class BadVersion(HikaruDocumentBase, HikaruCRDDocumentMixin):
+    metadata: Optional[ObjectMeta] = None
     i1: int = 5
     apiVersion: str = 'v1'
     kind: str = "BadVersion"
+
 
 
 def test30():
     """
     Catch an error if apiVersion is formed wrong
     """
-    register_crd_schema(BadVersion, "badversions")
+    register_crd_class(BadVersion, "badversions")
     bv: BadVersion = BadVersion()
     try:
         bv.create()
@@ -805,12 +816,13 @@ def test30():
 
 @dataclass
 class NoNamespace(HikaruDocumentBase, HikaruCRDDocumentMixin):
+    metadata: Optional[ObjectMeta] = None
     i1: int = 5
     apiVersion: str = "example.com/v1"
     kind: str = "NoNamespace"
 
 
-register_crd_schema(NoNamespace, "nonamespaces", is_namespaced=False)
+register_crd_class(NoNamespace, "nonamespaces", is_namespaced=False)
 
 
 def test31():
@@ -841,7 +853,7 @@ class NNWithMetadata(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind: str = "NNWithMetadata"
 
 
-register_crd_schema(NNWithMetadata, "withmetadatas", is_namespaced=False)
+register_crd_class(NNWithMetadata, "withmetadatas", is_namespaced=False)
 
 
 def test33():
@@ -896,7 +908,7 @@ def test36():
     Check we raise when trying to register something not a HikaruDocumentBase subclass
     """
     try:
-        register_crd_schema(Oopsie, 'oopsies')
+        register_crd_class(Oopsie, 'oopsies')
         raise CRDTestExp("should have raised a type error")
     except TypeError as e:
         assert "A CRD registered" in str(e)
@@ -909,13 +921,13 @@ class Missing(HikaruDocumentBase, HikaruCRDDocumentMixin):
 
 def test37():
     """
-    Register should raise for missing apiVersion/kind
+    Register should raise for missing apiVersion/kind/metadata
     """
     try:
-        register_crd_schema(Missing, "missings")
+        register_crd_class(Missing, "missings")
         raise CRDTestExp("should have raised a type error")
     except TypeError as e:
-        assert "both an apiVersion and kind" in str(e)
+        assert "must have apiVersion, kind, and metadata attributes" in str(e)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from hikaru.model.rel_1_23.v1 import ObjectMeta
 from hikaru import HikaruBase, HikaruDocumentBase, set_default_release
-from hikaru.crd import register_crd_schema, HikaruCRDDocumentMixin
+from hikaru.crd import register_crd_class, HikaruCRDDocumentMixin
 from hikaru.meta import FieldMetadata as fm
 from typing import Optional
 from dataclasses import dataclass, field
@@ -31,4 +31,4 @@ class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind: str = "MyCluster"
 
 
-register_crd_schema(MyCluster, plural_name="myclusters", is_namespaced=False)
+register_crd_class(MyCluster, plural_name="myclusters", is_namespaced=False)

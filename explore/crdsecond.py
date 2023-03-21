@@ -1,5 +1,5 @@
 from hikaru.model.rel_1_23.v1 import *
-from hikaru.crd import register_crd_schema, get_crd_schema, HikaruCRDDocumentMixin
+from hikaru.crd import register_crd_class, get_crd_schema, HikaruCRDDocumentMixin
 from hikaru.meta import FieldMetadata as fm
 from dataclasses import dataclass, field
 from typing import Optional
@@ -33,7 +33,7 @@ class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
     kind: str = "MyCluster"
 
 
-register_crd_schema(MyCluster, plural_name="myclusters", is_namespaced=False)
+register_crd_class(MyCluster, plural_name="myclusters", is_namespaced=False)
 
 
 if __name__ == "__main__":

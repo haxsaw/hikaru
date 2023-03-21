@@ -1,0 +1,30 @@
+Advanced Hikaru usage
+
+Creating Derived Classes of Existing Classes
+============================================
+
+Defining New Classes to Serve as a CRD
+======================================
+
+Hikaru includes the ability to generate JSON schema from user-defined subclasses of
+HikaruBase and HikaruDocument base for the purpose of defining custom resource definitions
+(CRDs), and then subsequently allows you to use these user-defined classes to perform
+CRUD operations on the CRD just like with already defined K8s resources.
+
+.. note::
+
+    This is a new and evolving feature, and not every capability of JSON Schema will be
+    available during earlier releases.
+
+.. note::
+
+    While every attempt has been made to make simple uses of the CRD support features
+    easy to access and use, for some of the deeper aspects of Hikaru's CRD support, the
+    reader will be expected to understand the abilities and limitations of JSON Schema.
+    For any use of these features, the reader will need to understand the ins and outs
+    of creating CRDs (Hikaru does include all standard documentation for CRDs in the
+    CustomResourceDefinition class).
+
+
+
+Creating Watchers for CRD classes

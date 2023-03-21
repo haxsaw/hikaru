@@ -329,7 +329,7 @@ class HikaruBase(object):
                 p.find_by_name('name',
                                following="containers.volumeMounts")
 
-            Or suppose you wanted 'exec' from from anywhere in the lifecycle object
+            Or suppose you wanted 'exec' from anywhere in the lifecycle object
             of of the first container in a pod::
 
                 p.find_by_name('exec',
@@ -1235,6 +1235,19 @@ class HikaruDocumentBase(HikaruBase):
 
 
 class FieldMetadata(dict):
+    f"""
+    This class establishes a convention for population of a dataclasses.field()'s metadata dictionary.
+
+    The dataclasses.field() object includes a metadata dict object that can be employed by users in whatever
+    fashion they wish. Hikaru uses this dict as a means to convey schema property modifiers in the process of
+    defining CRDs. All values are stored under the {field_metadata_domain} key so as to avoid collisions with
+    other uses of this parameter.
+    
+    The FieldMetadata class provides the means to formalize the management of this info. Being a derived class
+    of dict, FieldMetadata can be used to store any other metadata the users wishes, but is primarily focused on
+    giving the user a simple mechanism for specifying property modifiers that will be rendered in the JSON schema
+    for a class meant to be a CRD.
+    """
     domain = field_metadata_domain
     DESCRIPTION_KEY = "description"
     ENUM_KEY = "enum"
@@ -1253,11 +1266,11 @@ class FieldMetadata(dict):
     # MAX_PROPS_KEY = "maxProperties"
     # oneOf is detected due to the use of the Union[] type annotation
 
-    def __init__(self, *args,
+    def __init__(self,
                  description: Optional[str] = None,
                  enum: Optional[List[Any]] = None,
                  format: Optional[str] = None,
-                 additional_props_type: Optional[Any] = None,
+                 # additional_props_type: Optional[Any] = None,
                  minimum: Optional[Union[int, float]] = None,
                  exclusive_minimum: Optional[bool] = None,
                  maximum: Optional[Union[int, float]] = None,
@@ -1269,9 +1282,41 @@ class FieldMetadata(dict):
                  unique_items: Optional[bool] = None,
                  # Not yet for these
                  # min_properties: Optional[int] = None,
-                 # max_properties: Optional[int] = None,
+                 # max_properties: Optional[int] = None
                  **kwargs):
-        super(FieldMetadata, self).__init__(*args, **kwargs)
+        """
+        Create a new FieldMetadata object
+
+        Creates a new instance that can be provided as the value of the metadata argument to dataclasses.field()
+
+        :param description: optional string; if provided, will be established as the description modifier for
+            the field
+        :param enum: optional list of any type; if provided, will establish the list of valid values for the property.
+            The user should make sure that the type of the values in the enum match the type of the field; Hikaru does
+            no checking in this regard (but the K8s back end probably will).
+        :param format: optional string; allowed format for the supplied value. Available formats are dependent on the
+            property's data type. Consult the JSON Schema spec for details.
+        :param minimum: optional int or float; the minimum value that the property is allowed to assume.
+        :param exclusive_minimum: optional bool; whether the minimum includes or excludes the minimum itself. If True,
+            the property's value must be > minimum, if False it may be >= the minimum. It makes no sense to supply
+            this without also specifying the minimum.
+        :param maximum: optional int or float; the maximum value that the property is allowed to assume.
+        :param exclusive_maximum: optional bool; whether the maximum includes or excludes the maximum itself. If True,
+            the property's value must be < maximum, and if False it may be <= maximum. It makes no sense to supply
+            this without also specifying the maximum.
+        :param pattern: optional string; a regular expression in JSON notation that describes the accepted strings
+            for the property (which must be type string). Usually best specified with a raw string to avoid regex
+            escapes.
+        :param multiple_of: optional float or int; specifies that the property value must be evenly divisible by the
+            value of this parameter. The type of value should match the type of the property.
+        :param min_items: optional int; for array parameters, indicates the minimum number of elements that the
+            array must have.
+        :param max_items: optional int; for array parameters, indicates the maximum number of elements that the
+            array must have.
+        :param unique_items: optional bool; for array parameters, True indicates that each array element must have a
+            unique value.
+        """
+        super(FieldMetadata, self).__init__(*(), **kwargs)
         self[self.domain] = {}
         if description is not None:
             self[self.domain][self.DESCRIPTION_KEY] = description
@@ -1281,8 +1326,8 @@ class FieldMetadata(dict):
             self[self.domain][self.ENUM_KEY] = list(enum)
         if format is not None:
             self[self.domain][self.FORMAT_KEY] = format
-        if additional_props_type is not None:
-            self[self.domain][self.ADDITIONAL_PROPS_KEY] = additional_props_type
+        # if additional_props_type is not None:
+        #     self[self.domain][self.ADDITIONAL_PROPS_KEY] = additional_props_type
         if minimum is not None:
             self[self.domain][self.MIN_KEY] = minimum
         if exclusive_minimum is not None:
