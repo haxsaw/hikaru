@@ -6,6 +6,23 @@ Creating Derived Classes of Existing Classes
 Defining New Classes to Serve as a CRD
 ======================================
 
+I.  Intro to Hikaru CRD support
+    i.  Overall abilities
+    ii. Features
+    iii.Limitations
+    iv. Use cases
+    v.  Warnings
+II. Quick Example
+    i.  Explanation of example (vocab?)
+    ii. Resource
+    iii.Definition
+    iv. Creation/deletion
+    v.  Watching
+    vi. Disposal
+III.Designing a CRD
+    i.  HikaruDocumentBase, HikaruCRDDocumentMixin and HikaruBase roles
+    ii.
+
 Hikaru includes the ability to generate JSON schema from user-defined subclasses of
 HikaruBase and HikaruDocument base for the purpose of defining custom resource definitions
 (CRDs), and then subsequently allows you to use these user-defined classes to perform

@@ -1,5 +1,5 @@
 from resource import MyCluster
-from hikaru import set_default_release, get_yaml
+from hikaru import get_yaml
 from hikaru.watch import Watcher
 from kubernetes import config
 

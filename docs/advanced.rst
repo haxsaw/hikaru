@@ -1,6 +1,5 @@
-*******************************************
-Advanced Hikaru: Defining Your Own Classes
-*******************************************
+Defining Your Own Classes
+==================================
 
 Hikaru supports the creation and integration of custom classes for a number of use cases. It can allow you to supply a custom class to an existing operation as well as creating instances of your custom class automatically when needed. Some use cases
 are quite simple to implement, while others demand a bit more knowledge of Python dataclasses
@@ -18,11 +17,11 @@ for your classes to work properly within Hikaru:
    if you wanted to create a subclass of ``Pod``, you will run into errors if the module that
    contains your ``Pod`` subclass has an import statement like the following:
 
-    ``from hikaru.model.rel_1_21.v1 import Pod``
+    ``from hikaru.model.rel_1_26.v1 import Pod``
 
    Instead, you must import all of the symbols from that release/version:
 
-    ``from hikaru.model.rel_1_21.v1 import *``
+    ``from hikaru.model.rel_1_26.v1 import *``
 
 2. All of your custom classes must be defined at the top-level within your module, otherwise
    Hikaru won't be able to find them when needed.
@@ -74,7 +73,7 @@ as a parameter, and hides the actual create method name:
 .. code:: python
 
     from hikaru import register_version_kind_class
-    from hikaru.model.rel_1_21 import *
+    from hikaru.model.rel_1_26 import *
 
     class CRUDPod(Pod):
         def create_in_namespace(self, namespace: str):
@@ -107,7 +106,7 @@ a ``__post_init__()`` method like the following:
 
     from typing import Any
     from hikaru import register_version_kind_class
-    from hikaru.model.rel_1_21 import *
+    from hikaru.model.rel_1_26 import *
 
     class DictPod(Pod):
         def __post_init__(self, client: Any = None):  # NOTE THE PARAMETERS!
@@ -191,91 +190,6 @@ can't be used with ``InitVar`` fields. This is why we create an empty dict in th
 Making a Class For a New Document Type
 #######################################
 
-Kubernetes provides a means to create your own controllers for common aggregations of basic
-components, and also provides a means for objects known as 'operators' to be defined that allow
-you to create YAML with new data and fields that those controllers can use. Using Hikaru
-base classes and the class registration facility, you can get Hikaru to consume this YAML and
-yield your own custom class instances, or model these operators directly in Python with the
-same capabilities as existing Hikaru classes.
-
-To create a class that supports a new YAML document type, you create a derived dataclass directly
-from ``HikaruDocumentBase`` rather than one of its subclasses, and then provide it with all of
-the fields required to hold the data for your operator. You **must** include ``apiVersion``
-and ``kind`` fields in your class definition, but you do not need to implement a
-``__post_init__()`` method unless you have other class attributes that you want to add that
-aren't part of those that come from the official document definition.
-
-As an example, let's suppose we have an operator that we want to define that will have a YAML
-representation that looks like the following:
-
-.. code:: yaml
-
-    ---
-    apiVersion: hikaru.v1
-    kind: outer121
-    metadata:
-      name: custom-tester
-      namespace: default
-    inner:
-      strField: gotta have it
-      intField: 43
-      optIntField: 121
-
-Our outer object contains two other objects; one is a standard ``metadata`` object, and the other
-has the key ``inner``, sort of like a ``spec`` object as in Pods or Deployments. You need to
-model all objects that your aren't going to reuse from the existing set of Hikaru model objects.
-Here is an example implementation of the classes that can consume this YAML:
-
-.. code:: python
-
-    from typing import Optional
-    from dataclasses import dataclass
-    from hikaru import HikaruBase, HikaruDocumentBase
-    from hikaru.model.rel_1_21 import *
-
-    @dataclass
-    class Inner(HikaruBase):
-        strField: str
-        intField: int
-        optStrField: Optional[str] = None
-        optIntField: Optional[int] = None
-    
-    
-    @dataclass
-    class Outer(HikaruDocumentBase):
-        apiVersion: str = 'hikaru.v1'
-        kind: str = 'outer'
-        metadata: Optional[ObjectMeta] = None
-        inner: Optional[Inner] = None
-
-    # we only register the subclass of HikaruDocumentBase
-    register_version_kind_class(Outer, Outer.apiVersion, Outer.kind)
-
-There are a few things to note here:
-
-1. The ``Inner`` class is a subclass of ``HikaruBase``, not ``HikaruDocumentBase``. This is
-   because it only appears as a component of a document class.
-2. We can have fields without default values, but these must come before any fields with
-   default values. Any fields that don't have a default value **must** be specified in the YAML
-   and are treated as required parameters when creating such objects in Python.
-3. We only register the top-level class, ``Outer``. It **must** have both ``apiVersion`` and
-   ``kind`` attributes; if it doesn't, ``register_version_kind_class()`` will raise an
-   exception.
-4. We can mix existing Hikaru classes (here, ``ObjectMeta``) with our own custom classes.
-5. As before, we can add methods or even ``__post_init__()`` implementations as described above.
-
-.. note::
-
-    A word on field names: Kubernetes YAML uses camel case for all field names in YAML objects,
-    but uses PEP8 names within the Kubernetes Python client. In order to stay aligned with
-    the YAML convention of camel case, Hikaru maintains camel case for the generated Python
-    classes' field names, but will convert to PEP8 when needed. Conversion circumstances are
-    sometimes subtle, and so to avoid the sudden appearance of a PEP8 name instead of camel
-    case, it is best to always use camel case when defining your field names in custom
-    classes such as the above.
-
-Once registered, Hikaru will be able to create instances of the ``Outer`` class when parsing
-YAML as in the example, and if asked to produce YAML from Python, it will generate appropriately
-formatted YAML with the desired content. Processing with JSON and Python dicts will also
-operate properly.
-
+The main use case for completely new document (resource) types is to create a custom resource
+defintion, or CRD. Hikaru has direct support for creating CRDs; refer to the advanced topic
+<< SOME REF >> for details.

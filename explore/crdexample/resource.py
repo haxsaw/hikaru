@@ -7,28 +7,51 @@ from dataclasses import dataclass, field
 
 set_default_release("rel_1_23")
 
-
-@dataclass
-class MyClusterSpec(HikaruBase):
-    appId: str
-    language: str = field(metadata=fm(enum=["csharp", "python", "go"]))
-    environmentType: str = field(metadata=fm(enum=["dev", "test", "prod"]))
-    os: Optional[str] = field(default=None, metadata=fm(enum=["windows",
-                                                              "linux"]))
-    instanceSize: Optional[str] = field(default=None,
-                                        metadata=fm(enum=["small",
-                                                          "medium",
-                                                          "large"]))
-    replicas: Optional[int] = field(default=1,
-                                    metadata=fm(minimum=1))
+plural = "myplatforms"
+group = "example.com"
 
 
 @dataclass
-class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
-    spec: MyClusterSpec
+class MyPlatformSpec(HikaruBase):
+    appId: str = field(metadata=fm(
+        description="The ID of the app this platform is for",
+        pattern=r'^\d{3}-\d{2}-\d{4}$'))
+    language: str = field(metadata=fm(
+        description="Which language the app to deploy is written",
+        enum=["csharp", "python", "go"]))
+    environmentType: str = field(metadata=fm(
+        description="Deployment env type",
+        enum=["dev", "test", "prod"]))
+    os: Optional[str] = field(default=None, metadata=fm(
+        description="OS required for the deployment",
+        enum=["windows",
+              "linux"]))
+    instanceSize: Optional[str] = field(
+        default=None,
+        metadata=fm(
+            description="Size of the instance needed; default is 'small'",
+            enum=["small",
+                  "medium",
+                  "large"]))
+    replicas: Optional[int] = field(
+        default=1,
+        metadata=fm(description="How many replicas should be created, min 1",
+                    minimum=1))
+
+
+@dataclass
+class MyPlatform(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
-    apiVersion: str = "example.com/v1"
-    kind: str = "MyCluster"
+    spec: Optional[MyPlatformSpec] = None
+    apiVersion: str = f"{group}/v1"
+    kind: str = "MyPlatform"
 
 
-register_crd_class(MyCluster, plural_name="myclusters", is_namespaced=False)
+register_crd_class(MyPlatform, plural_name=plural, is_namespaced=False)
+
+
+if __name__ == "__main__":
+    from hikaru import get_yaml
+    from hikaru.crd import get_crd_schema
+
+    print(get_yaml(get_crd_schema(MyPlatform)))

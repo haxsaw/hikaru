@@ -20,7 +20,7 @@ Release: |release|
    hikaru-document
    using-with-kubernetes
    watchers
-   advanced
+   advanced-topics
    patterns-recipes
    issues
    reference

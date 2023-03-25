@@ -1231,7 +1231,36 @@ class HikaruDocumentBase(HikaruBase):
         self._status = None
 
     def get_status(self):
+        """
+        Returns a status object, if a call resulted in on
+
+        It turns out that for certain resources, a delete() operation will result in K8s returning a sort of odd
+        object: a Status resource, but one whose kind and apiVersion properties indicate it is a different type
+        of message altogether. In these instances, Hikaru would try to instantiate the class identified by the
+        kind/apiVersion attributes, but generally not fail as most of the time the pieces that are missing in the
+        received message are optional on the receiving class. However, this doesn't always happen, and besides,
+        the lack of visible status hides important information. So the following solution was settled on in order
+        to not break existing code: Hikaru now detects if a Status object is being returned, and if so it creates
+        and instance with the received data and stores it in a private variable. The method returns self as usual,
+        but this new method returns the status object if there is one.
+
+        If a status object is returned, it remains held by self until it is explicitly cleared with clear_status()
+
+        :returns: None or a Status object if one was present from the previous call.
+        """
         return self._status
+
+    def clear_status(self):
+        """
+        Clear out any previously held status.
+
+        See the docstring for get_status() to understand when Status objects might be available.
+
+        This call clears out any held Status so that subsequent calls that don't generate Status won't be confused
+        by the presence of a previously received status. It is the responsibility of the user of the object
+        to determine when Status should be cleared out.
+        """
+        self._status = None
 
 
 class FieldMetadata(dict):
@@ -1252,7 +1281,6 @@ class FieldMetadata(dict):
     DESCRIPTION_KEY = "description"
     ENUM_KEY = "enum"
     FORMAT_KEY = "format"
-    ADDITIONAL_PROPS_KEY = "additional_props_type"
     MIN_KEY = "minimum"
     EX_MIN_KEY = "exclusiveMinimum"
     MAX_KEY = "maximum"
@@ -1262,6 +1290,7 @@ class FieldMetadata(dict):
     MIN_ITEMS_KEY = "minItems"
     MAX_ITEMS_KEY = "maxItems"
     UNIQUE_ITEMS_KEY = "uniqueItems"
+    # ADDITIONAL_PROPS_KEY = "additional_props_type"
     # MIN_PROPS_KEY = "minProperties"
     # MAX_PROPS_KEY = "maxProperties"
     # oneOf is detected due to the use of the Union[] type annotation

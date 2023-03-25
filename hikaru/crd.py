@@ -452,7 +452,7 @@ class HikaruCRDDocumentMixin(object):
         Reads an existing K8s CRD resource and retuns a populated object
 
         Sends a read request to K8s for an existing CRD based on the data in self. If it doesn't exist,
-        the K8s libraries raise an error. If it doesn't returns a new instance that contains all the details
+        the K8s libraries raise an error. If it does it returns a new instance that contains all the details
         of the resource.
 
         :param field_manager: optional str; fieldManager is a name associated with the actor or
@@ -505,6 +505,11 @@ class HikaruCRDDocumentMixin(object):
 
         Takes the data from self and generates and update message to K8s. The updated instance is returned
         as a new object. If the instance doesn't exist, the K8s library raises and ApiError.
+
+        NOTE: An update can only be performed on an instance that was "read" first. However, when the update
+            is sent, if the instance has changed in K8s first, the update will fail with a message that the
+            update isn't on the latest version of the resource. You will need to read the resource again,
+            re-apply the changes, and then call update() once again..
 
         :param field_manager: optional str; fieldManager is a name associated with the actor or
             entity that is making these changes. The value must be less than or 128 characters long,

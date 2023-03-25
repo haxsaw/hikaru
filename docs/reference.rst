@@ -44,6 +44,14 @@ Hikaru modelling base classes
 .. autoclass:: hikaru.HikaruDocumentBase
    :members:
 
+.. _HikaruCRDDocumentMixin doc:
+
+.. autoclass:: hikaru.crd.HikaruCRDDocumentMixin
+
+.. _FieldMetadata doc:
+
+.. autoclass:: hikaru.meta.FieldMetadata
+
 .. _Response doc:
 
 .. autoclass:: hikaru.Response
@@ -133,3 +141,11 @@ Hikaru functions
 .. _rollback_cm doc:
 
 .. autofunction:: hikaru.rollback_cm
+
+.. _get_crd_schema doc:
+
+.. autofunction:: hikaru.crd.get_crd_schema
+
+.. _register_crd_class doc:
+
+.. autofunction:: hikaru.crd.register_crd_class
