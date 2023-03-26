@@ -34,7 +34,7 @@ attributes set to another object type. This has turned out to be a problem when
 deleting CRDs, as the deletion message returns a Status that presents itself as the CRD,
 and that mismatch causes an exception when processing the return.
 
-Hikaru now senses this in a general way, and handles it in the following way:
+Hikaru now senses this in general, and handles it in the following way:
 
 1. The Status message is recognized and handled as a Status message.
 2. The object on which the ``delete()`` was invoked has none of the data in the object
