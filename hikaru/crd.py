@@ -203,6 +203,9 @@ def _process_cls(cls) -> dict:
                 # we can eventually clarify, but for now we'll just treat it as a k/v
                 # pairs collection
                 prop["additionalProperties"] = {"type": "string"}
+            elif initial_type is InitVar:
+                # some Python's let this through; skip it
+                continue
             else:
                 raise TypeError(f"Don't know how to process type {p.name}'s {p.annotation}; "
                                 f"origin: {get_origin(p.annotation)}, args: {get_args(p.annotation)}")

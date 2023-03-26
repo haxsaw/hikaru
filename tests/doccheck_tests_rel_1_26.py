@@ -73,5 +73,6 @@ if __name__ == "__main__":
     try:
         for cls in test_classes:
             test_docclass(cls)
+            test_crd_processing(cls)
     finally:
         ending()

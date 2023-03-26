@@ -2,6 +2,50 @@
 Release Notes
 *************
 
+v1.0.0b
+-------
+
+*Default K8s release:* 26.x
+
+*Deprecated K8s release:* 23.x
+
+This release of Hikaru introduces a signficant new feature, support for user-defined
+custom resource definitions (CRDs). The capability integrates smoothly with the current
+capabilities of Hikaru and supports:
+
+- The ability to define the structure of a CRD with Hikaru classes, either from scratch
+  or to mimic one that is already in your environment,
+- Sending the defintition into Kubernetes where it will be established as a CRD managed
+  by K8s,
+- Managing instances of the new CRD using CRUD methods,
+- Establishing Watchers on the new CRD to in order to monitor activity or create
+  controllers in Python,
+- The use of CRD classes as context managers, just like other Hikaru document classes.
+
+The new features are found in the ``hikaru.crd`` and ``hikaru.meta`` modules, and consists
+of two new classes and two new functions. The documentation at ReadTheDocs has details
+with examples under the "Advanced Topics" section. There are also some examples in the
+github repo under explore/crdexample.
+
+Additionally, a pair of new methods has been added to HikaruDocumentBase: ``get_status()``
+and ``clear_status()``. If the course of developing the CRD support, it was discovered that
+certain Kubernetes calls return a Status object, but with ``apiVersion`` and ``kind``
+attributes set to another object type. This has turned out to be a problem when
+deleting CRDs, as the deletion message returns a Status that presents itself as the CRD,
+and that mismatch causes an exception when processing the return.
+
+Hikaru now senses this in a general way, and handles it in the following way:
+
+1. The Status message is recognized and handled as a Status message.
+2. The object on which the ``delete()`` was invoked has none of the data in the object
+   changed.
+3. The status object is held in a private variable and can be retrieved by calling
+   ``get_status()`` on the object. If this returns None then there was no status returned.
+4. The user can clear out a received status on an object with ``clear_status()``.
+
+In this way the existing API to Hikaru classes remains intact but any Status that is
+returned is now available for examination.
+
 v0.16.0b
 --------
 
