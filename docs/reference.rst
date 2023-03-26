@@ -48,9 +48,17 @@ Hikaru modelling base classes
 
 .. autoclass:: hikaru.crd.HikaruCRDDocumentMixin
 
+   .. automethod:: create
+   .. automethod:: read
+   .. automethod:: update
+   .. automethod:: delete
+   .. automethod:: api_call
+
 .. _FieldMetadata doc:
 
 .. autoclass:: hikaru.meta.FieldMetadata
+
+   .. automethod::  __init__
 
 .. _Response doc:
 

@@ -1,11 +1,13 @@
 from hikaru.model.rel_1_23.v1 import ObjectMeta
-from hikaru import HikaruBase, HikaruDocumentBase, set_default_release, get_yaml
-from hikaru.crd import register_crd_class, HikaruCRDDocumentMixin, get_crd_schema
-from hikaru.meta import FieldMetadata as fm
+from hikaru import (HikaruBase, HikaruDocumentBase,
+                    set_default_release)
+from hikaru.crd import register_crd_class, HikaruCRDDocumentMixin
 from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 set_default_release("rel_1_23")
+plural = "myplatforms"
+group = "example.com"
 
 
 @dataclass
@@ -22,12 +24,15 @@ class MyPlatformSpec(HikaruBase):
 class MyPlatform(HikaruDocumentBase, HikaruCRDDocumentMixin):
     metadata: ObjectMeta
     spec: Optional[MyPlatformSpec] = None
-    apiVersion: str = "example.com/v1"
+    apiVersion: str = f"{group}/v1"
     kind: str = "MyPlatform"
 
 
-register_crd_class(MyPlatform, plural_name="myplatforms", is_namespaced=False)
+register_crd_class(MyPlatform, plural, is_namespaced=False)
 
 
 if __name__ == "__main__":
+    from hikaru import get_yaml
+    from hikaru.crd import get_crd_schema
+
     print(get_yaml(get_crd_schema(MyPlatform)))

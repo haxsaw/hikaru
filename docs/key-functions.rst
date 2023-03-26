@@ -251,3 +251,26 @@ rollback_cm()
 When using an instance of a HikaruDocumentBase subclass as a context manager,
 wrapping it with this function in the ``with`` statement sets the object so that it
 can roll back to its original state if an error occurs in the ``with`` block.
+
+register_crd_class()
+********************
+
+:ref:`Documentation<register_crd_class doc>`
+
+Registers a new user-created custom resource definition class with Hikaru. This is similar to 
+``registers_version_kind_class()``, but captures additional data needed for supporting user
+created resources. This function registers the class with Hikaru's runtime system, which allows
+Hikaru to create instances of the class when Kubernetes sends a message for this resource,
+as well as establishing the appropriate watch mechanisms for supporting Watchers on CRDs.
+
+get_crd_schema()
+****************
+
+:ref:`Documentaton<get_crd_schema doc>`
+
+Inspects a ``HikaruDocumentBase`` subclass and generates a ``JSONSchemaProps`` object that contains
+the OpenAPI schema for the supplied subclass. This can then be viewed if desired, but the primary
+use for the returned schema is to supply it to a ``CustomResourceDefinition`` object to define
+the subclass as a CRD to Kubernetes. You can read more about creating CRDs 
+:ref:`here<Hikaru CRD Support>`.
+

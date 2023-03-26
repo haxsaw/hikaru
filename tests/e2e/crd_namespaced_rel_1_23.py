@@ -11,6 +11,8 @@ import pytest
 
 namespace = "rel-1-23-crd"
 
+set_default_release("rel_1_23")
+
 
 def beginning():
     set_default_release("rel_1_23")
@@ -208,3 +210,18 @@ def test06():
     result = crd.delete()
     crd_defined = False
     assert result
+
+
+if __name__ == "__main__":
+    beginning()
+    the_tests = {k: v for k, v in globals().items()
+                 if k.startswith('test') and callable(v)}
+    try:
+        for k, v in the_tests.items():
+            try:
+                v()
+            except Exception as e:
+                print(f'{k} failed with {str(e)}, {e.__class__}')
+                raise
+    finally:
+        ending()

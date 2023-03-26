@@ -224,7 +224,7 @@ its ``create()`` method. In a file called `instantiate.py` add this code:
         mc: MyPlatform = MyPlatform(
             metadata=ObjectMeta(name="first-go"),
             spec=MyPlatformSpec(
-                appId="first-go-spec",
+                appId="123-45-6789",
                 language="python",
                 environmentType="dev",
                 instanceSize="small"
@@ -319,7 +319,7 @@ types, and default values for specific attributes. The following sections go ove
 Base classes
 ------------
 
-Hikaru CRDs are defined by creating a class with both ``HikaruDocumentBase`` and ``HikaruCRDDocumentMixin`` as
+Hikaru CRDs are defined by creating a topmost class with both ``HikaruDocumentBase`` and ``HikaruCRDDocumentMixin`` as
 bases in the topmost class. **By 'topmost', we are referring to the class that gives the CRD its identity and
 serves as the root object in a hierarchy of data and other objects**.
 While a CRD may be comprised of multiple classes, only the topmost class should be inherited from these
@@ -327,13 +327,13 @@ two bases. All other classes in a CRD must inherit from ``HikaruBase``.
 
 Each of these classes provides specific capabilities:
 
-- *HikaruBase* provides all the foundation machinery to integrate a derived class into the Hikaru
+- ``HikaruBase`` provides all the foundation machinery to integrate a derived class into the Hikaru
   runtime, as well as providing a number of common capabilites such as duplication, merging, rendering
   into different forms, etc. See
-- *HikaruDocumentBase*, which is a subclass of ``HikaruBase``, add some additional capability to allow
+- ``HikaruDocumentBase``, which is a subclass of ``HikaruBase``, adds some additional capability to allow
   a class to serve as a 'topmost' class for a K8s resource. So for example, a Pod is topmost class
   that describes pods, and it is derived from HikaruDocumentBase.
-- *HikaruCRDDocumentMixin* is an adjunct class for HikaruDocumentBase that adds standard CRUD methods
+- ``HikaruCRDDocumentMixin`` is an adjunct class for HikaruDocumentBase that adds standard CRUD methods
   and context manager capabilities to all topmost CRD resource classes.
 
 Required attribute: ``apiVersion: str = "<group>/<version>"``
@@ -378,7 +378,7 @@ Required attribute: ``kind: str = "CRDName"``
 ----------------------------------------------
 
 A topmost class must contain a ``kind`` string attribute whose default value is a name for the kind of
-resource a class represents. Conventially, this should simply be the name of the resource class: for
+resource a class represents. Conventionally, this should simply be the name of the resource class: for
 instance, in the initial example, our topmost class is MyPlatform, and the kind of that class is
 "MyPlatform". The only constraint is that there can only be one class with a specific combination of
 version and kind values; Hikaru only tracks a single class for each unique combination of these values.
@@ -393,8 +393,8 @@ fail without it, and so it is best to include it as a required attribute.
 Decorated with ``dataclass``
 -----------------------------
 
-Every class in your CRD, whether the topmost class or not, must be decorated with the `dataclasses`
-module's `dataclass` decorator. If this is missing, Hikaru will not be able to properly inspect your
+Every class in your CRD, whether the topmost class or not, must be decorated with the ``dataclasses``
+module's ``dataclass`` decorator. If this is missing, Hikaru will not be able to properly inspect your
 CRD's classes which will result in runtime errors. So be sure to use this decorator for all classes in
 your CRD.
 
@@ -434,30 +434,58 @@ an ObjectMeta instance for the metadata attribute.
 
 Other things to note here:
 
-- MyPlatformSpec is derived from HikaruBase, while the topmost class MyPlatform is derived from both
-  HikaruDocumentBase and HikaruCRDDocumentMixin.
-- You can reuse any existing Kubernetes class within your CRD classes; here, MyPlatform uses a standard
-  ObjectMeta class.
+- ``MyPlatformSpec`` is derived from ``HikaruBase``, while the topmost class ``MyPlatform`` is derived from both
+  ``HikaruDocumentBase`` and ``HikaruCRDDocumentMixin``.
+- You can reuse any existing Kubernetes class within your CRD classes; here, ``MyPlatform`` uses the standard
+  ``ObjectMeta`` class.
 - The ``metadata`` attribute has no default and so appears before the other attributes in the dataclass.
 
 Supported type annotations
 --------------------------
 
+Python type annotations have grown considerably, but not every construct is currently supported by Hikaru.
+Hikaru support has largely been driven by the requirements of the K8s API spec. The following list
+summarizes the annotations that Hikaru can process:
+
+- int
+- float
+- str
+- bool
+- dict (str keys, str values)
+- subclass of HikaruBase
+- List of any of the above
+- Any of the above, including List, can be placed inside Optional[]
+
+Note that ``datetime`` isn't listed above; these come in as strings parseable into datetime objects. This is
+consistent with Kubernetes use; datetimes are strings with a format value of 'date-time'.
+
+Forward references are supported in the normal way. To make a forward reference to a HikaruBase subclass
+in a type annotation, put the class name in quotes like so:
+
+.. code:: python
+
+    class X(HikaruBase):
+        field_x: List['SomeClassToCome']   # the forward ref
+        # more fields...
+
+    class SomeClassToCome(HikaruBase):
+        # and so on...
+
 Specifying more details with field()
 -------------------------------------
 
-The dataclasses module includes a function named ``fields()``; this function provides the user a way to specify
-some additional details regarding the nature of a dataclass attribute. Hikaru works with dataclasses
-that use field() and provides some additional tools to use with field() to allow Hikaru to generate
-richer schema for defining a CRD to Kubernetes.
+The standard ``dataclasses`` module includes a function named ``field()``; this factory function
+provides the user a way to specify some additional details regarding the nature of a dataclass
+attribute. Hikaru works with dataclasses that use ``field()`` and provides some additional tools to
+use with ``field()`` to allow Hikaru to generate richer schema for defining a CRDs to Kubernetes.
 
-The field() factory function includes an argument ``metadata``, which is a dictionary that Python leaves to
-the user to employ however they wish; the field() factory captures the value but does nothing with it.
+The ``field()`` factory function includes an argument ``metadata``, which is a dictionary that Python leaves to
+the user to employ however they wish; the ``field()`` factory captures the value but does nothing with it.
 Hikaru provides another class, ``hikaru.meta.FieldMetadata``, which is a dict that can be used for the value
 of the ``metadata`` parameter, but which imposes a normalized structure on the dict for storing Hikaru values
 that should avoid a collision with any other uses.
 
-Before we go into the use of ``FieldMetadata`` in detail, let's revisit the MyPlatform example from before.
+Before we go into the use of ``FieldMetadata`` in detail, let's revisit the ``MyPlatform`` example from before.
 We can see in YAML form the schema that Hikaru will generate when sent to YAML with the one liner:
 
 .. code:: python
@@ -483,8 +511,8 @@ which produces this resultant schema:
 
 This shows that the only validation data sent to K8s will be the types involved in each field.
 
-Now let's rewrite the above CRD classes
-to use the ``field()`` factory and ``FieldMetadata`` for tuning how Hikaru will render the schema for the CRD.
+Now let's rewrite the above CRD classes to use the ``field()`` factory and ``FieldMetadata``
+for tuning how Hikaru will render the schema for the CRD.
 
 .. code:: python
 
@@ -592,6 +620,10 @@ them:
 | unique_items      | array (list, tuple)           | bool                 | True if all array items must be unique  |
 +-------------------+-------------------------------+----------------------+-----------------------------------------+
 
+* refer to the OpenAPI spec for allowed format values
+
+If any of the following are used with an array type, they apply to the elements in the array:
+``enum, format, minimum, exclusive_minimum, maximum, exclusive_maximum, pattern, or multiple_of``. 
 Modifiers used with the incorrect type of property are ignored.
 
 .. note::
@@ -605,16 +637,19 @@ Modifiers used with the incorrect type of property are ignored.
 Good practices
 ------------------
 
-Several good practices should be observed when creating your own CRDs:
+Several good practices should be observed when defining your own CRDs:
 
 - **Split the CRD into at least two parts, the topmost object and the ``spec``, and make the spec optional**:
   virtually every existing K8s resource is organized this way, and the reason is simple: you only need the
   contents of the spec when instantiating the resource, not when reading, or deleting. So if you make the spec
-  optional then when you want to read/delete you only need to provide the name via the metadata.
+  optional then when you want to read/delete you only need to provide the name via the metadata. Typically, the topmost
+  object contains ``apiVersion``, ``kind``, ``metadata``, and ``spec``, while the ``spec`` object contains all the
+  data relevant to the CRD itself. You don't have to do things this way, but it can be a lot simpler to follow
+  this convention.
 - **House the resource classes in their own module**: this way the resources can be imported into any other module
   easily for whatever purpose.
-- **Add a call to ``set_default_release()`` for the release your CRD depends on**: if you do this in the resource
-  module, you won't need to do this in the main code that uses the resource.
+- **Add a call to ``set_default_release()`` for the release your CRD depends on in the resource module**: if you
+  do this in the resource module, you won't need to do this in the main code that uses the resource.
 - **If you're creating a class to mimic an existing CRD**, you may not want to bother with adding ``field()``
   calls with ``FieldMetadata`` to your CRD dataclasses. This is because the ``FieldMetadata`` elements only come
   into play when defining the CRD to Kubernetes; Hikaru does nothing with them in any other cases, so they
@@ -622,11 +657,14 @@ Several good practices should be observed when creating your own CRDs:
 - **The ``description`` modifier is a good place to mention default values**: this allows the user to query the
   API for its metadata and receive more useful information regarding its use.
 - **If your class is to mimic and existing CRD, don't bother with a ``CustomResourceDefinition`` object**: there
-  is not need for this work if you aren't expecting to define the resource to K8s. It is enough to create the
+  is no need for this work if you aren't expecting to define the resource to K8s. It is enough to create the
   CRD classes to begin working with the resource from Python.
 
 Defining the CRD to Kubernetes
 ==============================
+
+The basics
+----------
 
 If you want to now define a CRD to Kubernetes, you need to use the ``CustomResourceDefinition`` class to provide K8s
 the metadata about your resource including the schema for your CRD classes.
@@ -643,8 +681,8 @@ is a typical use:
 
     schema: JSONSchemaProps = get_crd_schema(MyPlatform)
 
-And now schema contains an OpenAPI schema for MyPlatform and all the classes it contains. YOu can have a look
-at this schema with ``get_yaml()``:
+And now ``schema`` cis a ``JSONSchemaProps`` object containing an OpenAPI schema for ``MyPlatform`` and all the classes
+it contains. You can have a look at this schema with ``get_yaml()``:
 
 .. code:: python
 
@@ -668,7 +706,7 @@ the data in the CRD class and registration: ::
     CustomResourceDefinition  # which contains:
         spec CustomResourceDefinitionSpec  # which contains:
             group  # which must match the group portion of the apiVersion attribute
-            scope  # which must be Cluster or Namespaced agree with is_namespaced from register_crd_class()
+            scope  # which must be Cluster or Namespaced; must agree with is_namespaced from register_crd_class()
             names CustomResourceDefinitionNames  # which contains:
                 shortName  # list of strings to use as short names
                 plural  # which must match the plural name used in register_crd_class()
@@ -683,7 +721,7 @@ the data in the CRD class and registration: ::
         metadata ObjectMeta  # which contains:
             name  # of the form plural.group; using our vars, f"{plural}.{group}" would do it
 
-Using this as a guide, here's once again how we' create a CRD definition object for the MyPlatform class:
+Using this as a guide, here's once again how we create a CRD definition object for the MyPlatform class:
 
 .. code:: python
 
@@ -718,8 +756,8 @@ After this, assuming that Kubernetes has been configured as previously shown, al
 
     result = crd.create()
 
-The result value will be another CustomResourceDefinition object with all data filled out, in particular
-the ObjectMeta data. You can now see your resource with ``kubectl``:
+The result value will be another ``CustomResourceDefinition`` object with all data filled out, in particular
+the ``ObjectMeta`` data. You can now see your resource with ``kubectl``:
 
 .. code::
 
@@ -727,11 +765,63 @@ the ObjectMeta data. You can now see your resource with ``kubectl``:
 
 You should see the plural.group name in the returned list.
 
+Defining namespaced CRDs
+------------------------
+
+Defining namespaced CRDs only takes a few changes, which we'll summarize here:
+
+- **Be sure to set is_namespaced=True when registering the CRD class with register_crd_class()**: Not doing this
+  will break ``Watcher`` objects and other things.
+- **Be sure to set scope="Namespaced" in the CustomResourceDefinitionSpec**: This tells Kubernetes that the resource
+  is a namespaced one. This is only important if you are actually defining the CRD to Kubernetes; if your class is only to access
+  and existing CRD you don't need to create a ``CustomResourceDefinition`` at all.
+
+Additionally, you have an extra step to carry out when instantiating your namespaced CRD: first, the namespace that your instance
+refers to must exist! This is also true if you want to create a ``Watcher`` on your namespaced CRD: the namespace for the things
+you want to watch must exist. You can always easily try reading for the existence of the namespace first with something like:
+
+.. code:: python
+
+    ns: Namespace = Namespace(metadata=ObjectMeta(name='the-namespace-name'))
+    try:
+        result = ns.read()
+    except:
+        result = ns.create()
+
+This fragment will try to read the namespace first, and if it doesn't exist, will then create it. You'll then be free
+to create your CRD instance.
+
+Places you might go wrong
+-------------------------
+
+Here are some common pitfalls when working with CRDs:
+
+- **register_crd_class()'s is_namespaced doesn't agree with scope of CustomResourceDefinitionSpec**: this
+  is easy to mistake if you copy code that worked originally for a cluster CRD to a namespaced CRD. Always
+  check that they agree.
+- **Starting a Watcher() on a namespaced CRD before the namespace exists**: it's easy to jump the gun here,
+  and we've seen some odd errors that probably need to be better processed in Hikaru. Regardless, a Watcher()
+  on a namespaced CRD won't work if the namespace doesn't first exist.
+- **The ObjectMeta name isn't the plural as specified in CustomResourceDefinitionNames**: when defining a CRD
+  to K8s, you need to ensure that the value of the ``plural`` argument in the ``CustomResourceDefinitionNames``
+  object is the same as the first part of the ``name`` given to the ObjectMeta for the ``CustomResourceDefinition``.
+  We showed some techniques above to ensure tha the value is the saem for both of these in the examples above;
+  it's best you adopt this or similar practices to ensure consistency.
+- **Run set_default_release() BEFORE registering your CRD with register_crd_class()**: this is important if
+  the release is for isn't the current default release (which is the highest numbered Kubernetes release 
+  for which there is support in the Hikaru package). If you register before setting the default release, and
+  your default release is lesser than the initial default, Hikaru will register your CRD according to the wrong
+  release and it won't be able to find your class when it receives a message for it. In the examples above,
+  the initial default release was rel_1_26, but all our CRDs were built against rel_1_23. Due to this, we needed
+  to set the default release to rel_1_23 PRIOR to registering our CRD so that it would be viewed as part of the
+  rel_1_23 release. You'll know if you have a problem of this type if Hikaru complains that it can't find a class
+  for a specific version/kind.
+
 Limitations
 ===========
 
 This initial version of CRD support has some limitations; generally they shouldn't be a problem, but are listed
-below to the user can plan accordingly.
+below so the user can plan accordingly.
 
 Recursive definitions
 ---------------------
@@ -751,7 +841,7 @@ the property as a nested class instead of a dict.
 Can't automatically create Hikaru classes from existing CRDs
 ------------------------------------------------------------
 
-While Hikaru can read ``CustomResourceDefinition``s from Kubernetes which will contain a schema, Hikaru is currently
+While Hikaru can read a ``CustomResourceDefinition`` from Kubernetes which will contain a schema, Hikaru is currently
 unable to transform that schema back into a Python dataclass. This is a difficult problem to solve due to the
 many ways that schema can be encoded in OpenAPI. This might get added as a feature at some future point, but will
 almost certainly require a schema with a very specific organization.
@@ -773,18 +863,27 @@ No list operations
 
 Some Kubernetes resource classes have a 'List' variant; for example, there are both Pod and PodList resources,
 the latter of which is read-only. In many cases, these list resources are there to support Watch capabilities.
-However, Watchers are already available for CRDs in Hikaru. Given this, there is currently no equivalent
-capability in Hikaru, but this may be added as needs arise. Certainly it would be possible for a user to create
-a 'List' variant of their own resource and then create a controller that returned appropriate lists of the base
-resource.
+However, Watchers are already available for CRDs in Hikaru. Given this, there is currently no equivalent List
+capability in Hikaru for CRDs, but this may be added as needs arise. Certainly it would be possible for a user
+to create a 'List' variant of their own resource and then create a controller that returned appropriate lists
+of the base resource.
 
 No ObjectMeta-less reads
 ------------------------
 
 In the CRUD methods exposed by Hikaru on core Kubernetes resources, the user is given two ways to specify the
-name of the resource for read operations: they can fill in the ``name`` attribute of a resources ``ObjectMeta``
+name of the resource for read operations: they can fill in the ``name`` attribute of a resource's ``ObjectMeta``
 object, or they can supply a keyword argument ``name`` to the ``read()`` call and behind the scenes the necessary
 work is done to name the resource to read. Currently, Hikaru CRD support requires the use of the ``ObjectMeta``
 approach for supplying the name. A later release will provide support for specifying the name via arguments to
 the ``read()`` method.
+
+No direct support for datetime attributes
+-----------------------------------------
+
+As mentioned previously, Kubernetes's API spec defines datetimes as strings with a date-time format. Due to earlier
+issues with the datetime objects created by the Kubernetes Python API, Hikaru expresses datetimes as strings but
+in a format easily parseable into datetime. With the addition of some of the added metadata used in CRD definition,
+this restriction may change in the future.
+
 

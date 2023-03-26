@@ -27,7 +27,7 @@ class MyPlatformSpec(HikaruBase):
         enum=["windows",
               "linux"]))
     instanceSize: Optional[str] = field(
-        default=None,
+        default='small',
         metadata=fm(
             description="Size of the instance needed; default is 'small'",
             enum=["small",

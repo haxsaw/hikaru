@@ -712,3 +712,6 @@ def register_crd_class(crd_cls, plural_name: str, is_namespaced: bool = True):
             "CustomObjectsApi",
             "list_cluster_custom_object")
     return crd_cls
+
+
+__all__ = ["HikaruCRDDocumentMixin", "register_crd_class", "get_crd_schema"]
