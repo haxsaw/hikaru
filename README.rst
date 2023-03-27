@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 0.16.0b
+Version 1.0.0
 
 |travis|   |license|   |versions|   |coverage|
 
@@ -96,6 +96,14 @@ Hikaru provides an abstraction on over the K8s `watch` APIs, which allow you to 
 create code that receives events for all activites carried out in your K8s cluster on
 a per-kind basis. Or, you can create a watch container that multiplexes the output
 from individual watches into a single stream.
+
+Create Custom Resource Definitions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As of release 1.0.0, Hikaru supports the creation of CRDs that integrate with the rest
+of Hikaru. Automatically generate schema from a Hikaru class, define CRDs to
+Kubernetes, manage CRD instances with CRUD methods, and create watchers that allow
+you to build your own controllers for your CRDs.
 
 Integrate your own subclasses
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
