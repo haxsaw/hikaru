@@ -2,7 +2,7 @@
 Release Notes
 *************
 
-v1.0.0b
+v1.0.0
 -------
 
 *Default K8s release:* 26.x

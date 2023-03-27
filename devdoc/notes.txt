@@ -39,6 +39,7 @@ Where to change version numbers for a new release
 hikaru/__init__.py: __version__
 hikaru/setup.py: __version__
 hikaru/README.rst
+hikaru/release_notes.rst
 
 Changes to setup.py
 -------------------
