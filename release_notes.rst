@@ -2,6 +2,18 @@
 Release Notes
 *************
 
+v1.0.1
+------
+
+*Default K8s release:* 26.x
+
+*Deprecated K8s release:* 23.x
+
+**Bugfix release**
+
+This is a quick release to fix a bug where PodStatus was not properly populating the podIP
+and hostIP attributes. This has now been corrected.
+
 v1.0.0
 -------
 

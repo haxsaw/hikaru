@@ -28,6 +28,7 @@ It is based on having access to a Linux install of k3s.
 import base64
 from os import getcwd
 from pathlib import Path
+import re
 import time
 from typing import cast, Optional
 from unittest import SkipTest
@@ -138,6 +139,39 @@ def test02():
         assert res.obj and isinstance(res.obj, Pod)
         res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
         assert res.obj and isinstance(res.obj, Pod)
+    finally:
+        _ = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
+
+
+ip_regex = r"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+
+
+def test02a():
+    """
+    Create a pod and check for hostIP and podIP; must arrive w/in a minute
+    """
+    path = base_path / "core-pod.yaml"
+    p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
+    p.metadata.name += '-2a'
+    res = p.createNamespacedPod(e2e_namespace)
+    try:
+        assert res.obj and isinstance(res.obj, Pod)
+        found_podIP: bool = False
+        found_hostIP: bool = False
+        for i in range(60):
+            time.sleep(1)
+            res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
+            assert res.obj and isinstance(res.obj, Pod)
+            if not found_podIP and res.obj.status.podIP:
+                assert re.match(ip_regex, res.obj.status.podIP)
+                found_podIP = True
+            if not found_hostIP and res.obj.status.hostIP:
+                assert re.match(ip_regex, res.obj.status.hostIP)
+                found_hostIP = True
+            if found_hostIP and found_podIP:
+                break
+        else:
+            assert False, f"Found hostIP: {found_hostIP}, found podIP: {found_podIP}"
     finally:
         _ = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
 

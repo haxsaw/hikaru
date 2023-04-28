@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 def get_long_desc():
@@ -60,7 +60,7 @@ setup(
     keywords=["Kubernetes", "modelling", "YAML", "JSON", "modeling",
               "translate", "translator", "reformatter", "transform"],
     install_requires=get_requirements(),
-    classifiers=["Development Status :: 3 - Alpha",
+    classifiers=["Development Status :: 4 - Beta",
                  "Intended Audience :: Developers",
                  "Intended Audience :: Financial and Insurance Industry",
                  "Intended Audience :: Information Technology",
