@@ -39,7 +39,7 @@ def ending():
 
 
 @dataclass
-class TestCRUD_1_23(Application):
+class CRUD_1_23(Application):
     dep: Deployment
     ns: Namespace
 
@@ -47,7 +47,7 @@ class TestCRUD_1_23(Application):
     def standard_instance(cls, namespace: str):
         path = base_path / 'apps-deployment.yaml'
         dep = cast(Deployment, load_full_yaml(path=str(path))[0])
-        app = TestCRUD_1_23(dep=dep, ns=Namespace(metadata=ObjectMeta(name=namespace)))
+        app = CRUD_1_23(dep=dep, ns=Namespace(metadata=ObjectMeta(name=namespace)))
         return app
 
 
@@ -55,7 +55,7 @@ def test01():
     """
     Testing delete first so we have something that can wipe out a created app
     """
-    app: TestCRUD_1_23 = TestCRUD_1_23.standard_instance(test_ns + "test01")
+    app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "test01")
     assert app.delete()
 
 
@@ -63,7 +63,7 @@ def test02():
     """
     Testing create
     """
-    app: TestCRUD_1_23 = TestCRUD_1_23.standard_instance(test_ns + "test02")
+    app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "test02")
     assert app.create()
     assert app.delete()
 
@@ -73,10 +73,10 @@ def test03():
     Test read for an existing app
     """
     bad_diff_types = {DiffType.INCOMPATIBLE_DIFF, DiffType.TYPE_CHANGED, DiffType.REMOVED, DiffType.VALUE_CHANGED}
-    app: TestCRUD_1_23 = TestCRUD_1_23.standard_instance(test_ns + "test03")
+    app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "test03")
     assert app.create()
     try:
-        read_app: TestCRUD_1_23 = TestCRUD_1_23.read(instance_id=app.instance_id)
+        read_app: CRUD_1_23 = CRUD_1_23.read(instance_id=app.instance_id)
         assert read_app is not None
         assert read_app.instance_id == app.instance_id
         diffs: Dict[str, List[DiffDetail]] = app.diff(read_app)

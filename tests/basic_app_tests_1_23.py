@@ -87,9 +87,9 @@ class MockApiClient(object):
         return self.body, 400 if self.gen_failure else 200, {}
 
 
-class TestingReporter(Reporter):
+class MockReporter(Reporter):
     def __init__(self):
-        super(TestingReporter, self).__init__()
+        super(MockReporter, self).__init__()
         self.app_starts = []
         self.app_ends = []
         self.reports = []
@@ -115,7 +115,7 @@ class TestingReporter(Reporter):
 
 
 @dataclass
-class TestApp01(Application):
+class App01(Application):
     ns: Namespace
     pod: Pod
     ns_name = "test-app01-ns"
@@ -126,9 +126,9 @@ def test01():
     Test basic application creation
     """
     client = MockApiClient(fail_on_verb='get')
-    ta01: TestApp01 = TestApp01(ns=Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=TestApp01.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta01: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])))
     ta01.client = client
     assert ta01.create(dry_run="All")
@@ -141,12 +141,12 @@ def test02():
     Test that TestApp01 calls the reporter the proper number of times
     """
     client = MockApiClient(fail_on_verb='get')
-    ta02: TestApp01 = TestApp01(ns=Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=TestApp01.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])))
     ta02.client = client
-    reporter = TestingReporter()
+    reporter = MockReporter()
     ta02.set_reporter(reporter)
     assert ta02.create(dry_run="All")
     assert len(reporter.app_starts) == 1, f"Expected 1 op start, got {len(reporter.app_starts)}"
@@ -159,12 +159,12 @@ def test03():
     Test that a created app has the proper metadata keys in all components
     """
     client = MockApiClient(fail_on_verb='get')
-    ta03: TestApp01 = TestApp01(ns=Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=TestApp01.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta03: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])))
     ta03.client = client
-    reporter = TestingReporter()
+    reporter = MockReporter()
     ta03.set_reporter(reporter)
     assert ta03.create(dry_run="All")
     instance_id = ta03.instance_id
@@ -178,7 +178,7 @@ def test03():
 
 
 @dataclass
-class TestApp02(Application):
+class App02(Application):
     pod: Pod
     ns: Namespace
     pod2: Pod
@@ -190,15 +190,15 @@ def test04():
     Check that namespaces are created first
     """
     client = MockApiClient(fail_on_verb='get')
-    ta04: TestApp02 = TestApp02(ns=Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app02-pod", namespace=TestApp02.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta04: App02 = App02(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app02-pod", namespace=App02.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app02-pod2", namespace=TestApp02.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app01-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app02-pod2", namespace=App02.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                             image="test-app01-image")])))
     ta04.client = client
-    reporter = TestingReporter()
+    reporter = MockReporter()
     ta04.set_reporter(reporter)
     assert ta04.create(dry_run="All")
     ns_idx = -1
@@ -222,14 +222,14 @@ def test04():
 
 
 @dataclass
-class Test5Namespace(Namespace):
+class T5Namespace(Namespace):
     pass
 
 
 @dataclass
-class TestApp05(Application):
+class App05(Application):
     pod: Pod
-    ns: Test5Namespace
+    ns: T5Namespace
     pod2: Pod
     ns_name = "test-app05-ns"
 
@@ -239,15 +239,15 @@ def test05():
     Make sure that derived classes of namespace go first in creation
     """
     client = MockApiClient(fail_on_verb='get')
-    ta05: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta05: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app01-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                             image="test-app01-image")])))
     ta05.client = client
-    reporter = TestingReporter()
+    reporter = MockReporter()
     ta05.set_reporter(reporter)
     assert ta05.create(dry_run="All")
     ns_idx = -1
@@ -274,15 +274,15 @@ def test06():
     """
     check we store the attribute name in the annotations for each rsrc created
     """
-    from hikaru_app import _app_resource_attr_annotation_key
+    from hikaru.app import _app_resource_attr_annotation_key
     key = get_app_rsrc_attr_annotation_key()
     client = MockApiClient()
-    ta06: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp01.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta06: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app01-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                             image="test-app01-image")])))
     ta06.client = client
     assert key == _app_resource_attr_annotation_key
@@ -296,16 +296,16 @@ def test07():
     """
     Test that the per-thread app instance key is used as intended when creating an app instance
     """
-    from hikaru_app import _app_instance_label_key
+    from hikaru.app import _app_instance_label_key
     test07_ai_key = "test07_app_instance_key"
     set_app_instance_label_key(test07_ai_key)
     client = MockApiClient()
-    ta07: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp05.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app01-container",
+    ta07: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App05.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app05-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
                                                                            image="test-app01-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app05-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app05-container",
                                                                             image="test-app05-image")])))
     ta07.client = client
     try:
@@ -355,16 +355,16 @@ def test09():
             self.ok = False
 
     kc: KeyCollector = KeyCollector()
-    ta09: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp05.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app09-container",
+    ta09: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App05.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                            image="test-app09-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app09-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                             image="test-app09-image")])))
     ta09.client = MockApiClient()
 
-    def work_func(kc_arg: KeyCollector, keytouse: str, app: TestApp05):
+    def work_func(kc_arg: KeyCollector, keytouse: str, app: App05):
         sleep(0.25)
         set_app_instance_label_key(keytouse)
         kc_arg.key = get_app_instance_label_key()
@@ -392,12 +392,12 @@ def test10():
     """
     Test that dup on basic apps works (only has fields that are resources)
     """
-    ta10: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp05.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app09-container",
+    ta10: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App05.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                            image="test-app09-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app09-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                             image="test-app09-image")])))
     ta10.client = MockApiClient()
     ta10.create(dry_run="All")
@@ -409,12 +409,12 @@ def test11():
     """
     Test that a changed dup does create a difference
     """
-    ta11: TestApp05 = TestApp05(ns=Test5Namespace(metadata=ObjectMeta(name=TestApp05.ns_name)),
-                                pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=TestApp05.ns_name),
-                                        spec=PodSpec(containers=[Container(name="test-app09-container",
+    ta11: App05 = App05(ns=T5Namespace(metadata=ObjectMeta(name=App05.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app09-pod", namespace=App05.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                            image="test-app09-image")])),
-                                pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=TestApp05.ns_name),
-                                         spec=PodSpec(containers=[Container(name="test-app09-container",
+                        pod2=Pod(metadata=ObjectMeta(name="test-app05-pod2", namespace=App05.ns_name),
+                                 spec=PodSpec(containers=[Container(name="test-app09-container",
                                                                             image="test-app09-image")])))
     ta11.instance_id = "bar"
     ta11_copy = ta11.dup()
