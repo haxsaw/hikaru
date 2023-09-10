@@ -22,7 +22,7 @@ import json
 import keyword
 from dataclasses import asdict
 from io import StringIO
-from typing import List, TextIO, Optional, Tuple
+from typing import List, TextIO, Optional, Tuple, Dict
 
 from ruamel.yaml import YAML
 
@@ -348,20 +348,38 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
 #
 # this helps get around problems when classes from different groups
 # have the same name
-_deprecation_helper = {
-    'rel_1_23': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_24': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_25': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-    'rel_1_26': {
-        ('v1', 'Event'): ('v1', 'Event_core'),
-    },
-}
+# _deprecation_helper = {
+#     'rel_1_23': {
+#         ('v1', 'Event'): ('v1', 'Event_core'),
+#     },
+#     'rel_1_24': {
+#         ('v1', 'Event'): ('v1', 'Event_core'),
+#     },
+#     'rel_1_25': {
+#         ('v1', 'Event'): ('v1', 'Event_core'),
+#     },
+#     'rel_1_26': {
+#         ('v1', 'Event'): ('v1', 'Event_core'),
+#     },
+# }
+
+
+_deprecation_helper: Dict[str, Dict[Tuple[str, str], Tuple[str, str]]] = {}
+
+
+def add_deprecations_for_release(rel: str, deprecations: Dict[Tuple[str, str], Tuple[str, str]]):
+    """
+    Add deprecations to the global deprecation dictionary for a release
+
+    This function is for Hikaru's internal use to provide a way for class collisions to be
+    handled properly. It is not meant for general use.
+
+    :param rel: string; the release to add deprecations for
+    :param deprecations: dict; a dictionary of (api_version, kind) tuples to
+        (api_version, kind) tuples that should be used instead
+    :return: None
+    """
+    _deprecation_helper[rel] = deprecations
 
 
 def _vk_mapper(api_version: str, kind: str, release: str=None) -> Tuple[str, str]:

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 Incisive Technology Ltd
+# Copyright (c) 2023 Incisive Technology Ltd
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,8 +44,8 @@ def get_default_release() -> Optional[str]:
     def_rel = _default_release_by_thread.get(ct.name)
     if def_rel is None:
         if _default_release is None:
-            from hikaru.model import default_release
-            _default_release = default_release
+            from hikaru.model.defrel import get_default_release
+            _default_release = get_default_release()
         def_rel = _default_release
     return def_rel
 

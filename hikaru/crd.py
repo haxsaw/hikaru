@@ -35,6 +35,10 @@ _ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
 _type_map = {str: "string", int: "integer", float: "number", bool: "boolean"}
 
 
+# there are no production uses to change this value, but testing may alter it
+model_root_package = "hikaru.model"
+
+
 def get_crd_schema(cls, jsp_class: Optional[type] = None):
     """
     Return a JSONSchemaProps instance suitable for describing this class in a CustomResourceDefinition msg
@@ -68,7 +72,7 @@ def get_crd_schema(cls, jsp_class: Optional[type] = None):
         # pragma: no cover
         def_release = get_default_release()
         try:
-            mod = import_module(".v1", f"hikaru.model.{def_release}")
+            mod = import_module(".v1", f"{model_root_package}.{def_release}")
         except ImportError as e:  # pragma: no cover
             raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
         jsp_class = getattr(mod, "JSONSchemaProps")
@@ -617,7 +621,7 @@ class HikaruCRDDocumentMixin(object):
         """
         def_release = get_default_release()
         try:
-            mod = import_module(".v1", f"hikaru.model.{def_release}")
+            mod = import_module(".v1", f"{model_root_package}.{def_release}")
         except ImportError as e:  # pragma: no cover
             raise ImportError(f"Couldn't import the module with DeleteOptions: {e}")
 

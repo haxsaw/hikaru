@@ -36,6 +36,9 @@ except ImportError:  # pragma: no cover
 
 field_metadata_domain = "hikaru"
 
+# there are no production uses to change this value, but testing may alter it
+model_root_package = "hikaru.model"
+
 
 class ParamSpec(object):
     def __init__(self, param: Parameter, hint_type, field: Optional[Field]):
@@ -196,7 +199,7 @@ class Response(Generic[T]):
                 if isinstance(self.obj, V1Status):
                     from .naming import get_default_release
                     drel = get_default_release()
-                    mod = import_module(".v1", f"hikaru.model.{drel}")
+                    mod = import_module(".v1", f"{model_root_package}.{drel}")
                     self.obj.api_version = mod.Status.apiVersion
                     self.obj.kind = mod.Status.kind
                 self.obj = from_dict(self.obj.to_dict(),

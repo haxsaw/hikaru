@@ -14,8 +14,8 @@ from time import sleep
 from typing import Optional, List, Dict
 from kubernetes.client.exceptions import ApiException
 from hikaru import *
-set_default_release("rel_1_23")
-from hikaru.model.rel_1_23.v1 import *
+set_default_release("rel_1_26")
+from hikaru.model.rel_1_26.v1 import *
 from hikaru.app import Application, Reporter
 from hikaru.app import (get_app_instance_label_key, get_app_rsrc_attr_annotation_key,
                         set_app_instance_label_key, set_global_app_instance_label_key,
@@ -379,7 +379,7 @@ def test09():
     def work_func(kc_arg: KeyCollector, keytouse: str, app: App05):
         sleep(0.25)
         set_app_instance_label_key(keytouse)
-        set_default_release("rel_1_23")
+        set_default_release("rel_1_26")
         kc_arg.key = get_app_instance_label_key()
         kc_arg.ok = app.create(dry_run="All")
         # then clear out special key for this thread

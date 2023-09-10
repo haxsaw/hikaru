@@ -32,8 +32,9 @@ from typing import (Optional, List, Tuple, Dict, get_args, get_origin, Generator
                     TextIO)
 from threading import current_thread, Thread
 from . import (HikaruDocumentBase, get_default_release, DiffDetail, HikaruBase, DiffType,
-               set_default_release, get_clean_dict, from_dict, TypeWarning)
+               set_default_release, get_clean_dict, from_dict, TypeWarning, CatalogEntry)
 from .crd import HikaruCRDDocumentMixin
+from .utils import Response
 from .watch import MultiplexingWatcher, Watcher
 
 # _hikaru_app_version_key denotes the version of the metadata scheme that is used by hikaru-app
@@ -41,13 +42,15 @@ from .watch import MultiplexingWatcher, Watcher
 # may or may not change when a new version of hikaru-app is released. If it does change, then older
 # versions of hikaru-app will not be able to read the metadata.labels and metadata.annotations data,
 # however, newer versions of hikaru-app will be able to read the older data.
-_hikaru_app_version_key = "_HIKARU_APP_VERSION_KEY_"
+_hikaru_app_version_key = "HIKARU_APP_VERSION_KEY"
 _hikaru_app_metadata_version = "1.0.0"
-# or "app.kubernetes.io/instance"
-_app_instance_label_key = "_HIKARU_INSTANCE_LABEL_KEY_"
+_app_instance_label_key = "app.kubernetes.io/instance"
 _per_thread_instance_label_keys: Dict[str, str] = {}
-_app_resource_attr_annotation_key = "_HIKARU_RSRC_ATTR_KEY_"
+_app_resource_attr_annotation_key = "HIKARU_RSRC_ATTR_KEY"
 _per_thread_attr_annotation_keys: Dict[str, str] = {}
+
+# there are no production uses to change this value, but testing may alter it
+model_root_package = "hikaru.model"
 
 
 def record_resource_metadata(rsrc: HikaruDocumentBase, instance_id: str, name: str):
@@ -309,6 +312,43 @@ class Reporter(object):
     def __init__(self, *args, **kwargs):
         pass
 
+    def advise_plan(self, app: 'Application', app_action: str, tranches: List[List["FieldInfo"]]) -> Optional[bool]:
+        """
+        Tells the reporter the work to be performed in create or delete CRUD operations
+
+        This advisory method is called by the Application instance when a CRUD create or delete is executed on
+        an Application. It is meant to give a Reporter instance early notice (and right of refusal) for a set of work
+        to perform for these operations.
+
+        The method is called after the order of work has been determined but before any work starts. It is passed a
+        list of lists (tranches) of FieldInfo objects that identifies the HikaruDocumentBase subclasses that will be
+        involved in the operation, and in what order the work will be carried out. Each inner list contains resources
+        that can be actioned simultaneously, and the outer list sequences the processing of each inner list. So for a
+        value of tranches like:
+
+        [  [a], [b, c, d], [e, f]  ]
+
+        The Application object will first action 'a', then 'b', 'c', and 'd' in parallel, and then when all of
+        those are done will then action 'e' and 'f' in parallel.
+
+        If the implementation of advise_plan() returns False, then processing of the CRUD operation is aborted. This
+        provides a means to allow inspection of the plan and to veto its execution. If you run into cases where Hikaru
+        computes an incorrect plan please file a bug report.
+
+        :param app: Application; the Application subclass instance the plan is for
+        :param app_action: str; the type of operation to be performed (create, delete)
+        :param tranches: list of lists of FieldInfo objects; this is the work that is to be performed
+            and in what order. The outer list sequences the work, and each HikaruDocumentBase resource in an inner
+            list may be processed at the same time. FieldInfo objects describe key details of a field on a dataclass
+            but can also optionally include a reference to the actual instance of the object the field describes. Hence,
+            this method should look at the 'instance' attribute of the FieldInfo object for the actual object that will
+            be actioned in the operation. NOTE: the value of 'instance' may be None if the field was optional in the
+            dataclass.
+        :return: optional bool. If False, then processing the provided plan is aborted. Any other value allows
+            processing to proceed. Returning None is fine; this will allow processing to continue.
+        """
+        return True
+
     def report(self, app: "Application", app_action: str, event_type: str, timestamp: str, attribute_name: str,
                resource: HikaruDocumentBase, additional_details: dict):
         """
@@ -342,14 +382,14 @@ class Reporter(object):
             'manifest': list of (str, HikaruDocumentBase) tuples  # list of all resources to
                           # processes; present with APP_START_PROCESSING events
         """
-        pass
+        pass  # pragma: no cover
 
     def should_abort(self, app: "Application") -> bool:
         """
         Returns True if the Application should stop processing resources
         :return: bool; True if the Application should stop resource processing, False to keep going
         """
-        return False
+        return False  # pragma: no cover
 
 
 class FieldInfo(object):
@@ -362,6 +402,7 @@ class FieldInfo(object):
         self.type = ftype
         self.has_default = has_default
         self.default_factory = default_factory
+        self.instance: Optional[HikaruDocumentBase] = None  # filled out later
 
 
 @dataclass
@@ -444,6 +485,28 @@ class Application(object):
         self._reporter = reporter
         return self
 
+    def advise_plan(self, app_action: str, tranches: List[List[FieldInfo]]) -> Optional[bool]:
+        """
+        Notify any reporter of the proposed plan for the indicated operation
+
+        If the Application has a reporter, notify it of the processing plan indicated by the content of 'tranches'
+        for the action specified by 'app_action'.
+
+        This method returns any value returned from the reporter, otherwise None
+
+        :param app_action:
+        :param tranches:
+
+        Returns:
+
+        """
+        if self._reporter:
+            tcopy = list(list(l) for l in tranches)
+            retval = self._reporter.advise_plan(self, app_action, tcopy)
+        else:
+            retval = None
+        return retval
+
     def report(self, app_action: str, event_type: str, additional_details: dict,
                resource: Optional[HikaruDocumentBase] = None, attribute_name: Optional[str] = None):
         """
@@ -479,7 +542,7 @@ class Application(object):
                                   attribute_name, resource, additional_details)
 
     _pri1_classes = ["Namespace"]
-    _pri2_classes = ["Node", "Volume", "ClusterRole", "Role", "PersistentVolume",
+    _pri2_classes = ["Node", "ClusterRole", "Role", "PersistentVolume",
                      "StorageClass", "Endpoint", "Service"]
 
     @classmethod
@@ -514,14 +577,14 @@ class Application(object):
         dup(), etc, all work without things having to get complicated.
         """
         for f in fields(cls):
-            if type(f.type) is type and (f.type, HikaruDocumentBase):
+            if type(f.type) is type and issubclass(f.type, HikaruDocumentBase):
                 has_default = f.default is not MISSING or f.default_factory is not MISSING
                 yield FieldInfo(f.name, f.type, has_default, default=f.default,
                                 default_factory=f.default_factory)
             elif get_origin(f.type) is Union:  # optional is implemented as Union[T, None]
                 op_type = get_args(f.type)[0]
                 if issubclass(op_type, HikaruDocumentBase):
-                    if f.default is MISSING:
+                    if f.default is MISSING:  # pragma: no cover
                         default = None
                         df = f.default_factory
                     else:
@@ -541,11 +604,12 @@ class Application(object):
         pri3: List[FieldInfo] = []
         pri4: List[FieldInfo] = []
         relname = get_default_release()
-        v1mod = import_module(".v1", f"hikaru.model.{relname}")
+        v1mod = import_module(".v1", f"{model_root_package}.{relname}")
         # these could be cached by release
         pri1_classses = tuple([getattr(v1mod, c) for c in self._pri1_classes])
         pri2_classses = tuple([getattr(v1mod, c) for c in self._pri2_classes])
         for fi in self.iterate_fields():
+            fi.instance = getattr(self, fi.name, None)
             if issubclass(fi.type, pri1_classses):
                 pri1.append(fi)
             elif issubclass(fi.type, pri2_classses):
@@ -556,13 +620,16 @@ class Application(object):
                 pri4.append(fi)
         return pri1, pri2, pri3, pri4
 
-    def create(self, dry_run: Optional[str] = False, client: Optional[ApiClient] = None) -> bool:
+    def create(self, dry_run: Optional[str] = None, client: Optional[ApiClient] = None) -> bool:
         """
         Create the resources in the Application
 
         This method will deploy the resources in the Application to the Kubernetes cluster
-        :param dry_run:
-        :param client:
+        dry_run: optional str, default None. May have the value 'All' which indicates to perform a dry run on
+            all processing stages for each resources
+        client: optional ApiClient, default None. You can create your ApiClient object which will be used when
+            contacting Kubernetes, or you can have the K8s client library do it for you by specifying the location
+            of a config file with the KUBECONFIG environment variable.
         :return: bool; True if all resources were deployed successfully, False otherwise
         """
         # get some objects from the default release module
@@ -579,9 +646,12 @@ class Application(object):
             # before work starts to ensure that the thread that called this method shares
             # the same key as the threads it spawns.
             if not self._resource_fields:
-                for l in self._compute_create_order():
+                tranches = list(self._compute_create_order())
+                if self.advise_plan("create", tranches) is False:
+                    return False
+                for l in tranches:
                     self._resource_fields.extend(l)
-            self.report("create", Reporter.APP_START_PROCESSING, {'manifest': []})
+            self.report("create", Reporter.APP_START_PROCESSING, {'manifest': list(self._resource_fields)})
 
             # OK, right now the following deployment logic is limited; it tears off
             # deploying things, but if it fails then it just keeps going with the next
@@ -597,15 +667,10 @@ class Application(object):
                         raise ValueError(f"field {f.name} is not set and has no default")
                 record_resource_metadata(r, self.instance_id, f.name)
                 self.report("create", Reporter.RSRC_START_PROCESSING, {}, r, f.name)
-                if r in self._created:
-                    # this resource has already been created, so skip it
-                    self.report("create", Reporter.RSRC_DONE_PROCESSING, {}, r, f.name)
-                    continue
                 # check if this resource already exists, create if not
                 try:
                     self.report("create", Reporter.RSRC_READ_OP, {}, r, f.name)
                     _ = r.read(client=client)
-                    self._created.append(r)
                 except ApiException as e:
                     if e.status == 404:
                         # namespace doesn't exist, so create it
@@ -615,7 +680,6 @@ class Application(object):
                             r.create(dry_run=dry_run, client=client)
                             # TODO: we need to add checks about when the resource is ready
                             self.report("create", Reporter.RSRC_DONE_PROCESSING, {}, r, f.name)
-                            self._created.append(r)
                         except Exception as e:
                             self.report("create", Reporter.RSRC_ERROR, {'error': str(e)}, r, f.name)
                             self.report("create", Reporter.RSRC_DONE_PROCESSING, {}, r, f.name)
@@ -663,9 +727,9 @@ class Application(object):
 
         - Since hikaru-app only models first-order resources, Kubernetes-managed resources derived from the first-order
         ones will not be part of what's read. So for example, if an Application subclass contains a Deployment, reading
-        an instance of this Application will only yield the deployment, not the Pods that Kubernetes may have spun up
+        an instance of this Application will only yield the Deployment, not the Pods that Kubernetes may have spun up
         based on the rules in the deployment.
-        - CRDs currently are not supported, so if you use CRDs within your application there's no way to read the back
+        - CRDs currently are not supported, so if you use CRDs within your application there's no way to read them back
         with this method.
 
         :param instance_id: str; the string value of the application instance's id; this will be used to locate only
@@ -674,13 +738,21 @@ class Application(object):
             supplied via other usual means, such as telling K8s the location of a config file with credentials.
         """
         relname = get_default_release()
-        v1mod = import_module(".v1", f"hikaru.model.{relname}")
+        # TODO; we may need to search through more versions in a release
+        v1mod = import_module(".v1", f"{model_root_package}.{relname}")
         selector = get_label_selector_for_instance_id(instance_id)
         init_vars = {}
         for f in cls.iterate_fields():
             model_cls = getattr(v1mod, f"{f.type.__name__}List")
-            meth = getattr(model_cls, f"list{f.type.__name__}")
-            obj_list: List = meth(label_selector=selector, client=client)
+            # ok, search for a suitable method to list the resources
+            if hasattr(model_cls, f"list{f.type.__name__}ForAllNamespaces"):
+                meth = getattr(model_cls, f"list{f.type.__name__}ForAllNamespaces")
+            elif hasattr(model_cls, f"list{f.type.__name__}"):
+                meth = getattr(model_cls, f"list{f.type.__name__}")
+            else:
+                raise TypeError(f"Can't find a suitable method to list {f.type.__name__} resources")
+            response: Response[model_cls] = meth(label_selector=selector, client=client)
+            obj_list: list = response.obj.items
             for r in obj_list:
                 if resource_name_matches_metadata(r, f.name):
                     init_vars[f.name] = r
@@ -689,7 +761,7 @@ class Application(object):
         app.instance_id = instance_id
         return app
 
-    def delete(self, dry_run: Optional[str] = False, client: Optional[ApiClient] = None) -> bool:
+    def delete(self, dry_run: Optional[str] = None, client: Optional[ApiClient] = None) -> bool:
         """
         Delete the constituent resources of the application
 
@@ -703,13 +775,23 @@ class Application(object):
 
         NOTE: when the call completes, tools such as kubectl may still list the resource; this due to K8s resources
         not being deleted immediately in some cases, but their state should be reflected as "Terminating".
-        """
+
+        :param dry_run: optional str, default None. May have the value 'All' which indicates to perform a dry run on
+            all processing stages for each resources
+        :param client: optional ApiClient, default None. You can create your ApiClient object which will be used when
+            contacting Kubernetes, or you can have the K8s client library do it for you by specifying the location
+            of a config file with the KUBECONFIG environment variable.
+
+        :return: True if the update ran successfully, False otherwise        """
         try:
             if client is None:
                 client = self.client
             # TODO: same parallelism is needed here as in create
             if not self._resource_fields:
-                for l in self._compute_create_order():
+                tranches = list(self._compute_create_order())
+                if self.advise_plan("delete", tranches) is False:
+                    return False
+                for l in tranches:
                     self._resource_fields.extend(l)
             resource_fields = self._resource_fields[:]
             resource_fields.reverse()
@@ -733,6 +815,43 @@ class Application(object):
                     raise
         finally:
             self.report("delete", Reporter.APP_DONE_PROCESSING, {})
+        return True
+
+    def update(self, dry_run: Optional[str] = None, client: Optional[ApiClient] = None) -> bool:
+        """
+        Update all resources in the Application instance
+
+        This method iterates over all resources in the Application and invokes 'update()' on each. It updates
+        all resources, making no attempt to only update resources that have changed.
+
+        :param dry_run: optional str, default None. May have the value 'All' which indicates to perform a dry run on
+            all processing stages for each resources
+        :param client: optional ApiClient, default None. You can create your ApiClient object which will be used when
+            contacting Kubernetes, or you can have the K8s client library do it for you by specifying the location
+            of a config file with the KUBECONFIG environment variable.
+
+        :return: True if the update ran successfully, False otherwise
+        """
+        self.report("update", Reporter.APP_START_PROCESSING, {})
+        try:
+            for f in self.iterate_fields():
+                rsrc: HikaruDocumentBase = getattr(self, f.name, None)
+                self.report("update", Reporter.RSRC_START_PROCESSING, {}, attribute_name=f.name, resource=rsrc)
+                if rsrc is None:
+                    self.report("update", Reporter.RSRC_DONE_PROCESSING, {}, attribute_name=f.name, resource=rsrc)
+                    continue   # nothing to update; @TODO: should we check to see if it was there and should be del'd?
+                try:
+                    self.report("update", Reporter.RSRC_UPDATE_OP, {}, attribute_name=f.name, resource=rsrc)
+                    rsrc.update(dry_run=dry_run, client=client)
+                    self.report("update", Reporter.RSRC_DONE_PROCESSING, {}, attribute_name=f.name, resource=rsrc)
+                except Exception as e:
+                    self.report("update", Reporter.RSRC_ERROR, {"error": str(e)},
+                                attribute_name=f.name, resource=rsrc)
+                    self.report("update", Reporter.RSRC_DONE_PROCESSING, {},
+                                attribute_name=f.name, resource=rsrc)
+                    raise
+        finally:
+            self.report("update", Reporter.APP_DONE_PROCESSING, {})
         return True
 
     def diff(self, other) -> Dict[str, List[DiffDetail]]:
@@ -759,19 +878,15 @@ class Application(object):
             r1: HikaruBase = getattr(self, f.name, None)
             r2: HikaruBase = getattr(other, f.name, None)
             if r1 is None:
-                if not f.has_default:
-                    differences[f.name] = [DiffDetail(DiffType.MISSING, self.__class__, f.name, ["missing"],
-                                                      "resource missing from this instance")]
-                    continue
-                else:
-                    raise ValueError(f"field {f.name} has no default value and is missing from this instance")
+                if r2 is None:
+                    continue  # nothing to see here; keep going
+                differences[f.name] = [DiffDetail(DiffType.ADDED, self.__class__, f.name, ["missing"],
+                                                  "resource missing from self but present in other")]
+                continue
             if r2 is None:
-                if not f.has_default:
-                    differences[f.name] = [DiffDetail(DiffType.MISSING, self.__class__, f.name, ["missing"],
-                                                      "resource missing from other instance")]
-                    continue
-                else:
-                    raise ValueError(f"field {f.name} has no default value and is missing from other instance")
+                differences[f.name] = [DiffDetail(DiffType.REMOVED, self.__class__, f.name, ["missing"],
+                                                  "resource missing from other instance but present in self")]
+                continue
             diffs = r1.diff(r2)
             if diffs:
                 differences[f.name] = diffs
@@ -800,8 +915,7 @@ class Application(object):
         calls super().dup() and then copies the additional attributes.
 
         Note: for any dataclass field that is a subclass of HikaruBase (which includes HikaruDocumentBase), the
-        method will use that object's dup() method to create a duplicate of that field. Otherwise
-        the field will be copied using copy.deepcopy().
+        method will use that object's dup() method to create a duplicate of that field.
 
         :return: a new Application instance that is a duplicate of this instance
         """
@@ -868,7 +982,7 @@ class Application(object):
         """
         if self.__class__ is not other.__class__:
             raise TypeError(f"other must be an instance of {self.__class__.__name__}")
-        for f in self.iterate_fields(self):
+        for f in self.iterate_fields():
             self_attr: HikaruDocumentBase = getattr(self, f.name, None)
             other_attr: HikaruDocumentBase = getattr(other, f.name, None)
             if self_attr is None:
@@ -899,7 +1013,7 @@ class Application(object):
         attempt to populate those fields with empty instances of the appropriate type. If a
         """
         args = {}
-        for f in cls.iterate_fields(cls):
+        for f in cls.iterate_fields():
             args[f.name] = f.type.get_empty_instance()
         return cls(**args)
 
@@ -978,6 +1092,7 @@ class Application(object):
             app.instance_id = d["instance_id"]
         finally:
             set_default_release(release_at_start)
+        return app
 
     def get_json(self) -> str:
         """
@@ -1057,9 +1172,78 @@ class Application(object):
         doc = list(parser.load_all(to_parse))[0]
         return cls.from_dict(doc)
 
-    # TODO: object_at_path() - get the data at an attribute path in the app
-    # TODO: find_by_name() - find all occurrences of a resource at all paths in the app
-    # TODO: ReportMaper - take an app and a collection of paths and generate a report
+    def object_at_path(self, path: list):
+        """
+        returns the value named by path starting at self
+
+        Returns an object or base value by navigating the supplied path starting at 'self'. The elements of path are
+        either strings representing attribute names or else integers in the case where an attribute name reaches a
+        list (the int is used as an index into the list). Generally, the thing to do is to use the 'path' attribute
+        of a returned CatalogEntry from find_by_name()
+
+        :param path: A list of strings or ints. :return: Whatever value is found at the end of the path; this could
+            be another HikaruBase instance or a plain Python object (str, bool, dict, etc).
+
+        :raises RuntimeError: raised if None is found anywhere along the path except at the last element
+        :raises IndexError: raised if a path index value is beyond the end of a list-valued attribute
+        :raises ValueError: if an index for a list can't be turned into an int
+        :raises AttributeError: raised if any attribute on the path isn't an attribute of the previous object on
+            the path
+        :return: a
+        """
+        if not hasattr(self, path[0]):
+            raise AttributeError(f"The application doesn't have an attribute named {path[0]}")
+        topmost_rsrc: HikaruDocumentBase = getattr(self, path[0], None)
+        if topmost_rsrc is None:
+            raise RuntimeError(f"The attribute {path[0]} in the application is None")
+        final_rsrc = topmost_rsrc.object_at_path(path[1:])
+        return final_rsrc
+
+    def find_by_name(self, name: str, following: Union[str, List] = None) -> List[CatalogEntry]:
+        """
+
+        Args:
+            name:
+            following:
+
+        Returns:
+        """
+        results: List[CatalogEntry] = []
+        first_bit = None
+        if following is not None:
+            if isinstance(following, str):
+                parts = following.split('.')
+                first_bit = parts[0]
+                try:
+                    first_bit = int(first_bit)
+                except ValueError:
+                    pass
+            elif isinstance(following, list):
+                first_bit = following[0]
+                try:
+                    first_bit = int(first_bit)
+                except ValueError:
+                    pass
+            if isinstance(first_bit, int):
+                first_bit = None  # can't have an index at the app level
+        attr_set = set(fi.name for fi in self.iterate_fields())
+        if first_bit in attr_set:
+            # then we're only to look under this attr
+            attr_set = {first_bit}
+            # ANNND we have to adjust 'following' to not have the initial component since it won't be found
+            if isinstance(following, str):
+                following = ".".join(following.split('.')[1:])
+                following = following if following else None
+            else:  # must have been a list
+                following = following[1:] if following[1:] else None
+        for attrname in attr_set:
+            rsrc: HikaruBase = getattr(self, attrname, None)
+            if rsrc is not None:
+                entries: List[CatalogEntry] = rsrc.find_by_name(name, following)
+                for ce in entries:
+                    ce.path.insert(0, attrname)
+                results.extend(entries)
+        return results
 
     def get_type_warnings(self):
         """
@@ -1068,6 +1252,7 @@ class Application(object):
         This method checks the types of all the fields in the app and its resources and returns a list
         any type mismatches it finds. The list will be empty if there are no type mismatches.
         """
+        # TODO: this needs to return a dict so you can tell what warnings belong to what object
         warnings: [TypeWarning] = []
         for f in self.iterate_fields():
             r = getattr(self, f.name, None)

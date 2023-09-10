@@ -35,7 +35,6 @@ from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints, Opt
 from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
-from hikaru.naming import camel_to_pep8
 from hikaru.tweaks import h2kc_translate
 from hikaru.utils import get_origin, get_args, field_metadata_domain
 
@@ -330,7 +329,7 @@ class HikaruBase(object):
                                following="containers.volumeMounts")
 
             Or suppose you wanted 'exec' from anywhere in the lifecycle object
-            of of the first container in a pod::
+            of the first container in a pod::
 
                 p.find_by_name('exec',
                                following=['containers', 0, 'lifecycle'])

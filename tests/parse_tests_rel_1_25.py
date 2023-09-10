@@ -39,7 +39,7 @@ def setup():
 test_parms = []
 path = pathlib.Path("test_yaml")
 for p in path.iterdir():
-    if str(p).endswith("/list.yaml"):
+    if p.parts[-1] == 'list.yaml':
         test_parms.append(pytest.param(p, marks=pytest.mark.xfail))
     elif str(p).endswith('.json'):
         continue
@@ -113,7 +113,7 @@ def do_all():
         try:
             test_yaml(p)
         except Exception as e:
-            if str(p) == "test_yaml/list.yaml":
+            if str(p) == pathlib.Path("test_yaml/list.yaml"):
                 print(f"WARNING! Still failed on list.yaml; no support in the "
                       f"swagger file for List. Ignoring failure")
             else:

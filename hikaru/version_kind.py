@@ -27,6 +27,10 @@ from hikaru.naming import get_default_release, process_api_version
 _release_version_kind_class_cache: Dict[str, Dict[str, Dict[str, type]]] = {}
 
 
+# there are no production uses to change this value, but testing may alter it
+model_root_package = "hikaru.model"
+
+
 def register_version_kind_class(cls: type, version: str, kind: str,
                                 release: Optional[str] = None) -> Optional[type]:
     """
@@ -258,7 +262,7 @@ def get_version_kind_class(version: str, kind: str,
     if len(kind_dict) == 0:
         try:
             mod = importlib.import_module(f".{use_version}",
-                                          f"hikaru.model.{use_release}.{use_version}")
+                                          f"{model_root_package}.{use_release}.{use_version}")
         except ImportError:
             pass
         else:
