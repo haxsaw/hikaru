@@ -42,7 +42,8 @@
           ]
         }
       ],
-      "deprecations": "{}"
+      "deprecations": "{}",
+      "version": "1.0.0"
     },
   "rel_1_19":
     {
@@ -79,7 +80,8 @@
           ]
         }
       ],
-      "deprecations": "{}"
+      "deprecations": "{}",
+      "version": "1.0.0"
     },
   "rel_1_21":
     {
@@ -125,7 +127,8 @@
           ]
         }
       ],
-      "deprecations": "{}"
+      "deprecations": "{}",
+      "version": "1.0.0"
     },
   "rel_1_22":
     {
@@ -171,7 +174,8 @@
           ]
         }
       ],
-      "deprecations": "{}"
+      "deprecations": "{}",
+      "version": "1.0.0"
     },
   "rel_1_23":
     {
@@ -199,7 +203,8 @@
           ]
         }
       ],
-      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}"
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.0.0"
     },
   "rel_1_24":
     {
@@ -227,7 +232,8 @@
           ]
         }
       ],
-      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}"
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.0.0"
     },
   "rel_1_25":
     {
@@ -255,7 +261,8 @@
           ]
         }
       ],
-      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}"
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.0.0"
     },
   "rel_1_26":
     {
@@ -283,6 +290,7 @@
           ]
         }
       ],
-      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}"
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.0.0"
     }
 }

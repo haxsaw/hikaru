@@ -203,7 +203,10 @@ try:
     from .v1 import *
 except ImportError:  # pragma: no cover
     pass
-from .deprecations import *"""
+from .deprecations import *
+
+
+__version__ = '%s'"""
 
 
 _deprecation_warning = \
@@ -1905,7 +1908,8 @@ def prep_rel_package(directory: str, deprecated: bool = False) -> Path:
     print(_module_docstring, file=f)
     if deprecated:
         print("import warnings", file=f)
-    print(_package_init_code, file=f)
+    rel_version = build_helper_data[_release_in_process]['version']
+    print(_package_init_code % rel_version, file=f)
     if deprecated:
         print(_deprecation_warning % path.name, file=f)
     print(file=f)
