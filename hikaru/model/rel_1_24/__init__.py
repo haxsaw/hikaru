@@ -30,6 +30,7 @@ try:
     from .v1 import *
 except ImportError:  # pragma: no cover
     pass
+from .deprecations import *
 
 globs = dict(globals())
 __all__ = [c.__name__ for c in globs.values()

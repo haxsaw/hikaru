@@ -5,27 +5,30 @@ Dumb things you always forget for a release build
 Adding support for a new release of the Kubernetes client
 ---------------------------------------------------------
 
-So a couple of files need to be tweaked to ensure the build runs properly
-and some minor adjustments are made for the few aberrations in how some
-resources are named.
+Add new entries to build_helper.json for the release:
 
-1. Add new entries to build_helper.json for the release: this is the file that
-   helps the builder sort out what version of a resource to prefer when reading
-   the same named resource from multiple groups in the same version (there are
-   a short list of usual culprits here like Event, Subject, Token, etc). You can
-   start by copying the previous release's entries, but may need to adjust
-   due to testing results. The builder will crash if you don't make an entry
-   for the new release (this is deliberate to ensure you fix build_helper.json)
-   and not just blindly provide a default that won't cause an error but will
-   be hard to track down when you lose versions of resources you thought you
-   had. It's sensible to pare this down to the minimum required, but it's
-   harmless to have too many (but unneeded) entries.
-2. Put a new entry into the _deprecation_helper dict in generate.py, usually
-   only involving Event. That resource appears to have been moved from core to
-   events, but the core variation is being kept around for a while it seems.
-   This screws up certain deserialization operations, and the lack of it mani-
-   fests itself in errors having to do with Event in the generated_methods
-   and integration tests.
+You make a new entry for the release like "rel_1_27", and the value is a dict
+with two keys:
+
+- the 'preferred_versions' key helps the builder sort out what version of a
+  resource to prefer when reading the same named resource from multiple groups
+  in the same version (there are a short list of usual culprits here like Event,
+  Subject, Token, etc).
+- the 'deprecations' key contains a Python dict rendered as a string; this dict
+  maps certain version/kind combos to alternately named classes that were constructed
+  in accordance to the preferred versions key above. This string is turned back into
+  a dict and written to a file that is loaded at hikaru run time to provide the mappings
+  needed just in time. Usually this only involves the Event kind, but hopefully the K8s
+  team will eventually finally drop this one and this can be a string with an empty
+  dict.
+
+You can start by copying the previous release's entries, but may need to adjust
+due to testing results. The builder will crash if you don't make an entry
+for the new release (this is deliberate to ensure you fix build_helper.json)
+and not just blindly provide a default that won't cause an error but will
+be hard to track down when you lose versions of resources you thought you
+had. It's sensible to pare this down to the minimum required, but it's
+harmless to have too many (but unneeded) entries.
 
 
 Make a method/class map snapshot

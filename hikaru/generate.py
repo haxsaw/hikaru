@@ -345,24 +345,6 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
 
     return objs
 
-#
-# this helps get around problems when classes from different groups
-# have the same name
-# _deprecation_helper = {
-#     'rel_1_23': {
-#         ('v1', 'Event'): ('v1', 'Event_core'),
-#     },
-#     'rel_1_24': {
-#         ('v1', 'Event'): ('v1', 'Event_core'),
-#     },
-#     'rel_1_25': {
-#         ('v1', 'Event'): ('v1', 'Event_core'),
-#     },
-#     'rel_1_26': {
-#         ('v1', 'Event'): ('v1', 'Event_core'),
-#     },
-# }
-
 
 _deprecation_helper: Dict[str, Dict[Tuple[str, str], Tuple[str, str]]] = {}
 
@@ -379,6 +361,7 @@ def add_deprecations_for_release(rel: str, deprecations: Dict[Tuple[str, str], T
         (api_version, kind) tuples that should be used instead
     :return: None
     """
+    global _deprecation_helper
     _deprecation_helper[rel] = deprecations
 
 

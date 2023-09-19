@@ -108,6 +108,7 @@ def test_yaml(yamlpath: pathlib.Path):
 
 
 def do_all():
+    setup()
     path = pathlib.Path("test_yaml")
     for p in path.iterdir():
         try:

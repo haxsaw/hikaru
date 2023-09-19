@@ -18,6 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import importlib
 from typing import Tuple, Optional, Dict
 from threading import current_thread, Thread
 
@@ -54,18 +55,30 @@ def set_default_release(relname: str):
     """
     Sets the default release for the current thread.
 
+    NOTE: it is assumed that setting a default release indicates the intent to
+        create objects from within that release. In anticipation of that, the base
+        module of the release is imported as part of this call.
+
     :param relname: string; the name of the release to use for this same thread.
          NOTE: there is no checking that this release package exists!
     """
     ct: Thread = current_thread()
     _default_release_by_thread[ct.name] = relname
+    # by setting a default release the user in indicating an intent to acquire
+    # objects from that release. There is some priming work that needs to be done
+    # first so we'll automatically import the base module for the release package
+    _ = importlib.import_module(f".{relname}", "hikaru.model")
 
 
 def set_global_default_release(relname: str):
     """
     Sets the global default release to use to the specified release
 
-    This is the release value used if there is no per-thread default release
+    This is the release value used if there is no per-thread default release.
+
+    NOTE: it is assumed that setting a default release indicates the intent to
+        create objects from within that release. In anticipation of that, the base
+        module of the release is imported as part of this call.
 
     :param relname: string; the name of a release module in the model
         package. NOTE: there is no checking that this release package
@@ -73,6 +86,10 @@ def set_global_default_release(relname: str):
     """
     global _default_release
     _default_release = relname
+    # by setting a default release the user in indicating an intent to acquire
+    # objects from that release. There is some priming work that needs to be done
+    # first so we'll automatically import the base module for the release package
+    _ = importlib.import_module(f".{relname}", "hikaru.model")
 
 
 def process_api_version(api_version: str) -> Tuple[str, str]:

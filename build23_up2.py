@@ -202,7 +202,8 @@ _package_init_code = \
 try:
     from .v1 import *
 except ImportError:  # pragma: no cover
-    pass"""
+    pass
+from .deprecations import *"""
 
 
 _deprecation_warning = \
@@ -226,6 +227,9 @@ try:
     from .{} import *
 except ImportError:  # pragma: no cover
     pass"""
+
+
+build_helper_data: dict = {}
 
 
 class PropertyDescriptor(object):
@@ -1777,8 +1781,8 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
 
 
 def load_swagger(swagger_file_path: str):
-    global _release_in_process, _release_hints
-    f = open(swagger_file_path, 'r')
+    global _release_in_process, _release_hints, build_helper_data
+    f = open(swagger_file_path, 'r', encoding='utf-8')
     d = json.load(f)
     info = d.get('info')
     rel_version = info.get("version")
@@ -1786,8 +1790,11 @@ def load_swagger(swagger_file_path: str):
     release_name = f"rel_{relnum}"
     _release_in_process = release_name
     try:
-        hint_text = open("build_helper.json", 'rt').read()
-        h = json.loads(hint_text)
+        hint_text = open("build_helper.json", 'rt', encoding='utf-8').read()
+        h: dict = json.loads(hint_text)
+        build_helper_data = h
+        for v in build_helper_data.values():
+            v["deprecations"] = eval(v.get('deprecations', '{}'))
         _release_hints = h.get(_release_in_process)
         PreferredVersions.load_preferreds(_release_hints)
     except FileNotFoundError:
@@ -2186,20 +2193,24 @@ def make_namespace_root(directory: str):
     if defrel_file.exists():
         defrel_file.unlink()
     dfile = defrel_file.open("w", encoding="utf-8")
-    sfile = Path("defrel_master.py").open("r")
+    sfile = Path("defrel_master.py").open("r", encoding='utf-8')
     dfile.write(sfile.read())
     dfile.close()
 
 
-_deprecations_skeleton = """from hikaru.generate add_deprecations_for_release
+_deprecations_skeleton = """from hikaru.generate import add_deprecations_for_release
 
-add_deprecations_for_release("%s", {})
+add_deprecations_for_release("%s", %s)
 """
 
 
 def make_deprecations(directory: str):
     path = Path(directory)
-    depmod_path = path
+    depmod_path = path / _release_in_process / "deprecations.py"
+    f = depmod_path.open('w', encoding='utf-8')
+    f.write(_deprecations_skeleton % (_release_in_process,
+                                      str(build_helper_data[_release_in_process].get("deprecations", {}))))
+    f.close()
 
 
 def build_it(swagger_file: str):
@@ -2207,6 +2218,7 @@ def build_it(swagger_file: str):
     path = prep_model_root(model_package)
     relpath = path / _release_in_process
     prep_rel_package(str(relpath), deprecated=False)
+    make_deprecations(model_package)
     write_modules(str(relpath))
     make_namespace_root(model_package)
 
