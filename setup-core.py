@@ -4,7 +4,7 @@ __version__ = "1.0.0"
 
 
 def get_long_desc():
-    return open('README.rst', 'r').read()
+    return open('README-core.rst', 'r').read()
 
 
 def get_requirements():

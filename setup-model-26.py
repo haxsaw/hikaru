@@ -1,54 +1,23 @@
 from setuptools import setup
+from lam import list_all_modules
 
-__version__ = "1.0.1"
+__version__ = "1.0.0"
 
 
 def get_long_desc():
-    return open('README.rst', 'r').read()
+    return open('README-model-26.rst', 'r').read()
 
 
 def get_requirements():
-    lines = open('requirements.txt', 'r').readlines()
+    lines = open('requirements-model-26.txt', 'r').readlines()
     reqs = [line.strip() for line in lines if line.strip()]
     return reqs
 
 
 setup(
-    name="hikaru",
+    name="hikaru-model-26",
     version=__version__,
-    packages=["hikaru",
-              "hikaru.model",
-              "hikaru.model.rel_1_23",
-              "hikaru.model.rel_1_23.v1",
-              "hikaru.model.rel_1_23.v1alpha1",
-              "hikaru.model.rel_1_23.v1beta1",
-              "hikaru.model.rel_1_23.v1beta2",
-              "hikaru.model.rel_1_23.v2",
-              "hikaru.model.rel_1_23.v2beta1",
-              "hikaru.model.rel_1_23.v2beta2",
-              "hikaru.model.rel_1_24",
-              "hikaru.model.rel_1_24.v1",
-              "hikaru.model.rel_1_24.v1alpha1",
-              "hikaru.model.rel_1_24.v1beta1",
-              "hikaru.model.rel_1_24.v1beta2",
-              "hikaru.model.rel_1_24.v2",
-              "hikaru.model.rel_1_24.v2beta1",
-              "hikaru.model.rel_1_24.v2beta2",
-              "hikaru.model.rel_1_25",
-              "hikaru.model.rel_1_25.v1",
-              "hikaru.model.rel_1_25.v1alpha1",
-              "hikaru.model.rel_1_25.v1beta1",
-              "hikaru.model.rel_1_25.v1beta2",
-              "hikaru.model.rel_1_25.v2",
-              "hikaru.model.rel_1_25.v2beta2",
-              "hikaru.model.rel_1_26",
-              "hikaru.model.rel_1_26.v1",
-              "hikaru.model.rel_1_26.v1alpha1",
-              "hikaru.model.rel_1_26.v1beta1",
-              "hikaru.model.rel_1_26.v1beta2",
-              "hikaru.model.rel_1_26.v1beta3",
-              "hikaru.model.rel_1_26.v2",
-              ],
+    py_modules=list_all_modules("hikaru/model/rel_1_26"),
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
     long_description=get_long_desc(),
@@ -60,7 +29,7 @@ setup(
     keywords=["Kubernetes", "modelling", "YAML", "JSON", "modeling",
               "translate", "translator", "reformatter", "transform"],
     install_requires=get_requirements(),
-    classifiers=["Development Status :: 4 - Beta",
+    classifiers=["Development Status :: 5 - Production/Stable",
                  "Intended Audience :: Developers",
                  "Intended Audience :: Financial and Insurance Industry",
                  "Intended Audience :: Information Technology",
@@ -71,6 +40,7 @@ setup(
                  "Programming Language :: Python :: 3.8",
                  "Programming Language :: Python :: 3.9",
                  "Programming Language :: Python :: 3.10",
+                 "Programming Language :: Python :: 3.11",
                  "Programming Language :: Python :: Implementation",
                  "Topic :: Software Development",
                  "Topic :: Software Development :: Code Generators",

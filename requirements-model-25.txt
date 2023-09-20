@@ -1,0 +1,2 @@
+kubernetes >=25.3.0
+hikaru-core @ file:///C:/Users/tcarr/PycharmProjects/hikaru/dist/hikaru_core-1.0.0-py3-none-any.whl

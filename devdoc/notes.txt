@@ -8,7 +8,7 @@ Adding support for a new release of the Kubernetes client
 Add new entries to build_helper.json for the release:
 
 You make a new entry for the release like "rel_1_27", and the value is a dict
-with two keys:
+with three keys:
 
 - the 'preferred_versions' key helps the builder sort out what version of a
   resource to prefer when reading the same named resource from multiple groups
@@ -21,6 +21,13 @@ with two keys:
   needed just in time. Usually this only involves the Event kind, but hopefully the K8s
   team will eventually finally drop this one and this can be a string with an empty
   dict.
+- the 'version' key contains a string that is the version of supported release of the
+  K8s client. So for instance, when we first release a hikaru model for the K8s 27.x libs,
+  this should have the value '1.0.0'. If the 27.x then gets a new version, those models should
+  be rebuilt and this version value bumped up accordingly, say '1.1.0'. Alternatively, if
+  a patch is needed on the model due to a discovered error, the version should be changed
+  to '1.0.1'. Finally, if something drastic changes in the core and the models are all
+  revamped, the version should be '2.0.0'.
 
 You can start by copying the previous release's entries, but may need to adjust
 due to testing results. The builder will crash if you don't make an entry
