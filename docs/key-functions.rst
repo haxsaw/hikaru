@@ -241,7 +241,7 @@ register_version_kind_class()
 Registers the class to create when Hikaru encounters the specified version and kind
 values.
 Use of this function is part of advanced Hikaru usage, which is documented
-:ref:`here<Advanced Hikaru: Defining Your Own Classes>`.
+:ref:`here<Defining Your Own Classes>`.
 
 rollback_cm()
 *************

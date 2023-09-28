@@ -28,13 +28,14 @@ from hikaru.naming import (set_global_default_release, set_default_release,
 from hikaru.version_kind import (register_version_kind_class,
                                  get_version_kind_class)
 from hikaru.utils import Response, rollback_cm
+from hikaru.model.defrel import get_default_installed_release
 
 
 model_classes = [k for k, v in globals().items()
                  if type(v) == type and
                  k != HikaruBase]
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_source",
            "get_clean_dict", "load_full_yaml", "get_processors", "TypeWarning",
@@ -42,6 +43,6 @@ __all__ = ["HikaruBase", "CatalogEntry", "get_json", "get_yaml", "get_python_sou
            "set_default_release", "set_global_default_release", "get_default_release",
            "camel_to_pep8", "HikaruDocumentBase", "Response",
            'register_version_kind_class', 'get_version_kind_class',
-           'KubernetesException', 'rollback_cm']
+           'KubernetesException', 'rollback_cm', 'get_default_installed_release']
 __all__.extend(model_classes)
 del model_classes

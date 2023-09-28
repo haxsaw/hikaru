@@ -294,7 +294,7 @@ class HikaruBase(object):
     def find_by_name(self, name: str, following: Union[str, List] = None) -> \
             List[CatalogEntry]:
         """
-        Returns a list of catalog entries for the named field wherever they occur
+        Returns a list of catalog entries for the named field wherever it occurs
         in the model.
 
         This method returns a list of CatalogEntry instances that match the criteria

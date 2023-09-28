@@ -1,21 +1,6 @@
 Hikaru Application
 *******************
 
-Basic Usage
-    Creating an Application Class
-    CRUD operations
-Digging Deeper
-    Labels and Annotations
-    Modeling Constraints
-    Instance Customization
-    Persisted Forms
-    Cannonical Forms with Class Methods
-Other Operations
-    Type Checking
-    Diffs
-    Searching
-
-
 The Hikaru Application facility provides a way to aggregate a set of K8s resources that support an application
 into a single construct that Hikaru can model and manage together. Additionally, it provides many of the same
 utility methods that HikaruDocumentBase derived model classes do. With Applications objects you can:
@@ -29,8 +14,8 @@ utility methods that HikaruDocumentBase derived model classes do. With Applicati
 - Use the various inspection methods to do things like check type correctness, diff instances, or search for
   instances of particular classes within the application
 
-The Basics
-==========
+Application Basics
+==================
 
 Creating an Application Class
 -----------------------------
@@ -162,6 +147,29 @@ Here's a simple example of a ``Reporter`` that prints some of the data to a spec
     # Using an ``ex`` instance from the above examples,
     ex.set_reporter(reporter)
 
+If you want a Reporter that can do more than just report on activity as it occurs, say, to first show the work
+that will be performed, your Reporter subclass can also implement the ``advise_plan()`` method, which will be called
+before any work is started to let you know what's going to happen. The following shows a simple example of showing
+the planned work:
+
+.. code:: python
+
+        def advise_plan(self, app: Application, app_action: str,
+                        tranches: List[List["FieldInfo"]]) -> Optional[bool]:
+            print(f"This is the work that will be processed for the {app_action}:")
+            for i, tranche in enumerate(tranches):
+                for fi in tranche:
+                    print(f"{fi.name}, a {fi.type.__name__} is part of tranche {i}")
+            return True
+
+Work is broken into `tranches`, where items in a tranche may be processed in parallel. Each tranche is processed
+in the order it is presented in the tranches list. The ``advise_plan()`` method then returns a value that is
+treated as bool: if True, then actually processing will proceed. If False, then processing is aborted and no work
+is done. For this reason, be sure to include a return value from your ``advise_plan()``, as the default return of
+None will result in your work plan being aborted.
+
+Reporter subclasses can also implement the ``should_abort()`` method which returns True if current processing should
+be aborted. The default implementation returns False, so processing always continues.
 
 
 Digging Deeper
@@ -189,13 +197,37 @@ queries:
 This label and annotation data allow Hikaru to recreate instances of Application objects with the ``read()``
 class method on the Application subclass.
 
+While you generally won't need to play with these values yourself, Hikaru provides a set of functions that
+can interact with this data and how it is accessed:
+
+- :ref:`get_label_selector_for_instance_id()<get_label_selector_for_instance_id doc>` returns a string that can be
+  used as a Kubernetes 'selector' for reading objects from the cluster that have a particular Hikaru Application
+  instance_id. This is used by Hikaru when re-assembling an Application instance from the cluster based on a supplied
+  instance_id.
+- :ref:`get_app_instance_label_key()<get_app_instance_label_key doc>` returns the string Hikaru Application will use
+  as the key in the labels mapping to identify resources that are part of the same Application instance. This may
+  be a per-thread value; while there is a global default key as noted above, each thread may set its own key.
+- :ref:`set_app_instance_label_key()<set_app_instance_label_key doc>` sets the string Hikaru Application will use
+  as the key for instance_id in the labels mapping for any resources in an Application instance. This is a per-thread
+  value, so calling this in one thread won't result in another thread seeing the value.
+- :ref:`set_global_app_instance_label_key()<set_global_app_instance_label_key doc>` sets the string Hikaru Application
+  will use as the key for instance_id in the labels mapping for any resources in an Application instance. *This is a global key*,
+  and applies across all threads unless a specific per-thread key has been established with set_app_instance_label_key().
+- :ref:`record_resource_metadata()<record_resource_metadata doc>` is used by Hikaru for storing the above data into
+  the annotations and labels using the specified keys. Normally, users don't have to deal with this function.
+  However, if they have some non-Hikaru Application resources they want to be able to access via an Application
+  model, they could use Hikaru methods to create objects for each resource in the app, apply the function to each,
+  and then call update() on the resource. They would then be able to be read into an Application instance using
+  the instance_id used in the calls to record_resource_metadata(). So this function could aid in a migration of
+  existing application resources to work with Hikaru Applictions.
+- :ref:`resource_name_matches_metadata()<resource_name_matches_metadata doc>` is a predicate function that returns True
+  when the a resource name (that is, the attribute name in an Application class) matches the name stored in the resource.
+  This function simply hides the logic for doing the comparison.
+
 .. note::
 
-    Altering either these keys or their values will make it so that Hikaru will not be able to re-create
-    the instance with ``read()``. It is possible to change what key is use to stored the instance UUID in the ``labels``
-    mapping with ``app.set_app_instance_label_key()``. Similarly, you can change the key used in the annotations mapping
-    that stores the name of the attribute a resource instance belongs to with ``app.set_app_rsrc_attr_annotation_key()``.
-    See the relevant documentation for details.
+    Altering either these keys or their values can make it so that Hikaru will not be able to re-create
+    the instance with ``read()``, so avoid changing any keys/values in labels or annotations that aren't familiar.
 
 Modeling Constraints
 --------------------
@@ -414,33 +446,42 @@ manner. For instance, the implementation below allows the caller to specify the 
 This approach can allow for a wide variety of customization approaches, even providing a means to allow the caller to provide
 whole sub-assemblies such as a specifically configured ``Container`` instance for the PodSpec.
 
-Instance Customization
-^^^^^^^^^^^^^^^^^^^^^^
+Non-Kubernetes Instance Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you require storing additional data in your Application subclass you have a bit more work ahead of you.
+.. note::
 
-Generally, adding non-resource data to Application subclasses is discouraged due to the complexity involved in working around the
-constraints of dataclasses, what can be stored/retrieved in Kubernetes, and the work needed to support persisting
-reanimating such classes. Few use cases can't be addressed with either the factory method approach shown above or else storing the
-additional data in an object associated with the Application instance. For the sake of completeness, the steps required are
-discussed here.
-
-*Creating instances*
-
-Instance creation is taken over by the ``dataclass`` machinery and that imposes some restrictions. While it is possible to include
-fields in a dataclass that can have type a annotation of ``InitVar`` which allows them to be
-
+    For this release of the Application facility in Hikaru, we **strongly** discourage trying to add any data to the Application
+    subclass that isn't some kind of K8s resource class. Doing otherwise at this point is neither well protected nor supported, and
+    any hacks users put in may wind up not working as the supported means to do this is worked out going forward. We suggest that
+    if you need other data associated with your Applicaiton instances you store it in an associated object and not integrate it
+    into the Application dataclass.
 
 
 Other Operations
 =================
 
-Type Checking
--------------
+The Application class also supports a number of other methods, most of which are analogues of those from HikaruBse, but work on
+entire Application instances:
 
-Diffs
-------
-
-Searching
-----------
+- ``diff()``-- Like ``diff()`` on HikaruBase objects, but works across all resources in an application. Returns a dict
+  of differences where the key is the name of the class attribute were a difference was found and the value is a list
+  of ``DiffDetail`` objects describing the difference.
+- ``dup()``-- Creates a deep copy of the Application instance on which the ``dup()`` method is invoked. Conduct your mad scientist
+  experiments on this clone.
+- ``merge()``-- Merges data from another instance of the Appliction into the instance on which ``merge()`` is invoked.
+- ``get_empty_instance()``-- Creates minimal but meaningless 'empty' instance of your application class.
+- ``get_clean_dict()``-- Acquire a Python dict representing the Application instance; this can be stored and used to recreate
+  the instance later.
+- ``from_dict()``-- Recreate an Application instance from a dict prevsviously created with ``get_clean_dict()``.
+- ``get_json()``-- Acquire a JSON representation of the Application instance.
+- ``from_json()``-- Recreate an Application instance from a JSON document previously created with ``get_json()``.
+- ``get_yaml()``-- Acquire a YAML representation of the Application instance.
+- ``from_yaml()``-- Recreate an Application instance from a YAML document previously created with ``get_yaml()``.
+- ``get_type_warnings()``-- Acquire type warnings for all component resources in an Application instance.
+- ``object_at_path()``-- Follow a path to an object and return that object (used with the path returned by diff() and
+  get_type_warnings()).
+- ``find_by_name()``-- Returns a list of CatalogEntry objects wherever they occur in the Application instance's resources.
+- ``find_uses_of_class()``-- Search through an Application instance and find all users of the named class, or any subclass of
+  the named class.
 

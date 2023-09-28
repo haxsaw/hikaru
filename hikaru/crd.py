@@ -55,7 +55,7 @@ def get_crd_schema(cls, jsp_class: Optional[type] = None):
 
     - Cannot handle recursively defined classes (yet), neither direct nor indirect.
     - Cannot handle dicts whose values are anything but strings; if you need more complex types
-      then use a nested class.
+      use a nested class.
     - Cannot handle Unions of multiple types.
 
     :param cls: a class object, derived from at least HikaruBase. A schema for this class will be
@@ -241,9 +241,9 @@ class HikaruCRDDocumentMixin(object):
     Add this class to the list of bases for classes meant to be used as the basis
     for a custom resource definitions. It will provide:
 
-    - create(), read(), update(), delete() methods,
+    - create, read, update, delete methods,
     - context manager capabilities,
-    - enable using the CRD class in a Watch()
+    - enable using the CRD class in a Watch
 
     NOTE: this mixin only works properly when used with HikaruDocumentBase as
         a sibling base class; it shouldn't be used with HikaruBase
@@ -276,7 +276,7 @@ class HikaruCRDDocumentMixin(object):
         """
         Generalized method for calling into the K8s client API for custom objects
 
-        This is the generalized call for K8s custom objects. All of the CRD CRUD methods use this
+        This is the generalized call for K8s custom objects. All the CRD CRUD methods use this
         method to access the underlying functionality of K8s; all behaviors are specified via the
         parameters. You probably don't need to access this directly
 
@@ -291,7 +291,8 @@ class HikaruCRDDocumentMixin(object):
             https://golang.org/pkg/unicode/#IsPrint.
         :param field_validation: optional str; fieldValidation instructs the server on how to handle
             objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
-            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            that the `ServerSideFieldValidation` feature gate is also enabled. Valid values are:
+
             - Ignore: This will ignore any unknown fields that are silently dropped from the object,
               and will ignore all but the last duplicate field that the decoder encounters. This is
               the default behavior prior to v1.23 and is the default behavior when the
@@ -304,12 +305,15 @@ class HikaruCRDDocumentMixin(object):
             - Strict: This will fail the request with a BadRequest error if any unknown fields would be
               dropped from the object, or if any duplicate fields are present. The error returned from
               the server will contain all unknown and duplicate fields encountered.
+
         :param pretty: optional str; if True then the output is pretty printed.
         :param dry_run: optional str; When present, indicates that modifications should not be
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
             values are:
+
             - All: all dry run stages will be processed.
+
         :param async_req: optional bool; if True, the call is async and the result requires the caller
             to invoke get() on the returned Response object. Default is False, making the call blocking.
         :return Response: if the call was sync, then Response.obj will contain the result, if async, then
@@ -382,7 +386,8 @@ class HikaruCRDDocumentMixin(object):
             https://golang.org/pkg/unicode/#IsPrint.
         :param field_validation: optional str; fieldValidation instructs the server on how to handle
             objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
-            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            that the `ServerSideFieldValidation` feature gate is also enabled. Valid values are:
+
             - Ignore: This will ignore any unknown fields that are silently dropped from the object,
               and will ignore all but the last duplicate field that the decoder encounters. This is
               the default behavior prior to v1.23 and is the default behavior when the
@@ -400,6 +405,7 @@ class HikaruCRDDocumentMixin(object):
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
             values are:
+
             - All: all dry run stages will be processed.
         :param async_req: optional bool; if True, the call is async and the result requires the caller
             to invoke get() on the returned Response object. Default is False, making the call blocking.
@@ -468,7 +474,8 @@ class HikaruCRDDocumentMixin(object):
             https://golang.org/pkg/unicode/#IsPrint.
         :param field_validation: optional str; fieldValidation instructs the server on how to handle
             objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
-            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            that the `ServerSideFieldValidation` feature gate is also enabled. Valid values are:
+
             - Ignore: This will ignore any unknown fields that are silently dropped from the object,
               and will ignore all but the last duplicate field that the decoder encounters. This is
               the default behavior prior to v1.23 and is the default behavior when the
@@ -524,7 +531,8 @@ class HikaruCRDDocumentMixin(object):
             https://golang.org/pkg/unicode/#IsPrint.
         :param field_validation: optional str; fieldValidation instructs the server on how to handle
             objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
-            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            that the `ServerSideFieldValidation` feature gate is also enabled. Valid values are:
+
             - Ignore: This will ignore any unknown fields that are silently dropped from the object,
               and will ignore all but the last duplicate field that the decoder encounters. This is
               the default behavior prior to v1.23 and is the default behavior when the
@@ -542,6 +550,7 @@ class HikaruCRDDocumentMixin(object):
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
             values are:
+
             - All: all dry run stages will be processed.
         :param async_req: optional bool; if True, the call is async and the result requires the caller
             to invoke get() on the returned Response object. Default is False, making the call blocking.
@@ -585,6 +594,7 @@ class HikaruCRDDocumentMixin(object):
             field or OrphanDependents may be set, but not both. The default policy is decided by the
             existing finalizer set in the metadata.finalizers and the resource-specific default policy.
             Acceptable values are:
+
             - 'Orphan' - orphan the dependents;
             - 'Background' - allow the garbage collector to delete the dependents
               in the background;
@@ -595,7 +605,8 @@ class HikaruCRDDocumentMixin(object):
             https://golang.org/pkg/unicode/#IsPrint.
         :param field_validation: optional str; fieldValidation instructs the server on how to handle
             objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields, provided
-            that the `ServerSideFieldValidation`feature gate is also enabled. Valid values are:
+            that the `ServerSideFieldValidation` feature gate is also enabled. Valid values are:
+
             - Ignore: This will ignore any unknown fields that are silently dropped from the object,
               and will ignore all but the last duplicate field that the decoder encounters. This is
               the default behavior prior to v1.23 and is the default behavior when the
@@ -613,11 +624,12 @@ class HikaruCRDDocumentMixin(object):
             persisted. An invalid or unrecognized dryRun directive will result
             in an error response and no further processing of the request. Valid
             values are:
+
             - All: all dry run stages will be processed.
         :param async_req: optional bool; if True, the call is async and the result requires the caller
             to invoke get() on the returned Response object. Default is False, making the call blocking.
         :return: Depends on the resource. Often it is an instance of the deleted resource, but may also
-            be a instance of the Status object; what is returned is defined by the swagger spec.
+            be an instance of the Status object; what is returned is defined by the swagger spec.
         """
         def_release = get_default_release()
         try:

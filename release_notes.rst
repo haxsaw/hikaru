@@ -2,6 +2,106 @@
 Release Notes
 *************
 
+v1.1.0
+------
+
+This is a big release for Hikaru as it is not only delivered using a significant re-vamp of
+the packaging approach, but also includes a new feature that supports whole applications
+which support the semantics of individual Kubernetes resource model classes.
+
+Packaging
+=========
+
+In this release, Hikaru has been broken into a set of smaller packages that allows you to only install the
+support you wish, while still offering a single "install everything" package. Either approach
+retains the same set of APIs and package structure, so should be transparent to your code.
+
+The new package structure is composed of:
+
+- ``hikaru-core``, which contains all of the underlying machinery that makes Hikaru run, including:
+
+  - Base model classes
+  - YAML, JSON, and Python dict exchange formats
+  - The new ``Application`` facility (more on this below)
+
+  Note that ``hikaru-core`` DOES NOT include support for code generation; this has been
+  moved to another package, ``hikaru-codegen`` (more on this below). There's really not much
+  you can do with core alone; at a minimum you need a model package for useful work (you could do
+  pure CRDs with just core, as long as they don't refer to any model classes).
+
+- A set of ``hikaru-model-*`` packages, where each package supports a single release of the
+  Kubernetes API. All model packages have ``hikaru-core`` as a requirement, so simply installing
+  the model you wish to work with will also install the core.
+- Python code generation capabilities have been moved to the ``hikaru-codegen`` package, which,
+  if installed, will only then install the ``black`` and ``autopep8`` code formatters.
+- Finally, the old ``hikaru`` package will still be offered, but it will become a meta-package that
+  installs the core, the four most recent models, and the codegen package.
+
+This structure has a number of benefits, some of which are in response to user requests:
+
+- **Smaller installs are now possible**: you can create minimal installs that only involve the
+  core and the model release(s) you wish to work with, leaving other models behind as
+  well as unneeded capabilities such as code formatting. Users who had Hikaru in AWS Lambdas
+  will now have a smaller distributable package.
+- **Model release deprecation is (mostly) over**: previously, Hikaru only supported four
+  releases of models since all were rolled into the single package. To keep that package from growing without
+  bound, older model releases would be deprecated so the Hikaru package didn't just keep growning.
+  That is no longer an issue as you can now install only the release of the models you wish to
+  work with. Models will only be deprecated if they are quite old and core has moved on.
+- **Multiple model releases are still supported**: so if you want to install both ``hikaru-model-25`` and
+  ``hikaru-model-26``, things will work as before. Multple installed models will still require the use
+  ``set_default_release()`` to inform Hikaru as to which release you want it to use to create objects
+  received from Kubernetes.
+- **Model packages can be updated independently of the core**: it hasn't happened so far, but there's\
+  always been the possibility that some older but non-deprecated release gets a patch from the keepers
+  of the Python Kubernetes client, which would force an update to the overall Hikaru package when it
+  really wasn't warranted. Now a patched model release can be created independently of the Hikaru core
+  package.
+- **New versions of models can be supported more quickly**: with the old package that contained multiple
+  models, a new K8s Python client release would entail a new model release, which entailed full testing
+  of all models in the overall Hikaru package. New models are time-consuming enough without adding all
+  the additional testing. But now we only need a new model package to support the new K8s release and
+  everything else can remain untouched (how we deal with the Hikaru meta-package is open for consideration).
+
+Documentation is still offered at the single ReadTheDocs site, where the core, models, and codegen packages
+are documented. The packages are all up on PyPI, so search there for hikaru to see all the available packages.
+
+Applications
+=============
+
+The new release of Hikaru also includes a new facility for defining all the resources for a single system
+or application in a single class. Supported by a base ``Application`` class, this facility provides similar
+functionality to that provided by classes like ``Pod`` or ``Deployment``. With this facility, you can:
+
+- Define methods to create canonical configurations of applications,
+- Provide parameters to these methods to customize instance creation,
+- Access CRUD methods to create/read/update/delete instances of applications within a K8s cluster,
+- Persist application instances to/from JSON, YAML, and Python dicts,
+- Access inspection and other management operations like diff and merge on whole application instance,
+- Create watches on all the resources in the application and receive events for each component.
+
+Consider this capability as an alternative to Helm, but instead of templatizing YAML files, you simply parameterize
+factory methods on your application class.
+
+This version does not include support for generating Python source code for the application, but that feature is
+coming. Other features, such as assembling application definitions from existing objects created from YAML/JSON/dicts
+or the cluster itself will follow on from there.
+
+Other changes
+==============
+
+There are a few other changes in this new release:
+
+- ``set_default_release()`` and ``set_global_default_release()`` now both automatically import the root package
+  for the indicated release: the assumption here is that since you bothered setting a default release, you'll probably
+  be using objects from it, so Hikaru front-end-loads the importation of the model package for the release you specify.
+- A new function, ``hikaru.model.defrel.get_default_installed_release()`` returns name of the highest numbered release
+  current *installed* on the system. This function actually examines the filesystem and has nothing to do with any preferred
+  release indicated by calls to ``set_default_release()``. The function ``get_default_release()`` uses
+  ``get_default_installed_release()`` if there has been no call to ``set_default_release()`` or ``set_global_default_release()``.
+- The ``from_dict()`` function has gotten a speedup, and now works 3-10x faster depending on the kind of object being
+  processed.
+
 v1.0.1
 ------
 

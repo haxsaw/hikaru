@@ -84,8 +84,8 @@ final YAML file to submit to Kubernetes. A simple version of that processing app
     import sys
     from hikaru import *
 
-    def add_labels(label_file_paths: List[str], inyaml_file: TextIO, outyaml_file:
-TextIO):
+    def add_labels(label_file_paths: List[str], inyaml_file: TextIO,
+                   outyaml_file: TextIO):
         # get_processors() returns a list of processed YAML
         # we get the first since there's only one ([0] on the end)
         labels = []

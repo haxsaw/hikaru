@@ -138,6 +138,10 @@ get_origin(inner_type)
 # and this gets the type in the list
 get_args(inner_type)[0]
 
+READMEs
+========
 
-x = P
-1234
+The font for the main hikaru logo is UNKNONWN
+
+The font for the subpackages is "Maiandra GD" size 80, which is available in
+GIMP at least on Windows (ver 2.10.34)

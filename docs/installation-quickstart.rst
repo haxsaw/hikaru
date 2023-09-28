@@ -2,16 +2,29 @@
 Installation and Quickstart
 ***************************
 
-Installation
+Installing
 ############
 
 From PyPI, you can just use the normal ``pip install`` dance:
 
     ``pip install hikaru``
 
-Or if installing from source,  cd into the project root and then you can install from setup.py:
+This will install the core Hikaru package, the four most recent K8s model packages, and the codegen
+package (all all their dependencies).
+
+If installing from source,  cd into the project root and then you can install from setup.py:
 
     ``python setup.py install``
+
+If you want to install just core support and models for a single Kubernetes release, for example
+release 25.x, you can just install that model package and it will also install the core Hikaru
+package:
+
+    ``pip install hikaru-model-25``
+
+If you want to fine-tune your installation so it is smaller
+and more targeted, see the :ref:`Installation` page for details on how to install specific parts of
+Hikaru.
 
 The project GitHub repository can be found at: https://github.com/haxsaw/hikaru
 

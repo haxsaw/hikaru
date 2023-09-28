@@ -63,6 +63,12 @@ def record_resource_metadata(rsrc: HikaruDocumentBase, instance_id: str, name: s
     created, updated, or deleted. This function is not intended to be called by users of hikaru-app, but is provided
     in case a user wants to use the same mechanism for their own purposes.
 
+    Since Hikaru handles the invocation of this normally, users shouldn't use this function
+    unless they have a specific need. One such need is to gather a set of existing resources
+    into an Application instance by calling this function on a series of resources, providing
+    a constant instance_id and varying values for name that match the attributes of an Application
+    subclass, and then calling update() on each in turn.
+
     :param rsrc: HikaruDocumentBase; the resource to set the metadata on
     :param instance_id: str; the unique Application instance id
     :param name: str; name of the attributes that the resource is known by within the application
@@ -372,15 +378,28 @@ class Reporter(object):
         :param resource: HikaruDocumentBase; the resource that the event is for
         :param additional_details: dict; different for each event type, but not absolutely
             needed to understand the event. Possible keys/values:
-            'error': <the-error-string>  # used for RSRC_ERROR
-            'index': int  # used when the resource is an element of a list; index of the
-                          # resource being reported on
-            'key': str    # used when the resource is a value in a dict of resources; string
-                          # value of the key of the resource
-            'app-operation': str  # used when the event is for an application operation; one
-                                  # of 'create', 'read', 'update', 'delete'
-            'manifest': list of (str, HikaruDocumentBase) tuples  # list of all resources to
-                          # processes; present with APP_START_PROCESSING events
+
+            +----------------------------------+---------------------------------+
+            | 'error': str                     | used for RSRC_ERROR             |
+            +----------------------------------+---------------------------------+
+            | 'index': int                     | used when the resource is an    |
+            |                                  | element of a list; index of the |
+            |                                  | resource being reported on      |
+            +----------------------------------+---------------------------------+
+            | 'key': str                       | used when the resource is a     |
+            |                                  | value in a dict of resources;   |
+            |                                  | string value of the key of the  |
+            |                                  | resource                        |
+            +----------------------------------+---------------------------------+
+            | 'app-operation': str             | used when the event is for an   |
+            |                                  | application operation; one of   |
+            |                                  | 'create', 'read', 'update',     |
+            |                                  | 'delete'                        |
+            +----------------------------------+---------------------------------+
+            | 'manifest':                      | list of all resources to        |
+            | list of                          | process; present with           |
+            | (str, HikaruDocumentBase) tuples | APP_START_PROCESSING events     |
+            +----------------------------------+---------------------------------+
         """
         pass  # pragma: no cover
 
@@ -394,7 +413,11 @@ class Reporter(object):
 
 class FieldInfo(object):
     """
-    Internal class used to hold flattened out type info for a dataclass field
+    Class used to hold flattened out type info for a dataclass field
+
+    Instances of this class are used both internally by Hikaru and are also passed
+    to a user via the Reporter (if one is supplied) to inform them of various activities
+    the Application object is conducting on their behalf.
     """
     def __init__(self, name: str, ftype: type, has_default: bool, default: Any = None,
                  default_factory: Callable = None):
@@ -625,9 +648,10 @@ class Application(object):
         Create the resources in the Application
 
         This method will deploy the resources in the Application to the Kubernetes cluster
-        dry_run: optional str, default None. May have the value 'All' which indicates to perform a dry run on
+
+        :param dry_run: optional str, default None. May have the value 'All' which indicates to perform a dry run on
             all processing stages for each resources
-        client: optional ApiClient, default None. You can create your ApiClient object which will be used when
+        :param client: optional ApiClient, default None. You can create your ApiClient object which will be used when
             contacting Kubernetes, or you can have the K8s client library do it for you by specifying the location
             of a config file with the KUBECONFIG environment variable.
         :return: bool; True if all resources were deployed successfully, False otherwise
@@ -726,11 +750,11 @@ class Application(object):
         ============
 
         - Since hikaru-app only models first-order resources, Kubernetes-managed resources derived from the first-order
-        ones will not be part of what's read. So for example, if an Application subclass contains a Deployment, reading
-        an instance of this Application will only yield the Deployment, not the Pods that Kubernetes may have spun up
-        based on the rules in the deployment.
+          ones will not be part of what's read. So for example, if an Application subclass contains a Deployment, reading
+          an instance of this Application will only yield the Deployment, not the Pods that Kubernetes may have spun up
+          based on the rules in the deployment.
         - CRDs currently are not supported, so if you use CRDs within your application there's no way to read them back
-        with this method.
+          with this method.
 
         :param instance_id: str; the string value of the application instance's id; this will be used to locate only
             resources that are part of the app instance
@@ -1201,12 +1225,28 @@ class Application(object):
 
     def find_by_name(self, name: str, following: Union[str, List] = None) -> List[CatalogEntry]:
         """
+        Returns a list of catalog entries for the named field wherever it occurs
+        in the Application's resources.
 
-        Args:
-            name:
-            following:
+        This is a convenience method that uses the method of the same name from HikaruBase
+        on each of the components of the application object. The returned CatalogEntry
+        objects have a path that includes the name of the attribute in the Application where
+        the item can be found.
 
-        Returns:
+        See the doc for HikaruBase.find_by_name for complete documentation.
+
+
+        :param name: string containing a name for an attribute somewhere in the model,
+            the search for with starts at 'self'. This must be a legal Python identifier,
+            not an integer.
+        :param following: optional sequence of strings or a single string with '.' separators
+            that names path under which search for name should be conducted. See the doc
+            for HikaruBase.find_by_name() for further details.
+        :return: list of CatalogEntry objects that match the query criteria.
+        :raises TypeError: if 'name' is not a string, or if 'following' is not
+            a string or list
+        :raises ValueError: if 'following' is a list and one of the elements is not
+            a str or an int
         """
         results: List[CatalogEntry] = []
         first_bit = None

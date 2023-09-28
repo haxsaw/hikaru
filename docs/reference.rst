@@ -47,12 +47,40 @@ Hikaru modelling base classes
 .. _HikaruCRDDocumentMixin doc:
 
 .. autoclass:: hikaru.crd.HikaruCRDDocumentMixin
+   :members:
 
-   .. automethod:: create
-   .. automethod:: read
-   .. automethod:: update
-   .. automethod:: delete
-   .. automethod:: api_call
+Hikaru Application classes
+****************************
+
+.. _Application doc:
+
+.. autoclass:: hikaru.app.Application
+
+    .. automethod:: create
+    .. automethod:: delete
+    .. automethod:: diff
+    .. automethod:: dup
+    .. automethod:: find_by_name
+    .. automethod:: find_uses_of_class
+    .. automethod:: from_dict
+    .. automethod:: from_json
+    .. automethod:: from_yaml
+    .. automethod:: get_clean_dict
+    .. automethod:: get_empty_instance
+    .. automethod:: get_json
+    .. automethod:: get_type_warnings
+    .. automethod:: get_yaml
+    .. automethod:: merge
+    .. automethod:: object_at_path
+    .. automethod:: read
+    .. automethod:: set_reporter
+    .. automethod:: update
+
+.. autoclass:: hikaru.app.Reporter
+    :members:
+
+.. autoclass:: hikaru.app.FieldInfo
+    :members:
 
 .. _FieldMetadata doc:
 
@@ -157,3 +185,31 @@ Hikaru functions
 .. _register_crd_class doc:
 
 .. autofunction:: hikaru.crd.register_crd_class
+
+.. _get_default_installed_release doc:
+
+.. autofunction:: hikaru.model.defrel.get_default_installed_release
+
+.. _get_label_selector_for_instance_id doc:
+
+.. autofunction:: hikaru.app.get_label_selector_for_instance_id
+
+.. _get_app_instance_label_key doc:
+
+.. autofunction:: hikaru.app.get_app_instance_label_key
+
+.. _set_app_instance_label_key doc:
+
+.. autofunction:: hikaru.app.set_app_instance_label_key
+
+.. _set_global_app_instance_label_key doc:
+
+.. autofunction:: hikaru.app.set_global_app_instance_label_key
+
+.. _record_resource_metadata doc:
+
+.. autofunction:: hikaru.app.record_resource_metadata
+
+.. _resource_name_matches_metadata doc:
+
+.. autofunction:: hikaru.app.resource_name_matches_metadata
