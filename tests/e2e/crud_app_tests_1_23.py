@@ -13,9 +13,13 @@ from os import getcwd
 from pathlib import Path
 from typing import cast
 from kubernetes import config
+from kubernetes.client.exceptions import ApiException
 from hikaru import *
 from hikaru.model.rel_1_23.v1 import *
 from hikaru.app import Application, Reporter
+import pytest
+
+set_default_release("rel_1_23")
 
 cwd = getcwd()
 if cwd.endswith('/e2e'):
@@ -26,16 +30,24 @@ else:
     base_path = Path('test_yaml')
 del cwd
 
-test_ns = "crud-test-ns-1-23"
+test_ns = "crud-app-test-ns-1-23"
 
 
 def beginning():
     set_default_release("rel_1_23")
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
+    return True
 
 
 def ending():
     pass
+
+
+@pytest.fixture(scope="module", autouse=True)
+def setup():
+    res = beginning()
+    yield res
+    ending()
 
 
 @dataclass
@@ -47,6 +59,7 @@ class CRUD_1_23(Application):
     def standard_instance(cls, namespace: str):
         path = base_path / 'apps-deployment.yaml'
         dep = cast(Deployment, load_full_yaml(path=str(path))[0])
+        dep.metadata.namespace = namespace
         app = CRUD_1_23(dep=dep, ns=Namespace(metadata=ObjectMeta(name=namespace)))
         return app
 
@@ -56,7 +69,12 @@ def test01():
     Testing delete first so we have something that can wipe out a created app
     """
     app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "test01")
-    assert app.delete()
+    result = False
+    try:
+        _ = app.delete()
+    except ApiException as e:
+        if e.status != 404:
+            raise
 
 
 def test02():
@@ -72,6 +90,8 @@ def test03():
     """
     Test read for an existing app
     """
+    ignore_attrs = {'resourceVersion', 'deployment.kubernetes.io/revision', 'managedFields', 'observedGeneration',
+                    'unavailableReplicas', 'conditions'}
     bad_diff_types = {DiffType.INCOMPATIBLE_DIFF, DiffType.TYPE_CHANGED, DiffType.REMOVED, DiffType.VALUE_CHANGED}
     app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "test03")
     assert app.create()
@@ -81,7 +101,8 @@ def test03():
         assert read_app.instance_id == app.instance_id
         diffs: Dict[str, List[DiffDetail]] = app.diff(read_app)
         for attr, l in diffs.items():
+            assert attr == "dep", f"unexpected attribute in diff: {attr}"
             for d in l:
-                assert d.diff_type not in bad_diff_types, f"diff type {d.diff_type} found in {attr} with path {d.path}"
+                assert d.attrname in ignore_attrs, f"unexpected diff attr in dep: {d.attrname}"
     finally:
         app.delete()
