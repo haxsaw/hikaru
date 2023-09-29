@@ -196,7 +196,7 @@ def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
 
 
 def from_dict(adict: dict, cls: Optional[type] = None,
-              translate: bool = False) -> HikaruBase:
+              translate: Optional[bool] = False) -> HikaruBase:
     """
     Create Hikaru objects from a ``get_clean_dict()`` dict
 
@@ -224,24 +224,27 @@ def from_dict(adict: dict, cls: Optional[type] = None,
         what class to make from the data
     :raises TypeError: if adict isn't actually a dict, or if cls isn't a subclass
         (not an instance) of HikaruBase
+    :raises ValueError: if no class can be located for the 'kind' and 'apiVersion' values
+        in the supplied dict.
     """
     if not isinstance(adict, dict):
         raise TypeError("The 'adict' parameter is not a dict")
     if cls is not None and not issubclass(cls, HikaruBase):
         raise TypeError("cls is not a subclass of HikaruBase")
-    parser = YAML(typ="safe")
-    sio = StringIO()
-    parser.dump(adict, stream=sio)
 
     if cls is None:
-        docs = load_full_yaml(yaml=sio.getvalue(), translate=translate)
-        doc = docs[0]
-    else:
-        parser = YAML(typ="safe")
-        sio.seek(0)
-        yaml = parser.load(sio)
-        doc = cls.from_yaml(yaml, translate=translate)
-    return doc
+        # then this must be a top-level dict that has apiVersion and kind
+        # attributes; if not then we have an error
+        if 'apiVersion' not in adict or 'kind' not in adict:
+            raise RuntimeError("The 'adict' parameter is missing apiVersion or kind keys")
+        ver, kind = adict['apiVersion'], adict['kind']
+        cls = get_version_kind_class(ver, kind)
+        if cls is None:
+            raise ValueError(f"The contained apiVersion '{ver}' and kind "
+                             f"'{kind}' don't map to any known class")
+    inst = cls.get_empty_instance()
+    inst.process(adict, translate=translate)
+    return inst
 
 
 def get_processors(path: str = None, stream: TextIO = None,
