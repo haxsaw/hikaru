@@ -19,7 +19,8 @@ from hikaru.model.rel_1_24.v1 import *
 from hikaru.app import Application, Reporter
 from hikaru.app import (get_app_instance_label_key, get_app_rsrc_attr_annotation_key,
                         set_app_instance_label_key, set_global_app_instance_label_key,
-                        set_app_rsrc_attr_annotation_key, set_global_rsrc_attr_annotation_key)
+                        set_app_rsrc_attr_annotation_key, set_global_rsrc_attr_annotation_key,
+                        AppWatcher)
 from hikaru.crd import HikaruCRDDocumentMixin
 from dataclasses import dataclass, Field, fields, field
 
@@ -32,7 +33,7 @@ class CRDTestExp(Exception):
 
 class MockApiClient(object):
     def __init__(self, gen_failure=False, raise_exp=False, fail_on_verb=None, tweaker_func=None,
-                 gen_failure_code=404):
+                 gen_failure_code=404, use_exception: Optional[BaseException] = ApiException):
         self.body = None
         self.client_side_validation = 1
         self.gen_failure = gen_failure
@@ -44,6 +45,7 @@ class MockApiClient(object):
         self.post_count = 0
         self.put_count = 0
         self.get_count = 0
+        self.use_exception = use_exception
 
     def select_header_accept(self, accepts):
         """Returns `Accept` based on an array of accepts provided.
@@ -88,7 +90,7 @@ class MockApiClient(object):
             self.get_count += 1
         if self.fail_on_verb == verb:
             self.allow_tweak(verb)
-            raise ApiException(404, "Synthetic not found", {})
+            raise self.use_exception(self.gen_failure_code, "Synthetic not found", {})
         if self.raise_exp:
             self.allow_tweak(verb)
             raise CRDTestExp("Synthetic failure")
@@ -106,6 +108,7 @@ class MockReporter(Reporter):
         self.app_ends = []
         self.reports = []
         self.abort = False
+        self.ok_plan = True
 
     def report(self, app: Application, app_action: str, event_type: str, timestamp: str, attribute_name: str,
                resource: HikaruDocumentBase, additional_details: dict):
@@ -121,9 +124,13 @@ class MockReporter(Reporter):
         self.app_ends.clear()
         self.reports.clear()
         self.abort = False
+        self.ok_plan = True
 
     def should_abort(self, app: Application) -> bool:
         return self.abort
+
+    def advise_plan(self, app: 'Application', app_action: str, tranches: List[List["FieldInfo"]]) -> Optional[bool]:
+        return self.ok_plan
 
 
 @dataclass
@@ -778,6 +785,272 @@ def test27():
     assert len(results4) == 1, f"got {len(results4)} results"
     for result in results4:
         assert result.path[0] in {"p1", "p2", "d1"}, f"path {result.path} starts with unexpected element"
+
+
+def test28():
+    """
+    Check that if we say 'no' to the plan nothing goes forward
+    """
+    client = MockApiClient()
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                   image="test-app01-image")])))
+    ta02.client = client
+    reporter = MockReporter()
+    reporter.ok_plan = False
+    ta02.set_reporter(reporter)
+    assert not ta02.create(dry_run="All")
+    assert len(reporter.app_starts) == 0
+
+
+def test29():
+    """
+    Check we handle other status codes besides 404
+    """
+    client = MockApiClient(fail_on_verb="get", gen_failure_code=420)
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                           image="test-app01-image")])))
+    ta02.client = client
+    reporter = MockReporter()
+    ta02.set_reporter(reporter)
+    try:
+        assert not ta02.create(dry_run="All")
+    except ApiException as e:
+        assert e.status == 420
+    assert len(reporter.app_starts) == 1
+    assert len(reporter.reports) == 4
+
+
+def test30():
+    """
+    Test that we handle some other exception from below with grace and control
+    """
+    client = MockApiClient(fail_on_verb="get", gen_failure_code=420, use_exception=NotImplementedError)
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                           image="test-app01-image")])))
+    ta02.client = client
+    reporter = MockReporter()
+    ta02.set_reporter(reporter)
+    try:
+        assert not ta02.create(dry_run="All")
+    except ApiException as e:
+        assert False, "should have raised NotImplementedError"
+    except NotImplementedError as _:
+        pass
+    assert len(reporter.app_starts) == 1
+    assert len(reporter.reports) == 4
+
+
+def test31():
+    """
+    Abort a delete's plan
+    """
+    client = MockApiClient()
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                   image="test-app01-image")])))
+    ta02.client = client
+    reporter = MockReporter()
+    reporter.ok_plan = False
+    ta02.set_reporter(reporter)
+    assert not ta02.delete(dry_run="All")
+    assert len(reporter.app_starts) == 0
+
+
+def test32():
+    """
+    Test the basic update flow
+    """
+    client = MockApiClient()
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                   image="test-app01-image")])))
+    ta02.client = client
+    reporter = MockReporter()
+    ta02.set_reporter(reporter)
+    assert ta02.create(dry_run="All")
+    ta02.pod.metadata.labels["new-label"] = "summat"
+    assert ta02.update(dry_run="All")
+
+
+def test33():
+    """
+    Test that we can't diff the wrong objects
+    """
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                   image="test-app01-image")])))
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    try:
+        ta02.diff(i)
+        assert False, "should have raised a ValueError"
+    except TypeError:
+        pass
+
+
+def test34():
+    """
+    Make sure diff notes when something is missing
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])),
+                                   dep=Deployment.get_empty_instance())
+    i_copy = i.dup()
+    i_copy.dep = None
+    diffs = i.diff(i_copy)
+    assert 'dep' in diffs
+    assert len(diffs['dep']) == 1
+    assert diffs['dep'][0].diff_type == DiffType.REMOVED
+
+
+def test35():
+    """
+    Make sure diff notes when something is added
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    i_copy = i.dup()
+    i_copy.dep = Deployment.get_empty_instance()
+    diffs = i.diff(i_copy)
+    assert 'dep' in diffs
+    assert len(diffs['dep']) == 1
+    assert diffs['dep'][0].diff_type == DiffType.ADDED
+
+
+def test36():
+    """
+    Make sure we can't merge dissimilar objects
+    """
+    ta02: App01 = App01(ns=Namespace(metadata=ObjectMeta(name=App01.ns_name)),
+                        pod=Pod(metadata=ObjectMeta(name="test-app01-pod", namespace=App01.ns_name),
+                                spec=PodSpec(containers=[Container(name="test-app01-container",
+                                                                   image="test-app01-image")])))
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    try:
+        ta02.merge(i)
+        assert False, "should have raised a ValueError"
+    except TypeError:
+        pass
+
+
+def test37():
+    """
+    make sure we can find diff paths
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    i_copy = i.dup()
+    i_copy.dep = Deployment.get_empty_instance()
+    diffs = i.diff(i_copy)
+    o = i_copy.object_at_path(diffs['dep'][0].path)
+    assert isinstance(o, Deployment)
+    # while we're at it, let's make sure that if we have a bad path we get and attr error
+    try:
+        i_copy.object_at_path(["NOT_THERE"])
+        assert False, "we should have had an AttributeError"
+    except AttributeError:
+        pass
+
+
+def test38():
+    """
+    Check some of the edge cases for object_at_path()
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    o = i.object_at_path(['dep'])
+    assert o is None
+    try:
+        _ = i.object_at_path(['dep', 'metadata'])
+        assert False, "should have raised a RuntimeError"
+    except RuntimeError:
+        pass
+
+
+def test39():
+    """
+    Exercise the get_type_warnings() method
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    tw = i.get_type_warnings()
+    assert len(tw) == 3
+    assert len(tw['dep']) == 0
+    i.dep = Pod.get_empty_instance()
+    tw = i.get_type_warnings()
+    assert len(tw) == 3
+    assert len(tw['dep']) != 0
+    i.dep = None
+    i.pod = None
+    tw = i.get_type_warnings()
+    assert len(tw) == 3
+    assert len(tw['dep']) == 0
+    assert len(tw['pod']) != 0
+    i.pod = PodSpec.get_empty_instance()
+    tw = i.get_type_warnings()
+    assert len(tw) == 3
+    assert len(tw['pod']) != 0
+
+
+def test40():
+    """
+    Test find uses of class
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])))
+    uses = i.find_uses_of_class(Pod)
+    assert len(uses) == 1
+    uses = i.find_uses_of_class(Deployment)
+    assert len(uses) == 0
+    try:
+        _ = i.find_uses_of_class(PodSpec)
+        assert False, "Should have raised a TypeError"
+    except TypeError:
+        pass
+    try:
+        _ = i.find_uses_of_class(HikaruDocumentBase)
+        assert  False, "Should have raised a TypeError"
+    except TypeError:
+        pass
+
+
+def test41():
+    """
+    Try creating a watcher on an app
+    """
+    i: RoundTheHorn = RoundTheHorn(ns=Namespace(metadata=ObjectMeta(name="round_the_horn")),
+                                   pod=Pod(metadata=ObjectMeta(name="test-app24-pod", namespace="round_the_horn"),
+                                   spec=PodSpec(containers=[Container(name="test-app24-container",
+                                                                      image="test-app24-image")])),
+                                   dep=Deployment.get_empty_instance())
+    _ = AppWatcher(i)
+    # this is just loading a MultiplexingWatcher with the contents of the app
 
 
 if __name__ == "__main__":

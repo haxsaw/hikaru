@@ -353,7 +353,7 @@ class Reporter(object):
         :return: optional bool. If False, then processing the provided plan is aborted. Any other value allows
             processing to proceed. Returning None is fine; this will allow processing to continue.
         """
-        return True
+        return True  # pragma: no cover
 
     def report(self, app: "Application", app_action: str, event_type: str, timestamp: str, attribute_name: str,
                resource: HikaruDocumentBase, additional_details: dict):
@@ -773,7 +773,7 @@ class Application(object):
                 meth = getattr(model_cls, f"list{f.type.__name__}ForAllNamespaces")
             elif hasattr(model_cls, f"list{f.type.__name__}"):
                 meth = getattr(model_cls, f"list{f.type.__name__}")
-            else:
+            else:  # pragma: no cover
                 raise TypeError(f"Can't find a suitable method to list {f.type.__name__} resources")
             response: Response[model_cls] = meth(label_selector=selector, client=client)
             obj_list: list = response.obj.items
@@ -856,6 +856,8 @@ class Application(object):
 
         :return: True if the update ran successfully, False otherwise
         """
+        if client is None:
+            client = self.client
         self.report("update", Reporter.APP_START_PROCESSING, {})
         try:
             for f in self.iterate_fields():
@@ -893,10 +895,10 @@ class Application(object):
         new instance, such as the resource version. These differences can be ignored by the caller.
 
         :param other: an instance of the same Application subclass as this instance
-        :raises: ValueError if other is not an instance of the same Application subclass as this instance
+        :raises: TypeError if other is not an instance of the same Application subclass as this instance
         """
         if not isinstance(other, self.__class__):
-            raise ValueError(f"other must be an instance of {self.__class__.__name__}")
+            raise TypeError(f"other must be an instance of {self.__class__.__name__}")
         differences = {}
         for f in self.iterate_fields():
             r1: HikaruBase = getattr(self, f.name, None)
@@ -904,11 +906,11 @@ class Application(object):
             if r1 is None:
                 if r2 is None:
                     continue  # nothing to see here; keep going
-                differences[f.name] = [DiffDetail(DiffType.ADDED, self.__class__, f.name, ["missing"],
+                differences[f.name] = [DiffDetail(DiffType.ADDED, self.__class__, f.name, [f.name],
                                                   "resource missing from self but present in other")]
                 continue
             if r2 is None:
-                differences[f.name] = [DiffDetail(DiffType.REMOVED, self.__class__, f.name, ["missing"],
+                differences[f.name] = [DiffDetail(DiffType.REMOVED, self.__class__, f.name, [f.name],
                                                   "resource missing from other instance but present in self")]
                 continue
             diffs = r1.diff(r2)
@@ -949,7 +951,7 @@ class Application(object):
             if r is None:
                 if f.has_default:
                     continue
-                else:
+                else:  # pragma: no cover
                     raise ValueError(f"field {f.name} has no default value and is missing from this instance")
             init_args[f.name] = r.dup()
         dup = self.__class__(**init_args)
@@ -1208,7 +1210,7 @@ class Application(object):
         :param path: A list of strings or ints. :return: Whatever value is found at the end of the path; this could
             be another HikaruBase instance or a plain Python object (str, bool, dict, etc).
 
-        :raises RuntimeError: raised if None is found anywhere along the path except at the last element
+        :raises RuntimeError: raised if path[0] is None but there are more elements
         :raises IndexError: raised if a path index value is beyond the end of a list-valued attribute
         :raises ValueError: if an index for a list can't be turned into an int
         :raises AttributeError: raised if any attribute on the path isn't an attribute of the previous object on
@@ -1219,7 +1221,10 @@ class Application(object):
             raise AttributeError(f"The application doesn't have an attribute named {path[0]}")
         topmost_rsrc: HikaruDocumentBase = getattr(self, path[0], None)
         if topmost_rsrc is None:
-            raise RuntimeError(f"The attribute {path[0]} in the application is None")
+            if len(path) > 1:
+                raise RuntimeError(f"The attribute {path[0]} in the application is None")
+            else:
+                return topmost_rsrc
         final_rsrc = topmost_rsrc.object_at_path(path[1:])
         return final_rsrc
 
@@ -1285,17 +1290,18 @@ class Application(object):
                 results.extend(entries)
         return results
 
-    def get_type_warnings(self):
+    def get_type_warnings(self) -> Dict[str, List[TypeWarning]]:
         """
         Get all the type warnings for this app and its resources
 
         This method checks the types of all the fields in the app and its resources and returns a list
         any type mismatches it finds. The list will be empty if there are no type mismatches.
         """
-        # TODO: this needs to return a dict so you can tell what warnings belong to what object
-        warnings: [TypeWarning] = []
+        all_warnings: Dict[str, List[TypeWarning]] = {}
         for f in self.iterate_fields():
             r = getattr(self, f.name, None)
+            warnings: List[TypeWarning] = []
+            all_warnings[f.name] = warnings
             if r is None:
                 if f.has_default:
                     continue
@@ -1311,9 +1317,9 @@ class Application(object):
                                                 f"field {f.name} is {type(r)} but should be a HikaruDocumentBase"))
                 else:
                     warnings.extend(r.get_type_warnings())
-        return warnings
+        return all_warnings
 
-    def find_uses_of_class(self, cls: HikaruDocumentBase) -> List[HikaruDocumentBase]:
+    def find_uses_of_class(self, cls: type) -> List[HikaruDocumentBase]:
         """
         Search through the app and find all uses of the specified class (or its subclasses)
 
@@ -1329,8 +1335,9 @@ class Application(object):
             raise TypeError("cls must be a subclass of HikaruDocumentBase")
         found: List[HikaruDocumentBase] = []
         for r in self.iterate_fields():
-            if isinstance(r, cls):
-                found.append(r)
+            a = getattr(self, r.name)
+            if isinstance(a, cls):
+                found.append(a)
         return found
 
 
