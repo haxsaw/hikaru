@@ -195,6 +195,29 @@ def from_json(json_data: str, cls: Optional[type] = None) -> HikaruBase:
     return from_dict(d, cls=cls)
 
 
+def _determine_version_kind(doc: dict, release: str) -> Tuple[str, str]:
+    """
+    Centralize the tortured logic for determining the proper values for apiVersion and kind
+
+    There are a number of edge cases when determining the apiVersion/kind values for a K8s
+    document, and a lot depends on where the doc comes from. Since a couple of different funcs
+    need to be able to determine this, the logic is centralized here so hopefully there's no
+    need for other special case processing.
+
+    :returns: 2-tuple, both strings: apiVersion, kind
+    """
+    initial_api_version = doc.get('apiVersion', '--NOPE--')
+    if initial_api_version == '--NOPE--':
+        initial_api_version = doc.get('api_version', '')
+    _, api_version = process_api_version(initial_api_version)
+    kind = doc.get('kind', "")
+    api_version, kind = _vk_mapper(initial_api_version
+                                   if api_version != initial_api_version
+                                   else api_version,
+                                   kind, release)
+    return api_version, kind
+
+
 def from_dict(adict: dict, cls: Optional[type] = None,
               translate: Optional[bool] = False) -> HikaruBase:
     """
@@ -235,9 +258,10 @@ def from_dict(adict: dict, cls: Optional[type] = None,
     if cls is None:
         # then this must be a top-level dict that has apiVersion and kind
         # attributes; if not then we have an error
-        if 'apiVersion' not in adict or 'kind' not in adict:
-            raise RuntimeError("The 'adict' parameter is missing apiVersion or kind keys")
-        ver, kind = adict['apiVersion'], adict['kind']
+        # if 'apiVersion' not in adict or 'kind' not in adict:
+        #     raise RuntimeError("The 'adict' parameter is missing apiVersion or kind keys")
+        # ver, kind = adict['apiVersion'], adict['kind']
+        ver, kind = _determine_version_kind(adict, get_default_release())
         cls = get_version_kind_class(ver, kind)
         if cls is None:
             raise ValueError(f"The contained apiVersion '{ver}' and kind "
@@ -328,15 +352,16 @@ def load_full_yaml(path: str = None, stream: TextIO = None,
     docs = get_processors(path=path, stream=stream, yaml=yaml)
     objs = []
     for i, doc in enumerate(docs):
-        initial_api_version = doc.get('apiVersion', '--NOPE--')
-        if initial_api_version == '--NOPE--':
-            initial_api_version = doc.get('api_version', '')
-        _, api_version = process_api_version(initial_api_version)
-        kind = doc.get('kind', "")
-        api_version, kind = _vk_mapper(initial_api_version
-                                       if api_version != initial_api_version
-                                       else api_version,
-                                       kind, release)
+        # initial_api_version = doc.get('apiVersion', '--NOPE--')
+        # if initial_api_version == '--NOPE--':
+        #     initial_api_version = doc.get('api_version', '')
+        # _, api_version = process_api_version(initial_api_version)
+        # kind = doc.get('kind', "")
+        # api_version, kind = _vk_mapper(initial_api_version
+        #                                if api_version != initial_api_version
+        #                                else api_version,
+        #                                kind, release)
+        api_version, kind = _determine_version_kind(doc, release)
         klass = get_version_kind_class(api_version, kind, release)
         if klass is None:
             raise RuntimeError(f"Doc number {i} in the supplied YAML has an"

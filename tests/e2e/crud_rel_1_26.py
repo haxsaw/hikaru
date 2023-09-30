@@ -72,6 +72,8 @@ def test01():
     try:
         d.read()
         d.read()
+        time.sleep(0.1)
+        d.read()
         d.metadata.labels['a'] = 'b'
         d.update()
     finally:
@@ -89,6 +91,7 @@ def test01a():
     d.create(namespace=crud_namespace)
     try:
         d.read()
+        time.sleep(0.1)
         d.read()
         d.metadata.labels['test'] = 'test01a'
         d.update()
@@ -294,6 +297,7 @@ def test10():
     rc.create()
     try:
         rc.read()
+        time.sleep(0.1)
         rc.read()
         rc.metadata.labels['test'] = 'test10'
         rc.update()
@@ -365,6 +369,8 @@ def test12():
     try:
         job.read()
         job.read()
+        time.sleep(0.1)
+        job.read()
         job.metadata.labels['test'] = 'test12'
         job.update()
     finally:
@@ -409,6 +415,8 @@ def test13():
     ds.create()
     try:
         ds.read()
+        ds.read()
+        time.sleep(0.1)
         ds.read()
         ds.metadata.labels['test'] = 'test13'
         ds.update()

@@ -586,7 +586,7 @@ class HikaruBase(object):
                                f" {type(other_attr)}",
                                attr,
                                other_attr)]
-        elif issubclass(type(attr), (str, int, float, bool, NoneType)):
+        elif issubclass(type(attr), (str, int, float, bool, datetime.datetime, NoneType)):
             if attr == other_attr:
                 return []
             return [DiffDetail(DiffType.VALUE_CHANGED,

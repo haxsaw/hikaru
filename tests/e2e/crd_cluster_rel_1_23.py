@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from kubernetes import config
 
 set_default_release("rel_1_23")
+config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
 
 
 @dataclass
@@ -34,7 +35,6 @@ class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
 
 
 register_crd_class(MyCluster, plural_name="myclusters", is_namespaced=False)
-config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
 
 crd_defined: bool = False
 crd_instance_created: bool = False
