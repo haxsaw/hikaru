@@ -56,22 +56,33 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
         is a bit faster than 'autopep8', and no formatting is the fastest.
     :return: Python source code that will re-create the supplied object
     :raises RuntimeError: if an unrecognized style is supplied
+    :raises ImportError: if the hikaru-codegen package hasn't been installed and the selected
+        code formatter can't be imported. NOTE: hikaru-codegen ensures that a compatible version#
+        of the formatter is installed, but you can install either black or autopep8 yourself
+        and risk incompatibility.
     """
-    from autopep8 import fix_code
-    from black import format_str, Mode, NothingChanged
-
     if style not in ('black', 'autopep8', None):
         raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
     if style is None:
         result = code
     elif style == "autopep8":
+        try:
+            from autopep8 import fix_code
+        except ImportError:  # pragma: no cover
+            raise ImportError("You are trying to generate autopep8-formatted Python code, but autopep8 isn't "
+                              "installed. Please install the hikaru-codegen package to satisfy this requirement.")
         result = fix_code(code, options={"max_line_length": 88,
                                          "experimental": 1})
     else:  # then it's black
         try:
+            from black import format_str, Mode, NothingChanged
+        except ImportError:  # pragma: no cover
+            raise ImportError("You are trying to generate black-formatted Python code, but black isn't "
+                              "installed. Please install the hikaru-codegen package to satisfy this requirement.")
+        try:
             result = format_str(code, mode=Mode())
-        except NothingChanged:
+        except NothingChanged:  # pragma: no cover
             result = code
     return result
 
