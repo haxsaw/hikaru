@@ -121,10 +121,10 @@ are carried out.
 
 The ``report()`` method is passed the following parameters:
 
-- The ``Application`` instace doing the reporting, so that multiple instances can share the same ``Reporter``,
+- The ``Application`` instance doing the reporting, so that multiple instances can share the same ``Reporter``,
 - A string defining what kind of action is being carried out (create, read, etc),
 - A string defining the type of the event being reported; these are class attributes on the ``Reporter`` class,
-- A string timestamp of when the event occured,
+- A string timestamp of when the event occurred,
 - An optional string containing the name of the attribute in the Application that is being processed (None if an
   Application level event),
 - A ``HikaruDocumentBase`` derived resource instance that is being processed (or None if an,
@@ -139,7 +139,7 @@ Here's a simple example of a ``Reporter`` that prints some of the data to a spec
             self.stream = stream
 
         def report(self, app: Application, app_action: str, event_type: str, timestamp: str,
-                   attribute_name: str, resource: HikaruDocumentBase, addtional_details: dict):
+                   attribute_name: str, resource: HikaruDocumentBase, additional_details: dict):
             self.stream.write(f"Got event {event_type} for {app_action} at {timestamp} "
                               f"for resource {attribute_name}\n")
 
@@ -219,7 +219,7 @@ can interact with this data and how it is accessed:
   model, they could use Hikaru methods to create objects for each resource in the app, apply the function to each,
   and then call update() on the resource. They would then be able to be read into an Application instance using
   the instance_id used in the calls to record_resource_metadata(). So this function could aid in a migration of
-  existing application resources to work with Hikaru Applictions.
+  existing application resources to work with Hikaru Applications.
 - :ref:`resource_name_matches_metadata()<resource_name_matches_metadata doc>` is a predicate function that returns True
   when the a resource name (that is, the attribute name in an Application class) matches the name stored in the resource.
   This function simply hides the logic for doing the comparison.
@@ -343,7 +343,7 @@ Because of constraints imposed by Python dataclasses and Hikaru Application sema
 further customizing Application instances in terms of the data instances can contain.
 
 As previously mentioned, the definition of a Application subclass can only contain dataclass fields that are type annotated
-to be some kind of ``HikaruDocumentBase`` subclasss. This is in support of the ``read()`` class method on all Application
+to be some kind of ``HikaruDocumentBase`` subclass. This is in support of the ``read()`` class method on all Application
 subclasses. ``read()`` takes a single argument, the instance_id from a previous invocation, and uses that to query the K8s cluster
 to find all the resources that go into the Application. The ``read()`` method uses the type annotated class attributes to determine
 what kind of objects to query from the cluster, and then uses those queried objects in the creation of a new instance of the
@@ -391,7 +391,7 @@ call:
                  ns=Namespace(metadata=ObjectMeta(name="example_ns")
                  )
 
-Operationally this is fine, but puts significant responsibiltiy on the caller to ensure that the components are each configured
+Operationally this is fine, but puts significant responsibility on the caller to ensure that the components are each configured
 correctly for the purpose of the app (and possibly for other conventions and standards as well).
 
 A simple way to ensure that a user of ``Example`` can always get a canonical form of the app is to provide a classmethod that
@@ -454,7 +454,7 @@ Non-Kubernetes Instance Data
     For this release of the Application facility in Hikaru, we **strongly** discourage trying to add any data to the Application
     subclass that isn't some kind of K8s resource class. Doing otherwise at this point is neither well protected nor supported, and
     any hacks users put in may wind up not working as the supported means to do this is worked out going forward. We suggest that
-    if you need other data associated with your Applicaiton instances you store it in an associated object and not integrate it
+    if you need other data associated with your Application instances you store it in an associated object and not integrate it
     into the Application dataclass.
 
 
@@ -469,11 +469,11 @@ entire Application instances:
   of ``DiffDetail`` objects describing the difference.
 - ``dup()``-- Creates a deep copy of the Application instance on which the ``dup()`` method is invoked. Conduct your mad scientist
   experiments on this clone.
-- ``merge()``-- Merges data from another instance of the Appliction into the instance on which ``merge()`` is invoked.
+- ``merge()``-- Merges data from another instance of the Application into the instance on which ``merge()`` is invoked.
 - ``get_empty_instance()``-- Creates minimal but meaningless 'empty' instance of your application class.
 - ``get_clean_dict()``-- Acquire a Python dict representing the Application instance; this can be stored and used to recreate
   the instance later.
-- ``from_dict()``-- Recreate an Application instance from a dict prevsviously created with ``get_clean_dict()``.
+- ``from_dict()``-- Recreate an Application instance from a dict previously created with ``get_clean_dict()``.
 - ``get_json()``-- Acquire a JSON representation of the Application instance.
 - ``from_json()``-- Recreate an Application instance from a JSON document previously created with ``get_json()``.
 - ``get_yaml()``-- Acquire a YAML representation of the Application instance.

@@ -105,7 +105,7 @@ standard files. Most of these are ignorable for general cases, but maybe useful 
 - __init__.py: imports all symbols from the default version sub-package (more on this below) and also ensures
   that the deprecations overrides are loaded.
 - deprecations.py: defines certain deprecations that Hikaru core must watch out for when using this model package's
-  objects; this provides a way for the core to dis-ambiguate certain situations. Not usually needed by anyone but the
+  objects; this provides a way for the core to disambiguate certain situations. Not usually needed by anyone but the
   core.
 - unversioned.py: objects defined in the K8s API that don't seem to have an accompanying version number.
 - versions.py: contains a single global variable, `versions`, that is a list of strings that names the set of version

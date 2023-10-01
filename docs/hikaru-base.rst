@@ -204,7 +204,7 @@ attributes with the ``get_type_warnings()`` method.
 
 This method examines every field of an object hierarchy and compares the types of the values
 contained there with the types in the annotations. If there are any discrepancies, they are
-collected into a list of :ref:`TypeWarning<TypeWarning doc>` nametuples are returned to the
+collected into a list of :ref:`TypeWarning<TypeWarning doc>` namedtuples and are returned to the
 caller. TypeWarnings are similar in structure to CatalogEntries, but have a slightly different
 interpretation:
 

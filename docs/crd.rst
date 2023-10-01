@@ -181,7 +181,7 @@ A few things to note:
 
 - We use the imported ``group`` variable as the value of the ``group`` parameter to `CustomResourceDefinitionSpec`
   to ensure that the names are kept consistent.
-- In ``CustomResourceDefintionNames``, we use the imported ``plural`` variable and ``MyPlatform.kind`` for
+- In ``CustomResourceDefinitionNames``, we use the imported ``plural`` variable and ``MyPlatform.kind`` for
   values we supply to various parameters; again, we do this to ensure we use consistent names across
   various objects.
 - The ``scope`` parameter is set to "Cluster" which means that the resource is cluster-wide and doesn't need
@@ -328,7 +328,7 @@ two bases. All other classes in a CRD must inherit from ``HikaruBase``.
 Each of these classes provides specific capabilities:
 
 - ``HikaruBase`` provides all the foundation machinery to integrate a derived class into the Hikaru
-  runtime, as well as providing a number of common capabilites such as duplication, merging, rendering
+  runtime, as well as providing a number of common capabilities such as duplication, merging, rendering
   into different forms, etc. See
 - ``HikaruDocumentBase``, which is a subclass of ``HikaruBase``, adds some additional capability to allow
   a class to serve as a 'topmost' class for a K8s resource. So for example, a Pod is topmost class
@@ -805,7 +805,7 @@ Here are some common pitfalls when working with CRDs:
 - **The ObjectMeta name isn't the plural as specified in CustomResourceDefinitionNames**: when defining a CRD
   to K8s, you need to ensure that the value of the ``plural`` argument in the ``CustomResourceDefinitionNames``
   object is the same as the first part of the ``name`` given to the ObjectMeta for the ``CustomResourceDefinition``.
-  We showed some techniques above to ensure tha the value is the saem for both of these in the examples above;
+  We showed some techniques above to ensure tha the value is the same for both of these in the examples above;
   it's best you adopt this or similar practices to ensure consistency.
 - **Run set_default_release() BEFORE registering your CRD with register_crd_class()**: this is important if
   the release is for isn't the current default release (which is the highest numbered Kubernetes release 
@@ -881,7 +881,7 @@ the ``read()`` method.
 No direct support for datetime attributes
 -----------------------------------------
 
-As mentioned previously, Kubernetes's API spec defines datetimes as strings with a date-time format. Due to earlier
+As mentioned previously, Kubernetes' API spec defines datetimes as strings with a date-time format. Due to earlier
 issues with the datetime objects created by the Kubernetes Python API, Hikaru expresses datetimes as strings but
 in a format easily parseable into datetime. With the addition of some of the added metadata used in CRD definition,
 this restriction may change in the future.

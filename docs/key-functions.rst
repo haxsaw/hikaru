@@ -121,7 +121,8 @@ This will result in code that looks something like the following:
     the_deployment = Deployment(apiVersion='v1', kind='Deployment', metadata=ObjectMeta(
         name='wibble'), spec=DeploymentSpec(selector=LabelSelector(), template=PodTemplateSpec()))
 
-The above code is formatted to the default style, ``autopep8``. If you would rather have a more vertically oriented style, use ``black`` for the value of the style argument:
+The above code is formatted to the default style, ``autopep8``. If you would rather have a more vertically oriented
+style, use ``black`` for the value of the style argument:
 
 .. code:: python
 
@@ -266,7 +267,7 @@ as well as establishing the appropriate watch mechanisms for supporting Watchers
 get_crd_schema()
 ****************
 
-:ref:`Documentaton<get_crd_schema doc>`
+:ref:`Documentation<get_crd_schema doc>`
 
 Inspects a ``HikaruDocumentBase`` subclass and generates a ``JSONSchemaProps`` object that contains
 the OpenAPI schema for the supplied subclass. This can then be viewed if desired, but the primary

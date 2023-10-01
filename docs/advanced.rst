@@ -191,5 +191,5 @@ Making a Class For a New Document Type
 #######################################
 
 The main use case for completely new document (resource) types is to create a custom resource
-defintion, or CRD. Hikaru has direct support for creating CRDs; refer to the advanced topic
+definition, or CRD. Hikaru has direct support for creating CRDs; refer to the advanced topic
 << SOME REF >> for details.

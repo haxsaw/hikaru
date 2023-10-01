@@ -10,7 +10,7 @@ the core components of Hikaru, support for four different versions of the Kubern
 and the code generation capabilities that can turn live Hikaru objects into Python source.
 
 As of version 1.1.0, Hikaru's packaging has been changed. It has been broken into a collection of smaller packages that allow
-the user to only install the support tbey require. However, a meta-package still exists that mimicks the old ``hikaru`` package
+the user to only install the support they require. However, a meta-package still exists that mimics the old ``hikaru`` package
 and installs all the components that were present prior to version 1.1.0.
 
 The new package structure is as follows:
@@ -82,9 +82,15 @@ is an incompatible change in the core.
 Package versioning
 ==================
 
-Starting with v 1.1.0 of Hikaru and its new package structure, versioning will be a bit different. Previously, Hikaru would acquire a new version any time that a new version of the Kubernetes Python client became available or when Hikaru itself developed a new capability. This meant that if any version of the Kubernetes client was patched Hikaru had to issue a new version as well as any time Hikaru itself changed (happily this hasn't happened yet). This made the semantics of version numbers of Hikaru a bit murkey, as new versions had to be issued in multiple circumstances.
+Starting with v 1.1.0 of Hikaru and its new package structure, versioning will be a bit different. Previously,
+Hikaru would acquire a new version any time that a new version of the Kubernetes Python client became available or
+when Hikaru itself developed a new capability. This meant that if any version of the Kubernetes client was patched
+Hikaru had to issue a new version as well as any time Hikaru itself changed (happily this hasn't happened yet).
+This made the semantics of version numbers of Hikaru a bit murky, as new versions had to be issued in multiple
+circumstances.
 
-The new structure improves on this situation: ``hikaru-core`` will only get new versions when the core itself changes, and independent model packages will only get versions when they are first introduced or when the corresponding Kubernetes Python
+The new structure improves on this situation: ``hikaru-core`` will only get new versions when the core itself changes,
+and independent model packages will only get versions when they are first introduced or when the corresponding Kubernetes Python
 client is patched. The same goes for the codegen package. As the ``hikaru`` meta-pacakge will usually only floor the versions that
 make it up, it will only get new versions when an incompatibility arises in one of its component packages and a new version is
 required. This helps isolate version change impact better and makes testing of the Hikaru system simpler.
