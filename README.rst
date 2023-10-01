@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 1.0.1
+Version 1.1.0
 
 |travis|   |license|   |versions|   |coverage|
 
@@ -27,15 +27,41 @@ Version 1.0.1
 
 `Full documentation at Read the Docs <https://hikaru.readthedocs.io/en/latest/index.html>`_
 
-Hikaru is a tool that provides you the ability to easily shift between
-YAML, Python objects/source, and JSON representations of your Kubernetes config
-files. It provides assistance in authoring these files in Python,
-opens up options in how you can assemble and customise the files, and 
-provides some programmatic tools for inspecting large, complex files to
-enable automation of policy and security compliance.
+Hikaru is a collection of tools that allow you to work with Kubernetes resources from within Python in
+a variety of ways:
 
-Additionally, Hikaru allows you to use its K8s model objects to interact with Kubernetes,
-directing it to create, modify, and delete resources.
+- Hikaru provides type-annotated classes that model all of the Kubernetes resources in Python
+  and supports CRUD operations on those classes to manage their lifecycle in your Kubernetes cluster.
+- Hikaru also provides tooling to shift formats for these objects, allowing you to turn K8s YAML
+  into Python objects, JSON, or Python dicts, and vice-versa. It can also generate Python source code for K8s
+  objects loaded from non-Python sources.
+- Hikaru also supports a number of features that aid in the management of
+  your objects such as searching for specific fields or diffing two instances of a K8s resource.
+- Hikaru includes support for creating 'watches' on your objects, providing a means to monitor events
+  on your provisioned K8s resources.
+- Hikaru provides support for creation of CRDs which support all the above features such as CRUD operations
+  and watches.
+- Finally, Hikaru includes a facility to specify a collection of
+  resources as an 'application', similar in spirit to a Helm chart, and provides the same CRUD,
+  watch, and management capabilities on the entire application as it does on single resource objects
+  (full format shifting support to come).
+
+This ``hikaru`` package is a meta-package that has as dependencies:
+
+- ``hikaru-core`` for core Hikaru capabilities
+- ``hikaru-codegen`` for generating formatted Python source from Hikaru objects
+- The four most recent ``hikaru-model-*`` packages, currently:
+
+  - 23.x
+  - 24.x
+  - 25.x
+  - 26.x
+
+See each package's specific PyPI page for any details on that package.
+
+While you can continue to use this meta-package as before, we suggest you migrate to using the model
+versions that match the version of the Kubernetes API you need to interact with. This package just helps
+make that smoother.
 
 From Python
 ~~~~~~~~~~~
@@ -105,6 +131,14 @@ of Hikaru. Automatically generate schema from a Hikaru class, define CRDs to
 Kubernetes, manage CRD instances with CRUD methods, and create watchers that allow
 you to build your own controllers for your CRDs.
 
+Model entire applications
+-------------------------
+
+Hikaru provides an Application base class that can be derived from to allow the creation
+of sets of resources that comprise the infra for an application system. This Application model
+can be inspected, provisioned into a cluster, read from a cluster, and watched, just like
+with individual Hikaru K8s objects.
+
 Integrate your own subclasses
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -140,7 +174,7 @@ API coverage
 ~~~~~~~~~~~~
 
 Hikaru supports all objects in the OpenAPI swagger spec for
-the Kubernetes API **v 1.16**, and has initial support for methods on those objects
+the Kubernetes API **v 1.26**, and has initial support for methods on those objects
 from the same swagger spec. Additionally, it defines some higher-level CRUD-style
 methods on top of these foundation methods.
 

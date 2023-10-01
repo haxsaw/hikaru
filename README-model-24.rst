@@ -27,21 +27,21 @@ Version 1.1.0
 
 `Full documentation at Read the Docs <https://hikaru.readthedocs.io/en/latest/index.html>`_
 
-``Hikaru`` is a collection of tools that allow you to work with Kubernetes resources from within Python in
+Hikaru is a collection of tools that allow you to work with Kubernetes resources from within Python in
 a variety of ways:
 
-- ``Hikaru`` provides type-annotated classes that model all of the Kubernetes resources in Python
+- Hikaru provides type-annotated classes that model all of the Kubernetes resources in Python
   and supports CRUD operations on those classes to manage their lifecycle in your Kubernetes cluster.
-- ``Hikaru`` also provides tooling to shift formats for these objects, allowing you to turn K8s YAML
+- Hikaru also provides tooling to shift formats for these objects, allowing you to turn K8s YAML
   into Python objects, JSON, or Python dicts, and vice-versa. It can also generate Python source code for K8s
   objects loaded from non-Python sources.
-- ``Hikaru`` also supports a number of features that aid in the management of
+- Hikaru also supports a number of features that aid in the management of
   your objects such as searching for specific fields or diffing two instances of a K8s resource.
-- ``Hikaru`` includes support for creating 'watches' on your objects, providing a means to monitor events
+- Hikaru includes support for creating 'watches' on your objects, providing a means to monitor events
   on your provisioned K8s resources.
-- ``Hikaru`` provides support for creation of CRDs which support all the above features such as CRUD operations
+- Hikaru provides support for creation of CRDs which support all the above features such as CRUD operations
   and watches.
-- Finally, ``Hikaru`` includes a facility to specify a collection of
+- Finally, Hikaru includes a facility to specify a collection of
   resources as an 'application', similar in spirit to a Helm chart, and provides the same CRUD,
   watch, and management capabilities on the entire application as it does on single resource objects
   (full format shifting support to come).

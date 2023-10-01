@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 
 def get_long_desc():
@@ -16,39 +16,7 @@ def get_requirements():
 setup(
     name="hikaru",
     version=__version__,
-    packages=["hikaru",
-              "hikaru.model",
-              "hikaru.model.rel_1_23",
-              "hikaru.model.rel_1_23.v1",
-              "hikaru.model.rel_1_23.v1alpha1",
-              "hikaru.model.rel_1_23.v1beta1",
-              "hikaru.model.rel_1_23.v1beta2",
-              "hikaru.model.rel_1_23.v2",
-              "hikaru.model.rel_1_23.v2beta1",
-              "hikaru.model.rel_1_23.v2beta2",
-              "hikaru.model.rel_1_24",
-              "hikaru.model.rel_1_24.v1",
-              "hikaru.model.rel_1_24.v1alpha1",
-              "hikaru.model.rel_1_24.v1beta1",
-              "hikaru.model.rel_1_24.v1beta2",
-              "hikaru.model.rel_1_24.v2",
-              "hikaru.model.rel_1_24.v2beta1",
-              "hikaru.model.rel_1_24.v2beta2",
-              "hikaru.model.rel_1_25",
-              "hikaru.model.rel_1_25.v1",
-              "hikaru.model.rel_1_25.v1alpha1",
-              "hikaru.model.rel_1_25.v1beta1",
-              "hikaru.model.rel_1_25.v1beta2",
-              "hikaru.model.rel_1_25.v2",
-              "hikaru.model.rel_1_25.v2beta2",
-              "hikaru.model.rel_1_26",
-              "hikaru.model.rel_1_26.v1",
-              "hikaru.model.rel_1_26.v1alpha1",
-              "hikaru.model.rel_1_26.v1beta1",
-              "hikaru.model.rel_1_26.v1beta2",
-              "hikaru.model.rel_1_26.v1beta3",
-              "hikaru.model.rel_1_26.v2",
-              ],
+    packages=[],
     description="Hikaru allows you to smoothly move between Kubernetes YAML, "
                 "Python objects, and Python source, in any direction",
     long_description=get_long_desc(),

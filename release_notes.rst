@@ -7,7 +7,7 @@ v1.1.0
 
 This is a big release for Hikaru as it is not only delivered using a significant re-vamp of
 the packaging approach, but also includes a new feature that supports whole applications
-which support the semantics of individual Kubernetes resource model classes.
+while still supporting the semantics of individual Kubernetes resource model classes.
 
 Packaging
 =========
@@ -23,15 +23,21 @@ The new package structure is composed of:
   - Base model classes
   - YAML, JSON, and Python dict exchange formats
   - The new ``Application`` facility (more on this below)
+  - Watch support
+  - CRD support
 
-  Note that ``hikaru-core`` DOES NOT include support for code generation; this has been
-  moved to another package, ``hikaru-codegen`` (more on this below). There's really not much
-  you can do with core alone; at a minimum you need a model package for useful work (you could do
-  pure CRDs with just core, as long as they don't refer to any model classes).
+  Note that ``hikaru-core`` DOES NOT include support for:
+
+  - Any Kubernetes modeling classes (no Pods, Namespaces, etc)
+  - Code generation; this has been moved to another package, ``hikaru-codegen`` (more on this below).
+
+  There's really not much you can do with core alone; at a minimum you need a model package for
+  useful work (you could do pure CRDs with just core, as long as they don't refer to any model classes).
 
 - A set of ``hikaru-model-*`` packages, where each package supports a single release of the
   Kubernetes API. All model packages have ``hikaru-core`` as a requirement, so simply installing
-  the model you wish to work with will also install the core.
+  the model you wish to work with will also install the core. These are installed within the
+  ``hikaru.model`` namespace package, so existing imports will work as they did before.
 - Python code generation capabilities have been moved to the ``hikaru-codegen`` package, which,
   if installed, will only then install the ``black`` and ``autopep8`` code formatters.
 - Finally, the old ``hikaru`` package will still be offered, but it will become a meta-package that
@@ -45,14 +51,14 @@ This structure has a number of benefits, some of which are in response to user r
   will now have a smaller distributable package.
 - **Model release deprecation is (mostly) over**: previously, Hikaru only supported four
   releases of models since all were rolled into the single package. To keep that package from growing without
-  bound, older model releases would be deprecated so the Hikaru package didn't just keep growning.
+  bound, older model releases would be deprecated so the Hikaru package didn't just keep growing.
   That is no longer an issue as you can now install only the release of the models you wish to
   work with. Models will only be deprecated if they are quite old and core has moved on.
 - **Multiple model releases are still supported**: so if you want to install both ``hikaru-model-25`` and
-  ``hikaru-model-26``, things will work as before. Multple installed models will still require the use
+  ``hikaru-model-26``, things will work as before. Multiple installed models will still require the use
   ``set_default_release()`` to inform Hikaru as to which release you want it to use to create objects
   received from Kubernetes.
-- **Model packages can be updated independently of the core**: it hasn't happened so far, but there's\
+- **Model packages can be updated independently of the core**: it hasn't happened so far, but there's
   always been the possibility that some older but non-deprecated release gets a patch from the keepers
   of the Python Kubernetes client, which would force an update to the overall Hikaru package when it
   really wasn't warranted. Now a patched model release can be created independently of the Hikaru core
@@ -101,6 +107,21 @@ There are a few other changes in this new release:
   ``get_default_installed_release()`` if there has been no call to ``set_default_release()`` or ``set_global_default_release()``.
 - The ``from_dict()`` function has gotten a speedup, and now works 3-10x faster depending on the kind of object being
   processed.
+- **There is not longer a warning generated if the lowest-numbered release in the ``hikaru`` meta-package is imported**;
+  this is because the ``hikaru`` package is meant only to provide backwards compatibility for existing users and
+  because Hikaru will no longer be actually deprecating packages unless they won't work at all with a newer version of
+  ``hikaru-core``.
+
+Still broken
+============
+
+As of 26.x of Kubernetes, the swagger API spec for Event in the core group still doesn't match what is sent from
+Kubernetes. In particular, a field named ``event_time`` which is marked as required either doesn't arrive as part
+of the Event or has a null value. This causes the calls that deal with Events, namely methods on Event and EventList,
+to fail as Hikaru processing expects there to be data in these fields according to the swagger. We know some users
+have done some work-arounds using the lower-level Kubernetes APIs for Events, patch a value in, and then use
+``from_dict()`` to get the Hikaru objects for these. Hopefully this will be fixed in the 27.x version of the API,
+but if not we may investigate a workaround in the code to make these do something useful.
 
 v1.0.1
 ------
@@ -121,13 +142,13 @@ v1.0.0
 
 *Deprecated K8s release:* 23.x
 
-This release of Hikaru introduces a signficant new feature, support for user-defined
+This release of Hikaru introduces a significant new feature, support for user-defined
 custom resource definitions (CRDs). The capability integrates smoothly with the current
 capabilities of Hikaru and supports:
 
 - The ability to define the structure of a CRD with Hikaru classes, either from scratch
   or to mimic one that is already in your environment,
-- Sending the defintition into Kubernetes where it will be established as a CRD managed
+- Sending the definition into Kubernetes where it will be established as a CRD managed
   by K8s,
 - Managing instances of the new CRD using CRUD methods,
 - Establishing Watchers on the new CRD to in order to monitor activity or create
@@ -624,7 +645,7 @@ This release also has the following additional changes:
 
 - Python 3.10 has been added as a supported version of Python.
 
-- The lastest version of the *black* code formatter (21.12b0) has been verified
+- The latest version of the *black* code formatter (21.12b0) has been verified
   to work with Hikaru and is now accepted as a version that satisfies the package's
   requirements.
 
@@ -683,7 +704,7 @@ a fair amount of pruning in evidence:
 
 - An entire version has be removed in the 1.18 release of the spec:
   **v1beta2** no longer exists in the swagger file, and hence there is no
-  longer a v1beta2 subpackge in the rel_1_18 model package.
+  longer a v1beta2 subpackage in the rel_1_18 model package.
 - A number of operations (methods) have been dropped from the definition of
   resources in **v1beta1**. This appears to have been a full promotion to
   `v1` -only status.
@@ -692,7 +713,7 @@ Because of this, 'rel_1_17' will be retained as the default release in Hikaru
 for some time to give consumers an opportunity to ensure that they don't rely
 on anything from v1beta2 or methods on v1beta1 objects, and a point release
 will be issued later where we switch to the default release to 'rel_1_18'.
-As always, you can explicity set your release to rel_1_18 if you choose.
+As always, you can explicitly set your release to rel_1_18 if you choose.
 
 The total list of changes is too long to provide here; the CSV file
 `rel_0-7_to_0-8_diffs.csv <https://github
@@ -716,7 +737,7 @@ be a breaking change for some to fix a bug in the model code generation.
 - This release exposes the underlying Kubernetes `watch` facility, enabling you to easily create
   code that receives events detailing the activities that Kubernetes is carrying out. Events
   are delivered to you in the form of Hikaru model objects. The facility provides a higher-level
-  absraction than is available from the underlying K8s Python client, enabling you to establish
+  abstraction than is available from the underlying K8s Python client, enabling you to establish
   watches simply by naming the class you wish to receive events about. Additional assistance
   is provided to give you hints as to what classes are eligible for namespaced watches. See the
   "Watchers: Monitoring Kubernetes Activity" section of the documentation for full details.
@@ -795,7 +816,7 @@ New models for the 1.17 K8s client
 - **Import change**: the most impactful change in this release is that you can no longer
   use the ``from hikaru.model import *`` construct since Hikaru now supports both K8s clients
   1.16 and 1.17. This is because there *can* be incompatibilities with the new version of
-  Hikaru and an older version of the K8s client for certain symboles in certain versions.
+  Hikaru and an older version of the K8s client for certain symbols in certain versions.
   This can cause some user's installations to break. I decided that it would be better to
   cause everyone a small bit of pain rather than utterly break some subset of users. I did
   try a variety of approaches to work around this, but everything else had other effects that
@@ -931,7 +952,7 @@ change.
       SubjectAccessReview (CRUD)       Need useful examples
       SubjectAccessRulesReview (CRUD)  Need useful examples
       StorageClass (CRUD)              Need useful examples
-      SubjectAccessReivew (CRUD)       Need useful examples
+      SubjectAccessReview (CRUD)       Need useful examples
       TokenReview (CRUD)               Need useful examples
       VolumeAttachment (CRUD)          Need useful examples
       \'collection\' methods           Need useful examples

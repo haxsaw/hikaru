@@ -82,6 +82,10 @@ Other build tasks
 
 Building
 --------
+FIRST, delete any artifacts of previous builds!!!
+
+    rm -rf build
+
 building the package: python setup.py bdist_wheel
 
 Build testing process
