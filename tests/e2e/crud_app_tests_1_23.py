@@ -8,6 +8,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import time
 from dataclasses import dataclass
 from os import getcwd
 from pathlib import Path
@@ -104,5 +105,26 @@ def test03():
             assert attr == "dep", f"unexpected attribute in diff: {attr}"
             for d in l:
                 assert d.attrname in ignore_attrs, f"unexpected diff attr in dep: {d.attrname}"
+    finally:
+        app.delete()
+
+
+def test04():
+    """
+    Perform an update on an app's components
+    """
+    app: CRUD_1_23 = CRUD_1_23.standard_instance(test_ns + "-test04")
+    assert app.create()
+    try:
+        app = CRUD_1_23.read(app.instance_id)
+        app = CRUD_1_23.read(app.instance_id)
+        time.sleep(0.2)
+        app = CRUD_1_23.read(app.instance_id)
+        app.dep.metadata.annotations["test04"] = "dep-change"
+        app.ns.metadata.annotations["test04"] = "ns-change"
+        app.update()
+        new_app: CRUD_1_23 = CRUD_1_23.read(app.instance_id)
+        assert new_app.dep.metadata.annotations["test04"] == 'dep-change'
+        assert new_app.ns.metadata.annotations['test04'] == 'ns-change'
     finally:
         app.delete()

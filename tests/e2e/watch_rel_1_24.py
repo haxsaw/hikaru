@@ -19,14 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from dataclasses import dataclass
 from os import getcwd
 from pathlib import Path
 from threading import Thread
 import time
+from typing import cast
 from kubernetes import config
 from hikaru import set_global_default_release, load_full_yaml
-from hikaru.model.rel_1_24 import Pod, Namespace, ObjectMeta
+from hikaru.model.rel_1_24 import *
 from hikaru.watch import Watcher, MultiplexingWatcher, WatchEvent
+from hikaru.app import AppWatcher, Application
 
 set_global_default_release('rel_1_24')
 
@@ -209,6 +212,49 @@ def test05():
     assert expected == ns_seen, f'Not enough namespace events: {expected-ns_seen}'
     assert expected == pod_seen, f'Not enough pod events: {expected-pod_seen}'
 
+
+@dataclass
+class Watch_1_24(Application):
+    dep: Deployment
+    ns: Namespace
+
+    @classmethod
+    def standard_instance(cls, namespace: str) -> "Watch_1_24":
+        path = base_path / 'apps-deployment.yaml'
+        dep = cast(Deployment, load_full_yaml(path=str(path))[0])
+        dep.metadata.namespace = namespace
+        app = Watch_1_24(dep=dep, ns=Namespace(metadata=ObjectMeta(name=namespace)))
+        return app
+
+
+app_watch_ns = "app-watch-ns-24"
+
+
+def test06():
+    """
+    Try the app watcher on an app.
+    """
+    inst = Watch_1_24.standard_instance(app_watch_ns)
+    inst.create()
+    try:
+        app_mux = AppWatcher(inst)
+        rsrc_events_seen = set()
+        properly_stopped = False
+        for we in app_mux.stream(quit_on_timeout=True):
+            if we.obj.kind == 'Deployment':
+                assert we.obj.metadata.namespace == app_watch_ns
+                rsrc_events_seen.add(we.obj.kind)
+            elif we.obj.kind == "Namespace":
+                assert we.obj.metadata.name == app_watch_ns
+                rsrc_events_seen.add(we.obj.kind)
+            else:
+                assert False, f"Unexpected kind seen: {we.obj.kind}"
+            if len(rsrc_events_seen) == 2:
+                properly_stopped = True
+                app_mux.stop()
+        assert properly_stopped, "We quit on a timeout or error"
+    finally:
+        inst.delete()
 
 
 if __name__ == "__main__":

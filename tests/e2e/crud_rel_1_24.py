@@ -370,7 +370,7 @@ def test12():
     try:
         job.read()
         job.read()
-        time.sleep(0.1)
+        time.sleep(0.2)
         job.read()
         job.metadata.labels['test'] = 'test12'
         job.update()
