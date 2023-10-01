@@ -8,7 +8,7 @@ def get_long_desc():
 
 
 def get_requirements():
-    lines = open('requirements.txt', 'r').readlines()
+    lines = open('requirements-codegen.txt', 'r').readlines()
     reqs = [line.strip() for line in lines if line.strip()]
     return reqs
 
