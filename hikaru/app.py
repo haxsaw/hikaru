@@ -28,8 +28,9 @@ from uuid import uuid4
 from kubernetes.client import ApiClient
 from kubernetes.client.exceptions import ApiException
 from ruamel.yaml import YAML
-from typing import (Optional, List, Tuple, Dict, get_args, get_origin, Generator, Any, Callable, Union,
+from typing import (Optional, List, Tuple, Dict, Generator, Any, Callable, Union,
                     TextIO)
+from .utils import get_args, get_origin
 from threading import current_thread, Thread
 from . import (HikaruDocumentBase, get_default_release, DiffDetail, HikaruBase, DiffType,
                set_default_release, get_clean_dict, from_dict, TypeWarning, CatalogEntry)
