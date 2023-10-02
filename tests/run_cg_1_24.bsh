@@ -4,5 +4,5 @@
 # installing/removing packages
 #
 pip uninstall --yes kubernetes
-pip install kubernetes==23.6.0
-pytest *23_codegen.py
+pip install kubernetes==24.2.0
+pytest *24_codegen.py
