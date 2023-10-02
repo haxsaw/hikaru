@@ -1,4 +1,4 @@
-hikaru-core @ file:///home/tom/PycharmProjects/hikaru/dist/hikaru_core-1.1.0-py3-none-any.whl
-autopep8>=1.5.5
+hikaru-core >=1.1.0
+autopep8 >=1.5.5
 # we'll narrow down the black versions as we're using unofficial APIs
 black >=20.8b1,<=23.1.0
