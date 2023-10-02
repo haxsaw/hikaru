@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# this needs to run within a properly configured environment as it will be
+# installing/removing packages
+#
+pip uninstall --yes kubernetes
+pip install kubernetes==23.6.0
+pytest *23_codegen.py

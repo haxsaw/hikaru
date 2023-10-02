@@ -14,4 +14,4 @@ then
     APPEND="--cov-append"
   fi
 fi
-pytest --cov=hikaru --cov-report=term-missing ${APPEND} *1_23.py e2e/*1_23.py
+pytest --cov=hikaru --cov-report=term-missing ${APPEND} *1_23.py *23_codegen.py e2e/*1_23.py

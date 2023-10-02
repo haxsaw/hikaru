@@ -438,44 +438,33 @@ def test040():
 
 def test041():
     """
-    get_python_source with the autopep8 style
+    ensure that, if black isn't installed, get_python_source raises appropriately
     """
     assert isinstance(p, Pod)
-    code = get_python_source(p, style="black")
-    x = eval(code, globals(), locals())
-    assert p == x, "the two aren't the same"
+    try:
+        import black
+        raise SkipTest("this test only runs if hikaru-codegen isn't installed")
+    except ImportError:
+        try:
+            code = get_python_source(p, style="black")
+            assert False, "This should have raised since black isn't installed"
+        except ImportError as e:
+            assert "hikaru-codegen" in str(e)
 
 
 def test042():
     """
-    check that a modified loaded version of p isn't equal
+    ensure that, if autopep8 isn't installed, get_python_source raises appropriately
     """
-    assert isinstance(p, Pod)
-    code = get_python_source(p, style="black")
-    x = eval(code, globals(), locals())
-    assert isinstance(x, Pod)
-    x.spec.containers[1].lifecycle.postStart.httpGet.port = 4
-    assert x != p
-
-
-def test043():
-    """
-    check that you can render explicitly to autopep8
-    """
-    assert isinstance(p, Pod)
-    code = get_python_source(p, style='autopep8')
-    x = eval(code, globals(), locals())
-    assert p == x, "the two aren't the same"
-
-
-def test044():
-    """
-    check that you can render to black
-    """
-    assert isinstance(p, Pod)
-    code = get_python_source(p, style="black")
-    x = eval(code, globals(), locals())
-    assert p == x, "the two aren't the same"
+    try:
+        import autopep8
+        raise SkipTest("this test only runs if hikaru-codegen isn't installed")
+    except ImportError:
+        try:
+            code = get_python_source(p, style="autopep8")
+            assert False, "This should have raised since autopep8 isn't installed"
+        except ImportError as e:
+            assert "hikaru-codegen" in str(e)
 
 
 def test045():
@@ -485,7 +474,7 @@ def test045():
     assert isinstance(p, Pod)
     try:
         code = get_python_source(p, style="groovy")
-        assert False, "we should have got an exception about bad style"
+        assert False, "we should have got an exception about a bad style name"
     except RuntimeError:
         pass
 
@@ -918,28 +907,6 @@ def test082():
     assert s
 
 
-def test083():
-    """
-    check that the assign_to arg works in get_python_source()
-    """
-    assert isinstance(p, Pod)
-    s = get_python_source(p, style='black', assign_to='x')
-    assert s.startswith('x =')
-
-
-def test084():
-    """
-    ensure positional params are correct
-    """
-    own = OwnerReference('v1', 'OR', 'test084', 'asdf')
-    s = get_python_source(own, style='black')
-    o: OwnerReference = eval(s, globals(), locals())
-    assert o.apiVersion == 'v1'
-    assert o.kind == 'OR'
-    assert o.name == 'test084'
-    assert o.uid == 'asdf'
-
-
 def test085():
     """
     test the checks in get_clean_dict()
@@ -1050,18 +1017,6 @@ def test094():
         assert False, "Should have raised a TypeError"
     except TypeError:
         pass
-
-
-def test095():
-    """
-    Check two different code gen styles yield equivalent objects
-    """
-    assert isinstance(p, Pod)
-    code1 = get_python_source(p)
-    code2 = get_python_source(p, style='black')
-    obj1 = eval(code1, globals(), locals())
-    obj2 = eval(code2, globals(), locals())
-    assert obj1 == obj2
 
 
 def test096():
