@@ -1,2 +1,2 @@
-ruamel.yaml>=0.16.12
+ruamel.yaml >=0.16.12
 kubernetes >=23.6.0
