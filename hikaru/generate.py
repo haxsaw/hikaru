@@ -61,6 +61,7 @@ def get_python_source(obj: HikaruBase, assign_to: str = None,
         of the formatter is installed, but you can install either black or autopep8 yourself
         and risk incompatibility.
     """
+    style = style.lower() if style is not None else style
     if style not in ('black', 'autopep8', None):
         raise RuntimeError(f'Unrecognized style: {style}')
     code = obj.as_python_source(assign_to=assign_to)
