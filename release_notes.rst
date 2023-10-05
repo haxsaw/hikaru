@@ -2,6 +2,11 @@
 Release Notes
 *************
 
+hikaru v1.2.0
+-------------
+
+Drops support for Kubernetes 23.x and adds support for 27.x.
+
 hikaru-model-27 v1.1.0
 ----------------------
 
