@@ -14,3 +14,6 @@ sleep 5
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_all_1_26.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_all_1_27.bsh a

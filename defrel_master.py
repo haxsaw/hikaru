@@ -25,7 +25,7 @@ import os
 _default_release = None
 
 
-def get_default_release() -> str:
+def get_default_installed_release() -> str:
     """
     Returns the highest numbered installed release which is the default
 

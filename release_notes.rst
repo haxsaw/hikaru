@@ -2,6 +2,12 @@
 Release Notes
 *************
 
+hikaru-model-27 v1.1.0
+----------------------
+
+This is the first release of the model Hikaru model package to support the 27.x version of
+the Kubernetes API/objects.
+
 v1.1.0
 ------
 

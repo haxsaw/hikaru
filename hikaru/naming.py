@@ -180,7 +180,7 @@ def camel_to_pep8(name: str) -> str:
             replace('f_q_d_n', 'fqdn').replace('u_u_i_d', 'uuid').
             replace('c_i_d_r', 'cidr').
             replace('_i_d', '_id').replace('t_l_s', 'tls').replace('host_i_p', 'host_ip').
-            replace('pod_i_p', 'pod_ip'))
+            replace('pod_i_p', 'pod_ip').replace("i_p_address", "ip_address"))
 
 
 # mapping the group in apiVersion to the swagger group string

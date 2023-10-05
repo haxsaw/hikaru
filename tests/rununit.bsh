@@ -8,4 +8,4 @@ chmod 755 run_all_*.bsh
 /bin/bash ./run_unit_1_24.bsh a
 /bin/bash ./run_unit_1_25.bsh a
 /bin/bash ./run_unit_1_26.bsh a
-
+/bin/bash ./run_unit_1_27.bsh a

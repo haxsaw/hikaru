@@ -1673,7 +1673,7 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
             guess.add_operation(new_op)
         else:
             if new_op.op_id is not None:
-                print(f'Wanted to add a query op: {new_op.op_id}')
+                print(f"Wanted to add a query op: {new_op.op_id}")
     return new_op
 
 

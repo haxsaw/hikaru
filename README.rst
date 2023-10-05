@@ -52,10 +52,10 @@ This ``hikaru`` package is a meta-package that has as dependencies:
 - ``hikaru-codegen`` for generating formatted Python source from Hikaru objects
 - The four most recent ``hikaru-model-*`` packages, currently:
 
-  - 23.x
   - 24.x
   - 25.x
   - 26.x
+  - 27.x
 
 See each package's specific PyPI page for any details on that package.
 
