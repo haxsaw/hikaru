@@ -33,7 +33,7 @@ except ImportError:  # pragma: no cover
 from .deprecations import *
 
 
-__version__ = '1.0.0'
+__version__ = '1.1.1'
 
 globs = dict(globals())
 __all__ = [c.__name__ for c in globs.values()

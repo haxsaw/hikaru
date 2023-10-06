@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 1.1.0
+Version 1.1.1
 
 |travis|   |license|   |versions|   |coverage|
 
@@ -46,9 +46,10 @@ a variety of ways:
   watch, and management capabilities on the entire application as it does on single resource objects
   (full format shifting support to come).
 
-**This package supports resources from the Kubernetes Python client version 27.x**. It depends on the
+**This package provides model classes to create resources through the Kubernetes Python client version 27.x**.
+It depends on the
 ``hikaru-core`` package which will be installed automatically when this packages is installed. This package
-will work with any version of the Kubernetes Python client >= 26.x; if you need to constrain which release
+will work with any version of the Kubernetes Python client >= 27.x; if you need to constrain which release
 is installed then you should establish your own requirement limts on the Kubernetes Python client package.
 
 About

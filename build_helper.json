@@ -204,7 +204,7 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
   "rel_1_24":
     {
@@ -233,7 +233,7 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
   "rel_1_25":
     {
@@ -262,7 +262,7 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
   "rel_1_26":
     {
@@ -291,7 +291,7 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
   "rel_1_27":
     {
@@ -320,6 +320,35 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.0.0"
+      "version": "1.1.1"
+    },
+  "rel_1_28":
+    {
+      "preferred_versions": [
+        {
+        "class_name": "ServiceReference",
+        "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "admissionregistration"
+            },
+            {
+              "colliding_version": "v1beta1",
+              "preferred_group": "admissionregistration"
+            }
+          ]
+        },
+        {
+          "class_name": "TokenRequest",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "authentication"
+            }
+          ]
+        }
+      ],
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.1.0"
     }
 }

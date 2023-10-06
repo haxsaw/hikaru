@@ -2,6 +2,27 @@
 Release Notes
 *************
 
+hikaru v1.3.0
+-------------
+
+Drops inclusion of the of the v24.x Kubernetes classes (which can still be installed independently),
+and adds the v28.x classes. Automatically included class packages for this release are:
+
+  - 25.x
+  - 26.x
+  - 27.x
+  - 28.x
+
+hikaru-model-28 v1.1.0
+----------------------
+
+Hikaru model classes to work with the v28.x version of the Kubernetes API and Python client.
+
+hikaru-model-23 through 27 v1.1.1
+---------------------------------
+
+No functionality changes; corrected an incorrect __version__ variable in these releases.
+
 hikaru v1.2.0
 -------------
 

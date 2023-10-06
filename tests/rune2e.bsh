@@ -4,13 +4,13 @@
 # installing/removing packages
 #
 chmod 755 run_all_*.bsh
-/bin/bash ./run_e2e_1_24.bsh
-echo "sleeping 5 seconds..."
-sleep 5
-/bin/bash ./run_e2e_1_25.bsh a
+/bin/bash ./run_e2e_1_25.bsh
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_e2e_1_26.bsh a
 echo "sleeping 5 seconds..."
 sleep 5
 /bin/bash ./run_e2e_1_27.bsh a
+echo "sleeping 5 seconds..."
+sleep 5
+/bin/bash ./run_e2e_1_28.bsh a

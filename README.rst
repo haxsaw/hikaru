@@ -17,7 +17,7 @@
 |logo|
 
 
-Version 1.2.0
+Version 1.3.0
 
 |travis|   |license|   |versions|   |coverage|
 
@@ -52,10 +52,10 @@ This ``hikaru`` package is a meta-package that has as dependencies:
 - ``hikaru-codegen`` for generating formatted Python source from Hikaru objects
 - The four most recent ``hikaru-model-*`` packages, currently:
 
-  - 24.x
   - 25.x
   - 26.x
   - 27.x
+  - 28.x
 
 See each package's specific PyPI page for any details on that package.
 
