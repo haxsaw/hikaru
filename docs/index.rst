@@ -35,6 +35,24 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 
+K8s V1.28 v1 Documents Doc
+--------------------------
+
+.. toctree::
+  :maxdepth: 1
+  :caption: 1.28v1 ref docs
+
+  rel-1-28-v1
+
+K8s V1.27 v1 Documents Doc
+--------------------------
+
+.. toctree::
+  :maxdepth: 1
+  :caption: 1.27v1 ref docs
+
+  rel-1-27-v1
+
 K8s V1.26 v1 Documents Doc
 --------------------------
 
