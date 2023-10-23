@@ -51,7 +51,7 @@ hikaru/setup.py: __version__
 hikaru/README.rst
 hikaru/release_notes.rst
 
->> FOR EACH MODEL PACKAGE:
+>> FOR EACH MODEL PACKAGE, core, or codegen:
 change build_helper.json (set the 'version' entry correctly for the model's version)
 set the model's README to have the proper version number
 in the setup-model*.py file, set the __version__ variable to the correct version

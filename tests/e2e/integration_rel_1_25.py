@@ -26,6 +26,7 @@ on various objects.
 It is based on having access to a Linux install of k3s.
 """
 import base64
+import datetime
 from os import getcwd
 from pathlib import Path
 import re
@@ -101,6 +102,9 @@ def test01():
     res = d.createNamespacedDeployment(e2e_namespace)
     try:
         assert res.obj and isinstance(res.obj, Deployment)
+        d: Deployment = res.obj
+        assert not isinstance(d.metadata.creationTimestamp, datetime.datetime), "creationTimestamp is still a datetime"
+        assert isinstance(d.metadata.creationTimestamp, str)
         res = Deployment.readNamespacedDeployment(d.metadata.name, e2e_namespace)
         assert res.obj and isinstance(res.obj, Deployment)
     finally:
@@ -196,7 +200,7 @@ def test04():
     """
     Create, read, and delete a Namespace
     """
-    path = base_path / "core-namespace.yaml"
+    path = base_path / "core-namespace-25.yaml"
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path))[0])
     res = ns.createNamespace()
     try:
@@ -228,8 +232,8 @@ def test06():
     """
     Create a namespace and then a deployment in just that namespace, delete both
     """
-    path_ns = base_path / "dep-namespace.yaml"
-    path_dep = base_path / "dep-deployment.yaml"
+    path_ns = base_path / "dep-namespace-25.yaml"
+    path_dep = base_path / "dep-deployment-25.yaml"
     # namespace: create and read
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path_ns))[0])
     res = ns.createNamespace()

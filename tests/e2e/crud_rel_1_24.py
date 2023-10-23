@@ -139,7 +139,7 @@ def test04():
     """
     Create a namespace via CRUD
     """
-    path = base_path / "core-namespace.yaml"
+    path = base_path / "core-namespace-24.yaml"
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path))[0])
     ns.metadata.name = f"{crud_namespace}test04"
     ns.create()

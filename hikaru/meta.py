@@ -1005,20 +1005,24 @@ class HikaruBase(object):
             # ok, we've peeled away a Union left by Optional
             # let's see what we're really working with
             val = yaml.get(k8s_name, None)
-            if val is None and is_required:
-                raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}"
-                                f" (originally {f.name})")
             if val is None:
-                continue
+                if is_required:
+                    raise TypeError(f"{self.__class__.__name__} is missing {k8s_name}"
+                                    f" (originally {f.name})")
+                else:
+                    continue
             if (type(initial_type) == type and issubclass(initial_type, (int, str,
-                                                                         bool, float))
+                                                                         bool, float,
+                                                                         datetime.datetime))
                     or initial_type == object):
-                # FIXME: we convert timestamps to strings - this is a workaround to fix
+                # we convert timestamps to strings - this is a workaround to fix
                 # the fact that apparently the YAML processor gives us datetimes when it
                 # sees what it decides is a timestamp, and the kubernetes Python client
-                # appears to output such objects in the wrong format.
-                if type(val) is datetime.datetime and val.tzinfo is None:
-                    val = val.isoformat() + "Z"
+                # appears to output such objects in the wrong format. regardless,
+                # we want all timestamps to turn into strings as that's what's in the
+                # input swagger
+                if type(val) is datetime.datetime:
+                    val = val.isoformat() + ("Z" if val.tzinfo is None else "")
                 setattr(self, f.name, val)
             elif is_dataclass(initial_type) and issubclass(initial_type, HikaruBase):
                 if issubclass(initial_type, HikaruDocumentBase):

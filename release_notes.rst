@@ -2,6 +2,21 @@
 Release Notes
 *************
 
+hikaru-core v1.1.1
+------------------
+
+This bug fix release corrects handling of date/time attributes in various Kubernetes objects.
+
+In previous releases these were presented as ISO formatted datetime strings, but due to some of
+the changes introduced in v1.1.0 they percolated up from the underlying Kubernetes libraries
+as actual datetime objects. In the K8s swagger they are documented as strings in a 'date-time'
+format, so this release fixes the bug introduced in v1.1.0 and provides appropriately formatted
+strings instead of datetime objects.
+
+This fix does not impact the hikaru metapackage nor the any of the model packages; those have
+dependencies coded to pick up the newer hikaru-core pacakge, though you may have to update
+existing installations to get this bug fix.
+
 hikaru v1.3.0
 -------------
 
