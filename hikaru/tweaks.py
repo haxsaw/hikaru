@@ -73,6 +73,25 @@ class _DaemonEndpointTranslator(_BaseTranslator):
             return super(_DaemonEndpointTranslator, cls).h2kc_translate(fieldname)
 
 
+@_register_translator("Probe")
+class _ProbeTranslator(_BaseTranslator):
+    @classmethod
+    def h2kc_translate(cls, fieldname:str) -> str:
+        # OK, in this case the openapi spec file has 'exec' as the field
+        # name in the definition JSON, but when this is read from the cluster
+        # it is supplied to us as "_exec". So in this case, we have to detect
+        # when we want Probe's 'exec' as defined in the API spec we actually
+        # want _exec as it comes from the cluster.
+        if fieldname == 'exec':
+            return "_exec"
+        else:
+            return super(_ProbeTranslator, cls).h2kc_translate(fieldname)
+
+
+def h2kc_get_translator(target_cls: type):
+    return _translation_register.get(target_cls.__name__, _BaseTranslator).h2kc_translate
+
+
 def h2kc_translate(target_cls: type, fieldname: str) -> str:
-    xlator = _translation_register.get(target_cls.__name__, _BaseTranslator)
-    return xlator.h2kc_translate(fieldname)
+    xlator = h2kc_get_translator(target_cls)
+    return xlator(fieldname)

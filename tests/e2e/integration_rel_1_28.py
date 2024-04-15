@@ -181,6 +181,26 @@ def test02a():
         _ = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
 
 
+def test_issue_39():
+    """
+    Github issue #39: ensure that a livenessProbe is read back after creation
+    """
+    path = base_path / "core-pod.yaml"
+    p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
+    p.metadata.name += '-issue39'
+    probe = Probe(exec=ExecAction(command=["/bin/sleep", '1']), periodSeconds=60)
+    p.spec.containers[0].livenessProbe = probe
+    res = p.createNamespacedPod(e2e_namespace)
+    try:
+        res = Pod.readNamespacedPod(p.metadata.name, e2e_namespace)
+        assert res.obj and isinstance(res.obj, Pod)
+        p1: Pod = res.obj
+        assert isinstance(p1.spec.containers[0].livenessProbe, Probe)
+        assert p1.spec.containers[0].livenessProbe.exec.command[0] == "/bin/sleep"
+    finally:
+        _ = Pod.deleteNamespacedPod(p.metadata.name, e2e_namespace)
+
+
 def test03():
     """
     Create, read, and delete a Service

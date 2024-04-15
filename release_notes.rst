@@ -2,6 +2,19 @@
 Release Notes
 *************
 
+hikaru-core v1.1.2
+------------------
+
+This patch fixes a problem with Probe, which are refereced by PodSpecs among other objects.
+A field in the Probe object as it is provided from the cluster to Hikaru via the K8s libraries
+doesn't match how it is specified in the OpenAPI schema. In the schema, Probe has a field called
+'exec', however when it comes up from the K8s libraries it is '_exec'. It isn't clear if this
+reflects how it comes out of the cluster or is a name mapping done in the Python K8s libraries
+to avoid colliding with the Python 2 reserved work 'exec', but regardless this value didn't match
+what Hikaru was expected. There are a couple of fields like this and Hikaru has a mapping facility
+to catch these when they come from K8s, so this field in Probe has been added. Probes should now be
+properly read from the cluster.
+
 hikaru-core v1.1.1
 ------------------
 

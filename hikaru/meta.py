@@ -35,7 +35,9 @@ from typing import Union, List, Dict, Any, Type, ForwardRef, get_type_hints, Opt
 from dataclasses import fields, dataclass, is_dataclass, InitVar
 from inspect import signature, Parameter
 from collections import defaultdict, namedtuple
-from hikaru.tweaks import h2kc_translate
+
+import hikaru
+from hikaru.tweaks import h2kc_translate, h2kc_get_translator
 from hikaru.utils import get_origin, get_args, field_metadata_domain
 
 
@@ -984,9 +986,10 @@ class HikaruBase(object):
                                    f"value = {yaml}")  # pragma: no cover
             yaml = new
         hints = self._get_hints()
+        translator = h2kc_get_translator(self.__class__)
         for f in fields(self.__class__):
             k8s_name = f.name.strip("_")
-            k8s_name = (h2kc_translate(self.__class__, k8s_name)
+            k8s_name = (translator(k8s_name)
                         if translate
                         else k8s_name)
             is_required = True

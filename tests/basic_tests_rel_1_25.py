@@ -29,6 +29,7 @@ import json
 from hikaru.meta import DiffDetail, DiffType
 from hikaru.naming import make_swagger_name, process_swagger_name
 from hikaru.version_kind import get_version_kind_class
+from hikaru.tweaks import h2kc_get_translator, h2kc_translate
 
 
 set_default_release('rel_1_25')
@@ -52,7 +53,7 @@ def test001():
     """
     get the basic machinery creaking to life
     """
-    assert isinstance(p, Pod)
+    assert isinstance(p, Pod), f"p is a {p}"
     assert p.metadata.name == "hello-kiamol-3", p.metadata.name
 
 
@@ -1655,6 +1656,15 @@ def test143():
     m2: ObjectMeta = from_dict(d, cls=ObjectMeta)
     assert 'Key_1' in m2.labels
     assert 'key_2' in m2.labels
+
+
+def test_issue_39():
+    """
+    Issue 39: Ensure that the key '_exec' from K8s gets turned into 'exec'
+    """
+    xlator = h2kc_get_translator(Probe)
+    assert '_exec' == xlator('exec')
+    assert '_exec' == h2kc_translate(Probe, 'exec')
 
 
 if __name__ == "__main__":
