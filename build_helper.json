@@ -349,6 +349,31 @@
         }
       ],
       "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
-      "version": "1.1.0"
+      "version": "1.1.1"
+    },
+  "rel_1_29":
+    {
+      "preferred_versions": [
+        {
+        "class_name": "ServiceReference",
+        "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "admissionregistration"
+            }
+          ]
+        },
+        {
+          "class_name": "TokenRequest",
+          "preferred_group_by_version": [
+            {
+              "colliding_version": "v1",
+              "preferred_group": "authentication"
+            }
+          ]
+        }
+      ],
+      "deprecations": "{('v1', 'Event'): ('v1', 'Event_core')}",
+      "version": "1.1.1"
     }
 }

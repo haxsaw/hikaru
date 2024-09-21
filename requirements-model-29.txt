@@ -1,0 +1,2 @@
+kubernetes >=29.0.0
+hikaru-core >=1.1.0
