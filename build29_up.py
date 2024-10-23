@@ -79,6 +79,47 @@ from hikaru.meta import (HikaruBase, HikaruDocumentBase, KubernetesException,
                          WatcherDescriptor)
 
 
+# file names/handles for stuff we create errors about
+
+CLASS_NO_PROPS = 'class_with_no_props.txt'
+class_no_props_file = None
+
+NO_CLASS_FOR_OP = 'no_class_for_op.txt'
+no_class_for_op_file = None
+
+NO_CLASS_FOR_REF = "no_class_for_ref.txt"
+no_class_for_ref_file = None
+
+
+class Issues:
+    def __init__(self):
+        self.class_no_props_file = open(CLASS_NO_PROPS, 'w')
+        self.no_props_cnt = 0
+        self.no_class_for_op_file = open(NO_CLASS_FOR_OP, 'w')
+        self.no_op_cnt = 0
+        self.no_class_for_ref_file = open(NO_CLASS_FOR_REF, 'w')
+        self.no_ref_cnt = 0
+
+    def report_no_props(self, msg):
+        print(msg, file=self.class_no_props_file)
+        self.no_props_cnt += 1
+
+    def report_no_class_for_op(self, msg):
+        print(msg, file=self.no_class_for_op_file)
+        self.no_op_cnt += 1
+
+    def report_no_class_for_ref(self, msg):
+        print(msg, file=self.no_class_for_ref_file)
+        self.no_ref_cnt += 1
+
+
+# class SwaggerProcessException(Exception):
+#     def
+
+
+class SkipOpException(Exception):
+    pass
+
 
 class VersionStr(str):
     """
@@ -534,8 +575,10 @@ class Operation(object):
         self.version: VersionStr = get_path_version(self.op_path)
         self.gvk_version: VersionStr = VersionStr(gvk_dict.get('version'))
         self.group = gvk_dict.get('group', 'custom_objects')
+        if self.group == "custom_objects":
+            raise SkipOpException(f"Got 'custom_objects' for verb {verb}, path {op_path}, gvk: {gvk_dict}")
         self.kind = gvk_dict.get('kind')
-        self.op_id = op_id
+        self._op_id = op_id
         self.description = description
         self.is_staticmethod = False
         # flag if this can be 'watched'
@@ -572,7 +615,34 @@ class Operation(object):
             version = VersionStr("")
         else:
             version = version.replace('v', 'V')
-        self.meth_name = self.op_id.replace(version, '') if self.op_id else None
+        self._meth_name = self.op_id.replace(version, '') if self.op_id else None
+        self.remove = False
+
+    @property
+    def op_id(self) -> str:
+        return (self._op_id
+                .replace("Core", "")
+                .replace("V1", "")
+                .replace("Apps", "")
+                .replace("Autoscaling", "")
+                .replace("Batch", "")
+                .replace("Admissionregistration", "")
+                .replace("Certificates", "")
+                .replace("Coordination", "")
+                .replace("Discovery", "")
+                .replace("Networking", "")
+                .replace("deleteNodeColl", "deleteColl")
+                .replace("Scheduling", "")
+                .replace("Apiextensions", "")
+                .replace("Apiregistration", "")) if self._op_id is not None else None
+
+    @property
+    def meth_name(self) -> str:
+        if self.remove and "Core" in self._meth_name:
+            result = self._meth_name.replace("Core", "")
+        else:
+            result = self._meth_name
+        return result
 
     def set_owning_class_descriptor(self, cd: 'ClassDescriptor'):
         self.owning_cd = cd
@@ -1233,7 +1303,9 @@ class ClassDescriptor(object):
         doc_markers = set(self._doc_markers)
         required = self.swagger.get('required', [])
         if "properties" not in self.swagger:
-            print(f"Class {self.name} has no properties defined")
+            msg = f"Class {self.name} has no properties defined"
+            issues.report_no_props(msg)
+            # print(f"Class {self.name} has no properties defined")
             return
         for pname, pdict in self.swagger['properties'].items():
             prop = PropertyDescriptor(self, pname, pdict)
@@ -1433,19 +1505,35 @@ def get_module_def(ver: Optional[VersionStr]) -> Dict[str, List[ClassDescriptor]
     return ver_classes
 
 
+def find_cd_by_name_within_version(name: str, version: VersionStr) -> List[ClassDescriptor]:
+    vdict = _all_classes.get(version)
+    if vdict is None:
+        warn(f"DUDE, Can't find a version dict named {version} for ref "
+             f"{version}.{name}")
+        return []
+    unique_matches = {vdict[g][name] for g in vdict if name in vdict[g]}
+    return list(unique_matches)
+
+
 def find_cd_by_gvk(group: str, version: VersionStr, name: str,
                    recurse: bool = True) -> Optional[ClassDescriptor]:
     group = '' if group is None else group
     vdict = _all_classes.get(version)
     if vdict is None:
-        warn(f"Can't find a version dict named {version} for ref "
+        warn(f"DUDE, Can't find a version dict named {version} for ref "
              f"{group}.{version}.{name}")
         return None
     gdict = vdict.get(group)
     if gdict is None:
-        warn(f"Can't find a group dict named '{group}' for ref "
-             f"{group}.{version}.{name}")
-        return None
+        # take a stab that it's in the core group by a couple of names
+        for galt in ("io.k8s.api.core", "core"):
+            gdict = vdict.get(galt)
+            if gdict is not None:
+                break
+        else:
+            warn(f"Can't find a group dict named '{group}' for ref "
+                 f"{group}.{version}.{name}")
+            return None
     cd = gdict.get(name)
     if cd is None:
         # OK, there are a couple of edge cases to consider. First, we want to
@@ -1456,9 +1544,12 @@ def find_cd_by_gvk(group: str, version: VersionStr, name: str,
             cd = find_cd_by_gvk('core', version, name, recurse=False)
         if cd is None and group != '' and recurse:
             cd = find_cd_by_gvk('', version, name, recurse=False)
-        if cd is None:
-            warn(f"Can't find a class descriptor named {name} for ref "
+        if cd is None and recurse:
+            msg = (f"Can't find a class descriptor named {name} for ref "
                  f"{group}.{version}.{name}")
+            # issues.report_no_class_for_ref(msg)
+            # warn(f"Can't find a class descriptor named {name} for ref "
+            #      f"{group}.{version}.{name}")
         return cd
     return cd
 
@@ -1496,7 +1587,11 @@ def stop_when_true(test_expr, result_expr, seq):
 _dont_remove_groups = {"storage", "policy", "resource"}
 
 
-def make_method_name(op: Operation, cd: ClassDescriptor=None) -> str:
+def make_method_name(op: Operation, cd: ClassDescriptor=None,
+                     remove_core: bool = False, remove_ver: bool = False) -> str:
+    # TO DO: so it seems that perhaps the name 'core' might not need to be included
+    # in the generated method name, but we can't be sure until the version of
+    # K8s >= 29.0 is installed
     under_name = camel_to_pep8(op.op_id)
     parts = under_name.split("_")
     group = op.group.replace(".k8s.io", "") if op.group else ""
@@ -1509,6 +1604,12 @@ def make_method_name(op: Operation, cd: ClassDescriptor=None) -> str:
             parts.remove(group)
     except ValueError:
         pass
+    if remove_core and 'core' in parts:
+        parts.remove("core")
+    if remove_ver:
+        version = (cd.version if cd is not None else op.version).lower()
+        if version in parts:
+            parts.remove(version)
     result = "_".join(parts)
     return result
 
@@ -1576,6 +1677,10 @@ def _best_guess(op: Operation) -> Optional[ClassDescriptor]:
         group = ''
     group = group.split('.')[0]
     gvk_guess = find_cd_by_gvk(group, version, kind)
+    if gvk_guess is None:
+        possibles = find_cd_by_name_within_version(kind, version)
+        if len(possibles) == 1:
+            guess = possibles[0]
     if not guess or (gvk_guess is not None and len(guess.name) < len(gvk_guess.name)):
         guess = gvk_guess
     # returns check; look to the returns and if you find any that have a status
@@ -1597,7 +1702,11 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                                  reuse_op: Operation = None) -> Operation:
     version = get_path_version(path)
     if reuse_op is None:
-        new_op = Operation(verb, path, op_id, description, gvk_dict)
+        try:
+            new_op = Operation(verb, path, op_id, description, gvk_dict)
+        except SkipOpException as e:
+            # warn(str(e))
+            return None
     else:
         new_op = reuse_op
     for param in params:
@@ -1756,8 +1865,11 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
             guess.add_operation(new_op)
         else:
             if new_op.op_id is not None:
-                print(f"Wanted to add a query op '{new_op.op_id}' but couldn't figure out what class to "
+                msg = (f"Wanted to add a query op '{new_op.op_id}' but couldn't figure out what class to "
                       f"attach it to")
+                issues.report_no_class_for_op(msg)
+                # print(f"Wanted to add a query op '{new_op.op_id}' but couldn't figure out what class to "
+                #       f"attach it to")
     return new_op
 
 
@@ -1851,16 +1963,21 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         - string: method name
         If the method can't be resolved, a tuple of Nones is returned
     """
-    method_name = make_method_name(op, cd)
-    search_args = [(cd.group, cd.version, cd.kind),
-                   (op.group, op.version, op.kind),
-                   ('core', op.version, op.kind),
-                   ('apps', op.version, op.kind)]
     pkg = mod = cls = meth = None
-    for group, version, kind in search_args:
-        details = _search_for_method(group, version, kind, method_name)
-        if details is not None:
-            pkg, mod, cls, meth = details
+    for remove in (False, True):
+        method_name = make_method_name(op, cd, remove_core=remove, remove_ver=remove)
+        search_args = [(cd.group, cd.version, cd.kind),
+                       (op.group, op.version, op.kind),
+                       ('core', op.version, op.kind),
+                       ('apps', op.version, op.kind)]
+        for group, version, kind in search_args:
+            details = _search_for_method(group, version, kind, method_name)
+            if details is not None:
+                pkg, mod, cls, meth = details
+                if op is not None:  # also record the state of 'remove'
+                    op.remove = remove
+                break
+        if pkg:  # the inner for found the method
             break
     else:
         print(f"Can't find p/m/c/m for {method_name} in {cd.group} or {op.group}")
@@ -1935,17 +2052,23 @@ def load_swagger(swagger_file_path: str):
         last_op = None
         for verb, details in v.items():
             if verb == "parameters" and type(details) == list:
-                process_params_and_responses(k, last_verb, last_opid, details,
-                                             {}, '', {}, reuse_op=last_op)
+                found_op = process_params_and_responses(k, last_verb, last_opid, details,
+                                               {}, '', {}, reuse_op=last_op)
+                if found_op is None:
+                    msg = f"No operation created for opid:{last_opid}, verb:{last_verb}, path:{k}"
+                    issues.report_no_class_for_ref(msg)
                 last_op = None
                 continue
             gvk = details.get("x-kubernetes-group-version-kind", {})
             description = details.get('description', '')
             op_id = details["operationId"]
-            last_op = process_params_and_responses(k, verb, op_id,
-                                                   details.get("parameters", []),
-                                                   details.get("responses", {}),
-                                                   description, gvk)
+            last_op = found_op = process_params_and_responses(k, verb, op_id,
+                                                              details.get("parameters", []),
+                                                              details.get("responses", {}),
+                                                              description, gvk)
+            if found_op is None:
+                msg = f"No operation created for opid:{last_opid}, verb:{last_verb}, path:{k}"
+                issues.report_no_class_for_ref(msg)
             last_verb = verb
             last_opid = op_id
 
@@ -2348,4 +2471,9 @@ if __name__ == "__main__":
         print("no arguments besides the swagger file")
         sys.exit(1)
     print(f">>>Processing {sys.argv[1]}")
+    issues = Issues()
     build_it(sys.argv[1])
+    print()
+    print(f"Issues totals: no props: {issues.no_props_cnt}, bad refs: {issues.no_ref_cnt}, "
+          f"no class for op: {issues.no_op_cnt}")
+
