@@ -361,6 +361,16 @@ class PropertyDescriptor(object):
         elif isinstance(self.prop_type, ClassDescriptor):
             self.prop_type = new_dep
 
+    # Rel 1.29 change
+    _swagger2py_type_map = {
+        "string": "str",
+        "object": "str",
+        "integer": "int",
+        "integer32": "int",
+        "float": "float",
+        "boolean": "bool",
+        None: "str"
+    }
     def as_python_typeanno(self, as_required: bool) -> str:
         parts = ["    ", self.name, ": "]
         if self.container_type is None:
@@ -368,12 +378,37 @@ class PropertyDescriptor(object):
             if isinstance(self.prop_type, str):
                 parts.append(self.as_required(self.prop_type, as_required))
             elif isinstance(self.prop_type, ClassDescriptor):
-                parts.append(self.as_required(f"'{self.prop_type.hikaru_name}'",
-                                              as_required))
+                # Rel 1.29 change
+                if not self.prop_type.has_properties():
+                    # if no props, then is the one of those maddening types that is really
+                    # a renamed Python ordinal that perhaps has a specific format, or maybe
+                    # just a field that K8s allows to be more than one thing. We may have made
+                    # a class for this field but we can't really use those for typing a field as
+                    # they break the Hikaru typing system. Since there's nothing else we can do
+                    # with them anyway, we just peel away the swagger type and replace it with the
+                    # underlying type mapped to a Python type. For example, the Time class is defined
+                    # to just be a string, so here we render it as a 'str'. This is where typing gets
+                    # kind of loose in the K8s swagger, so a number of fields are simply mapped as
+                    # str and the user is kind of on their own. This will need a big mention in the doc
+                    parts.append(self.as_required(self._swagger2py_type_map.get(self.prop_type.type, "str"),
+                                                  as_required))
+                else:
+                    parts.append(self.as_required(f"'{self.prop_type.hikaru_name}'",
+                                                  as_required))
+            # Rel 1.29 change
+            else:
+                raise TypeError(f"Don't know how to handle attribute "
+                                f"{self.name} in {self.containing_class.hikaru_name} "
+                                f"of type {self.prop_type}")
         elif self.container_type is list:
             if isinstance(self.item_type, ClassDescriptor):
-                parts.append(self.as_required(f"List['{self.item_type.hikaru_name}']",
-                                              as_required))
+                # Rel 1.29 change; see note above if there is no container type
+                if not self.item_type.has_properties():
+                    parts.append(self.as_required(self._swagger2py_type_map.get(self.item_type.type, "str"),
+                                                  as_required))
+                else:
+                    parts.append(self.as_required(f"List['{self.item_type.hikaru_name}']",
+                                                  as_required))
             else:
                 parts.append(self.as_required(f"List[{self.item_type}]",
                                               as_required))
@@ -1015,13 +1050,14 @@ class CreateOperation(SyntheticOperation):
     actual create method is
     """
     op_name = 'create'
+    ignoreable_param_names = ('name', 'async_req')
 
     def get_meth_decorators(self) -> List[str]:
         return []
 
     def prep_inbound_params(self) -> List['OpParameter']:
         params = [p for p in self.prep_outbound_params()
-                  if p.name not in ('name', 'async_req')]
+                  if p.name not in self.ignoreable_param_names]
         return params
 
     def prep_outbound_params(self) -> List['OpParameter']:
@@ -1115,6 +1151,8 @@ class UpdateOperation(CreateOperation):
     to the patch method
     """
     op_name = 'update'
+    # Release 1.29 change
+    ignoreable_param_names = CreateOperation.ignoreable_param_names + ('body',)
 
     def post_method_code(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
         return _update_context_manager.split("\n")
@@ -1345,7 +1383,39 @@ class ClassDescriptor(object):
                     parts.append(" ".join(current_line))
         return parts
 
+    # Rel 1.29 change
+    _swagger2py_type_map = {
+        "string": "str",
+        "object": "str",
+        "integer": "int",
+        "integer32": "int",
+        "float": "float",
+        "boolean": "bool",
+        None: "str"
+    }
+
+    # Rel 1.29 change
+    def python_class_from_base_type(self) -> str:
+        lines = [
+            f"class {self.name}({self._swagger2py_type_map[self.type]}):",
+            f'    r"""',
+            f'    {self.split_line(self.description)}',
+            f'    """',
+            "    pass"
+        ]
+        code = "\n".join(lines)
+        # code = f"{self.name} = {self._swagger2py_type_map[self.type]}"
+        try:
+            code = format_str(code, mode=Mode())
+        except NothingChanged:
+            pass
+        return code
+
     def as_python_class(self, for_version: VersionStr) -> str:
+        # Rel 1.29 change
+        if not self.has_properties():
+            # return ""
+            return self.python_class_from_base_type()
         lines = list()
         # start of class statement
         if self.is_subclass_of is not None:
@@ -1441,6 +1511,10 @@ class ClassDescriptor(object):
 
     def has_properties(self) -> bool:
         return len(self.required_props) > 0 or len(self.optional_props) > 0
+
+    # Rel 1.29 change
+    def can_render(self) -> bool:
+        return self.has_properties() or self.type in ("string", "object", None)
 
 
 # class map
@@ -1789,7 +1863,12 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
         # else:
         #     raise RuntimeError(f"Don't know what to do with param"
         #                        f" {path}.{verb}.{name}")
-        new_op.add_parameter(name, ptype, description, required)
+        # new_op.add_parameter(name, ptype, description, required)
+        # Rel 1.29 change
+        if not op_id.startswith("patch"):
+            new_op.add_parameter(name, ptype, description, required)
+        elif name != "body":
+            new_op.add_parameter(name, ptype, description, required)
         if has_mismatch:
             objop_param_mismatches[f"{name}:{new_op.op_id}"] = new_op
 
@@ -1842,7 +1921,8 @@ def process_params_and_responses(path: str, verb: str, op_id: str,
                 whose_method = cd_in_params
     elif cd_in_responses:
         whose_method = cd_in_responses
-        new_op.is_staticmethod = True
+        # Rel 1.29 changed
+        new_op.is_staticmethod = False if op_id.startswith("patch") else True
     else:
         # then no objects in the params or responses; consider further below
         pass
@@ -2253,12 +2333,15 @@ class ModuleDef(object):
 def write_classes(class_list: List[ClassDescriptor], for_version: VersionStr,
                   stream=sys.stdout):
     for cd in class_list:
-        if not cd.has_properties():
-            print(f'Skipping code generation for attribute-less class {cd.name}, '
-                  f'v {cd.version} for version {for_version}')
-            continue
-        print(cd.as_python_class(for_version), file=stream)
-        print(file=stream)
+        # if not cd.can_render():
+        #     print(f'Skipping code generation for attribute-less class {cd.name}, '
+        #           f'v {cd.version} for version {for_version}')
+        #     continue
+        # Rel 1.29 change
+        class_code = cd.as_python_class(for_version)
+        if class_code:
+            print(class_code, file=stream)
+            print(file=stream)
 
 
 def output_boilerplate(stream=sys.stdout, other_imports=None):
