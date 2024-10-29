@@ -1157,7 +1157,17 @@ class UpdateOperation(CreateOperation):
     def post_method_code(self, cd: Optional['ClassDescriptor'] = None) -> List[str]:
         return _update_context_manager.split("\n")
 
-
+dead = \
+"""
+    if name is not None:
+        effective_name = name
+    elif not self.metadata or not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
+"""
 _delete_body_with_namespace = \
 """
     # noinspection PyDataclass
@@ -1172,14 +1182,8 @@ _delete_body_with_namespace = \
     else:
         effective_namespace = self.metadata.namespace
 
-    if name is not None:
-        effective_name = name
-    elif not self.metadata or not self.metadata.name:
-        raise RuntimeError("There must be a name supplied in either "
-                           "the arguments to {op_name}() or in a "
-                           "{classname}'s metadata")
-    else:
-        effective_name = self.metadata.name
+    %s
+    
     res = self.{methname}({paramlist})
     if not 200 <= res.code <= 299:
         raise KubernetesException("Kubernetes returned error " + str(res.code))
@@ -1188,6 +1192,28 @@ _delete_body_with_namespace = \
     elif isinstance(res.obj, Status):
         self._status = res.obj
     return self
+"""
+
+_delete_name_test_with_name_parameter = \
+"""
+    if name is not None:
+        effective_name = name
+    elif not self.metadata or not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
+"""
+
+_delete_name_test_without_name_parameter = \
+"""
+    if not self.metadata or not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
 """
 
 _delete_body_without_namespace = \
@@ -1242,7 +1268,10 @@ class DeleteOperation(CreateOperation):
         return 'effective_name'
 
     def _with_namespace_template(self):
-        return _delete_body_with_namespace
+        has_name_param = any([True for p in self.parameters if p.name == "name"])
+        return _delete_body_with_namespace % (_delete_name_test_with_name_parameter
+                                              if has_name_param
+                                              else _delete_name_test_without_name_parameter)
 
     def _without_namespace_template(self):
         return _delete_body_without_namespace
