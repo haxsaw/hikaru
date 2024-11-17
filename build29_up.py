@@ -61,7 +61,9 @@ get args            __args__        typing.get_args()
 inspect.signature() can give the argument signature for a
 method; can find how many required positional args there are.
 """
+import difflib
 from itertools import chain, permutations
+from difflib import SequenceMatcher, Match
 from functools import lru_cache
 import importlib
 from pathlib import Path
@@ -1691,7 +1693,8 @@ _dont_remove_groups = {"storage", "policy", "resource"}
 
 
 def make_method_name(op: Operation, cd: ClassDescriptor=None,
-                     remove_core: bool = False, remove_ver: bool = False) -> str:
+                     remove_core: bool = False, remove_ver: bool = False,
+                     remove_abherrartions: bool = False) -> str:
     # TO DO: so it seems that perhaps the name 'core' might not need to be included
     # in the generated method name, but we can't be sure until the version of
     # K8s >= 29.0 is installed
@@ -1709,10 +1712,39 @@ def make_method_name(op: Operation, cd: ClassDescriptor=None,
         pass
     if remove_core and 'core' in parts:
         parts.remove("core")
+    version = (cd.version if cd is not None else op.version).lower()
     if remove_ver:
-        version = (cd.version if cd is not None else op.version).lower()
         if version in parts:
             parts.remove(version)
+    if remove_abherrartions:
+        # this is to cover a smallish set of horrible op_ids from v29 that don't match
+        # method names without surgery
+        # first, there may be a part of a version number floating in there
+        for num in ("1", "2", "3"):
+            if num in parts:
+                parts.remove(num)
+        # next, look for part of a version name like 'alpha' or 'beta' and strip out
+        for vname in ('alpha', 'beta'):
+            for i, p in enumerate(parts):
+                if vname in p:
+                    parts[i] = p.replace(vname, '')
+        # next, look for some leftover group garbage that won't match the method
+        for garbage in ("resource", "apiserver"):
+            gcount = len([1 for p in parts if p == garbage])
+            if gcount > 1 or (len(parts) > 3 and parts[1] == garbage):
+                parts.remove(garbage)
+        # some op_ids don't have the full object name in them for 'list' methods;
+        # patch that in
+        # if parts[0] == 'list':
+        class_name_parts = camel_to_pep8(cd.name).split("_")
+        class_name_parts[0] = class_name_parts[0].lower()
+        if class_name_parts[-1] == "list":
+            del class_name_parts[-1]
+        s = difflib.SequenceMatcher(isjunk=None, a=class_name_parts, b=parts)
+        matches = s.get_matching_blocks()
+        if len(matches) == 3 and parts[matches[0].b] == class_name_parts[0] and parts[matches[1].b] == class_name_parts[-1]:
+            parts[matches[0].b:matches[1].b+1] = class_name_parts[:]
+
     result = "_".join(parts)
     return result
 
@@ -2057,7 +2089,6 @@ def _search_for_method(group: str, version: str, kind: str,
                 result = None
     return result
 
-
 def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     """
@@ -2073,8 +2104,9 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         If the method can't be resolved, a tuple of Nones is returned
     """
     pkg = mod = cls = meth = None
-    for remove in (False, True):
-        method_name = make_method_name(op, cd, remove_core=remove, remove_ver=remove)
+    for remove in ((False, False), (True, False), (True, True)):
+        method_name = make_method_name(op, cd, remove_core=remove[0], remove_ver=remove[0],
+                                       remove_abherrartions=remove[1])
         search_args = [(cd.group, cd.version, cd.kind),
                        (op.group, op.version, op.kind),
                        ('core', op.version, op.kind),
@@ -2084,12 +2116,12 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
             if details is not None:
                 pkg, mod, cls, meth = details
                 if op is not None:  # also record the state of 'remove'
-                    op.remove = remove
+                    op.remove = remove[0]
                 break
         if pkg:  # the inner for found the method
             break
     else:
-        print(f"Can't find p/m/c/m for {method_name} in {cd.group} or {op.group}")
+        print(f"Can't find p/m/c/m for {op.op_id} (real: {op._op_id}) in {cd.group} or {op.group}")
     return pkg, mod, cls, meth
 
 
