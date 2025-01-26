@@ -75,6 +75,8 @@ from collections import defaultdict
 import re
 from warnings import warn
 from black import NothingChanged, format_str, Mode
+
+from build23to27 import ClassDescriptor
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
 from hikaru.meta import (HikaruBase, HikaruDocumentBase, KubernetesException,
@@ -190,6 +192,52 @@ class VersionStr(str):
     @lru_cache
     def __ge__(self, other):
         return self == other or self > other
+
+
+class PMCM:
+    """
+    Instances hold partial/total search results from the operation of _search_for_method.
+
+    The idea here is to not do repeated searches over the same objects; when some partial
+    results are found then we want to capture those and not do the same search again only
+    to find the same objects, but rather start where we were successful and maybe try some
+    variations on finding a method. Hopefully this will provide build some speedup, and also
+    structure the code better for finding methods using small variations on the names we're
+    looking for.
+
+    Note: thie class has become more relevant since we had to move to searching for methods
+    using different manglings of their name.
+    """
+    def __init__(self, package_name=None, module_name=None, module=None, class_name=None, method_name=None):
+        self.package_name = package_name
+        self.module_name = module_name
+        self.module = module
+        self.class_name = class_name
+        self.method_name = method_name
+
+    @property
+    def is_complete(self) -> bool:
+        return (self.package_name is not None and
+                self.module_name is not None and
+                self.class_name is not None and
+                self.method_name is not None)
+
+    def reset(self):
+        self.package_name = self.module_name = self.class_name = self.method_name = None
+
+    @property
+    def empty(self) -> bool:
+        return (self.package_name is None and
+                self.module_name is None and
+                self.class_name is None and
+                self.method_name is None)
+
+    @property
+    def is_partially_filled(self) -> bool:
+        return (self.package_name is not None or
+                self.module_name is not None or
+                self.class_name is not None or
+                self.method_name is not None)
 
 
 # version, opid
@@ -948,6 +996,84 @@ class Operation(object):
                                         cd=cd))
         lines.extend(self.as_crud_python_method(cd))
         return lines
+
+
+def make_method_name_in_AdmissionregistrationV1Api(op: Operation, cd: ClassDescriptor) -> str:
+    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    mparts = methname.split("_")
+    if mparts[0] == "watch":
+        del mparts[0]
+    if mparts[-1] == "list":
+        del mparts[-1]
+        mparts.insert(0, "list")
+    newname = "_".join(mparts)
+    return newname
+
+
+def make_method_name_in_AppsV1Api(op: Operation, cd: ClassDescriptor) -> str:
+    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    mparts = methname.split("_")
+    if mparts[0] == "watch":
+        del mparts[0]
+    try:
+        idx = mparts.index("list")
+    except ValueError:
+        pass
+    else:
+        del mparts[idx]
+        mparts.insert(0, "list")
+    newname = "_".join(mparts)
+    return newname
+
+
+def make_method_name_in_AutoscalingV1Api(op: Operation, cd: ClassDescriptor) -> str:
+    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    mparts = methname.split("_")
+    if mparts[0] == "watch":
+        del mparts[0]
+    try:
+        idx = mparts.index("list")
+    except ValueError:
+        pass
+    else:
+        del mparts[idx]
+        mparts.insert(0, "list")
+    newname = "_".join(mparts)
+    return newname
+
+
+def make_method_name_in_CoreV1Api(op: Operation, cd: ClassDescriptor) -> str:
+    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    return methname
+
+
+def make_method_name_in_FlowcontrolApiserverV1Api(op: Operation, cd: ClassDescriptor):
+    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    mparts = methname.split("_")
+    for to_remove in ("flowcontrol", "apiserver"):
+        try:
+            mparts.remove(to_remove)
+        except ValueError:
+            pass
+    if mparts[0] == "watch":
+        del mparts[0]
+    if mparts[-1] == "list":
+        del mparts[-1]
+        mparts.insert(0, "list")
+    newname = "_".join(mparts)
+    return newname
+
+
+# this dict maps a class name to a function that knows how methods in this class
+# are managed from teh op_id and (hopefully) generates ones that match the methods4
+# of a specific class
+_custom_method_name_builders = {
+    "AdmissionregistrationV1Api": make_method_name_in_AdmissionregistrationV1Api,
+    "AppsV1Api": make_method_name_in_AppsV1Api,
+    "AutoscalingV1Api": make_method_name_in_AutoscalingV1Api,
+    "CoreV1Api": make_method_name_in_CoreV1Api,
+    "FlowcontrolApiserverV1Api": make_method_name_in_FlowcontrolApiserverV1Api,
+}
 
 
 def register_crud_class(verb: str):
@@ -2058,36 +2184,51 @@ class PreferredVersions(object):
 
 
 def _search_for_method(group: str, version: str, kind: str,
-                       methname: str) -> Union[NoneType,
-                                               Tuple[str, str, str, str]]:
+                       methname: str, partial_results: Union[NoneType, PMCM] = None) -> PMCM:
+    if partial_results is None:
+        partial_results = PMCM()
     version: VersionStr = VersionStr(version) if version is not None else version
     package_name = 'kubernetes.client.api'
-    mgroup = group if group else 'core'
-    mgroup = mgroup.replace(".k8s.io", "").replace(".", "_")
-    module_name = f'.{mgroup}_{version}_api' if version else f'.{mgroup}_api'
-    try:
-        mod = importlib.import_module(module_name, package_name)
-    except ModuleNotFoundError:
-        result = None
+    mod = None
+    if partial_results.module_name is not None:
+        module_name = partial_results.module_name
+        mod = partial_results.module
     else:
-        class_group = group if group else 'core'
-        class_group = class_group.replace(".k8s.io", "")
-        class_group = "".join(f.capitalize() for f in class_group.split("_"))
-        if "." in class_group:
-            class_group = "".join([w.capitalize() for w in class_group.split('.')])
-        class_name = (f'{class_group}{version.capitalize()}Api'
-                      if version else
-                      f'{class_group}Api')
+        mgroup = group if group else 'core'
+        mgroup = mgroup.replace(".k8s.io", "").replace(".", "_")
+        module_name = f'.{mgroup}_{version}_api' if version else f'.{mgroup}_api'
+        try:
+            mod = importlib.import_module(module_name, package_name)
+            partial_results.module = mod
+        except ModuleNotFoundError:
+            module_name = None
+    if module_name is not None:
+        if partial_results.class_name is not None:
+            class_name = partial_results.class_name
+        else:
+            class_group = group if group else 'core'
+            class_group = class_group.replace(".k8s.io", "")
+            class_group = "".join(f.capitalize() for f in class_group.split("_"))
+            if "." in class_group:
+                class_group = "".join([w.capitalize() for w in class_group.split('.')])
+            class_name = (f'{class_group}{version.capitalize()}Api'
+                          if version else
+                          f'{class_group}Api')
         cls = getattr(mod, class_name, None)
         if cls is None:
-            result = None
+            partial_results.reset()
         else:
+            partial_results.package_name = package_name
+            partial_results.module_name = module_name
+            partial_results.class_name = class_name
             meth = getattr(cls, methname, None)
             if meth is not None:
+                partial_results.method_name = methname
                 result = package_name, module_name, class_name, methname
-            else:
-                result = None
-    return result
+                partial_results.method_name = methname
+            # else:
+            #     result = None
+    return partial_results
 
 def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
@@ -2104,6 +2245,7 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         If the method can't be resolved, a tuple of Nones is returned
     """
     pkg = mod = cls = meth = None
+    details = PMCM()
     for remove in ((False, False), (True, False), (True, True)):
         method_name = make_method_name(op, cd, remove_core=remove[0], remove_ver=remove[0],
                                        remove_abherrartions=remove[1])
@@ -2112,15 +2254,39 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
                        ('core', op.version, op.kind),
                        ('apps', op.version, op.kind)]
         for group, version, kind in search_args:
-            details = _search_for_method(group, version, kind, method_name)
-            if details is not None:
-                pkg, mod, cls, meth = details
+            details.reset()
+            details: PMCM = _search_for_method(group, version, kind, method_name, partial_results=details)
+            if details.is_complete:
+                pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
                 if op is not None:  # also record the state of 'remove'
                     op.remove = remove[0]
                 break
-        if pkg:  # the inner for found the method
+            elif details.class_name is not None and details.class_name in _custom_method_name_builders:
+                cmnb = _custom_method_name_builders[details.class_name]
+                mname = cmnb(op, cd)
+                # details = _search_for_method("", "", "", mname, partial_results=details)
+                details = _search_for_method(group, version, kind, mname, partial_results=details)
+                if details.is_complete:
+                    pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
+                    if op is not None:  # also record the state of 'remove'
+                        op.remove = True   # is this always true??
+                    break
+        if pkg is not None:  # the inner for found the method
             break
     else:
+        # if details.is_partially_filled:
+        #     if details.class_name in _custom_method_name_builders:
+        #         cmnb = _custom_method_name_builders[details.class_name]
+        #         mname = cmnb(op, cd)
+        #         details = _search_for_method("", "", "", mname, partial_results=details)
+        #         if details.is_complete:
+        #             pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
+        #             if op is not None:  # also record the state of 'remove'
+        #                 op.remove = True   # is this always true??
+        #     if pkg is None and "deprecated" not in op.description.lower():
+        #         print(f"Can't complete finding {op.op_id} (real: {op._op_id}); did find: "
+        #               f"p={details.package_name}, m={details.module_name}, c={details.class_name}")
+        # else:
         print(f"Can't find p/m/c/m for {op.op_id} (real: {op._op_id}) in {cd.group} or {op.group}")
     return pkg, mod, cls, meth
 
