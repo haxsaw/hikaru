@@ -214,11 +214,11 @@ class Watcher(BaseWatcher):
 
         if namespace:
             if watcher_cls._namespaced_watcher is None:
-                raise TypeError(f"{cls.__name__} has no namespaced watcher support")
+                raise TypeError(f"{cls.__name__} in module {cls.__module__} has no namespaced watcher support")
             self.wd: WatcherDescriptor = watcher_cls._namespaced_watcher
         else:
             if watcher_cls._watcher is None:
-                raise TypeError(f"{cls.__name__} has no watcher support")
+                raise TypeError(f"{cls.__name__} in module {cls.__module__} has no watcher support")
             self.wd: WatcherDescriptor = watcher_cls._watcher
 
         super(Watcher, self).__init__()

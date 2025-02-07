@@ -786,22 +786,15 @@ class Operation(object):
                                                           body_key=body_key,
                                                           arg_assignment_lines="\n".join(
                                                              arg_assignment_lines),
-                                                          codes_returning_objects=
-                                                          codes_returning_objects,
-                                                          returned_type=
-                                                          self.owning_cd.hikaru_name)
+                                                          codes_returning_objects=codes_returning_objects,
+                                                          returned_type=self.owning_cd.hikaru_name)
             else:
-                rez = _static_method_nobody_template.format(k8s_class_name=
-                                                            k8s_class_name,
-                                                            k8s_method_name=
-                                                            k8s_method_name,
-                                                            arg_assignment_lines=
-                                                            "\n".join(
+                rez = _static_method_nobody_template.format(k8s_class_name=k8s_class_name,
+                                                            k8s_method_name=k8s_method_name,
+                                                            arg_assignment_lines="\n".join(
                                                                arg_assignment_lines),
-                                                            codes_returning_objects=
-                                                            codes_returning_objects,
-                                                            returned_type=
-                                                            self.owning_cd.hikaru_name)
+                                                            codes_returning_objects=codes_returning_objects,
+                                                            returned_type=self.owning_cd.hikaru_name)
         else:
             rez = _method_body_template.format(k8s_class_name=k8s_class_name,
                                                k8s_method_name=k8s_method_name,
@@ -998,16 +991,46 @@ class Operation(object):
         return lines
 
 
+operation_to_method_mapping = {
+    "createAdmissionregistrationV1MutatingWebhookConfiguration": "create_mutating_webhook_configuration",
+    "deleteAdmissionregistrationV1MutatingWebhookConfiguration": "delete_mutating_webhook_configuration",
+    "listAdmissionregistrationV1MutatingWebhookConfiguration": "list_mutating_webhook_configuration",
+    "readAdmissionregistrationV1MutatingWebhookConfiguration": "read_mutating_webhook_configuration",
+    "replaceAdmissionregistrationV1MutatingWebhookConfiguration": "replace_mutating_webhook_configuration"
+}
+
+heuristic_mappings = {
+    "connect_delete_namespaced_pod_proxy": "deleteCoreV1NamespacedPodProxy",
+    "connect_get_namespaced_pod_attach": "getCoreV1NamespacedPodAttach",
+    "connect_head_namespaced_service_proxy": "headCoreV1NamespacedServiceProxy",
+    "connect_patch_namespaced_node_proxy": "patchCoreV1NamespacedNodeProxy",
+    "connect_put_namespaced_service_proxy": "putCoreV1NamespacedServiceProxy",
+    "create_namespaced_endpoints": "createCoreV1NamespacedEndpoints",
+    "create_namespaced_event": "createCoreV1NamespacedEvent",
+    "delete_collection_namespaced_config_map": "deleteCollectionCoreV1NamespacedConfigMap",
+    "delete_collection_namespaced_endpoints": "deleteCollectionCoreV1NamespacedEndpoints",
+    "delete_namespaced_controller_revision": "deleteCoreV1NamespacedControllerRevision",
+    "list_node": "listCoreV1Node",
+    "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
+    "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
+    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints"
+}
+
+adreg_op_to_method_mapping = {}
+adreg_op_to_method_mapping.update(operation_to_method_mapping)
+adreg_op_to_method_mapping.update(heuristic_mappings)
+
 def make_method_name_in_AdmissionregistrationV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    mparts = methname.split("_")
-    if mparts[0] == "watch":
-        del mparts[0]
-    if mparts[-1] == "list":
-        del mparts[-1]
-        mparts.insert(0, "list")
-    newname = "_".join(mparts)
-    return newname
+    return adreg_op_to_method_mapping.get(op._op_id, "NO__MATCH__METHOD")
+    # methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    # mparts = methname.split("_")
+    # if mparts[0] == "watch":
+    #     del mparts[0]
+    # if mparts[-1] == "list":
+    #     del mparts[-1]
+    #     mparts.insert(0, "list")
+    # newname = "_".join(mparts)
+    # return newname
 
 
 def make_method_name_in_AppsV1Api(op: Operation, cd: ClassDescriptor) -> str:
@@ -1041,10 +1064,41 @@ def make_method_name_in_AutoscalingV1Api(op: Operation, cd: ClassDescriptor) -> 
     newname = "_".join(mparts)
     return newname
 
+operation_to_method_mapping = {
+    "listCoreV1Pod": "list_namespaced_pod",
+    "createCoreV1Namespace": "create_namespace",
+    "deleteCoreV1Service": "delete_namespaced_service",
+    "getCoreV1Node": "read_node",
+    "patchCoreV1ConfigMap": "patch_namespaced_config_map",
+    "replaceCoreV1Pod": "replace_namespaced_pod"
+}
+
+heuristic_mappings = {
+    "connect_delete_namespaced_pod_proxy": "deleteCoreV1NamespacedPodProxy",
+    "connect_get_namespaced_pod_attach": "getCoreV1NamespacedPodAttach",
+    "connect_head_namespaced_service_proxy": "headCoreV1NamespacedServiceProxy",
+    "connect_patch_namespaced_node_proxy": "patchCoreV1NamespacedNodeProxy",
+    "connect_put_namespaced_service_proxy": "putCoreV1NamespacedServiceProxy",
+    "create_namespaced_endpoints": "createCoreV1NamespacedEndpoints",
+    "create_namespaced_event": "createCoreV1NamespacedEvent",
+    "delete_collection_namespaced_config_map": "deleteCollectionCoreV1NamespacedConfigMap",
+    "delete_collection_namespaced_endpoints": "deleteCollectionCoreV1NamespacedEndpoints",
+    "delete_namespaced_controller_revision": "deleteCoreV1NamespacedControllerRevision",
+    "list_node": "listCoreV1Node",
+    "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
+    "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
+    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints"
+}
+
+core_op_to_method_map = {}
+core_op_to_method_map.update(operation_to_method_mapping)
+core_op_to_method_map.update(heuristic_mappings)
+
 
 def make_method_name_in_CoreV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    return methname
+    return core_op_to_method_map.get(op._op_id, "MATCH__NO__METHOD")
+    # methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
+    # return methname
 
 
 def make_method_name_in_FlowcontrolApiserverV1Api(op: Operation, cd: ClassDescriptor):
@@ -1064,6 +1118,113 @@ def make_method_name_in_FlowcontrolApiserverV1Api(op: Operation, cd: ClassDescri
     return newname
 
 
+storage_op_to_method_map = {
+    "getStorageV1APIResources": "get_api_resources",
+    "deleteStorageV1CollectionCSIDriver": "delete_collection_csi_driver",
+    "listStorageV1CSIDriver": "list_csi_driver",
+    "createStorageV1CSIDriver": "create_csi_driver",
+    "deleteStorageV1CSIDriver": "delete_csi_driver",
+    "readStorageV1CSIDriver": "read_csi_driver",
+    "patchStorageV1CSIDriver": "patch_csi_driver",
+    "replaceStorageV1CSIDriver": "replace_csi_driver",
+    "deleteStorageV1CollectionCSINode": "delete_collection_csi_node",
+    "listStorageV1CSINode": "list_csi_node",
+    "createStorageV1CSINode": "create_csi_node",
+    "deleteStorageV1CSINode": "delete_csi_node",
+    "readStorageV1CSINode": "read_csi_node",
+    "patchStorageV1CSINode": "patch_csi_node",
+    "replaceStorageV1CSINode": "replace_csi_node",
+    "listStorageV1CSIStorageCapacityForAllNamespaces": "list_csi_storage_capacity_for_all_namespaces",
+    "deleteStorageV1CollectionNamespacedCSIStorageCapacity": "delete_collection_namespaced_csi_storage_capacity",
+    "listStorageV1NamespacedCSIStorageCapacity": "list_namespaced_csi_storage_capacity",
+    "createStorageV1NamespacedCSIStorageCapacity": "create_namespaced_csi_storage_capacity",
+    "deleteStorageV1NamespacedCSIStorageCapacity": "delete_namespaced_csi_storage_capacity",
+    "readStorageV1NamespacedCSIStorageCapacity": "read_namespaced_csi_storage_capacity",
+    "patchStorageV1NamespacedCSIStorageCapacity": "patch_namespaced_csi_storage_capacity",
+    "replaceStorageV1NamespacedCSIStorageCapacity": "replace_namespaced_csi_storage_capacity",
+    "deleteStorageV1CollectionStorageClass": "delete_collection_storage_class",
+    "listStorageV1StorageClass": "list_storage_class",
+    "createStorageV1StorageClass": "create_storage_class",
+    "deleteStorageV1StorageClass": "delete_storage_class",
+    "readStorageV1StorageClass": "read_storage_class",
+    "patchStorageV1StorageClass": "patch_storage_class",
+    "replaceStorageV1StorageClass": "replace_storage_class",
+    "deleteStorageV1CollectionVolumeAttachment": "delete_collection_volume_attachment",
+    "listStorageV1VolumeAttachment": "list_volume_attachment",
+    "createStorageV1VolumeAttachment": "create_volume_attachment",
+    "deleteStorageV1VolumeAttachment": "delete_volume_attachment",
+    "readStorageV1VolumeAttachment": "read_volume_attachment",
+    "patchStorageV1VolumeAttachment": "patch_volume_attachment",
+    "replaceStorageV1VolumeAttachment": "replace_volume_attachment",
+    "readStorageV1VolumeAttachmentStatus": "read_volume_attachment_status",
+    "patchStorageV1VolumeAttachmentStatus": "patch_volume_attachment_status",
+    "replaceStorageV1VolumeAttachmentStatus": "replace_volume_attachment_status"
+}
+
+
+def make_method_name_in_StorageV1Api(op: Operation, cd: ClassDescriptor):
+    return storage_op_to_method_map.get(op._op_id, "MATCH__NO__METHOD")
+
+
+policy_op_to_method_map = {
+    "getPolicyV1APIResources": "get_api_resources",
+    "deletePolicyV1CollectionNamespacedPodDisruptionBudget": "delete_collection_namespaced_pod_disruption_budget",
+    "listPolicyV1NamespacedPodDisruptionBudget": "list_namespaced_pod_disruption_budget",
+    "createPolicyV1NamespacedPodDisruptionBudget": "create_namespaced_pod_disruption_budget",
+    "deletePolicyV1NamespacedPodDisruptionBudget": "delete_namespaced_pod_disruption_budget",
+    "readPolicyV1NamespacedPodDisruptionBudget": "read_namespaced_pod_disruption_budget",
+    "patchPolicyV1NamespacedPodDisruptionBudget": "patch_namespaced_pod_disruption_budget",
+    "replacePolicyV1NamespacedPodDisruptionBudget": "replace_namespaced_pod_disruption_budget",
+    "readPolicyV1NamespacedPodDisruptionBudgetStatus": "read_namespaced_pod_disruption_budget_status",
+    "patchPolicyV1NamespacedPodDisruptionBudgetStatus": "patch_namespaced_pod_disruption_budget_status",
+    "replacePolicyV1NamespacedPodDisruptionBudgetStatus": "replace_namespaced_pod_disruption_budget_status",
+    "listPolicyV1PodDisruptionBudgetForAllNamespaces": "list_pod_disruption_budget_for_all_namespaces"
+}
+
+
+def make_method_name_in_PolicyV1Api(op: Operation, cd: ClassDescriptor):
+    return policy_op_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+
+rbac_to_method_map = {
+    "getRbacAuthorizationV1APIResources": "get_api_resources",
+    "deleteRbacAuthorizationV1CollectionClusterRoleBinding": "delete_collection_cluster_role_binding",
+    "listRbacAuthorizationV1ClusterRoleBinding": "list_cluster_role_binding",
+    "createRbacAuthorizationV1ClusterRoleBinding": "create_cluster_role_binding",
+    "deleteRbacAuthorizationV1ClusterRoleBinding": "delete_cluster_role_binding",
+    "readRbacAuthorizationV1ClusterRoleBinding": "read_cluster_role_binding",
+    "patchRbacAuthorizationV1ClusterRoleBinding": "patch_cluster_role_binding",
+    "replaceRbacAuthorizationV1ClusterRoleBinding": "replace_cluster_role_binding",
+    "deleteRbacAuthorizationV1CollectionClusterRole": "delete_collection_cluster_role",
+    "listRbacAuthorizationV1ClusterRole": "list_cluster_role",
+    "createRbacAuthorizationV1ClusterRole": "create_cluster_role",
+    "deleteRbacAuthorizationV1ClusterRole": "delete_cluster_role",
+    "readRbacAuthorizationV1ClusterRole": "read_cluster_role",
+    "patchRbacAuthorizationV1ClusterRole": "patch_cluster_role",
+    "replaceRbacAuthorizationV1ClusterRole": "replace_cluster_role",
+    "deleteRbacAuthorizationV1CollectionNamespacedRoleBinding": "delete_collection_namespaced_role_binding",
+    "listRbacAuthorizationV1NamespacedRoleBinding": "list_namespaced_role_binding",
+    "createRbacAuthorizationV1NamespacedRoleBinding": "create_namespaced_role_binding",
+    "deleteRbacAuthorizationV1NamespacedRoleBinding": "delete_namespaced_role_binding",
+    "readRbacAuthorizationV1NamespacedRoleBinding": "read_namespaced_role_binding",
+    "patchRbacAuthorizationV1NamespacedRoleBinding": "patch_namespaced_role_binding",
+    "replaceRbacAuthorizationV1NamespacedRoleBinding": "replace_namespaced_role_binding",
+    "deleteRbacAuthorizationV1CollectionNamespacedRole": "delete_collection_namespaced_role",
+    "listRbacAuthorizationV1NamespacedRole": "list_namespaced_role",
+    "createRbacAuthorizationV1NamespacedRole": "create_namespaced_role",
+    "deleteRbacAuthorizationV1NamespacedRole": "delete_namespaced_role",
+    "readRbacAuthorizationV1NamespacedRole": "read_namespaced_role",
+    "patchRbacAuthorizationV1NamespacedRole": "patch_namespaced_role",
+    "replaceRbacAuthorizationV1NamespacedRole": "replace_namespaced_role",
+    "listRbacAuthorizationV1RoleBindingForAllNamespaces": "list_role_binding_for_all_namespaces",
+    "listRbacAuthorizationV1RoleForAllNamespaces": "list_role_for_all_namespaces"
+}
+
+
+def make_method_name_in_RbacAuthorizationiV1Api(op: Operation, cd: ClassDescriptor):
+    return rbac_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+
 # this dict maps a class name to a function that knows how methods in this class
 # are managed from teh op_id and (hopefully) generates ones that match the methods4
 # of a specific class
@@ -1073,6 +1234,9 @@ _custom_method_name_builders = {
     "AutoscalingV1Api": make_method_name_in_AutoscalingV1Api,
     "CoreV1Api": make_method_name_in_CoreV1Api,
     "FlowcontrolApiserverV1Api": make_method_name_in_FlowcontrolApiserverV1Api,
+    "StorageV1Api": make_method_name_in_StorageV1Api,
+    "PolicyV1Api": make_method_name_in_PolicyV1Api,
+    "RbacAuthorizationV1Api": make_method_name_in_RbacAuthorizationiV1Api,
 }
 
 
@@ -1344,7 +1508,7 @@ _delete_name_test_without_name_parameter = \
         effective_name = self.metadata.name
 """
 
-_delete_body_without_namespace = \
+_delete_body_without_namespace_with_name_parameter = \
 """
     # noinspection PyDataclass
     client = client or self.client
@@ -1366,6 +1530,28 @@ _delete_body_without_namespace = \
         self._status = res.obj
     return self
 """
+
+_delete_body_without_namespace_without_name_parameter = \
+"""
+    # noinspection PyDataclass
+    client = client or self.client
+
+    if not self.metadata or not self.metadata.name:
+        raise RuntimeError("There must be a name supplied in either "
+                           "the arguments to {op_name}() or in a "
+                           "{classname}'s metadata")
+    else:
+        effective_name = self.metadata.name
+    res = self.{methname}({paramlist})
+    if not 200 <= res.code <= 299:
+        raise KubernetesException("Kubernetes returned error " + str(res.code))
+    if self.__class__.__name__ == res.obj.__class__.__name__:
+        self.merge(res.obj, overwrite=True)
+    elif isinstance(res.obj, Status):
+        self._status = res.obj
+    return self
+"""
+
 
 
 @register_crud_class('delete')
@@ -1402,7 +1588,10 @@ class DeleteOperation(CreateOperation):
                                               else _delete_name_test_without_name_parameter)
 
     def _without_namespace_template(self):
-        return _delete_body_without_namespace
+        has_name_param = any([True for p in self.parameters if p.name == "name"])
+        return (_delete_body_without_namespace_with_name_parameter
+                if has_name_param else
+                _delete_body_without_namespace_without_name_parameter)
 
 
 @register_crud_class('read')
@@ -2257,7 +2446,7 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
             details.reset()
             details: PMCM = _search_for_method(group, version, kind, method_name, partial_results=details)
             if details.is_complete:
-                pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
+                pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.method_name
                 if op is not None:  # also record the state of 'remove'
                     op.remove = remove[0]
                 break
@@ -2267,7 +2456,7 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
                 # details = _search_for_method("", "", "", mname, partial_results=details)
                 details = _search_for_method(group, version, kind, mname, partial_results=details)
                 if details.is_complete:
-                    pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
+                    pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.method_name
                     if op is not None:  # also record the state of 'remove'
                         op.remove = True   # is this always true??
                     break
