@@ -1225,6 +1225,169 @@ def make_method_name_in_RbacAuthorizationiV1Api(op: Operation, cd: ClassDescript
     return rbac_to_method_map.get(op._op_id, "MATCH__METHOD")
 
 
+adminregv1a1_to_method_map = {
+    "getAdmissionregistrationV1alpha1APIResources": "get_api_resources",
+    "deleteAdmissionregistrationV1alpha1CollectionValidatingAdmissionPolicy": "delete_collection_validating_admission_policy",
+    "listAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "list_validating_admission_policy",
+    "createAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "create_validating_admission_policy",
+    "deleteAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "delete_validating_admission_policy",
+    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "read_validating_admission_policy",
+    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "patch_validating_admission_policy",
+    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "replace_validating_admission_policy",
+    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "read_validating_admission_policy_status",
+    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "patch_validating_admission_policy_status",
+    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "replace_validating_admission_policy_status",
+    "deleteAdmissionregistrationV1alpha1CollectionValidatingAdmissionPolicyBinding": "delete_collection_validating_admission_policy_binding",
+    "listAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "list_validating_admission_policy_binding",
+    "createAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "create_validating_admission_policy_binding",
+    "deleteAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "delete_validating_admission_policy_binding",
+    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "read_validating_admission_policy_binding",
+    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "patch_validating_admission_policy_binding",
+    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "replace_validating_admission_policy_binding"
+}
+
+
+def make_method_name_in_AdmissionRegistrationV1alpha1(op: Operation, cd: ClassDescriptor):
+    return adminregv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+
+storagev1a1_to_method_map = {
+    "getStorageV1alpha1APIResources": "get_api_resources",
+    "deleteStorageV1alpha1CollectionVolumeAttributesClass": "delete_collection_volume_attributes_class",
+    "listStorageV1alpha1VolumeAttributesClass": "list_volume_attributes_class",
+    "createStorageV1alpha1VolumeAttributesClass": "create_volume_attributes_class",
+    "deleteStorageV1alpha1VolumeAttributesClass": "delete_volume_attributes_class",
+    "readStorageV1alpha1VolumeAttributesClass": "read_volume_attributes_class",
+    "patchStorageV1alpha1VolumeAttributesClass": "patch_volume_attributes_class",
+    "replaceStorageV1alpha1VolumeAttributesClass": "replace_volume_attributes_class"
+}
+
+
+def make_method_name_in_StorageV1alpha1(op: Operation, cd: ClassDescriptor):
+    return storagev1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+int_api_to_method_map = {
+    "getInternalApiserverV1alpha1APIResources": "get_api_resources",
+    "deleteInternalApiserverV1alpha1CollectionStorageVersion": "delete_collection_storage_version",
+    "listInternalApiserverV1alpha1StorageVersion": "list_storage_version",
+    "createInternalApiserverV1alpha1StorageVersion": "create_storage_version",
+    "deleteInternalApiserverV1alpha1StorageVersion": "delete_storage_version",
+    "readInternalApiserverV1alpha1StorageVersion": "read_storage_version",
+    "patchInternalApiserverV1alpha1StorageVersion": "patch_storage_version",
+    "replaceInternalApiserverV1alpha1StorageVersion": "replace_storage_version",
+    "readInternalApiserverV1alpha1StorageVersionStatus": "read_storage_version_status",
+    "patchInternalApiserverV1alpha1StorageVersionStatus": "patch_storage_version_status",
+    "replaceInternalApiserverV1alpha1StorageVersionStatus": "replace_storage_version_status"
+}
+
+def make_method_name_in_InternalApiserverV1alpha1(op: Operation, cd: ClassDescriptor):
+    return int_api_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+authv1a1_to_method_map = {
+    "getAuthenticationV1alpha1APIResources": "get_api_resources",
+    "createAuthenticationV1alpha1SelfSubjectReview": "create_self_subject_review"
+}
+
+def make_method_name_in_AuthenticationV1alpha1Api(op: Operation, cd: ClassDescriptor):
+    return authv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+certsv1a1_to_method_map = {
+    "getCertificatesV1alpha1APIResources": "get_api_resources",
+    "deleteCertificatesV1alpha1CollectionClusterTrustBundle": "delete_collection_cluster_trust_bundle",
+    "listCertificatesV1alpha1ClusterTrustBundle": "list_cluster_trust_bundle",
+    "createCertificatesV1alpha1ClusterTrustBundle": "create_cluster_trust_bundle",
+    "deleteCertificatesV1alpha1ClusterTrustBundle": "delete_cluster_trust_bundle",
+    "readCertificatesV1alpha1ClusterTrustBundle": "read_cluster_trust_bundle",
+    "patchCertificatesV1alpha1ClusterTrustBundle": "patch_cluster_trust_bundle",
+    "replaceCertificatesV1alpha1ClusterTrustBundle": "replace_cluster_trust_bundle"
+}
+
+def make_method_name_in_CertificatesV1alpha1Api(op: Operation, cd: ClassDescriptor):
+    return certsv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+networkingv1a1_to_method_map = {
+    "getNetworkingV1alpha1APIResources": "get_api_resources",
+    "deleteNetworkingV1alpha1CollectionIPAddress": "delete_collection_ip_address",
+    "listNetworkingV1alpha1IPAddress": "list_ip_address",
+    "createNetworkingV1alpha1IPAddress": "create_ip_address",
+    "deleteNetworkingV1alpha1IPAddress": "delete_ip_address",
+    "readNetworkingV1alpha1IPAddress": "read_ip_address",
+    "patchNetworkingV1alpha1IPAddress": "patch_ip_address",
+    "replaceNetworkingV1alpha1IPAddress": "replace_ip_address",
+    "deleteNetworkingV1alpha1CollectionServiceCIDR": "delete_collection_service_cidr",
+    "listNetworkingV1alpha1ServiceCIDR": "list_service_cidr",
+    "createNetworkingV1alpha1ServiceCIDR": "create_service_cidr",
+    "deleteNetworkingV1alpha1ServiceCIDR": "delete_service_cidr",
+    "readNetworkingV1alpha1ServiceCIDR": "read_service_cidr",
+    "patchNetworkingV1alpha1ServiceCIDR": "patch_service_cidr",
+    "replaceNetworkingV1alpha1ServiceCIDR": "replace_service_cidr",
+    "readNetworkingV1alpha1ServiceCIDRStatus": "read_service_cidr_status",
+    "patchNetworkingV1alpha1ServiceCIDRStatus": "patch_service_cidr_status",
+    "replaceNetworkingV1alpha1ServiceCIDRStatus": "replace_service_cidr_status"
+}
+
+def make_method_name_in_NetworkingV1alpha1(op: Operation, cd: ClassDescriptor):
+    return networkingv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+adminregv1b1_to_method_map = {
+    "getAdmissionregistrationV1beta1APIResources": "get_api_resources",
+    "deleteAdmissionregistrationV1beta1CollectionValidatingAdmissionPolicy": "delete_collection_validating_admission_policy",
+    "listAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "list_validating_admission_policy",
+    "createAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "create_validating_admission_policy",
+    "deleteAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "delete_validating_admission_policy",
+    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "read_validating_admission_policy",
+    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "patch_validating_admission_policy",
+    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "replace_validating_admission_policy",
+    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "read_validating_admission_policy_status",
+    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "patch_validating_admission_policy_status",
+    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "replace_validating_admission_policy_status",
+    "deleteAdmissionregistrationV1beta1CollectionValidatingAdmissionPolicyBinding": "delete_collection_validating_admission_policy_binding",
+    "listAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "list_validating_admission_policy_binding",
+    "createAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "create_validating_admission_policy_binding",
+    "deleteAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "delete_validating_admission_policy_binding",
+    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "read_validating_admission_policy_binding",
+    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "patch_validating_admission_policy_binding",
+    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "replace_validating_admission_policy_binding"
+}
+
+def make_method_name_in_AdmissionregistrationV1beta1Api(op: Operation, cd: ClassDescriptor):
+    return adminregv1b1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+authv1b1_to_method_map = {
+    "getAuthenticationV1beta1APIResources": "get_api_resources",
+    "createAuthenticationV1beta1SelfSubjectReview": "create_self_subject_review"
+}
+
+def make_method_name_in_AuthenticationV1beta1Api(op: Operation, cd: ClassDescriptor):
+    return authv1b1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+flowcontrov1b3_to_method_map = {
+    "getFlowcontrolApiserverV1beta3APIResources": "get_api_resources",
+    "deleteFlowcontrolApiserverV1beta3CollectionFlowSchema": "delete_collection_flow_schema",
+    "listFlowcontrolApiserverV1beta3FlowSchema": "list_flow_schema",
+    "createFlowcontrolApiserverV1beta3FlowSchema": "create_flow_schema",
+    "deleteFlowcontrolApiserverV1beta3FlowSchema": "delete_flow_schema",
+    "readFlowcontrolApiserverV1beta3FlowSchema": "read_flow_schema",
+    "patchFlowcontrolApiserverV1beta3FlowSchema": "patch_flow_schema",
+    "replaceFlowcontrolApiserverV1beta3FlowSchema": "replace_flow_schema",
+    "readFlowcontrolApiserverV1beta3FlowSchemaStatus": "read_flow_schema_status",
+    "patchFlowcontrolApiserverV1beta3FlowSchemaStatus": "patch_flow_schema_status",
+    "replaceFlowcontrolApiserverV1beta3FlowSchemaStatus": "replace_flow_schema_status",
+    "deleteFlowcontrolApiserverV1beta3CollectionPriorityLevelConfiguration": "delete_collection_priority_level_configuration",
+    "listFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "list_priority_level_configuration",
+    "createFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "create_priority_level_configuration",
+    "deleteFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "delete_priority_level_configuration",
+    "readFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "read_priority_level_configuration",
+    "patchFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "patch_priority_level_configuration",
+    "replaceFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "replace_priority_level_configuration",
+    "readFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "read_priority_level_configuration_status",
+    "patchFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "patch_priority_level_configuration_status",
+    "replaceFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "replace_priority_level_configuration_status"
+}
+
+def make_method_name_in_AuthenticationV1beta1Api(op: Operation, cd: ClassDescriptor):
+    return flowcontrov1b3_to_method_map.get(op._op_id, "MATCH__METHOD")
+
 # this dict maps a class name to a function that knows how methods in this class
 # are managed from teh op_id and (hopefully) generates ones that match the methods4
 # of a specific class
@@ -1237,6 +1400,15 @@ _custom_method_name_builders = {
     "StorageV1Api": make_method_name_in_StorageV1Api,
     "PolicyV1Api": make_method_name_in_PolicyV1Api,
     "RbacAuthorizationV1Api": make_method_name_in_RbacAuthorizationiV1Api,
+    "AdmissionregistrationV1alpha1Api": make_method_name_in_AdmissionRegistrationV1alpha1,
+    "StorageV1alpha1Api": make_method_name_in_StorageV1alpha1,
+    "InternalApiserverV1alpha1Api": make_method_name_in_InternalApiserverV1alpha1,
+    "AuthenticationV1alpha1Api": make_method_name_in_AuthenticationV1alpha1Api,
+    "CertificatesV1alpha1Api": make_method_name_in_CertificatesV1alpha1Api,
+    "NetworkingV1alpha1Api": make_method_name_in_NetworkingV1alpha1,
+    "AdmissionregistrationV1beta1Api": make_method_name_in_AdmissionregistrationV1beta1Api,
+    "AuthenticationV1beta1Api": make_method_name_in_AuthenticationV1beta1Api,
+    "FlowcontrolApiserverV1beta3Api": make_method_name_in_AuthenticationV1beta1Api,
 }
 
 
@@ -2476,7 +2648,8 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         #         print(f"Can't complete finding {op.op_id} (real: {op._op_id}); did find: "
         #               f"p={details.package_name}, m={details.module_name}, c={details.class_name}")
         # else:
-        print(f"Can't find p/m/c/m for {op.op_id} (real: {op._op_id}) in {cd.group} or {op.group}")
+        if not op.op_id.startswith("watch"):
+            print(f"Can't find p/m/c/m for {op.op_id} (real: {op._op_id}) in {cd.group} or {op.group}")
     return pkg, mod, cls, meth
 
 
