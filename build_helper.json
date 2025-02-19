@@ -355,20 +355,11 @@
     {
       "preferred_versions": [
         {
-        "class_name": "ServiceReference",
-        "preferred_group_by_version": [
-            {
-              "colliding_version": "v1",
-              "preferred_group": "admissionregistration"
-            }
-          ]
-        },
-        {
           "class_name": "TokenRequest",
           "preferred_group_by_version": [
             {
               "colliding_version": "v1",
-              "preferred_group": "authentication"
+              "preferred_group": "io.k8s.api.authentication"
             }
           ]
         }

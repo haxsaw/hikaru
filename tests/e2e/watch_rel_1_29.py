@@ -64,7 +64,7 @@ def make_namespace(name):
         time.sleep(0.1)
         ns = Namespace(metadata=ObjectMeta(name=nsname))
         ns.create()
-        time.sleep(0.1)
+        time.sleep(0.3)
         ns.delete()
 
     t = Thread(target=do_it, args=(name,))

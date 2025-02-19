@@ -1740,8 +1740,7 @@ def test72():
             clientConfig=WebhookClientConfig(
                 service=ServiceReference(
                     name='admission-webhook',
-                    namespace=e2e_namespace,
-                    path="/validate"
+                    namespace=e2e_namespace
                 ),
             )
         )]

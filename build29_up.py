@@ -95,6 +95,18 @@ NO_CLASS_FOR_REF = "no_class_for_ref.txt"
 no_class_for_ref_file = None
 
 
+# Precompile regex once
+_underscore_pattern = re.compile(r'_([a-zA-Z])')
+
+def pep8_to_camel_case(method_name: str) -> str:
+    newname = _underscore_pattern.sub(lambda m: m.group(1).upper(), method_name)
+    newname = (newname.replace("Csi", "CSI").
+               replace("ApiService", "APIService").
+               replace("Cidr", "CIDR").
+               replace("IpAddress", "IPAddress"))
+    return newname
+
+
 class Issues:
     def __init__(self):
         self.class_no_props_file = open(CLASS_NO_PROPS, 'w')
@@ -115,10 +127,6 @@ class Issues:
     def report_no_class_for_ref(self, msg):
         print(msg, file=self.no_class_for_ref_file)
         self.no_ref_cnt += 1
-
-
-# class SwaggerProcessException(Exception):
-#     def
 
 
 class SkipOpException(Exception):
@@ -664,6 +672,7 @@ class Operation(object):
             raise SkipOpException(f"Got 'custom_objects' for verb {verb}, path {op_path}, gvk: {gvk_dict}")
         self.kind = gvk_dict.get('kind')
         self._op_id = op_id
+        self.found_k8s_method_name = None
         self.description = description
         self.is_staticmethod = False
         # flag if this can be 'watched'
@@ -703,9 +712,12 @@ class Operation(object):
         self._meth_name = self.op_id.replace(version, '') if self.op_id else None
         self.remove = False
 
+    node_pattern = r"Node(?!$)"
+    policy_pattern = r"Policy(?!$)"
+
     @property
     def op_id(self) -> str:
-        return (self._op_id
+        news = (self._op_id
                 .replace("Core", "")
                 .replace("V1", "")
                 .replace("Apps", "")
@@ -717,9 +729,22 @@ class Operation(object):
                 .replace("Discovery", "")
                 .replace("Networking", "")
                 .replace("deleteNodeColl", "deleteColl")
-                .replace("Scheduling", "")
-                .replace("Apiextensions", "")
-                .replace("Apiregistration", "")) if self._op_id is not None else None
+                # .replace("Scheduling", "")
+                # .replace("Apiextensions", "")
+                # .replace("Apiregistration", "")
+                # .replace("RbacAuthorization", "")
+                # .replace("Storage", "", 1)
+                # .replace("Authentication", "", 1)
+                # .replace("Authorization", "", 1)
+                # .replace("Events", "", 1)
+                # .replace("FlowcontrolApiserver", "")
+                .replace("alpha1", "")) if self._op_id is not None else None
+        if news is not None:
+            if re.search(self.node_pattern, news):
+                news = news.replace("Node", "", 1)
+            if re.search(self.policy_pattern, news):
+                news = news.replace("Policy", "", 1)
+        return news
 
     @property
     def meth_name(self) -> str:
@@ -903,7 +928,13 @@ class Operation(object):
         def_parts = []
         if parameters is None:
             parameters = self.parameters
-        def_parts.append(f"def {self.meth_name}(")
+        # def_parts.append(f"def {self.meth_name}(")
+        # def_parts.append(f"def {self.found_k8s_method_name if self.found_k8s_method_name else self.meth_name}(")
+        if self.meth_name in ("create", "read", "update", "delete"):
+            meth_name = self.meth_name
+        else:
+            meth_name = pep8_to_camel_case(self.found_k8s_method_name)
+        def_parts.append(f"def {meth_name}(")
         required = [p for p in parameters if p.required]
         optional = [p for p in parameters if not p.required]
         params = []
@@ -1013,7 +1044,7 @@ heuristic_mappings = {
     "list_node": "listCoreV1Node",
     "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
     "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
-    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints"
+    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints",
 }
 
 adreg_op_to_method_mapping = {}
@@ -1087,7 +1118,12 @@ heuristic_mappings = {
     "list_node": "listCoreV1Node",
     "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
     "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
-    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints"
+    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints",
+    "readCoreV1NodeStatus": "read_node_status",
+    "patchCoreV1NodeStatus": "patch_node_status",
+    "replaceCoreV1NodeStatus": "replace_node_status",
+    "connectCoreV1PatchNodeProxy": "connect_patch_node_proxy",
+    "connectCoreV1PatchNodeProxyWithPath": "connect_patch_node_proxy_with_path"
 }
 
 core_op_to_method_map = {}
@@ -1355,6 +1391,7 @@ def make_method_name_in_AdmissionregistrationV1beta1Api(op: Operation, cd: Class
 
 authv1b1_to_method_map = {
     "getAuthenticationV1beta1APIResources": "get_api_resources",
+    "createAuthenticationV1beta1SelfSubjectReview": "create_self_subject_review",
     "createAuthenticationV1beta1SelfSubjectReview": "create_self_subject_review"
 }
 
@@ -1385,8 +1422,17 @@ flowcontrov1b3_to_method_map = {
     "replaceFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "replace_priority_level_configuration_status"
 }
 
-def make_method_name_in_AuthenticationV1beta1Api(op: Operation, cd: ClassDescriptor):
+def make_method_name_in_FlowcontrolV1beta1Api(op: Operation, cd: ClassDescriptor):
     return flowcontrov1b3_to_method_map.get(op._op_id, "MATCH__METHOD")
+
+
+networkingv1_to_method_map = {
+"listNetworkingV1NetworkPolicyForAllNamespaces": "list_network_policy_for_all_namespaces",
+}
+
+def make_method_name_in_NetworkV1(op: Operation, cd: ClassDescriptor):
+    return networkingv1_to_method_map.get(op._op_id, "MATCH__METHOD")
+
 
 # this dict maps a class name to a function that knows how methods in this class
 # are managed from teh op_id and (hopefully) generates ones that match the methods4
@@ -1408,7 +1454,8 @@ _custom_method_name_builders = {
     "NetworkingV1alpha1Api": make_method_name_in_NetworkingV1alpha1,
     "AdmissionregistrationV1beta1Api": make_method_name_in_AdmissionregistrationV1beta1Api,
     "AuthenticationV1beta1Api": make_method_name_in_AuthenticationV1beta1Api,
-    "FlowcontrolApiserverV1beta3Api": make_method_name_in_AuthenticationV1beta1Api,
+    "FlowcontrolApiserverV1beta3Api": make_method_name_in_FlowcontrolV1beta1Api,
+    "NetworkingV1Api": make_method_name_in_NetworkV1
 }
 
 
@@ -1576,7 +1623,8 @@ class CreateOperation(SyntheticOperation):
                     if seen_namespace else
                     self._without_namespace_template())
         fdict = {"classname": cd.hikaru_name if cd else 'UNKNOWN',
-                 "methname": self.base_op.meth_name,
+                 # "methname": self.base_op.meth_name,
+                 "methname": pep8_to_camel_case(self.base_op.found_k8s_method_name),
                  'paramlist': ", ".join(param_assignments),
                  'op_name': self.op_name}
         body = body_str.format(**fdict)
@@ -2618,6 +2666,8 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
             details.reset()
             details: PMCM = _search_for_method(group, version, kind, method_name, partial_results=details)
             if details.is_complete:
+                if op.found_k8s_method_name is None and method_name is not None:
+                    op.found_k8s_method_name = method_name
                 pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.method_name
                 if op is not None:  # also record the state of 'remove'
                     op.remove = remove[0]
@@ -2625,9 +2675,10 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
             elif details.class_name is not None and details.class_name in _custom_method_name_builders:
                 cmnb = _custom_method_name_builders[details.class_name]
                 mname = cmnb(op, cd)
-                # details = _search_for_method("", "", "", mname, partial_results=details)
                 details = _search_for_method(group, version, kind, mname, partial_results=details)
                 if details.is_complete:
+                    if op.found_k8s_method_name is None and mname is not None:
+                        op.found_k8s_method_name = mname
                     pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.method_name
                     if op is not None:  # also record the state of 'remove'
                         op.remove = True   # is this always true??
