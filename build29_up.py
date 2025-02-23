@@ -63,7 +63,6 @@ method; can find how many required positional args there are.
 """
 import difflib
 from itertools import chain, permutations
-from difflib import SequenceMatcher, Match
 from functools import lru_cache
 import importlib
 from pathlib import Path
@@ -75,12 +74,14 @@ from collections import defaultdict
 import re
 from warnings import warn
 from black import NothingChanged, format_str, Mode
-
-from build23to27 import ClassDescriptor
+from build_helpers.op_method_mappers import OpToMethodMapper, MapperVendor
 from hikaru.naming import (process_swagger_name, full_swagger_name,
                            dprefix, camel_to_pep8)
 from hikaru.meta import (HikaruBase, HikaruDocumentBase, KubernetesException,
                          WatcherDescriptor)
+
+
+op_to_method_mapper: Optional[OpToMethodMapper] = None
 
 
 # file names/handles for stuff we create errors about
@@ -644,6 +645,262 @@ return resp
 """
 
 
+class ClassDescriptor(object):
+    _doc_markers = ('apiVersion', 'kind')
+
+    def __init__(self, swagger_name: str, swagger: dict):
+        self.has_doc_markers = False
+        self.has_gvk_dict = "x-kubernetes-group-version-kind" in swagger
+        group, version, name = process_swagger_name(swagger_name)
+        if version is not None:
+            version: VersionStr = VersionStr(version)
+        self.group = group if group is not None else ''
+        if self.has_gvk_dict:
+            gvk = swagger["x-kubernetes-group-version-kind"][0]
+            self.api_version_group = gvk["group"]
+            if self.api_version_group == "":
+                self.api_version_group = "core"
+        else:
+            self.api_version_group = self.group
+        self.name = self.kind = name
+        self.version: VersionStr = version
+        self.swagger = swagger
+        self.operations: Dict[str, Operation] = {}
+        self.description = self.swagger.get('description', '')
+        self.type = swagger.get('type', None)
+        self.is_subclass_of = (types_map[self.type]
+                               if self.type in types_map
+                               else None)
+        self.required_props = []
+        self.optional_props = []
+        self.watchable = False
+        self._hikaru_name = None
+        self.crud_ops_created = set()
+        self.properties_processed: bool = False
+
+    @property
+    def is_document(self):
+        return self.has_doc_markers and self.has_gvk_dict
+
+    def supports_namespaced_watch(self):
+        if self.watchable:
+            retval = any([True for op in self.operations.values()
+                          if op.supports_watch and 'Namespaced' in op.op_id])
+        else:
+            retval = False
+        return retval
+
+    @property
+    def hikaru_name(self) -> str:
+        if self._hikaru_name is None:
+            if PreferredVersions.is_preferred_for_swagger_gvk(self.group, self.version,
+                                                              self.name):
+                self._hikaru_name = self.name
+            else:
+                group = self.group if self.group is not None else ''
+                group = group.split('.')[0]
+                if not group and self.api_version_group:
+                    group = self.api_version_group.split('.')[0]
+                self._hikaru_name = f"{self.name}_{group}"
+        return self._hikaru_name
+
+    def add_operation(self, op: "Operation"):
+        if op.supports_watch:
+            self.watchable = True
+        self.operations[op.op_id] = op
+        op.set_owning_class_descriptor(self)
+
+    def adjust_special_props(self, fd: PropertyDescriptor):
+        if fd.name == 'apiVersion':
+            first_bit = (f'{self.api_version_group}/'
+                         if self.api_version_group not in ('core', '')
+                         else "")
+            fd.default_value = f'"{first_bit}{self.version}"'
+        elif fd.name == 'kind':
+            fd.default_value = f'"{self.name}"'
+
+    def process_properties(self):
+        if self.properties_processed:
+            return
+        self.properties_processed = True
+        doc_markers = set(self._doc_markers)
+        required = self.swagger.get('required', [])
+        if "properties" not in self.swagger:
+            msg = f"Class {self.name} has no properties defined"
+            issues.report_no_props(msg)
+            # print(f"Class {self.name} has no properties defined")
+            return
+        for pname, pdict in self.swagger['properties'].items():
+            prop = PropertyDescriptor(self, pname, pdict)
+            if pname in self._doc_markers:
+                self.adjust_special_props(prop)
+                try:
+                    doc_markers.remove(pname)
+                except KeyError:
+                    pass
+                if not doc_markers:
+                    self.has_doc_markers = True
+            if prop.name in required:
+                self.required_props.append(prop)
+            else:
+                self.optional_props.append(prop)
+
+    @staticmethod
+    def split_line(line, prefix: str = "   ", hanging_indent: str = "",
+                   linelen: int = 90) -> List[str]:
+        parts = []
+        if line is not None:
+            words = line.split()
+            current_line = [prefix]
+            for w in words:
+                w = w.strip()
+                if not w:
+                    continue
+                if (sum(len(s) for s in current_line) + len(current_line) + len(w) >
+                        linelen):
+                    parts.append(" ".join(current_line))
+                    current_line = [prefix]
+                    if hanging_indent:
+                        current_line.append(hanging_indent)
+                current_line.append(w)
+            else:
+                if current_line:
+                    parts.append(" ".join(current_line))
+        return parts
+
+    # Rel 1.29 change
+    _swagger2py_type_map = {
+        "string": "str",
+        "object": "str",
+        "integer": "int",
+        "integer32": "int",
+        "float": "float",
+        "boolean": "bool",
+        None: "str"
+    }
+
+    # Rel 1.29 change
+    def python_class_from_base_type(self) -> str:
+        lines = [
+            f"class {self.name}({self._swagger2py_type_map[self.type]}):",
+            f'    r"""',
+            f'    {self.split_line(self.description)}',
+            f'    """',
+            "    pass"
+        ]
+        code = "\n".join(lines)
+        # code = f"{self.name} = {self._swagger2py_type_map[self.type]}"
+        try:
+            code = format_str(code, mode=Mode())
+        except NothingChanged:
+            pass
+        return code
+
+    def as_python_class(self, for_version: VersionStr) -> str:
+        # Rel 1.29 change
+        if not self.has_properties():
+            # return ""
+            return self.python_class_from_base_type()
+        lines = list()
+        # start of class statement
+        if self.is_subclass_of is not None:
+            base = self.is_subclass_of
+        else:
+            # then it is to be a dataclass
+            lines.append("@dataclass")
+            base = (HikaruDocumentBase.__name__
+                    if self.is_document else
+                    HikaruBase.__name__)
+        lines.append(f"class {self.hikaru_name}({base}):")
+        # now the docstring
+        ds_parts = ['    r"""']
+        ds_parts.extend(self.split_line(self.description))
+        ds_parts.append("")
+        ds_parts.append(f'    Full name: {self.name.split("/")[-1]}')
+        if self.is_subclass_of is None:
+            ds_parts.append("")
+            ds_parts.append("    Attributes:")
+            for p in self.required_props:
+                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
+                                                hanging_indent="   "))
+            for p in (x for x in self.optional_props if x.container_type is None):
+                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
+                                                hanging_indent="   "))
+            for p in (x for x in self.optional_props if x.container_type is not None):
+                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
+                                                hanging_indent="   "))
+        ds_parts.append('    """')
+        lines.extend(ds_parts)
+        if self.is_subclass_of is None:
+            if self.required_props or self.optional_props:
+                lines.append("")
+            if self.is_document:
+                lines.append(f"    _version = '{self.version}'")
+            for p in self.required_props:
+                lines.append(p.as_python_typeanno(True))
+            for p in (x for x in self.optional_props if x.container_type is None):
+                lines.append(p.as_python_typeanno(False))
+            for p in (x for x in self.optional_props if x.container_type is not None):
+                lines.append(p.as_python_typeanno(False))
+            if self.is_document:
+                lines.append("    # noinspection PyDataclass")
+                lines.append("    client: InitVar[Optional[ApiClient]] = None")
+        lines.append("")
+        # now the operations
+        for op in (o for o in self.operations.values() if o.version == for_version and
+                   o.should_render and
+                   self.is_document):
+            assert isinstance(op, Operation)
+            method_lines = [f"    {line}" for line in op.as_python_method(self)
+                            if op.should_render]
+            method_lines.append("")
+            lines.extend(method_lines)
+            if op.supports_watch:
+                if 'Namespaced' in op.meth_name:
+                    target = '_namespaced_watcher'
+                else:
+                    target = '_watcher'
+                pkgname, modname, clsname, methname = \
+                    determine_k8s_mod_class(self, op)
+                lines.append(f"    {target} = WatcherDescriptor('{pkgname}', "
+                             f"'{modname}', '{clsname}', "
+                             f"'{methname}')")
+                lines.append("")
+
+        code = "\n".join(lines)
+        try:
+            code = format_str(code, mode=Mode())
+        except NothingChanged:
+            pass
+        return code
+
+    def depends_on(self, include_external=False) -> list:
+        """
+        returns a list of ClassDescriptors this ClassDescriptor depends on
+        :param include_external:
+        :return:
+        """
+        r = [p.depends_on() for p in self.required_props]
+        deps = [p for p in r
+                if p is not None]
+        o = [p.depends_on() for p in self.optional_props]
+        deps.extend(p for p in o
+                    if p is not None and (True
+                                          if include_external else
+                                          self.version == p.version))
+
+        for op in self.operations.values():
+            assert isinstance(op, Operation)
+            deps.extend(op.depends_on())
+        return [d for d in deps if d != self or d.name == "JSONSchemaProps"]
+
+    def has_properties(self) -> bool:
+        return len(self.required_props) > 0 or len(self.optional_props) > 0
+
+    # Rel 1.29 change
+    def can_render(self) -> bool:
+        return self.has_properties() or self.type in ("string", "object", None)
+
 class Operation(object):
     """
     A single operation from paths; associated with a verb such as 'get' or 'post'
@@ -928,8 +1185,6 @@ class Operation(object):
         def_parts = []
         if parameters is None:
             parameters = self.parameters
-        # def_parts.append(f"def {self.meth_name}(")
-        # def_parts.append(f"def {self.found_k8s_method_name if self.found_k8s_method_name else self.meth_name}(")
         if self.meth_name in ("create", "read", "update", "delete"):
             meth_name = self.meth_name
         else:
@@ -1020,443 +1275,6 @@ class Operation(object):
                                         cd=cd))
         lines.extend(self.as_crud_python_method(cd))
         return lines
-
-
-operation_to_method_mapping = {
-    "createAdmissionregistrationV1MutatingWebhookConfiguration": "create_mutating_webhook_configuration",
-    "deleteAdmissionregistrationV1MutatingWebhookConfiguration": "delete_mutating_webhook_configuration",
-    "listAdmissionregistrationV1MutatingWebhookConfiguration": "list_mutating_webhook_configuration",
-    "readAdmissionregistrationV1MutatingWebhookConfiguration": "read_mutating_webhook_configuration",
-    "replaceAdmissionregistrationV1MutatingWebhookConfiguration": "replace_mutating_webhook_configuration"
-}
-
-heuristic_mappings = {
-    "connect_delete_namespaced_pod_proxy": "deleteCoreV1NamespacedPodProxy",
-    "connect_get_namespaced_pod_attach": "getCoreV1NamespacedPodAttach",
-    "connect_head_namespaced_service_proxy": "headCoreV1NamespacedServiceProxy",
-    "connect_patch_namespaced_node_proxy": "patchCoreV1NamespacedNodeProxy",
-    "connect_put_namespaced_service_proxy": "putCoreV1NamespacedServiceProxy",
-    "create_namespaced_endpoints": "createCoreV1NamespacedEndpoints",
-    "create_namespaced_event": "createCoreV1NamespacedEvent",
-    "delete_collection_namespaced_config_map": "deleteCollectionCoreV1NamespacedConfigMap",
-    "delete_collection_namespaced_endpoints": "deleteCollectionCoreV1NamespacedEndpoints",
-    "delete_namespaced_controller_revision": "deleteCoreV1NamespacedControllerRevision",
-    "list_node": "listCoreV1Node",
-    "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
-    "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
-    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints",
-}
-
-adreg_op_to_method_mapping = {}
-adreg_op_to_method_mapping.update(operation_to_method_mapping)
-adreg_op_to_method_mapping.update(heuristic_mappings)
-
-def make_method_name_in_AdmissionregistrationV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    return adreg_op_to_method_mapping.get(op._op_id, "NO__MATCH__METHOD")
-    # methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    # mparts = methname.split("_")
-    # if mparts[0] == "watch":
-    #     del mparts[0]
-    # if mparts[-1] == "list":
-    #     del mparts[-1]
-    #     mparts.insert(0, "list")
-    # newname = "_".join(mparts)
-    # return newname
-
-
-def make_method_name_in_AppsV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    mparts = methname.split("_")
-    if mparts[0] == "watch":
-        del mparts[0]
-    try:
-        idx = mparts.index("list")
-    except ValueError:
-        pass
-    else:
-        del mparts[idx]
-        mparts.insert(0, "list")
-    newname = "_".join(mparts)
-    return newname
-
-
-def make_method_name_in_AutoscalingV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    mparts = methname.split("_")
-    if mparts[0] == "watch":
-        del mparts[0]
-    try:
-        idx = mparts.index("list")
-    except ValueError:
-        pass
-    else:
-        del mparts[idx]
-        mparts.insert(0, "list")
-    newname = "_".join(mparts)
-    return newname
-
-operation_to_method_mapping = {
-    "listCoreV1Pod": "list_namespaced_pod",
-    "createCoreV1Namespace": "create_namespace",
-    "deleteCoreV1Service": "delete_namespaced_service",
-    "getCoreV1Node": "read_node",
-    "patchCoreV1ConfigMap": "patch_namespaced_config_map",
-    "replaceCoreV1Pod": "replace_namespaced_pod"
-}
-
-heuristic_mappings = {
-    "connect_delete_namespaced_pod_proxy": "deleteCoreV1NamespacedPodProxy",
-    "connect_get_namespaced_pod_attach": "getCoreV1NamespacedPodAttach",
-    "connect_head_namespaced_service_proxy": "headCoreV1NamespacedServiceProxy",
-    "connect_patch_namespaced_node_proxy": "patchCoreV1NamespacedNodeProxy",
-    "connect_put_namespaced_service_proxy": "putCoreV1NamespacedServiceProxy",
-    "create_namespaced_endpoints": "createCoreV1NamespacedEndpoints",
-    "create_namespaced_event": "createCoreV1NamespacedEvent",
-    "delete_collection_namespaced_config_map": "deleteCollectionCoreV1NamespacedConfigMap",
-    "delete_collection_namespaced_endpoints": "deleteCollectionCoreV1NamespacedEndpoints",
-    "delete_namespaced_controller_revision": "deleteCoreV1NamespacedControllerRevision",
-    "list_node": "listCoreV1Node",
-    "patch_namespaced_endpoints": "patchCoreV1NamespacedEndpoints",
-    "read_namespaced_service_status": "readCoreV1NamespacedServiceStatus",
-    "replace_namespaced_endpoints": "replaceCoreV1NamespacedEndpoints",
-    "readCoreV1NodeStatus": "read_node_status",
-    "patchCoreV1NodeStatus": "patch_node_status",
-    "replaceCoreV1NodeStatus": "replace_node_status",
-    "connectCoreV1PatchNodeProxy": "connect_patch_node_proxy",
-    "connectCoreV1PatchNodeProxyWithPath": "connect_patch_node_proxy_with_path"
-}
-
-core_op_to_method_map = {}
-core_op_to_method_map.update(operation_to_method_mapping)
-core_op_to_method_map.update(heuristic_mappings)
-
-
-def make_method_name_in_CoreV1Api(op: Operation, cd: ClassDescriptor) -> str:
-    return core_op_to_method_map.get(op._op_id, "MATCH__NO__METHOD")
-    # methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    # return methname
-
-
-def make_method_name_in_FlowcontrolApiserverV1Api(op: Operation, cd: ClassDescriptor):
-    methname = make_method_name(op, cd, remove_core=True, remove_ver=True, remove_abherrartions=True)
-    mparts = methname.split("_")
-    for to_remove in ("flowcontrol", "apiserver"):
-        try:
-            mparts.remove(to_remove)
-        except ValueError:
-            pass
-    if mparts[0] == "watch":
-        del mparts[0]
-    if mparts[-1] == "list":
-        del mparts[-1]
-        mparts.insert(0, "list")
-    newname = "_".join(mparts)
-    return newname
-
-
-storage_op_to_method_map = {
-    "getStorageV1APIResources": "get_api_resources",
-    "deleteStorageV1CollectionCSIDriver": "delete_collection_csi_driver",
-    "listStorageV1CSIDriver": "list_csi_driver",
-    "createStorageV1CSIDriver": "create_csi_driver",
-    "deleteStorageV1CSIDriver": "delete_csi_driver",
-    "readStorageV1CSIDriver": "read_csi_driver",
-    "patchStorageV1CSIDriver": "patch_csi_driver",
-    "replaceStorageV1CSIDriver": "replace_csi_driver",
-    "deleteStorageV1CollectionCSINode": "delete_collection_csi_node",
-    "listStorageV1CSINode": "list_csi_node",
-    "createStorageV1CSINode": "create_csi_node",
-    "deleteStorageV1CSINode": "delete_csi_node",
-    "readStorageV1CSINode": "read_csi_node",
-    "patchStorageV1CSINode": "patch_csi_node",
-    "replaceStorageV1CSINode": "replace_csi_node",
-    "listStorageV1CSIStorageCapacityForAllNamespaces": "list_csi_storage_capacity_for_all_namespaces",
-    "deleteStorageV1CollectionNamespacedCSIStorageCapacity": "delete_collection_namespaced_csi_storage_capacity",
-    "listStorageV1NamespacedCSIStorageCapacity": "list_namespaced_csi_storage_capacity",
-    "createStorageV1NamespacedCSIStorageCapacity": "create_namespaced_csi_storage_capacity",
-    "deleteStorageV1NamespacedCSIStorageCapacity": "delete_namespaced_csi_storage_capacity",
-    "readStorageV1NamespacedCSIStorageCapacity": "read_namespaced_csi_storage_capacity",
-    "patchStorageV1NamespacedCSIStorageCapacity": "patch_namespaced_csi_storage_capacity",
-    "replaceStorageV1NamespacedCSIStorageCapacity": "replace_namespaced_csi_storage_capacity",
-    "deleteStorageV1CollectionStorageClass": "delete_collection_storage_class",
-    "listStorageV1StorageClass": "list_storage_class",
-    "createStorageV1StorageClass": "create_storage_class",
-    "deleteStorageV1StorageClass": "delete_storage_class",
-    "readStorageV1StorageClass": "read_storage_class",
-    "patchStorageV1StorageClass": "patch_storage_class",
-    "replaceStorageV1StorageClass": "replace_storage_class",
-    "deleteStorageV1CollectionVolumeAttachment": "delete_collection_volume_attachment",
-    "listStorageV1VolumeAttachment": "list_volume_attachment",
-    "createStorageV1VolumeAttachment": "create_volume_attachment",
-    "deleteStorageV1VolumeAttachment": "delete_volume_attachment",
-    "readStorageV1VolumeAttachment": "read_volume_attachment",
-    "patchStorageV1VolumeAttachment": "patch_volume_attachment",
-    "replaceStorageV1VolumeAttachment": "replace_volume_attachment",
-    "readStorageV1VolumeAttachmentStatus": "read_volume_attachment_status",
-    "patchStorageV1VolumeAttachmentStatus": "patch_volume_attachment_status",
-    "replaceStorageV1VolumeAttachmentStatus": "replace_volume_attachment_status"
-}
-
-
-def make_method_name_in_StorageV1Api(op: Operation, cd: ClassDescriptor):
-    return storage_op_to_method_map.get(op._op_id, "MATCH__NO__METHOD")
-
-
-policy_op_to_method_map = {
-    "getPolicyV1APIResources": "get_api_resources",
-    "deletePolicyV1CollectionNamespacedPodDisruptionBudget": "delete_collection_namespaced_pod_disruption_budget",
-    "listPolicyV1NamespacedPodDisruptionBudget": "list_namespaced_pod_disruption_budget",
-    "createPolicyV1NamespacedPodDisruptionBudget": "create_namespaced_pod_disruption_budget",
-    "deletePolicyV1NamespacedPodDisruptionBudget": "delete_namespaced_pod_disruption_budget",
-    "readPolicyV1NamespacedPodDisruptionBudget": "read_namespaced_pod_disruption_budget",
-    "patchPolicyV1NamespacedPodDisruptionBudget": "patch_namespaced_pod_disruption_budget",
-    "replacePolicyV1NamespacedPodDisruptionBudget": "replace_namespaced_pod_disruption_budget",
-    "readPolicyV1NamespacedPodDisruptionBudgetStatus": "read_namespaced_pod_disruption_budget_status",
-    "patchPolicyV1NamespacedPodDisruptionBudgetStatus": "patch_namespaced_pod_disruption_budget_status",
-    "replacePolicyV1NamespacedPodDisruptionBudgetStatus": "replace_namespaced_pod_disruption_budget_status",
-    "listPolicyV1PodDisruptionBudgetForAllNamespaces": "list_pod_disruption_budget_for_all_namespaces"
-}
-
-
-def make_method_name_in_PolicyV1Api(op: Operation, cd: ClassDescriptor):
-    return policy_op_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-
-rbac_to_method_map = {
-    "getRbacAuthorizationV1APIResources": "get_api_resources",
-    "deleteRbacAuthorizationV1CollectionClusterRoleBinding": "delete_collection_cluster_role_binding",
-    "listRbacAuthorizationV1ClusterRoleBinding": "list_cluster_role_binding",
-    "createRbacAuthorizationV1ClusterRoleBinding": "create_cluster_role_binding",
-    "deleteRbacAuthorizationV1ClusterRoleBinding": "delete_cluster_role_binding",
-    "readRbacAuthorizationV1ClusterRoleBinding": "read_cluster_role_binding",
-    "patchRbacAuthorizationV1ClusterRoleBinding": "patch_cluster_role_binding",
-    "replaceRbacAuthorizationV1ClusterRoleBinding": "replace_cluster_role_binding",
-    "deleteRbacAuthorizationV1CollectionClusterRole": "delete_collection_cluster_role",
-    "listRbacAuthorizationV1ClusterRole": "list_cluster_role",
-    "createRbacAuthorizationV1ClusterRole": "create_cluster_role",
-    "deleteRbacAuthorizationV1ClusterRole": "delete_cluster_role",
-    "readRbacAuthorizationV1ClusterRole": "read_cluster_role",
-    "patchRbacAuthorizationV1ClusterRole": "patch_cluster_role",
-    "replaceRbacAuthorizationV1ClusterRole": "replace_cluster_role",
-    "deleteRbacAuthorizationV1CollectionNamespacedRoleBinding": "delete_collection_namespaced_role_binding",
-    "listRbacAuthorizationV1NamespacedRoleBinding": "list_namespaced_role_binding",
-    "createRbacAuthorizationV1NamespacedRoleBinding": "create_namespaced_role_binding",
-    "deleteRbacAuthorizationV1NamespacedRoleBinding": "delete_namespaced_role_binding",
-    "readRbacAuthorizationV1NamespacedRoleBinding": "read_namespaced_role_binding",
-    "patchRbacAuthorizationV1NamespacedRoleBinding": "patch_namespaced_role_binding",
-    "replaceRbacAuthorizationV1NamespacedRoleBinding": "replace_namespaced_role_binding",
-    "deleteRbacAuthorizationV1CollectionNamespacedRole": "delete_collection_namespaced_role",
-    "listRbacAuthorizationV1NamespacedRole": "list_namespaced_role",
-    "createRbacAuthorizationV1NamespacedRole": "create_namespaced_role",
-    "deleteRbacAuthorizationV1NamespacedRole": "delete_namespaced_role",
-    "readRbacAuthorizationV1NamespacedRole": "read_namespaced_role",
-    "patchRbacAuthorizationV1NamespacedRole": "patch_namespaced_role",
-    "replaceRbacAuthorizationV1NamespacedRole": "replace_namespaced_role",
-    "listRbacAuthorizationV1RoleBindingForAllNamespaces": "list_role_binding_for_all_namespaces",
-    "listRbacAuthorizationV1RoleForAllNamespaces": "list_role_for_all_namespaces"
-}
-
-
-def make_method_name_in_RbacAuthorizationiV1Api(op: Operation, cd: ClassDescriptor):
-    return rbac_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-
-adminregv1a1_to_method_map = {
-    "getAdmissionregistrationV1alpha1APIResources": "get_api_resources",
-    "deleteAdmissionregistrationV1alpha1CollectionValidatingAdmissionPolicy": "delete_collection_validating_admission_policy",
-    "listAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "list_validating_admission_policy",
-    "createAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "create_validating_admission_policy",
-    "deleteAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "delete_validating_admission_policy",
-    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "read_validating_admission_policy",
-    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "patch_validating_admission_policy",
-    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicy": "replace_validating_admission_policy",
-    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "read_validating_admission_policy_status",
-    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "patch_validating_admission_policy_status",
-    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicyStatus": "replace_validating_admission_policy_status",
-    "deleteAdmissionregistrationV1alpha1CollectionValidatingAdmissionPolicyBinding": "delete_collection_validating_admission_policy_binding",
-    "listAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "list_validating_admission_policy_binding",
-    "createAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "create_validating_admission_policy_binding",
-    "deleteAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "delete_validating_admission_policy_binding",
-    "readAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "read_validating_admission_policy_binding",
-    "patchAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "patch_validating_admission_policy_binding",
-    "replaceAdmissionregistrationV1alpha1ValidatingAdmissionPolicyBinding": "replace_validating_admission_policy_binding"
-}
-
-
-def make_method_name_in_AdmissionRegistrationV1alpha1(op: Operation, cd: ClassDescriptor):
-    return adminregv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-
-storagev1a1_to_method_map = {
-    "getStorageV1alpha1APIResources": "get_api_resources",
-    "deleteStorageV1alpha1CollectionVolumeAttributesClass": "delete_collection_volume_attributes_class",
-    "listStorageV1alpha1VolumeAttributesClass": "list_volume_attributes_class",
-    "createStorageV1alpha1VolumeAttributesClass": "create_volume_attributes_class",
-    "deleteStorageV1alpha1VolumeAttributesClass": "delete_volume_attributes_class",
-    "readStorageV1alpha1VolumeAttributesClass": "read_volume_attributes_class",
-    "patchStorageV1alpha1VolumeAttributesClass": "patch_volume_attributes_class",
-    "replaceStorageV1alpha1VolumeAttributesClass": "replace_volume_attributes_class"
-}
-
-
-def make_method_name_in_StorageV1alpha1(op: Operation, cd: ClassDescriptor):
-    return storagev1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-int_api_to_method_map = {
-    "getInternalApiserverV1alpha1APIResources": "get_api_resources",
-    "deleteInternalApiserverV1alpha1CollectionStorageVersion": "delete_collection_storage_version",
-    "listInternalApiserverV1alpha1StorageVersion": "list_storage_version",
-    "createInternalApiserverV1alpha1StorageVersion": "create_storage_version",
-    "deleteInternalApiserverV1alpha1StorageVersion": "delete_storage_version",
-    "readInternalApiserverV1alpha1StorageVersion": "read_storage_version",
-    "patchInternalApiserverV1alpha1StorageVersion": "patch_storage_version",
-    "replaceInternalApiserverV1alpha1StorageVersion": "replace_storage_version",
-    "readInternalApiserverV1alpha1StorageVersionStatus": "read_storage_version_status",
-    "patchInternalApiserverV1alpha1StorageVersionStatus": "patch_storage_version_status",
-    "replaceInternalApiserverV1alpha1StorageVersionStatus": "replace_storage_version_status"
-}
-
-def make_method_name_in_InternalApiserverV1alpha1(op: Operation, cd: ClassDescriptor):
-    return int_api_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-authv1a1_to_method_map = {
-    "getAuthenticationV1alpha1APIResources": "get_api_resources",
-    "createAuthenticationV1alpha1SelfSubjectReview": "create_self_subject_review"
-}
-
-def make_method_name_in_AuthenticationV1alpha1Api(op: Operation, cd: ClassDescriptor):
-    return authv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-certsv1a1_to_method_map = {
-    "getCertificatesV1alpha1APIResources": "get_api_resources",
-    "deleteCertificatesV1alpha1CollectionClusterTrustBundle": "delete_collection_cluster_trust_bundle",
-    "listCertificatesV1alpha1ClusterTrustBundle": "list_cluster_trust_bundle",
-    "createCertificatesV1alpha1ClusterTrustBundle": "create_cluster_trust_bundle",
-    "deleteCertificatesV1alpha1ClusterTrustBundle": "delete_cluster_trust_bundle",
-    "readCertificatesV1alpha1ClusterTrustBundle": "read_cluster_trust_bundle",
-    "patchCertificatesV1alpha1ClusterTrustBundle": "patch_cluster_trust_bundle",
-    "replaceCertificatesV1alpha1ClusterTrustBundle": "replace_cluster_trust_bundle"
-}
-
-def make_method_name_in_CertificatesV1alpha1Api(op: Operation, cd: ClassDescriptor):
-    return certsv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-networkingv1a1_to_method_map = {
-    "getNetworkingV1alpha1APIResources": "get_api_resources",
-    "deleteNetworkingV1alpha1CollectionIPAddress": "delete_collection_ip_address",
-    "listNetworkingV1alpha1IPAddress": "list_ip_address",
-    "createNetworkingV1alpha1IPAddress": "create_ip_address",
-    "deleteNetworkingV1alpha1IPAddress": "delete_ip_address",
-    "readNetworkingV1alpha1IPAddress": "read_ip_address",
-    "patchNetworkingV1alpha1IPAddress": "patch_ip_address",
-    "replaceNetworkingV1alpha1IPAddress": "replace_ip_address",
-    "deleteNetworkingV1alpha1CollectionServiceCIDR": "delete_collection_service_cidr",
-    "listNetworkingV1alpha1ServiceCIDR": "list_service_cidr",
-    "createNetworkingV1alpha1ServiceCIDR": "create_service_cidr",
-    "deleteNetworkingV1alpha1ServiceCIDR": "delete_service_cidr",
-    "readNetworkingV1alpha1ServiceCIDR": "read_service_cidr",
-    "patchNetworkingV1alpha1ServiceCIDR": "patch_service_cidr",
-    "replaceNetworkingV1alpha1ServiceCIDR": "replace_service_cidr",
-    "readNetworkingV1alpha1ServiceCIDRStatus": "read_service_cidr_status",
-    "patchNetworkingV1alpha1ServiceCIDRStatus": "patch_service_cidr_status",
-    "replaceNetworkingV1alpha1ServiceCIDRStatus": "replace_service_cidr_status"
-}
-
-def make_method_name_in_NetworkingV1alpha1(op: Operation, cd: ClassDescriptor):
-    return networkingv1a1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-adminregv1b1_to_method_map = {
-    "getAdmissionregistrationV1beta1APIResources": "get_api_resources",
-    "deleteAdmissionregistrationV1beta1CollectionValidatingAdmissionPolicy": "delete_collection_validating_admission_policy",
-    "listAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "list_validating_admission_policy",
-    "createAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "create_validating_admission_policy",
-    "deleteAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "delete_validating_admission_policy",
-    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "read_validating_admission_policy",
-    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "patch_validating_admission_policy",
-    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicy": "replace_validating_admission_policy",
-    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "read_validating_admission_policy_status",
-    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "patch_validating_admission_policy_status",
-    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicyStatus": "replace_validating_admission_policy_status",
-    "deleteAdmissionregistrationV1beta1CollectionValidatingAdmissionPolicyBinding": "delete_collection_validating_admission_policy_binding",
-    "listAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "list_validating_admission_policy_binding",
-    "createAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "create_validating_admission_policy_binding",
-    "deleteAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "delete_validating_admission_policy_binding",
-    "readAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "read_validating_admission_policy_binding",
-    "patchAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "patch_validating_admission_policy_binding",
-    "replaceAdmissionregistrationV1beta1ValidatingAdmissionPolicyBinding": "replace_validating_admission_policy_binding"
-}
-
-def make_method_name_in_AdmissionregistrationV1beta1Api(op: Operation, cd: ClassDescriptor):
-    return adminregv1b1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-authv1b1_to_method_map = {
-    "getAuthenticationV1beta1APIResources": "get_api_resources",
-    "createAuthenticationV1beta1SelfSubjectReview": "create_self_subject_review",
-    "createAuthenticationV1beta1SelfSubjectReview": "create_self_subject_review"
-}
-
-def make_method_name_in_AuthenticationV1beta1Api(op: Operation, cd: ClassDescriptor):
-    return authv1b1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-flowcontrov1b3_to_method_map = {
-    "getFlowcontrolApiserverV1beta3APIResources": "get_api_resources",
-    "deleteFlowcontrolApiserverV1beta3CollectionFlowSchema": "delete_collection_flow_schema",
-    "listFlowcontrolApiserverV1beta3FlowSchema": "list_flow_schema",
-    "createFlowcontrolApiserverV1beta3FlowSchema": "create_flow_schema",
-    "deleteFlowcontrolApiserverV1beta3FlowSchema": "delete_flow_schema",
-    "readFlowcontrolApiserverV1beta3FlowSchema": "read_flow_schema",
-    "patchFlowcontrolApiserverV1beta3FlowSchema": "patch_flow_schema",
-    "replaceFlowcontrolApiserverV1beta3FlowSchema": "replace_flow_schema",
-    "readFlowcontrolApiserverV1beta3FlowSchemaStatus": "read_flow_schema_status",
-    "patchFlowcontrolApiserverV1beta3FlowSchemaStatus": "patch_flow_schema_status",
-    "replaceFlowcontrolApiserverV1beta3FlowSchemaStatus": "replace_flow_schema_status",
-    "deleteFlowcontrolApiserverV1beta3CollectionPriorityLevelConfiguration": "delete_collection_priority_level_configuration",
-    "listFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "list_priority_level_configuration",
-    "createFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "create_priority_level_configuration",
-    "deleteFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "delete_priority_level_configuration",
-    "readFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "read_priority_level_configuration",
-    "patchFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "patch_priority_level_configuration",
-    "replaceFlowcontrolApiserverV1beta3PriorityLevelConfiguration": "replace_priority_level_configuration",
-    "readFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "read_priority_level_configuration_status",
-    "patchFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "patch_priority_level_configuration_status",
-    "replaceFlowcontrolApiserverV1beta3PriorityLevelConfigurationStatus": "replace_priority_level_configuration_status"
-}
-
-def make_method_name_in_FlowcontrolV1beta1Api(op: Operation, cd: ClassDescriptor):
-    return flowcontrov1b3_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-
-networkingv1_to_method_map = {
-"listNetworkingV1NetworkPolicyForAllNamespaces": "list_network_policy_for_all_namespaces",
-}
-
-def make_method_name_in_NetworkV1(op: Operation, cd: ClassDescriptor):
-    return networkingv1_to_method_map.get(op._op_id, "MATCH__METHOD")
-
-
-# this dict maps a class name to a function that knows how methods in this class
-# are managed from teh op_id and (hopefully) generates ones that match the methods4
-# of a specific class
-_custom_method_name_builders = {
-    "AdmissionregistrationV1Api": make_method_name_in_AdmissionregistrationV1Api,
-    "AppsV1Api": make_method_name_in_AppsV1Api,
-    "AutoscalingV1Api": make_method_name_in_AutoscalingV1Api,
-    "CoreV1Api": make_method_name_in_CoreV1Api,
-    "FlowcontrolApiserverV1Api": make_method_name_in_FlowcontrolApiserverV1Api,
-    "StorageV1Api": make_method_name_in_StorageV1Api,
-    "PolicyV1Api": make_method_name_in_PolicyV1Api,
-    "RbacAuthorizationV1Api": make_method_name_in_RbacAuthorizationiV1Api,
-    "AdmissionregistrationV1alpha1Api": make_method_name_in_AdmissionRegistrationV1alpha1,
-    "StorageV1alpha1Api": make_method_name_in_StorageV1alpha1,
-    "InternalApiserverV1alpha1Api": make_method_name_in_InternalApiserverV1alpha1,
-    "AuthenticationV1alpha1Api": make_method_name_in_AuthenticationV1alpha1Api,
-    "CertificatesV1alpha1Api": make_method_name_in_CertificatesV1alpha1Api,
-    "NetworkingV1alpha1Api": make_method_name_in_NetworkingV1alpha1,
-    "AdmissionregistrationV1beta1Api": make_method_name_in_AdmissionregistrationV1beta1Api,
-    "AuthenticationV1beta1Api": make_method_name_in_AuthenticationV1beta1Api,
-    "FlowcontrolApiserverV1beta3Api": make_method_name_in_FlowcontrolV1beta1Api,
-    "NetworkingV1Api": make_method_name_in_NetworkV1
-}
 
 
 def register_crud_class(verb: str):
@@ -1824,263 +1642,6 @@ class ReadOperation(DeleteOperation):
 
 objop_param_mismatches: Dict[str, Operation] = {}
 response_mismatches: Dict[str, Operation] = {}
-
-
-class ClassDescriptor(object):
-    _doc_markers = ('apiVersion', 'kind')
-
-    def __init__(self, swagger_name: str, swagger: dict):
-        self.has_doc_markers = False
-        self.has_gvk_dict = "x-kubernetes-group-version-kind" in swagger
-        group, version, name = process_swagger_name(swagger_name)
-        if version is not None:
-            version: VersionStr = VersionStr(version)
-        self.group = group if group is not None else ''
-        if self.has_gvk_dict:
-            gvk = swagger["x-kubernetes-group-version-kind"][0]
-            self.api_version_group = gvk["group"]
-            if self.api_version_group == "":
-                self.api_version_group = "core"
-        else:
-            self.api_version_group = self.group
-        self.name = self.kind = name
-        self.version: VersionStr = version
-        self.swagger = swagger
-        self.operations: Dict[str, Operation] = {}
-        self.description = self.swagger.get('description', '')
-        self.type = swagger.get('type', None)
-        self.is_subclass_of = (types_map[self.type]
-                               if self.type in types_map
-                               else None)
-        self.required_props = []
-        self.optional_props = []
-        self.watchable = False
-        self._hikaru_name = None
-        self.crud_ops_created = set()
-        self.properties_processed: bool = False
-
-    @property
-    def is_document(self):
-        return self.has_doc_markers and self.has_gvk_dict
-
-    def supports_namespaced_watch(self):
-        if self.watchable:
-            retval = any([True for op in self.operations.values()
-                          if op.supports_watch and 'Namespaced' in op.op_id])
-        else:
-            retval = False
-        return retval
-
-    @property
-    def hikaru_name(self) -> str:
-        if self._hikaru_name is None:
-            if PreferredVersions.is_preferred_for_swagger_gvk(self.group, self.version,
-                                                              self.name):
-                self._hikaru_name = self.name
-            else:
-                group = self.group if self.group is not None else ''
-                group = group.split('.')[0]
-                if not group and self.api_version_group:
-                    group = self.api_version_group.split('.')[0]
-                self._hikaru_name = f"{self.name}_{group}"
-        return self._hikaru_name
-
-    def add_operation(self, op: Operation):
-        if op.supports_watch:
-            self.watchable = True
-        self.operations[op.op_id] = op
-        op.set_owning_class_descriptor(self)
-
-    def adjust_special_props(self, fd: PropertyDescriptor):
-        if fd.name == 'apiVersion':
-            first_bit = (f'{self.api_version_group}/'
-                         if self.api_version_group not in ('core', '')
-                         else "")
-            fd.default_value = f'"{first_bit}{self.version}"'
-        elif fd.name == 'kind':
-            fd.default_value = f'"{self.name}"'
-
-    def process_properties(self):
-        if self.properties_processed:
-            return
-        self.properties_processed = True
-        doc_markers = set(self._doc_markers)
-        required = self.swagger.get('required', [])
-        if "properties" not in self.swagger:
-            msg = f"Class {self.name} has no properties defined"
-            issues.report_no_props(msg)
-            # print(f"Class {self.name} has no properties defined")
-            return
-        for pname, pdict in self.swagger['properties'].items():
-            prop = PropertyDescriptor(self, pname, pdict)
-            if pname in self._doc_markers:
-                self.adjust_special_props(prop)
-                try:
-                    doc_markers.remove(pname)
-                except KeyError:
-                    pass
-                if not doc_markers:
-                    self.has_doc_markers = True
-            if prop.name in required:
-                self.required_props.append(prop)
-            else:
-                self.optional_props.append(prop)
-
-    @staticmethod
-    def split_line(line, prefix: str = "   ", hanging_indent: str = "",
-                   linelen: int = 90) -> List[str]:
-        parts = []
-        if line is not None:
-            words = line.split()
-            current_line = [prefix]
-            for w in words:
-                w = w.strip()
-                if not w:
-                    continue
-                if (sum(len(s) for s in current_line) + len(current_line) + len(w) >
-                        linelen):
-                    parts.append(" ".join(current_line))
-                    current_line = [prefix]
-                    if hanging_indent:
-                        current_line.append(hanging_indent)
-                current_line.append(w)
-            else:
-                if current_line:
-                    parts.append(" ".join(current_line))
-        return parts
-
-    # Rel 1.29 change
-    _swagger2py_type_map = {
-        "string": "str",
-        "object": "str",
-        "integer": "int",
-        "integer32": "int",
-        "float": "float",
-        "boolean": "bool",
-        None: "str"
-    }
-
-    # Rel 1.29 change
-    def python_class_from_base_type(self) -> str:
-        lines = [
-            f"class {self.name}({self._swagger2py_type_map[self.type]}):",
-            f'    r"""',
-            f'    {self.split_line(self.description)}',
-            f'    """',
-            "    pass"
-        ]
-        code = "\n".join(lines)
-        # code = f"{self.name} = {self._swagger2py_type_map[self.type]}"
-        try:
-            code = format_str(code, mode=Mode())
-        except NothingChanged:
-            pass
-        return code
-
-    def as_python_class(self, for_version: VersionStr) -> str:
-        # Rel 1.29 change
-        if not self.has_properties():
-            # return ""
-            return self.python_class_from_base_type()
-        lines = list()
-        # start of class statement
-        if self.is_subclass_of is not None:
-            base = self.is_subclass_of
-        else:
-            # then it is to be a dataclass
-            lines.append("@dataclass")
-            base = (HikaruDocumentBase.__name__
-                    if self.is_document else
-                    HikaruBase.__name__)
-        lines.append(f"class {self.hikaru_name}({base}):")
-        # now the docstring
-        ds_parts = ['    r"""']
-        ds_parts.extend(self.split_line(self.description))
-        ds_parts.append("")
-        ds_parts.append(f'    Full name: {self.name.split("/")[-1]}')
-        if self.is_subclass_of is None:
-            ds_parts.append("")
-            ds_parts.append("    Attributes:")
-            for p in self.required_props:
-                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
-                                                hanging_indent="   "))
-            for p in (x for x in self.optional_props if x.container_type is None):
-                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
-                                                hanging_indent="   "))
-            for p in (x for x in self.optional_props if x.container_type is not None):
-                ds_parts.extend(self.split_line(f'{p.name}: {p.description}',
-                                                hanging_indent="   "))
-        ds_parts.append('    """')
-        lines.extend(ds_parts)
-        if self.is_subclass_of is None:
-            if self.required_props or self.optional_props:
-                lines.append("")
-            if self.is_document:
-                lines.append(f"    _version = '{self.version}'")
-            for p in self.required_props:
-                lines.append(p.as_python_typeanno(True))
-            for p in (x for x in self.optional_props if x.container_type is None):
-                lines.append(p.as_python_typeanno(False))
-            for p in (x for x in self.optional_props if x.container_type is not None):
-                lines.append(p.as_python_typeanno(False))
-            if self.is_document:
-                lines.append("    # noinspection PyDataclass")
-                lines.append("    client: InitVar[Optional[ApiClient]] = None")
-        lines.append("")
-        # now the operations
-        for op in (o for o in self.operations.values() if o.version == for_version and
-                   o.should_render and
-                   self.is_document):
-            assert isinstance(op, Operation)
-            method_lines = [f"    {line}" for line in op.as_python_method(self)
-                            if op.should_render]
-            method_lines.append("")
-            lines.extend(method_lines)
-            if op.supports_watch:
-                if 'Namespaced' in op.meth_name:
-                    target = '_namespaced_watcher'
-                else:
-                    target = '_watcher'
-                pkgname, modname, clsname, methname = \
-                    determine_k8s_mod_class(self, op)
-                lines.append(f"    {target} = WatcherDescriptor('{pkgname}', "
-                             f"'{modname}', '{clsname}', "
-                             f"'{methname}')")
-                lines.append("")
-
-        code = "\n".join(lines)
-        try:
-            code = format_str(code, mode=Mode())
-        except NothingChanged:
-            pass
-        return code
-
-    def depends_on(self, include_external=False) -> list:
-        """
-        returns a list of ClassDescriptors this ClassDescriptor depends on
-        :param include_external:
-        :return:
-        """
-        r = [p.depends_on() for p in self.required_props]
-        deps = [p for p in r
-                if p is not None]
-        o = [p.depends_on() for p in self.optional_props]
-        deps.extend(p for p in o
-                    if p is not None and (True
-                                          if include_external else
-                                          self.version == p.version))
-
-        for op in self.operations.values():
-            assert isinstance(op, Operation)
-            deps.extend(op.depends_on())
-        return [d for d in deps if d != self or d.name == "JSONSchemaProps"]
-
-    def has_properties(self) -> bool:
-        return len(self.required_props) > 0 or len(self.optional_props) > 0
-
-    # Rel 1.29 change
-    def can_render(self) -> bool:
-        return self.has_properties() or self.type in ("string", "object", None)
 
 
 # class map
@@ -2672,9 +2233,8 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
                 if op is not None:  # also record the state of 'remove'
                     op.remove = remove[0]
                 break
-            elif details.class_name is not None and details.class_name in _custom_method_name_builders:
-                cmnb = _custom_method_name_builders[details.class_name]
-                mname = cmnb(op, cd)
+            elif details.class_name is not None and details.class_name in op_to_method_mapper:
+                mname = op_to_method_mapper.get_methname_for_op(details.class_name, op, cd)
                 details = _search_for_method(group, version, kind, mname, partial_results=details)
                 if details.is_complete:
                     if op.found_k8s_method_name is None and mname is not None:
@@ -2686,19 +2246,6 @@ def determine_k8s_mod_class(cd: ClassDescriptor, op: Operation = None) -> \
         if pkg is not None:  # the inner for found the method
             break
     else:
-        # if details.is_partially_filled:
-        #     if details.class_name in _custom_method_name_builders:
-        #         cmnb = _custom_method_name_builders[details.class_name]
-        #         mname = cmnb(op, cd)
-        #         details = _search_for_method("", "", "", mname, partial_results=details)
-        #         if details.is_complete:
-        #             pkg, mod, cls, meth = details.package_name, details.module_name, details.class_name, details.module_name
-        #             if op is not None:  # also record the state of 'remove'
-        #                 op.remove = True   # is this always true??
-        #     if pkg is None and "deprecated" not in op.description.lower():
-        #         print(f"Can't complete finding {op.op_id} (real: {op._op_id}); did find: "
-        #               f"p={details.package_name}, m={details.module_name}, c={details.class_name}")
-        # else:
         if not op.op_id.startswith("watch"):
             print(f"Can't find p/m/c/m for {op.op_id} (real: {op._op_id}) in {cd.group} or {op.group}")
     return pkg, mod, cls, meth
@@ -3194,6 +2741,7 @@ if __name__ == "__main__":
         print("no arguments besides the swagger file")
         sys.exit(1)
     print(f">>>Processing {sys.argv[1]}")
+    op_to_method_mapper = MapperVendor.get_mapper_for_swagger(sys.argv[1])
     issues = Issues()
     build_it(sys.argv[1])
     print()
