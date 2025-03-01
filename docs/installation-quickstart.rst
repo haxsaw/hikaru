@@ -10,17 +10,17 @@ From PyPI, you can just use the normal ``pip install`` dance:
     ``pip install hikaru``
 
 This will install the core Hikaru package, the four most recent K8s model packages, and the codegen
-package (all all their dependencies).
+package (and all their dependencies).
 
 If installing from source,  cd into the project root and then you can install from setup.py:
 
     ``python setup.py install``
 
 If you want to install just core support and models for a single Kubernetes release, for example
-release 25.x, you can just install that model package and it will also install the core Hikaru
+release 27.x, you can just install that model package and it will also install the core Hikaru
 package:
 
-    ``pip install hikaru-model-25``
+    ``pip install hikaru-model-27``
 
 If you want to fine-tune your installation so it is smaller
 and more targeted, see the :ref:`Installation` page for details on how to install specific parts of

@@ -41,7 +41,7 @@ Integration testing
     if you use a different Kubernetes system or have other requirements.
 
 Integration tests are also run from within the ``tests`` subdirectory, but live in the
-``e2e`` directory below that; this is so that unit tests can be run indpependently of
+``e2e`` directory below that; this is so that unit tests can be run independently of
 a Kubernetes installation.
 
 To run the integration tests, run the following from with ``tests``:
