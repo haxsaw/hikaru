@@ -24,6 +24,7 @@ from importlib import import_module
 from io import StringIO
 import json
 from inspect import getmodule
+from types import ModuleType
 from uuid import uuid4
 from kubernetes.client import ApiClient
 from kubernetes.client.exceptions import ApiException
@@ -32,6 +33,7 @@ from typing import (Optional, List, Tuple, Dict, Generator, Any, Callable, Union
                     TextIO)
 from .utils import get_args, get_origin
 from threading import current_thread, Thread
+import time
 from . import (HikaruDocumentBase, get_default_release, DiffDetail, HikaruBase, DiffType,
                set_default_release, get_clean_dict, from_dict, TypeWarning, CatalogEntry)
 from .crd import HikaruCRDDocumentMixin
@@ -621,14 +623,18 @@ class Application(object):
                 raise TypeError(f"field {f.name} is not a HikaruDocumentBase subclass or an "
                                 f"Optional[HikaruDocumentBase] subclass")
 
+    def _get_module(self) -> ModuleType:
+        relname = get_default_release()
+        v1mod = import_module(".v1", f"{model_root_package}.{relname}")
+        return v1mod
+
     def _compute_create_order(self) -> Tuple[List[FieldInfo], List[FieldInfo], List[FieldInfo], List[FieldInfo]]:
         # provides 4 lists of fields that can be provisioned in parallel
         pri1: List[FieldInfo] = []
         pri2: List[FieldInfo] = []
         pri3: List[FieldInfo] = []
         pri4: List[FieldInfo] = []
-        relname = get_default_release()
-        v1mod = import_module(".v1", f"{model_root_package}.{relname}")
+        v1mod = self._get_module()
         # these could be cached by release
         pri1_classses = tuple([getattr(v1mod, c) for c in self._pri1_classes])
         pri2_classses = tuple([getattr(v1mod, c) for c in self._pri2_classes])
@@ -821,6 +827,8 @@ class Application(object):
             resource_fields = self._resource_fields[:]
             resource_fields.reverse()
             self.report("delete", Reporter.APP_START_PROCESSING, {})
+            module = self._get_module()
+            classes_to_pause_for = tuple(getattr(module, c) for c in self._pri1_classes)
             for f in resource_fields:
                 r: HikaruDocumentBase = getattr(self, f.name)
                 # TODO; need to decide if we should check the instance_id and skip if it doesn't match
@@ -831,6 +839,8 @@ class Application(object):
                     continue
                 try:
                     self.report("delete", Reporter.RSRC_DELETE_OP, {}, r, f.name)
+                    if isinstance(r, classes_to_pause_for):
+                        time.sleep(0.2)
                     r.delete(dry_run=dry_run, client=client)
                     self._deleted.append(r)
                     self.report("delete", Reporter.RSRC_DONE_PROCESSING, {}, r, f.name)

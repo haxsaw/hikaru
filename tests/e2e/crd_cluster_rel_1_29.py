@@ -1,22 +1,3 @@
-# Copyright (c) 2023 Incisive Technology Ltd
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
 from hikaru.model.rel_1_29.v1 import *
 from hikaru import HikaruBase, HikaruDocumentBase, set_default_release
 from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin,
@@ -25,6 +6,7 @@ from hikaru.meta import FieldMetadata as fm
 from typing import Optional
 from dataclasses import dataclass, field
 from kubernetes import config
+import pytest
 
 set_default_release("rel_1_29")
 
@@ -34,12 +16,9 @@ class MyClusterSpec(HikaruBase):
     appId: str
     language: str = field(metadata=fm(enum=["csharp", "python", "go"]))
     environmentType: str = field(metadata=fm(enum=["dev", "test", "prod"]))
-    os: Optional[str] = field(default=None, metadata=fm(enum=["windows",
-                                                              "linux"]))
+    os: Optional[str] = field(default=None, metadata=fm(enum=["windows", "linux"]))
     instanceSize: Optional[str] = field(default=None,
-                                        metadata=fm(enum=["small",
-                                                          "medium",
-                                                          "large"]))
+                                        metadata=fm(enum=["small", "medium", "large"]))
     replicas: Optional[int] = field(default=1,
                                     metadata=fm(minimum=1))
 
@@ -55,6 +34,30 @@ class MyCluster(HikaruDocumentBase, HikaruCRDDocumentMixin):
 register_crd_class(MyCluster, plural_name="myclusters", is_namespaced=False)
 config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
 
+# Module-level fixture to ensure RBAC permissions for cluster-scoped CRD operations.
+# This creates a ClusterRoleBinding binding the default service account in the
+# "default" namespace to the "cluster-admin" role.
+@pytest.fixture(scope="module", autouse=True)
+def setup_rbac():
+    crb = ClusterRoleBinding(
+         metadata=ObjectMeta(name="crd-test-crb"),
+         subjects=[Subject(kind="ServiceAccount", name="default", namespace="default")],
+         roleRef=RoleRef(apiGroup="rbac.authorization.k8s.io", kind="ClusterRole", name="cluster-admin")
+    )
+    try:
+         crb.createClusterRoleBinding()
+    except Exception as e:
+         if "already exists" in str(e):
+             pass
+         else:
+             raise
+    yield
+    try:
+         ClusterRoleBinding.deleteClusterRoleBinding("crd-test-crb")
+    except Exception:
+         pass
+
+
 crd_defined: bool = False
 crd_instance_created: bool = False
 
@@ -65,8 +68,8 @@ def test01():
     """
     global crd_defined
     schema: JSONSchemaProps = get_crd_schema(MyCluster)
-    crd: CustomResourceDefinition = \
-        CustomResourceDefinition(spec=CustomResourceDefinitionSpec(
+    crd: CustomResourceDefinition = CustomResourceDefinition(
+        spec=CustomResourceDefinitionSpec(
             group="example.com",
             names=CustomResourceDefinitionNames(
                 shortNames=["myc"],
@@ -91,7 +94,7 @@ def test01():
     try:
         new_crd = crd.read()
     except:
-        new_crd: CustomResourceDefinition = crd.create()
+        new_crd = crd.create()
     assert new_crd
     crd_defined = True
 
@@ -197,8 +200,8 @@ def test06():
     if crd_instance_created or not crd_defined:
         raise Exception("can't delete the definition")
     schema: JSONSchemaProps = get_crd_schema(MyCluster)
-    crd: CustomResourceDefinition = \
-        CustomResourceDefinition(spec=CustomResourceDefinitionSpec(
+    crd: CustomResourceDefinition = CustomResourceDefinition(
+        spec=CustomResourceDefinitionSpec(
             group="example.com",
             names=CustomResourceDefinitionNames(
                 shortNames=["myc"],
@@ -212,7 +215,7 @@ def test06():
                 served=True,
                 storage=True,
                 schema=CustomResourceValidation(
-                    openAPIV3Schema=schema  # schema goes here!
+                    openAPIV3Schema=schema
                 )
             )]
         ),

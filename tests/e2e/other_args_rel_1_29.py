@@ -35,20 +35,21 @@ def beginning():
     config.load_kube_config(config_file="/etc/rancher/k3s/k3s.yaml")
     ns = Namespace(metadata=ObjectMeta(name=tests_namespace))
     res = ns.createNamespace()
-    time.sleep(0.1)  # give the system a moment to stablize or the first test can fail
+    time.sleep(0.2)  # give the system a moment to stablize or the first test can fail
     return res
 
 
 def ending():
-    Namespace.deleteNamespace(name=tests_namespace)
     res: Response = PodList.listPodForAllNamespaces()
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if pod.metadata.namespace == tests_namespace:
             try:
                 Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
+                time.sleep(0.2)
             except:
                 pass
+    Namespace.deleteNamespace(name=tests_namespace)
 
 
 @pytest.fixture(scope='module', autouse=True)
@@ -62,8 +63,10 @@ def test01():
     """
     Check async pod creation
     """
+    ServiceAccount
     base_pod = Pod(metadata=ObjectMeta(name='pod-test01'),
                    spec=PodSpec(
+                       serviceAccount="",
                        containers=[Container(image='busybox',
                                              name='sleep',
                                              args=["/bin/sh",

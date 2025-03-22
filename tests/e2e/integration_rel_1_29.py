@@ -48,7 +48,6 @@ else:
 del cwd
 e2e_namespace = 'e2e-tests-v1-rel1-29'
 
-
 setup_calls = 0
 
 conf: Optional[config.kube_config.Configuration] = None
@@ -63,22 +62,44 @@ def beginning():
     conf.client_side_validation = False
     config.kube_config.Configuration.set_default(conf)
     ns = Namespace(metadata=ObjectMeta(name=e2e_namespace))
+    # Capture the response from creating the namespace
     res = ns.createNamespace()
+
+    # Added RBAC setup: Create a ClusterRoleBinding for the default service account.
+    crb = ClusterRoleBinding(
+        metadata=ObjectMeta(name="e2e-test-crb"),
+        subjects=[Subject(kind="ServiceAccount", name="default", namespace=e2e_namespace)],
+        roleRef=RoleRef(apiGroup="rbac.authorization.k8s.io", kind="ClusterRole", name="cluster-admin")
+    )
+    try:
+        crb.createClusterRoleBinding()
+    except Exception as e:
+        if "already exists" in str(e):
+            pass
+        else:
+            raise
+
     return res
 
 
 def ending():
-    Namespace.deleteNamespace(name=e2e_namespace)
     res: Response = PodList.listPodForAllNamespaces()
     plist: PodList = cast(PodList, res.obj)
     for pod in plist.items:
         if (pod.metadata.namespace in ('default', e2e_namespace) and
-            (pod.metadata.name.startswith('rc-test') or
-             pod.metadata.name.startswith('job-test'))):
+                (pod.metadata.name.startswith('rc-test') or
+                 pod.metadata.name.startswith('job-test'))):
             try:
                 Pod.deleteNamespacedPod(pod.metadata.name, pod.metadata.namespace)
             except:
                 pass
+    time.sleep(0.3)
+    # Clean up the ClusterRoleBinding created during setup.
+    try:
+        ClusterRoleBinding.deleteClusterRoleBinding("e2e-test-crb")
+    except Exception:
+        pass
+    Namespace.deleteNamespace(name=e2e_namespace)
 
 
 @pytest.fixture(scope='module', autouse=True)
@@ -91,7 +112,6 @@ def setup():
 ####################
 # from test_utils.py
 ####################
-
 
 def test01():
     """
@@ -139,6 +159,10 @@ def test02():
     """
     path = base_path / "core-pod.yaml"
     p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
+    # Ensure the pod uses the default service account (which is bound to cluster-admin)
+    if not p.spec:
+        p.spec = PodSpec()
+    p.spec.serviceAccountName = "default"
     res = p.createNamespacedPod(e2e_namespace)
     try:
         assert res.obj and isinstance(res.obj, Pod)
@@ -158,6 +182,9 @@ def test02a():
     path = base_path / "core-pod.yaml"
     p: Pod = cast(Pod, load_full_yaml(path=str(path))[0])
     p.metadata.name += '-2a'
+    if not p.spec:
+        p.spec = PodSpec()
+    p.spec.serviceAccountName = "default"
     res = p.createNamespacedPod(e2e_namespace)
     try:
         assert res.obj and isinstance(res.obj, Pod)
@@ -208,6 +235,7 @@ def test04():
         res = Namespace.readNamespace(ns.metadata.name)
         assert res.obj and isinstance(res.obj, Namespace)
     finally:
+        time.sleep(0.2)  # give the namespace a chance to spin up
         _ = Namespace.deleteNamespace(ns.metadata.name)
 
 
@@ -237,12 +265,16 @@ def test06():
     # namespace: create and read
     ns: Namespace = cast(Namespace, load_full_yaml(path=str(path_ns))[0])
     res = ns.createNamespace()
+    time.sleep(0.2)
     try:
         assert res.obj and isinstance(res.obj, Namespace)
         res = Namespace.readNamespace(ns.metadata.name)
         assert res.obj and isinstance(res.obj, Namespace)
         # deployment: create and read
         dep: Deployment = cast(Deployment, load_full_yaml(path=str(path_dep))[0])
+        # Ensure the deployment's pods use the default service account
+        if dep.spec and dep.spec.template and dep.spec.template.spec:
+            dep.spec.template.spec.serviceAccountName = "default"
         res = dep.createNamespacedDeployment(ns.metadata.name)
         try:
             assert res.obj and isinstance(res.obj, Deployment)
@@ -253,6 +285,7 @@ def test06():
             _ = Deployment.deleteNamespacedDeployment(dep.metadata.name,
                                                       dep.metadata.namespace)
     finally:
+        time.sleep(0.2)
         _ = Namespace.deleteNamespace(ns.metadata.name)
 
 
@@ -292,7 +325,6 @@ def test07a():
 # from test_client.py
 #####################
 
-
 base_pod = Pod(metadata=ObjectMeta(),
                spec=PodSpec(
                    containers=[Container(image='busybox',
@@ -311,6 +343,10 @@ def test08():
     test_pod = base_pod.dup()
     test_pod.metadata.name = 'integration-test08'
     test_pod.spec.containers[0].args.append("while true;do date;sleep 5; done")
+    # Ensure the pod uses the default service account
+    if not test_pod.spec:
+        test_pod.spec = PodSpec()
+    test_pod.spec.serviceAccountName = "default"
     res = test_pod.createNamespacedPod(namespace=e2e_namespace)
     try:
         assert res.obj
@@ -492,7 +528,6 @@ def test12():
 # from test_batch.py
 ####################
 
-
 job_base = Job(metadata=ObjectMeta(name=''),
                spec=JobSpec(template=
                             PodTemplateSpec(metadata=ObjectMeta(name=''),
@@ -536,7 +571,6 @@ def test13():
 # from test_apps.py
 ####################
 
-
 def make_deployment(name: str) -> Deployment:
     base_deployment = Deployment(
         metadata=ObjectMeta(name=name),
@@ -546,6 +580,8 @@ def make_deployment(name: str) -> Deployment:
             template=PodTemplateSpec(
                 metadata=ObjectMeta(labels={'app': 'nginx'}),
                 spec=PodSpec(
+                    # Ensure pods created in the deployment use the default service account.
+                    serviceAccountName="default",
                     containers=[Container(
                         name='nginx',
                         image='nginx:1.15.4',
@@ -591,6 +627,7 @@ def make_daemonset(name: str) -> DaemonSet:
                     labels={'app': 'nginx'}
                 ),
                 spec=PodSpec(
+                    serviceAccountName="default",
                     containers=[Container(
                         name='nginx-app',
                         image='nginx:1.15.4'
@@ -1034,15 +1071,15 @@ def test53():
         template=PodTemplateSpec(
             metadata=ObjectMeta(labels={'name': ''}),
             spec=PodSpec(
-                 containers=[Container(image='nginx',
-                                       name='nginx',
-                                       ports=[ContainerPort(
-                                           containerPort=80,
-                                           protocol='TCP'
-                                       )]
-                                       )
-                             ]
-             ))
+                containers=[Container(image='nginx',
+                                      name='nginx',
+                                      ports=[ContainerPort(
+                                          containerPort=80,
+                                          protocol='TCP'
+                                      )]
+                                      )
+                            ]
+            ))
     )
     res = pt.createNamespacedPodTemplate(e2e_namespace)
     try:
@@ -1463,6 +1500,7 @@ def test67():
                 metadata=ObjectMeta(labels={'app': 'whoami-web'},
                                     name='whoami-web'),
                 spec=PodSpec(
+                    serviceAccountName="default",
                     containers=[Container(image='nginx',
                                           name='nginx',
                                           ports=[ContainerPort(
@@ -1559,6 +1597,7 @@ base_ss = StatefulSet(
         template=PodTemplateSpec(
             metadata=ObjectMeta(labels={"app": "todo-db"}),
             spec=PodSpec(
+                serviceAccountName="default",
                 containers=[
                     Container(
                         name="db",
@@ -1701,7 +1740,7 @@ def test71():
         metadata=ObjectMeta(namespace=e2e_namespace),
         spec=TokenRequestSpec(
             audiences=[sa.metadata.name],
-            expirationSeconds=60*10
+            expirationSeconds=60 * 10
         )
     )
     res = sa.createNamespacedServiceAccount(e2e_namespace)

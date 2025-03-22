@@ -1,33 +1,13 @@
-# Copyright (c) 2023 Incisive Technology Ltd
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 from hikaru.model.rel_1_29.v1 import *
 from hikaru import HikaruBase, HikaruDocumentBase, set_default_release
 from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin,
                         get_crd_schema)
 from hikaru.meta import FieldMetadata as fm
+import time
 from typing import Optional
 from dataclasses import dataclass, field
 from kubernetes import config
 import pytest
-
 
 namespace = "rel-1-29-crd"
 
@@ -35,10 +15,46 @@ namespace = "rel-1-29-crd"
 def beginning():
     set_default_release("rel_1_29")
     ns: Namespace = Namespace(metadata=ObjectMeta(name=namespace))
-    return ns.create()
+    ns_response = ns.create()
+
+    # Create a Role granting permissions on the "myplatforms" resource in this namespace.
+    role = Role(
+        metadata=ObjectMeta(name="crd-ns-role", namespace=namespace),
+        rules=[
+            PolicyRule(
+                apiGroups=["example.com"],
+                resources=["myplatforms"],
+                verbs=["create", "get", "list", "update", "patch", "delete"]
+            )
+        ]
+    )
+    try:
+        role.createNamespacedRole(namespace)
+    except Exception as e:
+        if "already exists" in str(e):
+            pass
+        else:
+            raise
+
+    # Create a RoleBinding binding the default service account in this namespace to the Role.
+    rb = RoleBinding(
+        metadata=ObjectMeta(name="crd-ns-rolebinding", namespace=namespace),
+        subjects=[Subject(kind="ServiceAccount", name="default", namespace=namespace)],
+        roleRef=RoleRef(apiGroup="rbac.authorization.k8s.io", kind="Role", name="crd-ns-role")
+    )
+    try:
+        rb.createNamespacedRoleBinding(namespace)
+    except Exception as e:
+        if "already exists" in str(e):
+            pass
+        else:
+            raise
+
+    return ns_response
 
 
 def ending():
+    time.sleep(0.3)
     Namespace.deleteNamespace(namespace)
 
 
@@ -54,12 +70,9 @@ class MyPlatformSpec(HikaruBase):
     appId: str
     language: str = field(metadata=fm(enum=["csharp", "python", "go"]))
     environmentType: str = field(metadata=fm(enum=["dev", "test", "prod"]))
-    os: Optional[str] = field(default=None, metadata=fm(enum=["windows",
-                                                              "linux"]))
+    os: Optional[str] = field(default=None, metadata=fm(enum=["windows", "linux"]))
     instanceSize: Optional[str] = field(default=None,
-                                        metadata=fm(enum=["small",
-                                                          "medium",
-                                                          "large"]))
+                                        metadata=fm(enum=["small", "medium", "large"]))
     replicas: Optional[int] = field(default=1,
                                     metadata=fm(minimum=1))
 
@@ -86,9 +99,8 @@ def test01():
     global crd_defined
     schema: JSONSchemaProps = get_crd_schema(MyPlatform)
 
-    # now make the CRD object with the schema
-    crd: CustomResourceDefinition = \
-        CustomResourceDefinition(spec=CustomResourceDefinitionSpec(
+    crd: CustomResourceDefinition = CustomResourceDefinition(
+        spec=CustomResourceDefinitionSpec(
             group="example.com",
             names=CustomResourceDefinitionNames(
                 shortNames=["myp"],
@@ -113,7 +125,7 @@ def test01():
     try:
         new_crd = crd.read()
     except:
-        new_crd: CustomResourceDefinition = crd.create()
+        new_crd = crd.create()
     assert new_crd
     crd_defined = True
 
@@ -139,6 +151,7 @@ def test02():
 
     new: MyPlatform = mc.create()
     assert new
+    time.sleep(0.2)
     crd_instance_created = True
 
 
@@ -202,10 +215,8 @@ def test06():
         raise Exception("Can't delete; crd not defined")
 
     schema: JSONSchemaProps = get_crd_schema(MyPlatform)
-
-    # now make the CRD object with the schema
-    crd: CustomResourceDefinition = \
-        CustomResourceDefinition(spec=CustomResourceDefinitionSpec(
+    crd: CustomResourceDefinition = CustomResourceDefinition(
+        spec=CustomResourceDefinitionSpec(
             group="example.com",
             names=CustomResourceDefinitionNames(
                 shortNames=["myp"],
