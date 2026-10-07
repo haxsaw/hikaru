@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 from importlib import import_module
-from inspect import isclass, Parameter
+from inspect import isclass, Parameter, signature
 from dataclasses import is_dataclass, InitVar
 from typing import Optional, Dict, Union, List
 from .meta import HikaruDocumentBase, HikaruBase, WatcherDescriptor, FieldMetadata as fm
@@ -33,6 +33,11 @@ from kubernetes.client.api_client import ApiClient
 
 _ignorable = {'apiVersion', 'kind', 'metadata', 'group'}
 _type_map = {str: "string", int: "integer", float: "number", bool: "boolean"}
+
+# Detect whether the installed client supports the newer `response_types_map`
+_call_api_uses_response_types_map: bool = (
+    'response_types_map' in signature(ApiClient.call_api).parameters
+)
 
 
 # there are no production uses to change this value, but testing may alter it
@@ -326,7 +331,12 @@ class HikaruCRDDocumentMixin(object):
         local_var_files = {}
         collection_formats = {}
         path_params = {}
-        response_type = object
+        codes_returning_objects = (200, 201, 202)
+        if _call_api_uses_response_types_map:
+            response_type_kwargs = {'response_types_map': {code: object
+                                                           for code in codes_returning_objects}}
+        else:
+            response_type_kwargs = {'response_type': object}
 
         # now stuff driven by the request
         if alt_body is not None:
@@ -354,11 +364,10 @@ class HikaruCRDDocumentMixin(object):
                                       body=body,
                                       post_params=form_params,
                                       files=local_var_files,
-                                      response_type=response_type,
                                       auth_settings=auth_settings,
                                       async_req=async_req,
-                                      collection_formats=collection_formats)
-        codes_returning_objects = (200, 201, 202)
+                                      collection_formats=collection_formats,
+                                      **response_type_kwargs)
         return Response[self.__class__](result, codes_returning_objects)
 
     def create(self, field_manager: Optional[str] = None,

@@ -22,8 +22,10 @@ from hikaru import *
 from hikaru.model.rel_1_28.v1 import *
 from hikaru.crd import (register_crd_class, HikaruCRDDocumentMixin, get_crd_schema)
 from hikaru.meta import FieldMetadata as FM
+from kubernetes.client import ApiClient
 from dataclasses import dataclass, field
 from typing import Optional, List, Union, Dict
+import json
 import pytest
 
 
@@ -948,6 +950,86 @@ def test37():
         raise CRDTestExp("should have raised a type error")
     except TypeError as e:
         assert "must have apiVersion, kind, and metadata attributes" in str(e)
+
+
+class FakeRESTResponse(object):
+    """
+    Minimal stand-in for kubernetes.client.rest.RESTResponse
+    """
+    def __init__(self, status: int, body: dict):
+        self.status = status
+        self.reason = "OK"
+        self.data = json.dumps(body).encode("utf-8")
+
+    def getheaders(self):
+        return {"content-type": "application/json"}
+
+    def getheader(self, name, default=None):
+        return self.getheaders().get(name, default)
+
+
+class FakeRESTClient(object):
+    """
+    Replaces ApiClient.rest_client so that the REAL kubernetes ApiClient code
+    (including its call_api() signature) is exercised, but no network is used.
+    Records what the ApiClient actually asked the transport to send.
+    """
+    def __init__(self, status: int = 200):
+        self.status = status
+        self.calls = []
+
+    def _request(self, method, url, query_params=None, headers=None, body=None,
+                 post_params=None, _preload_content=True, _request_timeout=None):
+        self.calls.append({"method": method, "url": url,
+                           "query_params": query_params,
+                           "headers": headers, "body": body})
+        return FakeRESTResponse(self.status, body if isinstance(body, dict) else {})
+
+    def GET(self, url, **kwargs):
+        return self._request("GET", url, **kwargs)
+
+    def POST(self, url, **kwargs):
+        return self._request("POST", url, **kwargs)
+
+    def PUT(self, url, **kwargs):
+        return self._request("PUT", url, **kwargs)
+
+    def DELETE(self, url, **kwargs):
+        return self._request("DELETE", url, **kwargs)
+
+
+def make_real_api_client(rest: FakeRESTClient) -> ApiClient:
+    client = ApiClient()
+    client.rest_client = rest
+    # this is how kubernetes.config populates the token (kubernetes < 36 key; >= 36
+    # stores it under 'BearerToken' but still honours 'authorization' as an alias)
+    client.configuration.api_key["authorization"] = "Bearer the-token"
+    return client
+
+
+def test38():
+    """
+    CRD api_call must work against the real kubernetes ApiClient.call_api()
+
+    Regression test for https://github.com/haxsaw/hikaru/issues/46: kubernetes>=36
+    renamed call_api()'s 'response_type' kwarg to 'response_types_map'. The
+    MockApiClient above accepts **kwargs so it can't catch this; here we drive the
+    real ApiClient with a fake transport.
+    """
+    rest = FakeRESTClient(status=201)
+    o: ExampleResource = ExampleResource(metadata=ObjectMeta(name="test38",
+                                                             namespace="default"),
+                                         f1=38)
+    o.client = make_real_api_client(rest)
+    res: ExampleResource = o.create()
+    assert isinstance(res, ExampleResource)
+    assert res.metadata.name == "test38"
+    assert res.f1 == 38
+    assert len(rest.calls) == 1
+    call = rest.calls[0]
+    assert call["method"] == "POST"
+    assert call["url"].endswith("/apis/example.com/v1/namespaces/default/exampleresources")
+    assert call["headers"]["authorization"] == "Bearer the-token"
 
 
 if __name__ == "__main__":
